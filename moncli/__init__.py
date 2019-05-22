@@ -22,6 +22,11 @@ class MondayClient():
         raise BoardNotFound('name', name)
 
 
+    def get_board_by_id(self, board_id):
+
+        return get_board_by_id(self.__api_key, board_id)
+
+
 class BoardNotFound(Exception):
 
     def __init__(self, search_type, value):
