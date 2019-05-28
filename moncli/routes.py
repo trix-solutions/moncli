@@ -4,6 +4,25 @@ BASE_URL = 'https://api.monday.com'
 PORT = '443'
 API_VERSION = 'v1'
 
+def get_users(api_key, page = 0, per_page = 25, offset = 0, order_by_latest = false):
+
+    resource_url = '{}/users.json'.format(format_url())
+
+    params = {
+        'api_key': api_key,
+        'page': page,
+        'per_page': per_page,
+        'offset': offset,
+        'order_by_latest': order_by_latest
+    }
+
+    resp = requests.get(resource_url, params=params)
+
+    if resp.status_code == 200:
+        return resp.json()
+
+    raise_mondayapi_error('GET', 'users.json', resp)
+
 def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = False):
 
     resource_url = '{}/boards.json'.format(format_url())
