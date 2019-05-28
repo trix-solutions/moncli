@@ -53,7 +53,7 @@ TAGS_BY_ID = 'tags/{}.json'
 
 def get_users(api_key, page = 0, per_page = 25, offset = 0, order_by_latest = False):
 
-    resource_url = '{}/users.json'.format(format_url())
+    resource_url = USERS
 
     params = {
         'api_key': api_key,
@@ -63,30 +63,24 @@ def get_users(api_key, page = 0, per_page = 25, offset = 0, order_by_latest = Fa
         'order_by_latest': order_by_latest
     }
 
-    resp = requests.get(resource_url, params=params)
-
-    if resp.status_code == 200:
-        return resp.json()
-
-    raise_mondayapi_error('GET', 'users.json', resp)
+    return execute_get(resource_url, params)
 
 
 def get_user_by_id(api_key, user_id):
 
-    resource_url = '{}/users/{}.json'.format(
-        format_url(),
-        user_id)
+    resource_url = USER_BY_ID.format(user_id)
 
     params = {
         'api_key': api_key,
         'id': user_id
     }
 
+    return execute_get(resource_url, params)
 
 
 def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = False):
 
-    resource_url = '{}/boards.json'.format(format_url())
+    resource_url = BOARDS
 
     params = {
         'api_key': api_key,
@@ -95,53 +89,46 @@ def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = F
         'order_by_latest': order_by_latest
     }
 
-    resp = requests.get(resource_url, params=params)
-
-    if resp.status_code == 200:
-        return resp.json()
-
-    raise_mondayapi_error('GET', 'boards.json', resp)
+    return execute_get(resource_url, params)
 
 
 def get_board_by_id(api_key, board_id):
 
-    resource_url = "{}/boards/{}.json".format(
-        format_url(),
-        board_id)
+    resource_url = BOARD_BY_ID.format(board_id)
 
     params = {
         'api_key': api_key
     }
 
-    resp = requests.get(resource_url, params=params)
+    return execute_get(resource_url, params)
+
+    
+def format_url(resource_url):
+
+    return "{}:{}/{}/{}".format(
+        BASE_URL, 
+        PORT, 
+        API_VERSION,
+        resource_url)
+
+
+def raise_mondayapi_error(method, resource_url, resp):
+    
+    raise MondayApiError(
+        method, 
+        format_url(resource_url), 
+        resp.status_code,
+         resp.text)
+
+
+def execute_get(resource_url, params):
+
+    resp = requests.get(format_url(resource_url), params=params)
 
     if resp.status_code == 200:
         return resp.json()
 
-    raise_mondayapi_error('GET', 'boards/{}.json'.format(board_id), resp)
-
-    
-def format_url():
-
-    return "{}:{}/{}".format(
-        BASE_URL, 
-        PORT, 
-        API_VERSION)
-
-
-def raise_mondayapi_error(method, resource_url, resp):
-
-    error_url = "{}:{}/{}/{}".format(
-        BASE_URL, 
-        PORT, 
-        API_VERSION, 
-        resource_url)
-    
-    raise MondayApiError(
-        method, 
-        error_url, 
-        resp.status_code,
-         resp.text)
+    raise_mondayapi_error('GET', resource_url, resp)
 
 
 class MondayApiError(Exception):
@@ -151,3 +138,21 @@ class MondayApiError(Exception):
         self.error_url = error_url
         self.error_code = error_code
         self.message = message
+
+
+class MondayQueryParameters():
+
+    def __init__(self, api_key):
+
+        self.__dict = { 'api_key': api_key}
+
+
+    def add(self, name, value):
+
+        self.__dict[name] = value
+        return self
+
+    
+    def to_dict(self):
+
+        return self.__dict
