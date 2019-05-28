@@ -56,26 +56,59 @@ def get_users(api_key, page = 0, per_page = 25, offset = 0, order_by_latest = Fa
     resource_url = USERS
 
     params = {
-        'api_key': api_key,
         'page': page,
         'per_page': per_page,
         'offset': offset,
         'order_by_latest': order_by_latest
     }
 
-    return execute_get(resource_url, params)
+    return execute_get(api_key, resource_url, params)
 
 
 def get_user_by_id(api_key, user_id):
 
     resource_url = USER_BY_ID.format(user_id)
 
+    return execute_get(api_key, resource_url)
+
+
+def get_user_posts(api_key, user_id, page = 0, per_page = 25, offset = 0):
+
+    resource_url = USER_POSTS.format(user_id)
+
     params = {
-        'api_key': api_key,
-        'id': user_id
+        'page': page,
+        'per_page': per_page,
+        'offset': offset
     }
 
-    return execute_get(resource_url, params)
+    return execute_get(api_key, resource_url, params)
+
+
+def get_user_newsfeed(api_key, user_id, page = 0, per_page = 25, offset = 0):
+
+    resource_url = USER_NEWSFEED.format(user_id)
+
+    params = {
+        'page': page,
+        'per_page': per_page,
+        'offset': offset
+    }
+
+    return execute_get(api_key, resource_url, params)
+
+
+def get_user_unread_feed(api_key, user_id, page = 0, per_page = 25, offset = 0):
+
+    resource_url = USER_UNREAD_FEED.format(user_id)
+
+    params = {
+        'page': page,
+        'per_page': per_page,
+        'offset': offset
+    }
+
+    return execute_get(api_key, resource_url, params)
 
 
 def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = False):
@@ -83,24 +116,19 @@ def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = F
     resource_url = BOARDS
 
     params = {
-        'api_key': api_key,
         'per_page': per_page,
         'only_globals': only_globals,
         'order_by_latest': order_by_latest
     }
 
-    return execute_get(resource_url, params)
+    return execute_get(api_key, resource_url, params)
 
 
 def get_board_by_id(api_key, board_id):
 
     resource_url = BOARD_BY_ID.format(board_id)
 
-    params = {
-        'api_key': api_key
-    }
-
-    return execute_get(resource_url, params)
+    return execute_get(api_key, resource_url)
 
     
 def format_url(resource_url):
@@ -121,9 +149,16 @@ def raise_mondayapi_error(method, resource_url, resp):
          resp.text)
 
 
-def execute_get(resource_url, params):
+def execute_get(api_key, resource_url, params = None):
 
-    resp = requests.get(format_url(resource_url), params=params)
+    monday_params = MondayQueryParameters(api_key)
+
+    if params != None:
+        monday_params.add_params(params)
+
+    resp = requests.get(
+        format_url(resource_url), 
+        params=monday_params.to_dict())
 
     if resp.status_code == 200:
         return resp.json()
@@ -147,10 +182,15 @@ class MondayQueryParameters():
         self.__dict = { 'api_key': api_key}
 
 
-    def add(self, name, value):
+    def add_param(self, name, value):
 
         self.__dict[name] = value
-        return self
+
+    
+    def add_params(self, params_dict):
+
+        for key in params_dict:
+            self.add_param(key, params_dict[key])
 
     
     def to_dict(self):
