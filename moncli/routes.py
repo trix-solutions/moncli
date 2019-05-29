@@ -281,6 +281,82 @@ def delete_pulse_subscriber(api_key, pulse_id, user_id):
     return execute_delete(api_key, resource_url)
 
 
+def get_pulse_notes(api_key, pulse_id):
+
+    resource_url = PULSE_NOTES.format(pulse_id)
+
+    return execute_get(api_key, resource_url)
+
+
+def post_pulse_notes(api_key, 
+        pulse_id, 
+        title, 
+        content, 
+        owners_only = True, 
+        user_id = None, 
+        create_update = None):
+
+    resource_url = PULSE_NOTES.format(pulse_id)
+
+    body = {
+        'title': title,
+        'content': content,
+        'owners_only': owners_only
+    }
+
+    if user_id != None:
+        body['user_id'] = user_id
+
+        if create_update != None:
+            body['create_update'] = create_update
+
+    return execute_post(api_key, resource_url, body)
+
+
+def put_pulse_note_by_id(
+        api_key, 
+        pulse_id,
+        note_id,
+        title,
+        content,
+        user_id = None,
+        create_update = None):
+
+    resource_url = PULSE_NOTE_BY_ID.format(pulse_id, note_id)
+
+    body = {
+        'title': title,
+        'content': content
+    }
+
+    if user_id != None:
+        body['user_id'] = user_id
+
+        if create_update != None:
+            body['create_update'] = create_update
+
+    return execute_put(api_key, resource_url, body)
+
+
+def delete_pulse_note_by_id(api_key, pulse_id, note_id):
+
+    resource_url = PULSE_NOTE_BY_ID.format(pulse_id, note_id)
+
+    return execute_delete(api_key, resource_url)
+
+
+def get_pulse_updates(api_key, pulse_id, page = 1, limit = 25):
+
+    resource_url = PULSE_UPDATES.format(pulse_id)
+
+    params = {
+        'page': page,
+        'limit': limit
+    }
+
+    return execute_get(api_key, resource_url, params)
+    
+
 def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = False):
 
     resource_url = BOARDS
