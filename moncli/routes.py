@@ -265,6 +265,23 @@ def execute_post(api_key, resource_url, body):
     raise_mondayapi_error('POST', resource_url, resp)
 
 
+def execute_put(api_key, resource_url, body):
+
+    monday_params = MondayQueryParameters(api_key)
+
+    data = json.dumps(body)
+
+    resp = requests.post(
+        format_url(resource_url),
+        data,
+        params=monday_params.to_dict())
+
+    if resp.status_code == 200:
+        return resp.json()
+
+    raise_mondayapi_error('PUT', resource_url, resp)
+
+
 def execute_delete(api_key, resource_url, params = None):
 
     monday_params = MondayQueryParameters(api_key)
