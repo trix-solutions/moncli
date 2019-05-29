@@ -249,6 +249,38 @@ def delete_pulse_by_id(api_key, pulse_id, archive = False):
     return execute_delete(api_key, resource_url, params)
 
 
+def get_pulse_subscribers(api_key, pulse_id, page = 1, per_page = 25, offset = 0):
+
+    resource_url = PULSE_SUBSCRIBERS.format(pulse_id)
+
+    params = {
+        'page': page,
+        'per_page': per_page,
+        'offset': offset
+    }
+
+    return execute_get(api_key, resource_url, params)
+
+
+def put_pulse_subscriber(api_key, pulse_id, user_id, as_admin = False):
+
+    resource_url = PULSE_SUBSCRIBERS.format(pulse_id)
+
+    body = {
+        'user_id': user_id,
+        'as_admin': as_admin
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
+def delete_pulse_subscriber(api_key, pulse_id, user_id):
+
+    resource_url = PULSE_SUBSCRIBERS_BY_USER_ID.format(pulse_id, user_id)
+
+    return execute_delete(api_key, resource_url)
+
+
 def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = False):
 
     resource_url = BOARDS
