@@ -193,6 +193,62 @@ def post_unlike_to_update(api_key, update_id, user_id):
     return execute_post(api_key, resource_url, body)
 
 
+def get_pulses(
+        api_key, 
+        page = 1,
+        per_page = 25, 
+        offset = 0,
+        order_by_latest = False,
+        since = None,
+        until = None):
+    
+    resource_url = PULSES
+
+    params = {
+        'page': page,
+        'per_page': per_page,
+        'offset': offset,
+        'order_by_latest': order_by_latest
+    }
+
+    if since != None:
+        params['since'] = since
+
+    if since != None:
+        params['until'] = until
+
+    return execute_get(api_key, resource_url, params)
+
+
+def get_pulse_by_id(api_key, pulse_id):
+
+    resource_url = PULSE_BY_ID.format(pulse_id)
+
+    return execute_get(api_key, resource_url)
+
+
+def put_pulse_by_id(api_key, pulse_id, name):
+
+    resource_url = PULSE_BY_ID.format(pulse_id)
+
+    body = {
+        'name': name
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
+def delete_pulse_by_id(api_key, pulse_id, archive = False):
+
+    resource_url = PULSE_BY_ID.format(pulse_id)
+
+    params = {
+        'archive': archive
+    }
+
+    return execute_delete(api_key, resource_url, params)
+
+
 def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = False):
 
     resource_url = BOARDS
