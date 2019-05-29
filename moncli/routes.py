@@ -1,4 +1,4 @@
-import requests
+import requests, json
 
 BASE_URL = 'https://api.monday.com'
 PORT = '443'
@@ -51,7 +51,7 @@ BOARD_SUBSCRIBERS_BY_ID = 'boards/{}/subscribers/{}.json'
 # Tags route signatures
 TAGS_BY_ID = 'tags/{}.json'
 
-def get_users(api_key, page = 0, per_page = 25, offset = 0, order_by_latest = False):
+def get_users(api_key, page = 1, per_page = 25, offset = 0, order_by_latest = False):
 
     resource_url = USERS
 
@@ -72,7 +72,7 @@ def get_user_by_id(api_key, user_id):
     return execute_get(api_key, resource_url)
 
 
-def get_user_posts(api_key, user_id, page = 0, per_page = 25, offset = 0):
+def get_user_posts(api_key, user_id, page = 1, per_page = 25, offset = 0):
 
     resource_url = USER_POSTS.format(user_id)
 
@@ -85,7 +85,7 @@ def get_user_posts(api_key, user_id, page = 0, per_page = 25, offset = 0):
     return execute_get(api_key, resource_url, params)
 
 
-def get_user_newsfeed(api_key, user_id, page = 0, per_page = 25, offset = 0):
+def get_user_newsfeed(api_key, user_id, page = 1, per_page = 25, offset = 0):
 
     resource_url = USER_NEWSFEED.format(user_id)
 
@@ -98,7 +98,7 @@ def get_user_newsfeed(api_key, user_id, page = 0, per_page = 25, offset = 0):
     return execute_get(api_key, resource_url, params)
 
 
-def get_user_unread_feed(api_key, user_id, page = 0, per_page = 25, offset = 0):
+def get_user_unread_feed(api_key, user_id, page = 1, per_page = 25, offset = 0):
 
     resource_url = USER_UNREAD_FEED.format(user_id)
 
@@ -109,6 +109,88 @@ def get_user_unread_feed(api_key, user_id, page = 0, per_page = 25, offset = 0):
     }
 
     return execute_get(api_key, resource_url, params)
+
+
+def get_updates(
+        api_key, 
+        page = 1, 
+        per_page = 25, 
+        offset = 0, 
+        since = None, 
+        until = None, 
+        updated_since = None, 
+        updated_until = None):
+
+    resource_url = UPDATES
+
+    params = {
+        'page': page,
+        'per_page': per_page,
+        'offset': offset
+    }
+
+    if since != None:
+        params['since'] = since
+
+    if since != None:
+        params['until'] = until
+
+    if since != None:
+        params['updated_since'] = updated_since
+
+    if since != None:
+        params['updated_until'] = updated_until
+
+    return execute_get(api_key, resource_url, params)
+
+
+def post_update(api_key, user_id, pulse_id, update_text):
+
+    resource_url = BOARDS
+
+    body = {
+        'user_id': user_id,
+        'pulse_id': pulse_id,
+        'update_text': update_text
+    }
+
+    return execute_post(api_key, resource_url, body)
+
+
+def get_update_by_id(api_key, update_id):
+
+    resource_url = UPDATES_BY_ID.format(update_id)
+
+    return execute_get(api_key, resource_url)
+
+
+def delete_update_by_id(api_key, update_id):
+
+    resource_url = UPDATES_BY_ID.format(update_id)
+
+    return execute_delete(api_key, resource_url)
+
+
+def post_like_to_update(api_key, update_id, user_id):
+
+    resource_url = UPDATE_LIKE.format(update_id)
+
+    body = {
+        'user': user_id
+    }
+
+    return execute_post(api_key, resource_url, body)
+
+
+def post_unlike_to_update(api_key, update_id, user_id):
+
+    resource_url = UPDATE_UNLIKE.format(update_id)
+
+    body = {
+        'user': user_id
+    }
+
+    return execute_post(api_key, resource_url, body)
 
 
 def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = False):
@@ -157,6 +239,40 @@ def execute_get(api_key, resource_url, params = None):
         monday_params.add_params(params)
 
     resp = requests.get(
+        format_url(resource_url), 
+        params=monday_params.to_dict())
+
+    if resp.status_code == 200:
+        return resp.json()
+
+    raise_mondayapi_error('GET', resource_url, resp)
+
+
+def execute_post(api_key, resource_url, body):
+
+    monday_params = MondayQueryParameters(api_key)
+
+    data = json.dumps(body)
+
+    resp = requests.post(
+        format_url(resource_url),
+        data,
+        params=monday_params.to_dict())
+
+    if resp.status_code == 200 or resp.status_code == 201:
+        return resp.json()
+
+    raise_mondayapi_error('POST', resource_url, resp)
+
+
+def execute_delete(api_key, resource_url, params = None):
+
+    monday_params = MondayQueryParameters(api_key)
+
+    if params != None:
+        monday_params.add_params(params)
+
+    resp = requests.delete(
         format_url(resource_url), 
         params=monday_params.to_dict())
 
