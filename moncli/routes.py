@@ -370,13 +370,57 @@ def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = F
     return execute_get(api_key, resource_url, params)
 
 
+def post_board(api_key, user_id, name, description, board_kind):
+
+    resource_url = BOARDS
+
+    body = {
+        'user_id': user_id,
+        'name': name,
+        'description': description,
+        'board_kind': board_kind
+    }
+
+
 def get_board_by_id(api_key, board_id):
 
     resource_url = BOARD_BY_ID.format(board_id)
 
     return execute_get(api_key, resource_url)
 
-    
+
+def delete_board_by_id(api_key, board_id):
+
+    resource_url = BOARD_BY_ID.format(board_id)
+
+    return execute_delete(api_key, resource_url)
+
+
+def get_board_groups(api_key, board_id, show_archived = False, show_deleted = False):
+
+    resource_url = BOARD_GROUPS.format(board_id)
+
+    params = {
+        'show_archived': show_archived,
+        'show_deleted': show_deleted
+    }
+
+    return execute_get(api_key, resource_url, params)
+
+
+def put_board_group(api_key, board_id, group_id, title, color):
+
+    resource_url = BOARD_GROUPS.format(board_id)
+
+    body = {
+        'group_id': group_id,
+        'title': title,
+        'color': color
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
 def format_url(resource_url):
 
     return "{}:{}/{}/{}".format(
