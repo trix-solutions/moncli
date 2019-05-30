@@ -421,6 +421,24 @@ def put_board_group(api_key, board_id, group_id, title, color):
     return execute_put(api_key, resource_url, body)
 
 
+def post_board_group(api_key, board_id, title):
+
+    resource_url = BOARD_GROUPS.format(board_id)
+
+    body = {
+        'title': title
+    }
+
+    return execute_post(api_key, resource_url, body)
+
+
+def get_tag_by_id(api_key, tag_id):
+
+    resource_url = TAGS_BY_ID.format(tag_id)
+
+    return execute_get(api_key, resource_url)
+    
+
 def format_url(resource_url):
 
     return "{}:{}/{}/{}".format(
