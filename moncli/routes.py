@@ -432,12 +432,43 @@ def post_board_group(api_key, board_id, title):
     return execute_post(api_key, resource_url, body)
 
 
+def get_board_subscribers(api_key, board_id, page = 1, per_page = 25, offset = 0):
+
+    resource_url = BOARD_SUBSCRIBERS.format(board_id)
+
+    params = {
+        'page': page,
+        'per_page': per_page,
+        'offset': offset
+    }
+
+    return execute_get(api_key, resource_url, params)
+
+
+def put_board_subscriber(api_key, board_id, user_id, as_admin = False):
+
+    resource_url = BOARD_SUBSCRIBERS.format(board_id)
+
+    body = {
+        'as_admin': as_admin
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
+def delete_board_subscriber_by_id(api_key, board_id, user_id):
+
+    resource_url = BOARD_SUBSCRIBERS_BY_ID.format(board_id, user_id)
+
+    execute_delete(api_key, resource_url)
+
+
 def get_tag_by_id(api_key, tag_id):
 
     resource_url = TAGS_BY_ID.format(tag_id)
 
     return execute_get(api_key, resource_url)
-    
+
 
 def format_url(resource_url):
 
