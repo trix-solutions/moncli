@@ -432,6 +432,78 @@ def post_board_group(api_key, board_id, title):
     return execute_post(api_key, resource_url, body)
 
 
+def get_board_pulses(api_key, board_id, page = 1, per_page = 25, order_by = None):
+
+    resource_url = BOARD_PULSES.format(board_id)
+
+    params = {
+        'page': page,
+        'per_page': per_page
+    }
+
+    if order_by != None:
+        params['order_by'] = order_by
+
+    return execute_get(api_key, resource_url, params)
+
+
+def post_board_post(
+        api_key, 
+        board_id, 
+        user_id, 
+        group_id, 
+        name, 
+        photo_from_url = None, 
+        update_text = None, 
+        add_to_bottom = False):
+
+    resource_url = BOARD_PULSES.format(board_id)
+
+    body = {
+        'user_id': user_id,
+        'group_id': group_id,
+        'pulse[name]': name,
+        'add_to_bottom': add_to_bottom
+    }
+
+    if photo_from_url != None:
+        body['photo_from_url'] = photo_from_url
+
+    if update_text != None:
+        body['update_text'] = update_text
+
+    return execute_post(api_key, resource_url, body)
+
+
+def post_board_pulse_duplicate(api_key, board_id, pulse_id, group_id, owner_id):
+
+    resource_url = BOARD_DUPLICATE_PULSE.format(board_id, pulse_id)
+
+    body = {
+        'group_id': group_id,
+        'owner_id': owner_id
+    }
+
+    return execute_post(api_key, resource_url, body)
+
+
+def post_board_pulses_to_new_board(api_key, board_id, user_id, group_id, pulse_ids, dest_board_id = None, force_move_to_board = False):
+
+    resource_url = BOARD_MOVE_GROUP.format(board_id)
+
+    body = {
+        'user_id': user_id,
+        'group_id': group_id,
+        'pulse_ids': pulse_ids
+    }
+
+    if (dest_board_id != None):
+        body['dest_board_id'] = dest_board_id
+        body['force_move_to_board'] = force_move_to_board
+
+    return execute_post(api_key, resource_url, body)
+
+
 def get_board_subscribers(api_key, board_id, page = 1, per_page = 25, offset = 0):
 
     resource_url = BOARD_SUBSCRIBERS.format(board_id)
