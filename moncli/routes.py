@@ -34,7 +34,7 @@ BOARD_MOVE_GROUP = 'boards/{}/groups/{}/move.json'
 BOARD_GROUP_BY_ID = 'boards/{}/groups/{}.json'
 BOARD_COLUMNS = 'boards/{}/columns.json'
 BOARD_COLUMN_BY_ID = 'boards/{}/columns/{}.json'
-BOARD_VALUE_COLUMN = 'boards/{}/columns/{}/value.json'
+BOARD_COLUMN_VALUE = 'boards/{}/columns/{}/value.json'
 BOARD_TEXT_COLUMN = 'boards/{}/columns/{}/text.json'
 BOARD_PERSON_COLUMN = 'boards/{}/columns/{}/person.json'
 BOARD_STATUS_COLUMN = 'boards/{}/columns/{}/status.json'
@@ -381,6 +381,8 @@ def post_board(api_key, user_id, name, description, board_kind):
         'board_kind': board_kind
     }
 
+    return execute_post(api_key, resource_url, body)
+
 
 def get_board_by_id(api_key, board_id):
 
@@ -431,6 +433,88 @@ def post_board_group(api_key, board_id, title):
 
     return execute_post(api_key, resource_url, body)
 
+
+def post_move_board_group(api_key, board_id, group_id, user_id, dest_board_id):
+
+    resource_url = BOARD_MOVE_GROUP.format(board_id, group_id)
+
+    body = {
+        'user_id': user_id,
+        'dest_board_id': dest_board_id
+    }
+
+    return execute_post(api_key, resource_url, body)
+
+
+def delete_board_group(api_key, board_id, group_id):
+
+    resource_url = BOARD_GROUP_BY_ID.format(board_id, group_id)
+
+    return execute_delete(api_key, resource_url)
+
+
+def get_board_columns(api_key, board_id, all_columns = False):
+
+    resource_url = BOARD_COLUMNS.format(board_id)
+
+    params = {
+        'all_columns': all_columns
+    }
+
+    return execute_get(api_key, resource_url, params)
+
+
+def post_board_column(api_key, board_id, title, column_type, labels = None):
+
+    resource_url = BOARD_COLUMNS.format(board_id)
+
+    body = {
+        'title': title,
+        'type': column_type
+    }
+
+    if column_type == 'status' and labels != None:
+        body['labesl'] = labels
+
+    return execute_post(api_key, resource_url, body)
+
+
+def put_board_column(api_key, board_id, column_id, title = None, status = None, labels = None):
+
+    resource_url = BOARD_COLUMN_BY_ID.format(board_id, column_id)
+
+    body = {}
+
+    if title != None:
+        body['title'] = title
+
+    if status != None:
+        body['status'] = status
+
+    if labels != None:
+        body['labels'] = labels
+
+    return execute_put(api_key, resource_url, body)\
+
+
+def delete_board_column(api_key, board_id, column_id):
+
+    resource_url = BOARD_COLUMN_BY_ID.format(board_id, column_id)
+
+    return execute_delete(api_key, resource_url)
+
+
+def get_board_column_value(api_key, board_id, column_id, pulse_id, return_as_array = False):
+
+    resource_url = BOARD_COLUMN_VALUE.format(board_id, column_id)
+
+    params = {
+        'pulse_id': pulse_id,
+        'return_as_array': return_as_array
+    }
+
+    return execute_get(api_key, resource_url, params)
+    
 
 def put_board_text_column(api_key, board_id, column_id, pulse_id, text):
 
