@@ -432,6 +432,94 @@ def post_board_group(api_key, board_id, title):
     return execute_post(api_key, resource_url, body)
 
 
+def put_board_text_column(api_key, board_id, column_id, pulse_id, text):
+
+    resource_url = BOARD_TEXT_COLUMN.format(board_id, column_id)
+
+    body = {
+        'pulse_id': pulse_id,
+        'text': text,
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
+def put_board_person_column(api_key, board_id, column_id, pulse_id, user_id):
+
+    resource_url = BOARD_PERSON_COLUMN.format(board_id, column_id)
+
+    body = {
+        'pulse_id': pulse_id,
+        'user_id': user_id,
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
+def put_board_status_column(api_key, board_id, column_id, pulse_id, color_index, update_id = None):
+
+    resource_url = BOARD_STATUS_COLUMN.format(board_id, column_id)
+
+    body = {
+        'pulse_id': pulse_id,
+        'color_index': color_index,
+    }
+
+    if update_id != None:
+        body['update_id'] = update_id
+
+    return execute_put(api_key, resource_url, body)
+
+
+def put_board_date_column(api_key, board_id, column_id, pulse_id, date_str):
+
+    resource_url = BOARD_DATE_COLUMN.format(board_id, column_id)
+
+    body = {
+        'pulse_id': pulse_id,
+        'date_str': str(date_str)
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
+def put_board_numeric_column(api_key, board_id, column_id, pulse_id, value):
+
+    resource_url = BOARD_NUMERIC_COLUMN.format(board_id, column_id)
+
+    body = {
+        'pulse_id': pulse_id,
+        'value': str(value)
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
+def put_board_tags_column(api_key, board_id, column_id, pulse_id, tags):
+
+    resource_url = BOARD_TAGS_COLUMN.format(board_id, column_id)
+
+    body = {
+        'pulse_id': pulse_id,
+        'tags': ', '.join(tags)
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
+def put_board_timeline_column(api_key, board_id, column_id, pulse_id, from_time, to_time):
+
+    resource_url = BOARD_TIMELINE_COLUMN.format(board_id, column_id)
+
+    body = {
+        'pulse_id': pulse_id,
+        'from': from_time,
+        'to': to_time
+    }
+
+    return execute_put(api_key, resource_url, body)
+
+
 def get_board_pulses(api_key, board_id, page = 1, per_page = 25, order_by = None):
 
     resource_url = BOARD_PULSES.format(board_id)
