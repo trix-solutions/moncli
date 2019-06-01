@@ -22,7 +22,7 @@ def get_pulses(
     if since != None:
         params['since'] = since
 
-    if since != None:
+    if until != None:
         params['until'] = until
 
     return execute_get(api_key, resource_url, params)
