@@ -7,6 +7,8 @@ class Board():
 
     def __init__(self, resp):
 
+        self.__data = resp
+
         self.id = resp['id']
         self.name = resp['name']
         self.description = resp['description']
@@ -15,5 +17,7 @@ class Board():
         self.updated_at = datetime.strptime(resp['updated_at'], DATE_FORMAT)
         self.columns = resp['columns']
         self.groups = resp['groups']
+
+
 
     

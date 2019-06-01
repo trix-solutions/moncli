@@ -1,4 +1,5 @@
 from moncli.routes import users, boards
+from .boards import Board
 
 class MondayClient():
 
@@ -9,22 +10,31 @@ class MondayClient():
     
     def get_boards(self, per_page = 25, only_globals = False, order_by_latest = False):
 
-        return boards.get_boards(self.__api_key, per_page, only_globals, order_by_latest)
+        result = []
+
+        resp_list = boards.get_boards(self.__api_key, per_page, only_globals, order_by_latest)
+
+        for resp in resp_list:
+            result.append(Board(resp))
+
+        return result
 
 
     def get_board(self, name):
 
-        for board in boards.get_boards(self.__api_key):
+        for resp in boards.get_boards(self.__api_key):
 
-            if board['name'].lower() == name.lower():           
-                return board
+            if resp['name'].lower() == name.lower():           
+                return Board(resp)
         
         raise BoardNotFound('name', name)
 
 
     def get_board_by_id(self, board_id):
 
-        return boards.get_board_by_id(self.__api_key, board_id)
+        resp = boards.get_board_by_id(self.__api_key, board_id)
+
+        return Board(resp)
 
 
 class BoardNotFound(Exception):
