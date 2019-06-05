@@ -5,9 +5,10 @@ from .constants import DATE_FORMAT, COLUMN_COLOR
 
 class Board():
 
-    def __init__(self, data):
+    def __init__(self, data, user):
 
         self.__data = data
+        self.__user = user
 
         self.id = data['id']
         self.name = data['name']
