@@ -263,7 +263,7 @@ def get_board_pulses(api_key, board_id, page = 1, per_page = 25, order_by = None
     return execute_get(api_key, resource_url, params)
 
 
-def post_board_post(
+def post_board_pulse(
         api_key, 
         board_id, 
         user_id, 

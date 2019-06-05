@@ -37,7 +37,7 @@ class MondayClient():
         resp_list = boards.get_boards(self.__api_key, per_page, only_globals, order_by_latest)
 
         for resp in resp_list:
-            result.append(Board(resp, self.__user))
+            result.append(Board(resp, self.__api_key, self.__user))
 
         return result
 
@@ -47,7 +47,7 @@ class MondayClient():
         for resp in boards.get_boards(self.__api_key):
 
             if resp['name'].lower() == name.lower():           
-                return Board(resp, self.__user)
+                return Board(resp, self.__api_key, self.__user)
         
         raise BoardNotFound('name', name)
 
@@ -56,7 +56,7 @@ class MondayClient():
 
         resp = boards.get_board_by_id(self.__api_key, board_id)
 
-        return Board(resp, self.__user)
+        return Board(resp, self.__api_key, self.__user)
 
 
 class BoardNotFound(Exception):
