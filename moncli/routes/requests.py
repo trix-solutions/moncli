@@ -23,11 +23,9 @@ def execute_post(api_key, resource_url, body):
 
     monday_params = MondayQueryParameters(api_key)
 
-    data = json.dumps(body)
-
     resp = requests.post(
         format_url(resource_url),
-        data,
+        body,
         params=monday_params.to_dict())
 
     if resp.status_code == 200 or resp.status_code == 201:

@@ -49,6 +49,23 @@ class Board():
         return results
 
 
+    def add_pulse(self, name, group_name, update_text = None, add_to_bottom = False):
+
+        if not self.__group_map.__contains__(group_name):
+            raise GroupNotFound(self, group_name)
+
+        group_id = self.__group_map[group_name].id
+
+        return boards.post_board_pulse(
+            self.__api_key, 
+            self.id, 
+            self.__user.id, 
+            group_id, 
+            name,
+            update_text=update_text, 
+            add_to_bottom=add_to_bottom)
+
+
 class Column():
 
     def __init__(self, data):
@@ -73,5 +90,13 @@ class Group():
         self.title = data['title']
         self.board_id = data['board_id']
 
+class GroupNotFound(Exception):
+
+    def __init__(self, board, group_name):
+
+        self.board_id = board.id
+        self.board_name = board.name
+        self.group_name = group_name
+        self.message = 'Unable to find group {} in board {}.'.format(self.group_name, self.board_name)
 
     

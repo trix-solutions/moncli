@@ -286,7 +286,7 @@ def post_board_pulse(
         body['photo_from_url'] = photo_from_url
 
     if update_text != None:
-        body['update_text'] = update_text
+        body['update[text]'] = update_text
 
     return execute_post(api_key, resource_url, body)
 
