@@ -7,7 +7,7 @@ def get_boards(api_key: str, **kwargs):
     operation.add_fields('id', 'name')
 
     result = execute_query(api_key, operation=operation)
-    return result['boards']
+    return result[constants.BOARDS]
 
 
 def create_board(api_key: str, board_name: str, board_kind: BoardKind):
@@ -16,7 +16,7 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind):
     operation.add_fields('id', 'name')
 
     result = execute_query(api_key, operation=operation)
-    return result['create_board']
+    return result[constants.CREATE_BOARD]
 
 
 def archive_board(api_key: str, board_id: str):
@@ -25,4 +25,4 @@ def archive_board(api_key: str, board_id: str):
     operation.add_fields('id', 'state')
 
     result = execute_query(api_key, operation=operation)
-    return result['archive_board']
+    return result[constants.ARCHIVE_BOARD]
