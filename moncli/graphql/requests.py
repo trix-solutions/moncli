@@ -1,5 +1,5 @@
 import requests, json
-from moncli.graphql import GraphQLOperation, OperationType
+from moncli.graphql import MondayApiError
 
 def execute_query(api_key: str, **kwargs):
 
@@ -21,8 +21,10 @@ def execute_query(api_key: str, **kwargs):
         headers=headers,
         data=data)
 
-    if resp.status_code == 200:
-        text = resp.json()
-        return text['data']
+    if resp.status_code != 200:
+        pass
+
+    text = resp.json()
+    return text['data']
 
     

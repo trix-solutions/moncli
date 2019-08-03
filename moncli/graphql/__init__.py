@@ -5,6 +5,16 @@ class OperationType(Enum):
     MUTATION = 2
 
 
+class MondayApiError(Exception):
+
+    def __init__(self, operation_type: OperationType, entity: str, error_code: int, message: str):
+
+        self.operation_type = operation_type.name.lower()
+        self.entity = entity
+        self.error_code = error_code
+        self.message = message
+
+
 class GraphQLNode():
     
     def __init__(self):
