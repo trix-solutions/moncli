@@ -1,6 +1,5 @@
 from moncli.constants import BoardKind
-from moncli.graphql import constants, GraphQLOperation, OperationType
-from moncli.graphql.requests import execute_query
+from moncli.graphql import constants, GraphQLOperation, OperationType, execute_query
 
 def get_boards(api_key: str, **kwargs):
 

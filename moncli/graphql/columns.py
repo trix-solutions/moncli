@@ -1,5 +1,4 @@
-from moncli.graphql import constants, GraphQLOperation, OperationType
-from moncli.graphql.requests import execute_query
+from moncli.graphql import constants, GraphQLOperation, OperationType, execute_query
 
 
 def get_board_columns(api_key: str, board_id: str):
