@@ -47,3 +47,10 @@ class ColumnType(Enum):
     vote = 26
     week = 27
     world_clock = 28
+
+# Board state enum
+class State(Enum):
+    all = 1
+    active = 2
+    archived = 3
+    deleted = 4
