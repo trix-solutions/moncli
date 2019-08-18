@@ -1,3 +1,4 @@
+import json
 from enum import Enum
 
 class OperationType(Enum):
@@ -54,6 +55,9 @@ class GraphQLField(GraphQLNode):
         for key, value in kwargs.items():
             if type(value) is str:
                 self.arguments.__setitem__(key, '"{}"'.format(value))
+            elif type(value) is dict:
+                # Double the dump to get json arguments to work...
+                self.arguments.__setitem__(key, json.dumps(json.dumps(value)))
             elif isinstance(value, Enum):
                 self.arguments.__setitem__(key, value.name)
             else:

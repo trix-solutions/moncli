@@ -11,3 +11,4 @@ CHANGE_MULTIPLE_COLUMN_VALUES = 'change_multiple_column_values'
 # Items
 ITEMS = 'items'
 ITEMS_BY_COLUMN_VALUES = 'items_by_column_values'
+CREATE_ITEM = 'create_item'

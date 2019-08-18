@@ -29,3 +29,16 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
     result = execute_query(api_key, operation=operation)
     return result[constants.ITEMS_BY_COLUMN_VALUES]
+
+def create_item(api_key: str, item_name: str, board_id: str, **kwargs):
+
+    operation = GraphQLOperation(
+        OperationType.MUTATION,
+        constants.CREATE_ITEM,
+        item_name=item_name,
+        board_id=int(board_id),
+        **kwargs)
+    operation.add_fields('id')
+
+    result = execute_query(api_key, operation=operation)
+    return result[constants.CREATE_ITEM]
