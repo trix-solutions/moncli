@@ -1,6 +1,7 @@
 from enum import Enum
 
-DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+DATE_FORMAT = '%Y-%m-%d'
+DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 # Column Types
 COLUMN_NAME = 'name'

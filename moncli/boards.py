@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from moncli.routes import boards 
-from .constants import DATE_FORMAT, COLUMN_COLOR
+from .constants import DATETIME_FORMAT, COLUMN_COLOR
 
 class Board():
 
@@ -15,8 +15,8 @@ class Board():
         self.name = data['name']
         self.description = data['description']
         self.board_kind = data['board_kind']
-        self.created_at = datetime.strptime(data['created_at'], DATE_FORMAT)
-        self.updated_at = datetime.strptime(data['updated_at'], DATE_FORMAT)
+        self.created_at = datetime.strptime(data['created_at'], DATETIME_FORMAT)
+        self.updated_at = datetime.strptime(data['updated_at'], DATETIME_FORMAT)
         self.columns = [Column(column_data) for column_data in data['columns']]
         self.groups = [Group(group_data) for group_data in data['groups']]
 

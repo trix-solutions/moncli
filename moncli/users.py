@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from .constants import DATE_FORMAT
+from .constants import DATETIME_FORMAT
 
 class User():
 
@@ -16,5 +16,5 @@ class User():
         self.status = resp['status']
         self.birthday = resp['birthday']
         self.is_guest = resp['is_guest']
-        self.created_at = datetime.strptime(resp['created_at'], DATE_FORMAT)
-        self.updated_at = datetime.strptime(resp['updated_at'], DATE_FORMAT)
+        self.created_at = datetime.strptime(resp['created_at'], DATETIME_FORMAT)
+        self.updated_at = datetime.strptime(resp['updated_at'], DATETIME_FORMAT)
