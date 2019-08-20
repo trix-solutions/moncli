@@ -1,6 +1,7 @@
 import json
 from enum import Enum
 
+
 class OperationType(Enum):
     QUERY = 1
     MUTATION = 2
@@ -17,11 +18,9 @@ class MondayApiError(Exception):
 
 class GraphQLNode():
     
-    def __init__(self):
+    def __init__(self, name: str):
 
-        self.name: str = None
-        self.path: str = None
-        self.children: list = []
+        self.name: str = name
         self.arguments: dict = {}
 
 
@@ -35,55 +34,74 @@ class GraphQLNode():
         return '{} ({})'.format(body, formatted_args)
 
 
-    def format_children(self, body: str):
-
-        formatted_children = ', '.join([child.format_body() for child in self.children])
-        return '{} {{ {} }}'.format(body, formatted_children)
-
-
 class GraphQLField(GraphQLNode):
 
-    def __init__(self, name: str, path: str, nodes: dict, **kwargs):
-        super(GraphQLField, self).__init__()
-
-        self.name = name
-        self.path = path
-        self.__nodes = nodes
-
-        self.__nodes.__setitem__(self.path, self)
+    def __init__(self, name: str, *argv, **kwargs):
+        super(GraphQLField, self).__init__(name)
+        self.__children: dict = {}
         
-        for key, value in kwargs.items():
-            if type(value) is str:
-                self.arguments.__setitem__(key, '"{}"'.format(value))
-            elif type(value) is dict:
-                # Double the dump to get json arguments to work...
-                self.arguments.__setitem__(key, json.dumps(json.dumps(value)))
-            elif isinstance(value, Enum):
-                self.arguments.__setitem__(key, value.name)
-            else:
-                self.arguments.__setitem__(key, value)
+        self.add_fields(*argv)
+        self.add_arguments(**kwargs)
 
 
     def add_fields(self, *argv):
 
-        for name in argv:
-            path: str = '.'.join([self.path, name])
-            self.children.append(GraphQLField(name, path, self.__nodes))
+        for field in argv:
 
-        return self
+            if field == None or field == '':
+                continue
+            
+            if type(field) is str:
+
+                field_split = field.split('.')
+                existing_field = self.get_field(field_split[0])
+
+                # Add the new fields to the existing field
+                if existing_field != None:
+                    existing_field.add_fields('.'.join(field_split[1:]))
+                    continue
+
+                new_field = GraphQLField(field_split[0])
+                new_field.add_fields('.'.join(field_split[1:]))
+                self.__children.__setitem__(new_field.name, new_field)
+
+            elif type(field) is GraphQLField:
+                self.__children.__setitem__(field.name, field)
+
+
+    def add_arguments(self, **kwargs):
+
+        for key, value in kwargs.items():
+
+            if type(value) is str:
+                self.arguments.__setitem__(key, '"{}"'.format(value))
+
+            elif type(value) is dict:
+                # Double the dump to get json arguments to work...
+                self.arguments.__setitem__(key, json.dumps(json.dumps(value)))
+
+            elif isinstance(value, Enum):
+                self.arguments.__setitem__(key, value.name)
+
+            else:
+                self.arguments.__setitem__(key, value)
 
 
     def get_field(self, path: str):
 
-        return self.__nodes.get(path)
+        split_path = path.split('.')
+        child_name = split_path[0]
+        
+        if not self.__children.__contains__(child_name):
+            return None
 
+        node: GraphQLField = self.__children.get(child_name)
+        remaining_path = split_path[1:]
 
-    def add_argument_field(self, name: str, **kwargs):
+        if (len(remaining_path) == 0):
+            return node
 
-        path: str = '.'.join([self.path, name])
-        self.children.append(GraphQLField(name, path, self.__nodes, **kwargs))
-
-        return self
+        return node.get_field('.'.join(remaining_path))
 
 
     def format_body(self):
@@ -93,10 +111,16 @@ class GraphQLField(GraphQLNode):
         if len(self.arguments) > 0:
             body = self.format_arguments(body)
 
-        if len(self.children) > 0:
+        if len(self.__children) > 0:
             body = self.format_children(body)
 
         return body
+
+    
+    def format_children(self, body: str):
+
+        formatted_children = ', '.join([child.format_body() for child in self.__children.values()])
+        return '{} {{ {} }}'.format(body, formatted_children)
 
 
 class GraphQLOperation(GraphQLField):
@@ -104,8 +128,7 @@ class GraphQLOperation(GraphQLField):
     def __init__(self, action_type: OperationType, name: str, **kwargs):
 
         self.action_type = action_type.name.lower()
-        nodes = {}
-        super(GraphQLOperation, self).__init__(name, name, nodes, **kwargs)
+        super(GraphQLOperation, self).__init__(name, **kwargs)
         self.query_variables: dict = {}
 
 
