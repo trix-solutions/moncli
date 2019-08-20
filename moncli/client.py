@@ -1,63 +1,51 @@
-from moncli.routes import users, boards
+from moncli.graphql import boards
 from .boards import Board
 from .users import User
 
 class MondayClient():
 
-    def __init__(self, username, api_key):
+    def __init__(self, api_key_v1: str, api_key_v2: str):
      
-        self.__api_key = api_key
-        self.__user = self.get_user(username)
+        self.__api_key_v1 = api_key_v1
+        self.__api_key_v2 = api_key_v2
 
 
-    def get_user(self, username):
-
-        record_count = 100
-        page = 1
-
-        while record_count == 100:
-
-            this_page = users.get_users(self.__api_key, page, record_count)
-
-            target_user = [user for user in this_page if user['email'] == username]
-
-            if (len(target_user) == 0):
-                record_count = len(this_page)
-                continue
-
-            return User(target_user[0])
-        
-        raise UserNotFound(username)
-
-
-    def get_boards(self, per_page = 25, only_globals = False, order_by_latest = False):
+    def get_boards(self, **kwargs):
 
         result = []
 
-        resp_list = boards.get_boards(self.__api_key, per_page, only_globals, order_by_latest)
+        resp_boards = boards.get_boards(self.__api_key_v2, 'id', 'name', **kwargs)
 
-        for resp in resp_list:
-            result.append(Board(resp, self.__api_key, self.__user))
+        for board_data in resp_boards:
+            result.append(Board(self.__api_key_v1, self.__api_key_v2, **board_data))
 
         return result
 
 
-    def get_board(self, name):
+    def get_board(self, name: str):
 
-        for resp in boards.get_boards(self.__api_key):
+        resp_boards = boards.get_boards(
+            self.__api_key_v2, 
+            'id', 
+            'name', 
+            'board_folder_id', 
+            'board_kind', 
+            'description', 
+            'items.id', 
+            'owner.id', 
+            'permissions',
+            'pos',
+            'state', 
+            limit=1000)
 
-            if resp['name'].lower() == name.lower():           
-                return Board(resp, self.__api_key, self.__user)
+        board = [board for board in resp_boards if board['name'].lower() == name.lower()]
         
-        raise BoardNotFound('name', name)
-
-
-    def get_board_by_id(self, board_id):
-
-        resp = boards.get_board_by_id(self.__api_key, board_id)
-
-        return Board(resp, self.__api_key, self.__user)
-
+        if len(board) == 0:
+            raise BoardNotFound('name', name)
+        
+        board_data: dict = board[0]
+        return Board(self.__api_key_v1, self.__api_key_v2, **board_data)
+        
 
 class BoardNotFound(Exception):
 
