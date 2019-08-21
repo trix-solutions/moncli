@@ -125,10 +125,10 @@ class GraphQLField(GraphQLNode):
 
 class GraphQLOperation(GraphQLField):
 
-    def __init__(self, action_type: OperationType, name: str, **kwargs):
+    def __init__(self, action_type: OperationType, name: str, *argv, **kwargs):
 
         self.action_type = action_type.name.lower()
-        super(GraphQLOperation, self).__init__(name, **kwargs)
+        super(GraphQLOperation, self).__init__(name, *argv, **kwargs)
         self.query_variables: dict = {}
 
 

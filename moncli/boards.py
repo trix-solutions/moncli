@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 
 from .graphql import boards, items 
-from .constants import DATETIME_FORMAT, COLUMN_COLOR
+from .items import Item
 
 class Board():
 
@@ -41,8 +41,22 @@ class Board():
                 self.state = value
 
 
-    def get_items(self, group_name = None):
-        pass
+    def get_items(self):
+        
+        items_resp = items.get_items(
+            self.__api_key_v2, 
+            'id',
+            'name',
+            'board.id',
+            'board.name',
+            'creator_id',
+            'group.id',
+            'state',
+            'subscribers.id',
+            ids=self.__item_ids, 
+            limit=1000)
+
+        return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp] 
 
 
     def add_pulse(self, name, group_name, update_text = None, add_to_bottom = False):
@@ -51,16 +65,7 @@ class Board():
 
 class Column():
 
-    def __init__(self, data):
-
-        self.__data = data
-
-        self.id = data['id']
-        self.title = data['title']
-        self.type = data['type']
-        
-        if self.type == COLUMN_COLOR:
-            self.labels = data['labels']
+    pass
 
 
 class Group():
