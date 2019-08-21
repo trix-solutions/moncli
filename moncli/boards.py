@@ -1,16 +1,14 @@
 from datetime import datetime
 from typing import List
 
-from .graphql import boards, items 
-from .items import Item
+from .graphql import boards, items
 
 class Board():
 
     def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
-
         self.__api_key_v1 = api_key_v1
         self.__api_key_v2 = api_key_v2
-
+        self.__columns = None
         self.id = kwargs['id']
         self.name = kwargs['name']
 
@@ -21,6 +19,9 @@ class Board():
             
             elif key == 'board_kind':
                 self.board_kind = value
+
+            elif key == 'columns':
+                self.__columns = [Column(**column_data) for column_data in value]
 
             elif key == 'description':
                 self.description = value
@@ -50,6 +51,11 @@ class Board():
             'board.id',
             'board.name',
             'creator_id',
+            'column_values.id',
+            'column_values.text',
+            'column_values.title',
+            'column_values.value',
+            'column_values.additional_info',
             'group.id',
             'state',
             'subscribers.id',
@@ -58,14 +64,54 @@ class Board():
 
         return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp] 
 
+    
+    def get_columns(self):
 
-    def add_pulse(self, name, group_name, update_text = None, add_to_bottom = False):
-        pass
+        if self.__columns == None:
+
+            board = boards.get_boards(
+                self.__api_key_v2,
+                'columns.id',
+                'columns.archived',
+                'columns.settings_str',
+                'columns.title',
+                'columns.type',
+                'columns.width',
+                ids=int(self.id))[0]
+
+            self.__columns = [Column(**column_data) for column_data in board['columns']]
+
+        return self.__columns
+
+
+    def add_item(self, item_name: str, **kwargs):
+
+        item = items.create_item(self.__api_key_v2, item_name, self.id, 'id', **kwargs)
+
+        return item['id']
 
 
 class Column():
 
-    pass
+    def __init__(self, **kwargs):
+        self.id= kwargs['id']
+
+        for key, value in kwargs.items():
+
+            if key == 'archived':
+                self.archived = value
+
+            elif key == 'settings_str':
+                self.settings_str = value
+
+            elif key == 'title':
+                self.title = value
+            
+            elif key == 'type':
+                self.type = value
+
+            elif key == 'width':
+                self.width = value
 
 
 class Group():
@@ -77,6 +123,82 @@ class Group():
         self.id = data['id']
         self.title = data['title']
         self.board_id = data['board_id']
+
+
+class Item():
+
+    def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
+        self.__api_key_v2 = api_key_v2
+        self.__column_values = None
+        self.id = kwargs['id']
+        self.name = kwargs['name']
+
+        for key, value in kwargs.items():
+
+            if key == 'board':
+                
+                if type(value) == type(Board):
+                    self.board = value
+                
+                elif type(value) is dict:
+                    
+                    if value.__contains__('name'):
+                        self.board = Board(api_key_v1, api_key_v2, **value)
+
+                    else:
+                        self.__board_id = value['id']
+
+            elif key == 'column_values':
+                self.__column_values = [ColumnValue(**column_values) for column_values in value]
+
+            elif key == 'creator_id':
+                self.creator_id = value
+
+            elif key == 'group':
+                self.__group_id = value['id']
+
+            elif key == 'state':
+                self.state = value
+            
+            elif key == 'subscribers':
+                self.__subscriber_ids = [int(item['id']) for item in value]
+
+        
+    def get_column_values(self):
+
+        if self.__column_values == None:           
+            item = items.get_items(
+                self.__api_key_v2,
+                'column_values.id',
+                'column_values.text',
+                'column_values.title',
+                'column_values.value',
+                'column_values.additional_info')
+                
+            self.__column_values = [ColumnValue(**column_values) for column_values in item['column_values']]
+
+        return self.__column_values
+
+
+class ColumnValue():
+
+    def __init__(self, **kwargs):
+        self.id = kwargs['id']
+
+        for key, value in kwargs.items():
+
+            if key == 'text':
+                self.text = value
+
+            if key == 'title':
+                self.title = value
+
+            if key == 'value':
+                self.value = value
+
+            if key == 'additional_info':
+                self.additional_info = value
+
 
 class GroupNotFound(Exception):
 

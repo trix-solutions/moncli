@@ -1,5 +1,7 @@
-from moncli.graphql import boards
-from .boards import Board
+from typing import List
+
+from .graphql import boards, items
+from .boards import Board, Item
 from .users import User
 
 class MondayClient():
@@ -45,6 +47,29 @@ class MondayClient():
         
         board_data: dict = board[0]
         return Board(self.__api_key_v1, self.__api_key_v2, **board_data)
+
+    
+    def get_items(self, ids, **kwargs) -> List[Item]:
+
+        items_resp = items.get_items(
+            self.__api_key_v2, 
+            'id',
+            'name',
+            'board.id',
+            'board.name',
+            'creator_id',
+            'column_values.id',
+            'column_values.text',
+            'column_values.title',
+            'column_values.value',
+            'column_values.additional_info',
+            'group.id',
+            'state',
+            'subscribers.id',
+            ids=ids, 
+            limit=1000)
+
+        return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp] 
         
 
 class BoardNotFound(Exception):
