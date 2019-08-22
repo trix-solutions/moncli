@@ -3,6 +3,12 @@ BOARDS = 'boards'
 CREATE_BOARD = 'create_board'
 ARCHIVE_BOARD = 'archive_board'
 
+# Groups
+DUPLICATE_GROUP = 'duplicate_group'
+CREATE_GROUP = 'create_group'
+ARCHIVE_GROUP = 'archive_group'
+DELETE_GROUP = 'delete_group'
+
 # Columns
 CREATE_COLUMN = 'create_column'
 CHANGE_COLUMN_VALUE = 'change_column_value'
