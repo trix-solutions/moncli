@@ -9,6 +9,7 @@ class Board():
         self.__api_key_v1 = api_key_v1
         self.__api_key_v2 = api_key_v2
         self.__columns = None
+
         self.id = kwargs['id']
         self.name = kwargs['name']
 
@@ -27,7 +28,7 @@ class Board():
                 self.description = value
 
             elif key == 'groups':
-                self.__group_ids: List[int] = [int(item['id']) for item in value]
+                self.__group_ids: List[str] = [item['id'] for item in value]
 
             elif key == 'items':
                 self.__item_ids: List[int] = [int(item['id']) for item in value]

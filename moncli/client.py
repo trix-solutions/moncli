@@ -24,10 +24,9 @@ class MondayClient():
         return result
 
 
-    def get_board(self, name: str):
+    def get_board(self, id: str = None, name: str = None):
 
-        resp_boards = boards.get_boards(
-            self.__api_key_v2, 
+        field_list = [
             'id', 
             'name', 
             'board_folder_id', 
@@ -38,16 +37,52 @@ class MondayClient():
             'owner.id', 
             'permissions',
             'pos',
-            'state', 
-            limit=1000)
+            'state']
 
-        board = [board for board in resp_boards if board['name'].lower() == name.lower()]
+        if id != None and name != None:
+            raise TooManyGetBoardParameters()
+
+        elif id == None and name == None:
+            raise NotEnoughGetBoardParameters()
+
+        # Search for single board by ID
+        elif id != None:
+            resp_boards = boards.get_boards(
+                self.__api_key_v2, 
+                *field_list,
+                ids=int(id),
+                limit=1)
+
+            if len(resp_boards) == 0:
+                raise BoardNotFound('id', id)
+
+            return Board(self.__api_key_v1, self.__api_key_v2, **resp_boards[0])
+
+        # Page through boards until name match appears.
+        else:
+
+            # Hard configure the pagination rate.
+            page = 1
+            page_limit = 1000
+            record_count = 1000
+            while record_count >= page_limit:
+                resp_boards = boards.get_boards(
+                    self.__api_key_v2, 
+                    *field_list,
+                    limit=page_limit,
+                    page=page)
+
+                target_boards = [board for board in resp_boards if board['name'].lower() == name.lower()]
+
+                if len(target_boards) == 0:
+                    page += 1
+                    record_count = len(resp_boards)
+                    continue
+
+                return Board(self.__api_key_v1, self.__api_key_v2, **resp_boards[0])
         
-        if len(board) == 0:
-            raise BoardNotFound('name', name)
-        
-        board_data: dict = board[0]
-        return Board(self.__api_key_v1, self.__api_key_v2, **board_data)
+            if len(target_boards) == 0:
+                raise BoardNotFound('name', name)        
 
     
     def get_items(self, ids, **kwargs) -> List[Item]:
@@ -86,8 +121,12 @@ class BoardNotFound(Exception):
         else:
             self.message = 'Unable to find the requested board.'
 
-class UserNotFound(Exception):
+class TooManyGetBoardParameters(Exception):
 
-    def __init__(self, username):
+    def __init__(self):
+        self.message = "Unable to use both 'id' and 'name' when querying for a board."
 
-        self.message = 'Unable to find user with username: "{}".'.format(username)
+class NotEnoughGetBoardParameters(Exception):
+
+    def __init__(self):
+        self.message = "Either the 'id' or 'name' is required when querying a board."
