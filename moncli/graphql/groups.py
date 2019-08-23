@@ -14,43 +14,40 @@ def duplicate_group(api_key: str, board_id: str, group_id: str, *argv, **kwargs)
     return result[constants.DUPLICATE_GROUP]
 
 
-def create_group(api_key: str, board_id: str, group_name: str, *argv, **kwargs):
+def create_group(api_key: str, board_id: str, group_name: str, *argv):
 
     operation = GraphQLOperation(
         OperationType.QUERY, 
         constants.CREATE_GROUP, 
         *argv, 
         board_id=int(board_id), 
-        group_name=group_name, 
-        **kwargs)
+        group_name=group_name)
 
     result = execute_query(api_key, operation=operation)
     return result[constants.CREATE_GROUP]
 
 
-def archive_group(api_key: str, board_id: str, group_id: str, *argv, **kwargs):
+def archive_group(api_key: str, board_id: str, group_id: str, *argv):
 
     operation = GraphQLOperation(
         OperationType.QUERY, 
         constants.ARCHIVE_GROUP, 
         *argv, 
         board_id=int(board_id), 
-        group_id=group_id, 
-        **kwargs)
+        group_id=group_id)
 
     result = execute_query(api_key, operation=operation)
     return result[constants.ARCHIVE_GROUP]
 
 
-def delete_group(api_key: str, board_id: str, group_id: str, *argv, **kwargs):
+def delete_group(api_key: str, board_id: str, group_id: str, *argv):
     
     operation = GraphQLOperation(
         OperationType.QUERY, 
         constants.DELETE_GROUP, 
         *argv, 
         board_id=int(board_id), 
-        group_id=group_id, 
-        **kwargs)
+        group_id=group_id)
 
     result = execute_query(api_key, operation=operation)
     return result[constants.DELETE_GROUP]

@@ -26,6 +26,9 @@ class Board():
             elif key == 'description':
                 self.description = value
 
+            elif key == 'groups':
+                self.__group_ids: List[int] = [int(item['id']) for item in value]
+
             elif key == 'items':
                 self.__item_ids: List[int] = [int(item['id']) for item in value]
 
@@ -116,13 +119,54 @@ class Column():
 
 class Group():
 
-    def __init__(self, data):
+    def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
+        self.__api_key_v1 = api_key_v1
+        self.__api_key_v2 = api_key_v2
+        self.id = kwargs['id']
+        self.__item_ids = None
 
-        self.__data = data
+        for key, value in kwargs.items():
 
-        self.id = data['id']
-        self.title = data['title']
-        self.board_id = data['board_id']
+            if key == 'title':
+                self.title = value
+
+            elif key == 'archived':
+                self.archived = value
+            
+            elif key == 'color':
+                self.color = value
+
+            elif key == 'deleted':
+                self.deleted = value
+
+            elif key == 'items':
+                self.__item_ids = [int(item['id'] for item in value)]
+
+            elif key == 'position':
+                self.position = value
+    
+
+    def get_items(self):
+
+        items_resp = items.get_items(
+            self.__api_key_v2, 
+            'id',
+            'name',
+            'board.id',
+            'board.name',
+            'creator_id',
+            'column_values.id',
+            'column_values.text',
+            'column_values.title',
+            'column_values.value',
+            'column_values.additional_info',
+            'group.id',
+            'state',
+            'subscribers.id',
+            ids=self.__item_ids, 
+            limit=1000)
+
+        return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp] 
 
 
 class Item():
