@@ -6,9 +6,10 @@ from .graphql import boards, items
 class Board():
 
     def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
+        self.__columns = None
+        self.__groups = None
         self.__api_key_v1 = api_key_v1
         self.__api_key_v2 = api_key_v2
-        self.__columns = None
 
         self.id = kwargs['id']
         self.name = kwargs['name']
@@ -21,14 +22,8 @@ class Board():
             elif key == 'board_kind':
                 self.board_kind = value
 
-            elif key == 'columns':
-                self.__columns = [Column(**column_data) for column_data in value]
-
             elif key == 'description':
                 self.description = value
-
-            elif key == 'groups':
-                self.__group_ids: List[str] = [item['id'] for item in value]
 
             elif key == 'items':
                 self.__item_ids: List[int] = [int(item['id']) for item in value]
@@ -44,6 +39,44 @@ class Board():
 
             elif key == 'state':
                 self.state = value
+
+    
+    def get_columns(self):
+
+        if self.__columns == None:
+
+            board = boards.get_boards(
+                self.__api_key_v2,
+                'columns.id',
+                'columns.archived',
+                'columns.settings_str',
+                'columns.title',
+                'columns.type',
+                'columns.width',
+                ids=int(self.id))[0]
+
+            self.__columns = [Column(**column_data) for column_data in board['columns']]
+
+        return self.__columns
+
+    def get_groups(self):
+
+        if self.__groups == None:
+            
+            board = boards.get_boards(
+                self.__api_key_v2,
+                'groups.id',
+                'groups.title',
+                'groups.archived',
+                'groups.color',
+                'groups.deleted',
+                'groups.items.id',
+                'groups.position',
+                ids=int(self.id))[0]
+
+            self.__groups = [Group(**group_data) for group_data in board['groups']]
+
+        return self.__groups
 
 
     def get_items(self):
@@ -67,25 +100,6 @@ class Board():
             limit=1000)
 
         return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp] 
-
-    
-    def get_columns(self):
-
-        if self.__columns == None:
-
-            board = boards.get_boards(
-                self.__api_key_v2,
-                'columns.id',
-                'columns.archived',
-                'columns.settings_str',
-                'columns.title',
-                'columns.type',
-                'columns.width',
-                ids=int(self.id))[0]
-
-            self.__columns = [Column(**column_data) for column_data in board['columns']]
-
-        return self.__columns
 
 
     def add_item(self, item_name: str, **kwargs):
@@ -218,7 +232,8 @@ class Item():
                 'column_values.text',
                 'column_values.title',
                 'column_values.value',
-                'column_values.additional_info')
+                'column_values.additional_info',
+                ids=int(self.id))
                 
             self.__column_values = [ColumnValue(**column_values) for column_values in item['column_values']]
 

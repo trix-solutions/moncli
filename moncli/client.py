@@ -32,7 +32,6 @@ class MondayClient():
             'board_folder_id', 
             'board_kind', 
             'description', 
-            'groups.id',
             'items.id', 
             'owner.id', 
             'permissions',
