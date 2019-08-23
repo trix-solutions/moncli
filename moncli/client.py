@@ -2,6 +2,7 @@ from typing import List
 
 from .graphql import boards, items
 from .boards import Board, Item
+from .constants import BoardKind
 from .users import User
 
 class MondayClient():
@@ -10,7 +11,14 @@ class MondayClient():
      
         self.__api_key_v1 = api_key_v1
         self.__api_key_v2 = api_key_v2
+        
 
+    def create_board(self, board_name: str, board_kind: BoardKind):
+
+        resp_board = boards.create_board(self.__api_key_v2, board_name, board_kind, 'id')
+
+        return resp_board['id']
+    
 
     def get_boards(self, **kwargs):
 
@@ -105,6 +113,12 @@ class MondayClient():
             limit=1000)
 
         return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp] 
+
+    
+    def get_updates(self, **kwargs):
+        pass
+
+    
         
 
 class BoardNotFound(Exception):

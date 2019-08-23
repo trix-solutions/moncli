@@ -16,7 +16,7 @@ COLUMN_LONGTEXT = 'long-text'
 class BoardKind(Enum):
     public = 1
     private = 2
-    shareable = 3
+    share = 3
 
 # Column type enum
 class ColumnType(Enum):
