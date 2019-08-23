@@ -1,9 +1,9 @@
 from typing import List
 
-from .graphql import boards, items
 from .boards import Board, Item
-from .constants import BoardKind
+from .enums import BoardKind
 from .users import User
+from .graphql.operations import create_board, get_boards, get_items
 
 class MondayClient():
 
@@ -15,7 +15,7 @@ class MondayClient():
 
     def create_board(self, board_name: str, board_kind: BoardKind):
 
-        resp_board = boards.create_board(self.__api_key_v2, board_name, board_kind, 'id')
+        resp_board = create_board(self.__api_key_v2, board_name, board_kind, 'id')
 
         return resp_board['id']
     
@@ -24,7 +24,7 @@ class MondayClient():
 
         result = []
 
-        resp_boards = boards.get_boards(self.__api_key_v2, 'id', 'name', **kwargs)
+        resp_boards = get_boards(self.__api_key_v2, 'id', 'name', **kwargs)
 
         for board_data in resp_boards:
             result.append(Board(self.__api_key_v1, self.__api_key_v2, **board_data))
@@ -54,7 +54,7 @@ class MondayClient():
 
         # Search for single board by ID
         elif id != None:
-            resp_boards = boards.get_boards(
+            resp_boards = get_boards(
                 self.__api_key_v2, 
                 *field_list,
                 ids=int(id),
@@ -73,7 +73,7 @@ class MondayClient():
             page_limit = 1000
             record_count = 1000
             while record_count >= page_limit:
-                resp_boards = boards.get_boards(
+                resp_boards = get_boards(
                     self.__api_key_v2, 
                     *field_list,
                     limit=page_limit,
@@ -94,7 +94,7 @@ class MondayClient():
     
     def get_items(self, ids, **kwargs) -> List[Item]:
 
-        items_resp = items.get_items(
+        items_resp = get_items(
             self.__api_key_v2, 
             'id',
             'name',

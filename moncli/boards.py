@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from .graphql import boards, items
+from .graphql.operations import get_boards, get_items, create_item
 
 class Board():
 
@@ -45,7 +45,7 @@ class Board():
 
         if self.__columns == None:
 
-            board = boards.get_boards(
+            board = get_boards(
                 self.__api_key_v2,
                 'columns.id',
                 'columns.archived',
@@ -63,7 +63,7 @@ class Board():
 
         if self.__groups == None:
             
-            board = boards.get_boards(
+            board = get_boards(
                 self.__api_key_v2,
                 'groups.id',
                 'groups.title',
@@ -81,7 +81,7 @@ class Board():
 
     def get_items(self):
         
-        items_resp = items.get_items(
+        items_resp = get_items(
             self.__api_key_v2, 
             'id',
             'name',
@@ -104,7 +104,7 @@ class Board():
 
     def add_item(self, item_name: str, **kwargs):
 
-        item = items.create_item(self.__api_key_v2, item_name, self.id, 'id', **kwargs)
+        item = create_item(self.__api_key_v2, item_name, self.id, 'id', **kwargs)
 
         return item['id']
 
@@ -163,7 +163,7 @@ class Group():
 
     def get_items(self):
 
-        items_resp = items.get_items(
+        items_resp = get_items(
             self.__api_key_v2, 
             'id',
             'name',
@@ -226,7 +226,7 @@ class Item():
     def get_column_values(self):
 
         if self.__column_values == None:           
-            item = items.get_items(
+            item = get_items(
                 self.__api_key_v2,
                 'column_values.id',
                 'column_values.text',

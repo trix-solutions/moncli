@@ -1,128 +1,120 @@
 from typing import List, Dict, Any
 
-from moncli import BoardKind, ColumnType
-from moncli.graphql import constants, GraphQLOperation, OperationType, execute_query
+from moncli import graphql_entities as graphql
+from moncli.enums import *
+from moncli.graphql.requests import execute_query
+from moncli.graphql.constants import *
 
 def get_boards(api_key: str, *argv, **kwargs) -> List[Dict[str, Any]]:
 
-    operation = GraphQLOperation(
-        OperationType.QUERY, 
-        constants.BOARDS, 
+    operation = graphql.create_query( 
+        BOARDS, 
         *argv, 
         **kwargs)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.BOARDS]
+    return result[BOARDS]
 
 
 def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv):
 
-    operation = GraphQLOperation(
-        OperationType.MUTATION, 
-        constants.CREATE_BOARD, 
+    operation = graphql.create_mutation( 
+        CREATE_BOARD, 
         *argv, 
         board_name=board_name, 
         board_kind=board_kind)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.CREATE_BOARD]
+    return result[CREATE_BOARD]
 
 
 def archive_board(api_key: str, board_id: str, *argv):
 
-    operation = GraphQLOperation(
-        OperationType.MUTATION, 
-        constants.ARCHIVE_BOARD, 
+    operation = graphql.create_mutation(
+        ARCHIVE_BOARD, 
         *argv, 
         board_id=int(board_id))
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.ARCHIVE_BOARD]
+    return result[ARCHIVE_BOARD]
 
     
 def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType):
 
-    operation = GraphQLOperation(
-        OperationType.MUTATION, 
-        constants.CREATE_COLUMN, 
+    operation = graphql.create_mutation(
+        CREATE_COLUMN, 
         'id',
         board_id=int(board_id), 
         title=title, 
         column_type=column_type)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.CREATE_COLUMN]
+    return result[CREATE_COLUMN]
 
 
 def duplicate_group(api_key: str, board_id: str, group_id: str, *argv, **kwargs):
     
-    operation = GraphQLOperation(
-        OperationType.QUERY, 
-        constants.DUPLICATE_GROUP, 
+    operation = graphql.create_mutation(
+        DUPLICATE_GROUP, 
         *argv, 
         board_id=int(board_id), 
         group_id=group_id, 
         **kwargs)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.DUPLICATE_GROUP]
+    return result[DUPLICATE_GROUP]
 
 
 def create_group(api_key: str, board_id: str, group_name: str, *argv):
 
-    operation = GraphQLOperation(
-        OperationType.QUERY, 
-        constants.CREATE_GROUP, 
+    operation = graphql.create_mutation(
+        CREATE_GROUP, 
         *argv, 
         board_id=int(board_id), 
         group_name=group_name)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.CREATE_GROUP]
+    return result[CREATE_GROUP]
 
 
 def archive_group(api_key: str, board_id: str, group_id: str, *argv):
 
-    operation = GraphQLOperation(
-        OperationType.QUERY, 
-        constants.ARCHIVE_GROUP, 
+    operation = graphql.create_mutation(
+        ARCHIVE_GROUP, 
         *argv, 
         board_id=int(board_id), 
         group_id=group_id)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.ARCHIVE_GROUP]
+    return result[ARCHIVE_GROUP]
 
 
 def delete_group(api_key: str, board_id: str, group_id: str, *argv):
     
-    operation = GraphQLOperation(
-        OperationType.QUERY, 
-        constants.DELETE_GROUP, 
+    operation = graphql.create_mutation(
+        DELETE_GROUP, 
         *argv, 
         board_id=int(board_id), 
         group_id=group_id)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.DELETE_GROUP]
+    return result[DELETE_GROUP]
 
 def get_items(api_key: str, *argv, **kwargs):
 
-    operation = GraphQLOperation(
-        OperationType.QUERY, 
-        constants.ITEMS, 
+    operation = graphql.create_query(
+        ITEMS, 
         *argv, 
         **kwargs)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.ITEMS]
+    return result[ITEMS]
 
 
 def get_items_by_column_values(api_key: str, board_id: str, column_id: str, column_value: str, *argv, **kwargs):
 
-    operation = GraphQLOperation(
-        OperationType.QUERY, 
-        constants.ITEMS_BY_COLUMN_VALUES, 
+    operation = graphql.create_mutation(
+        ITEMS_BY_COLUMN_VALUES, 
         *argv,
         board_id=int(board_id), 
         column_id=column_id, 
@@ -130,17 +122,16 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
         **kwargs)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.ITEMS_BY_COLUMN_VALUES]
+    return result[ITEMS_BY_COLUMN_VALUES]
 
 def create_item(api_key: str, item_name: str, board_id: str, *argv, **kwargs):
 
-    operation = GraphQLOperation(
-        OperationType.MUTATION,
-        constants.CREATE_ITEM,
+    operation = graphql.create_mutation(
+        CREATE_ITEM,
         *argv,
         item_name=item_name,
         board_id=int(board_id),
         **kwargs)
 
     result = execute_query(api_key, operation=operation)
-    return result[constants.CREATE_ITEM]
+    return result[CREATE_ITEM]
