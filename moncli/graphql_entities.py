@@ -1,6 +1,22 @@
 import json
 from enum import Enum 
 
+
+def create_field(name: str, *argv, **kwargs):
+
+    return GraphQLField(name, *argv, **kwargs)
+
+
+def create_query(name: str, *argv, **kwargs):
+    
+    return GraphQLOperation(OperationType.QUERY, name, *argv, **kwargs)
+
+
+def create_mutation(name: str, *argv, **kwargs):
+    
+    return GraphQLOperation(OperationType.MUTATION, name, *argv, **kwargs)
+
+
 class OperationType(Enum):
     QUERY = 1
     MUTATION = 2
@@ -139,19 +155,4 @@ class GraphQLOperation(GraphQLField):
         body = '{} {{ {} }}'.format(self.action_type, body)
 
         return body
-
-
-def create_field(name: str, *argv, **kwargs):
-
-    return GraphQLField(name, *argv, **kwargs)
-
-
-def create_query(name: str, *argv, **kwargs):
-    
-    return GraphQLOperation(OperationType.QUERY, name, *argv, **kwargs)
-
-
-def create_mutation(name: str, *argv, **kwargs):
-    
-    return GraphQLOperation(OperationType.MUTATION, name, *argv, **kwargs)
     

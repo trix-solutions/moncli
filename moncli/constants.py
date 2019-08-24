@@ -3,6 +3,8 @@ from enum import Enum
 DATE_FORMAT = '%Y-%m-%d'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
+API_V2_ENDPOINT = 'https://api.monday.com/v2'
+
 # Column Types
 COLUMN_NAME = 'name'
 COLUMN_MULTIPERSON = 'multi-person'

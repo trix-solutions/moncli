@@ -1,4 +1,6 @@
 import requests, json
+
+from moncli.constants import API_V2_ENDPOINT
 from moncli.graphql.entities import MondayApiError
 
 def execute_query(api_key: str, **kwargs):
@@ -17,7 +19,7 @@ def execute_query(api_key: str, **kwargs):
     data = { 'query': query, 'variables': variables }
 
     resp = requests.post(
-        'https://api.monday.com/v2',
+        API_V2_ENDPOINT,
         headers=headers,
         data=data)
 
@@ -33,5 +35,3 @@ def execute_query(api_key: str, **kwargs):
         raise MondayApiError(error_query, status_code, errors)
 
     return text['data']
-
-    
