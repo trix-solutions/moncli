@@ -1,7 +1,122 @@
 from datetime import datetime
-from typing import List
 
-from .graphql.operations import get_boards, get_items, create_item
+from moncli.constants import DATETIME_FORMAT
+from moncli.enums import BoardKind, ColumnType, NotificationTargetType
+from moncli.graphql.operations import *
+
+class MondayClient():
+
+    def __init__(self, api_key_v1: str, api_key_v2: str):
+     
+        self.__api_key_v1 = api_key_v1
+        self.__api_key_v2 = api_key_v2
+        
+
+    def create_board(self, board_name: str, board_kind: BoardKind):
+
+        resp_board = create_board(self.__api_key_v2, board_name, board_kind, 'id')
+
+        return resp_board['id']
+    
+
+    def get_boards(self, **kwargs):
+
+        result = []
+
+        resp_boards = get_boards(self.__api_key_v2, 'id', 'name', **kwargs)
+
+        for board_data in resp_boards:
+            result.append(Board(self.__api_key_v1, self.__api_key_v2, **board_data))
+
+        return result
+
+
+    def get_board(self, id: str = None, name: str = None):
+
+        field_list = [
+            'id', 
+            'name', 
+            'board_folder_id', 
+            'board_kind', 
+            'description', 
+            'items.id', 
+            'owner.id', 
+            'permissions',
+            'pos',
+            'state']
+
+        if id != None and name != None:
+            raise TooManyGetBoardParameters()
+
+        elif id == None and name == None:
+            raise NotEnoughGetBoardParameters()
+
+        # Search for single board by ID
+        elif id != None:
+            resp_boards = get_boards(
+                self.__api_key_v2, 
+                *field_list,
+                ids=int(id),
+                limit=1)
+
+            if len(resp_boards) == 0:
+                raise BoardNotFound('id', id)
+
+            return Board(self.__api_key_v1, self.__api_key_v2, **resp_boards[0])
+
+        # Page through boards until name match appears.
+        else:
+
+            # Hard configure the pagination rate.
+            page = 1
+            page_limit = 1000
+            record_count = 1000
+            while record_count >= page_limit:
+                resp_boards = get_boards(
+                    self.__api_key_v2, 
+                    *field_list,
+                    limit=page_limit,
+                    page=page)
+
+                target_boards = [board for board in resp_boards if board['name'].lower() == name.lower()]
+
+                if len(target_boards) == 0:
+                    page += 1
+                    record_count = len(resp_boards)
+                    continue
+
+                return Board(self.__api_key_v1, self.__api_key_v2, **resp_boards[0])
+        
+            if len(target_boards) == 0:
+                raise BoardNotFound('name', name)        
+
+    
+    def get_items(self, ids, **kwargs) -> List[Item]:
+
+        items_resp = get_items(
+            self.__api_key_v2, 
+            'id',
+            'name',
+            'board.id',
+            'board.name',
+            'creator_id',
+            'column_values.id',
+            'column_values.text',
+            'column_values.title',
+            'column_values.value',
+            'column_values.additional_info',
+            'group.id',
+            'state',
+            'subscribers.id',
+            ids=ids, 
+            limit=1000)
+
+        return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp] 
+
+    
+    def get_updates(self, **kwargs):
+        pass
+
 
 class Board():
 
@@ -260,6 +375,24 @@ class ColumnValue():
                 self.additional_info = value
 
 
+class User():
+
+    def __init__(self, resp):
+
+        self.id = resp['id']
+        self.name = resp['name']
+        self.username = resp['email']
+        self.title = resp['title']
+        self.position = resp['position']
+        self.phone = resp['phone']
+        self.location = resp['location']
+        self.status = resp['status']
+        self.birthday = resp['birthday']
+        self.is_guest = resp['is_guest']
+        self.created_at = datetime.strptime(resp['created_at'], DATETIME_FORMAT)
+        self.updated_at = datetime.strptime(resp['updated_at'], DATETIME_FORMAT)
+
+
 class GroupNotFound(Exception):
 
     def __init__(self, board, group_name):
@@ -268,5 +401,28 @@ class GroupNotFound(Exception):
         self.board_name = board.name
         self.group_name = group_name
         self.message = 'Unable to find group {} in board {}.'.format(self.group_name, self.board_name)
-
     
+        
+
+class BoardNotFound(Exception):
+
+    def __init__(self, search_type, value):
+        
+        if search_type == 'id':
+            self.message = 'Unable to find board with name: "{}".'.format(value)
+        
+        elif search_type == 'name':
+            self.message = 'Unable to find board with the ID: "{}".'.format(value)
+
+        else:
+            self.message = 'Unable to find the requested board.'
+
+class TooManyGetBoardParameters(Exception):
+
+    def __init__(self):
+        self.message = "Unable to use both 'id' and 'name' when querying for a board."
+
+class NotEnoughGetBoardParameters(Exception):
+
+    def __init__(self):
+        self.message = "Either the 'id' or 'name' is required when querying a board."
