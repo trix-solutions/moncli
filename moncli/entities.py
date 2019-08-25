@@ -138,11 +138,27 @@ class MondayClient():
 
 
     def create_or_get_tag(self, tag_name: str, **kwargs):
-        pass
+        
+        resp = client.create_or_get_tag(
+            self.__api_key_v2, 
+            tag_name,
+            'id',
+            'name',
+            'color')
+
+        return Tag(**resp)
 
     
     def get_tags(self, **kwargs):
-        pass
+        
+        resp = client.get_tags(
+            self.__api_key_v2,
+            'id',
+            'name',
+            'color',
+            **kwargs)
+
+        return [Tag(**tag_data) for tag_data in resp]
 
 
     def get_users(self, **kwargs):
@@ -457,6 +473,20 @@ class ColumnValue():
             elif key == 'additional_info':
                 self.additional_info = value
 
+
+class Tag():
+
+    def __init__(self, **kwargs):
+
+        self.id = kwargs['id']
+
+        for key, value in kwargs.items():
+
+            if key == 'name':
+                self.name = value
+
+            elif key == 'color':
+                self.color = value
 
 class User():
 
