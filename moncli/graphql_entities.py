@@ -155,4 +155,63 @@ class GraphQLOperation(GraphQLField):
         body = '{} {{ {} }}'.format(self.action_type, body)
 
         return body
+
+
+class ArgumentValue():
+
+    def __init__(self, value):
+        self.value = value
+
+        
+    def format(self):
+        pass
+
+
+class StringValue(ArgumentValue):
+
+    def __init__(self, value):
+        super(StringValue, self).__init__(str(value))
     
+
+    def format(self):
+        return '"{}"'.format(self.value)
+
+
+class IntValue(ArgumentValue):
+
+    def __init__(self, value):
+        super(IntValue, self).__init__(int(value))
+    
+
+    def format(self):
+        return self.value
+
+
+class ListValue(ArgumentValue):
+
+    def __init__(self, value):
+        super(ListValue, self).__init__(list(value))
+
+
+    def format(self):
+        return self.value
+
+class EnumValue(ArgumentValue):
+
+    def __init__(self, value):
+        super(EnumValue, self).__init__(value)
+
+
+    def format(self):
+        enum : Enum = self.value
+        return enum.value
+
+
+class JsonValue(ArgumentValue):
+
+    def __init__(self, value):
+        super(JsonValue, self).__init__(value)
+
+    
+    def format(self):
+        return json.dumps(json.dumps(self.value))
