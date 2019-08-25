@@ -2,19 +2,23 @@ from datetime import datetime
 
 from moncli.constants import DATETIME_FORMAT
 from moncli.enums import BoardKind, ColumnType, NotificationTargetType
-from moncli.graphql.operations import *
+from moncli.graphql import operations as client
 
 class MondayClient():
 
-    def __init__(self, api_key_v1: str, api_key_v2: str):
+    def __init__(self, user_name: str, api_key_v1: str, api_key_v2: str):
      
         self.__api_key_v1 = api_key_v1
         self.__api_key_v2 = api_key_v2
+
+        me: User = self.get_me()
+        if me.email.lower() != user_name.lower():
+            raise AuthorizationError(user_name)
         
 
     def create_board(self, board_name: str, board_kind: BoardKind):
 
-        resp_board = create_board(self.__api_key_v2, board_name, board_kind, 'id')
+        resp_board = client.create_board(self.__api_key_v2, board_name, board_kind, 'id')
 
         return resp_board['id']
     
@@ -23,7 +27,7 @@ class MondayClient():
 
         result = []
 
-        resp_boards = get_boards(self.__api_key_v2, 'id', 'name', **kwargs)
+        resp_boards = client.get_boards(self.__api_key_v2, 'id', 'name', **kwargs)
 
         for board_data in resp_boards:
             result.append(Board(self.__api_key_v1, self.__api_key_v2, **board_data))
@@ -53,7 +57,7 @@ class MondayClient():
 
         # Search for single board by ID
         elif id != None:
-            resp_boards = get_boards(
+            resp_boards = client.get_boards(
                 self.__api_key_v2, 
                 *field_list,
                 ids=int(id),
@@ -72,7 +76,7 @@ class MondayClient():
             page_limit = 1000
             record_count = 1000
             while record_count >= page_limit:
-                resp_boards = get_boards(
+                resp_boards = client.get_boards(
                     self.__api_key_v2, 
                     *field_list,
                     limit=page_limit,
@@ -90,10 +94,20 @@ class MondayClient():
             if len(target_boards) == 0:
                 raise BoardNotFound('name', name)        
 
-    
-    def get_items(self, ids, **kwargs) -> List[Item]:
 
-        items_resp = get_items(
+    def archive_board(self, board_id: str):
+
+        archive_board_resp = client.archive_board(
+            self.__api_key_v2, 
+            board_id,
+            'id')
+
+        return Board(self.__api_key_v1, self.__api_key_v2, **archive_board_resp)
+
+    
+    def get_items(self, ids, **kwargs):
+
+        items_resp = client.get_items(
             self.__api_key_v2, 
             'id',
             'name',
@@ -116,6 +130,75 @@ class MondayClient():
     
     def get_updates(self, **kwargs):
         pass
+
+
+    def create_notification(self, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, payload: str):
+
+        client.create_notification(self.__api_key_v2, text, user_id, target_id, target_type, payload)
+
+
+    def create_or_get_tag(self, tag_name: str, **kwargs):
+        pass
+
+    
+    def get_tags(self, **kwargs):
+        pass
+
+
+    def get_users(self, **kwargs):
+        
+        resp = client.get_users(
+            self.__api_key_v2, 
+            'id',
+            'name',
+            'url',
+            'email',
+            'enabled',
+            'account.id',
+            'teams.id',
+            'birthday',
+            'country_code',
+            'created_at',
+            'is_guest',
+            'is_pending',
+            'join_date',
+            **kwargs)
+
+        return [User(self.__api_key_v1, self.__api_key_v2, **user_data) for user_data in resp]
+
+
+    def get_teams(self, **kwargs):
+        
+        resp = client.get_teams(
+            self.__api_key_v2,
+            'id',
+            'name',
+            'picture_url',
+            'users.id',
+            **kwargs)
+
+        return [Team(self.__api_key_v1, self.__api_key_v2, **team_data) for team_data in resp]
+
+    
+    def get_me(self):
+
+        resp = client.get_me(
+            self.__api_key_v2, 
+            'id',
+            'name',
+            'url',
+            'email',
+            'enabled',
+            'account.id',
+            'teams.id',
+            'birthday',
+            'country_code',
+            'created_at',
+            'is_guest',
+            'is_pending',
+            'join_date')
+
+        return User(self.__api_key_v1, self.__api_key_v2, **resp)
 
 
 class Board():
@@ -141,7 +224,7 @@ class Board():
                 self.description = value
 
             elif key == 'items':
-                self.__item_ids: List[int] = [int(item['id']) for item in value]
+                self.__item_ids = [int(item['id']) for item in value]
 
             elif key == 'owner':
                 self.__owner_id: str = value['id']
@@ -160,7 +243,7 @@ class Board():
 
         if self.__columns == None:
 
-            board = get_boards(
+            board = client.get_boards(
                 self.__api_key_v2,
                 'columns.id',
                 'columns.archived',
@@ -178,7 +261,7 @@ class Board():
 
         if self.__groups == None:
             
-            board = get_boards(
+            board = client.get_boards(
                 self.__api_key_v2,
                 'groups.id',
                 'groups.title',
@@ -196,7 +279,7 @@ class Board():
 
     def get_items(self):
         
-        items_resp = get_items(
+        items_resp = client.get_items(
             self.__api_key_v2, 
             'id',
             'name',
@@ -219,7 +302,7 @@ class Board():
 
     def add_item(self, item_name: str, **kwargs):
 
-        item = create_item(self.__api_key_v2, item_name, self.id, 'id', **kwargs)
+        item = client.create_item(self.__api_key_v2, item_name, self.id, 'id', **kwargs)
 
         return item['id']
 
@@ -278,7 +361,7 @@ class Group():
 
     def get_items(self):
 
-        items_resp = get_items(
+        items_resp = client.get_items(
             self.__api_key_v2, 
             'id',
             'name',
@@ -341,7 +424,7 @@ class Item():
     def get_column_values(self):
 
         if self.__column_values == None:           
-            item = get_items(
+            item = client.get_items(
                 self.__api_key_v2,
                 'column_values.id',
                 'column_values.text',
@@ -365,33 +448,198 @@ class ColumnValue():
             if key == 'text':
                 self.text = value
 
-            if key == 'title':
+            elif key == 'title':
                 self.title = value
 
-            if key == 'value':
+            elif key == 'value':
                 self.value = value
 
-            if key == 'additional_info':
+            elif key == 'additional_info':
                 self.additional_info = value
 
 
 class User():
 
-    def __init__(self, resp):
+    def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
+        self.__api_key_v1 = api_key_v1
+        self.__api_key_v2 = api_key_v2
+          
+        self.id = kwargs['id']
 
-        self.id = resp['id']
-        self.name = resp['name']
-        self.username = resp['email']
-        self.title = resp['title']
-        self.position = resp['position']
-        self.phone = resp['phone']
-        self.location = resp['location']
-        self.status = resp['status']
-        self.birthday = resp['birthday']
-        self.is_guest = resp['is_guest']
-        self.created_at = datetime.strptime(resp['created_at'], DATETIME_FORMAT)
-        self.updated_at = datetime.strptime(resp['updated_at'], DATETIME_FORMAT)
+        for key, value in kwargs.items():
 
+            if key == 'name':
+                self.name = value
+
+            elif key == 'url':
+                self.url = value
+
+            elif key == 'email':
+                self.email = value
+
+            elif key == 'enabled':
+                self.enabled = value
+
+            elif key == 'teams':
+                self.__team_ids = [int(team_data['id']) for team_data in value]
+
+            if key == 'birthday':
+                self.birthday = value
+
+            elif key == 'country_code':
+                self.country_code = value
+
+            elif key == 'created_at': 
+                self.create_at = value
+
+            elif key == 'is_guest':
+                self.is_guest = value
+
+            elif key == 'is_pending':
+                self.is_pending = value
+
+            elif key == 'join_date':
+                self.join_date = value
+
+            elif key == 'location':
+                self.locaiton = value
+
+            elif key == 'mobile_phone':
+                self.mobile_phone = value
+
+            elif key == 'phone':
+                self.phone = value
+
+            elif key == 'photo_original':
+                self.photo_original = value
+
+            elif key == 'photo_thumb':
+                self.photo_thumb = value
+
+            elif key == 'title':
+                self.title = value
+
+            elif key == 'utc_hours_diff':
+                self.utc_hours_diff = value
+
+        
+    def get_account(self):
+
+        resp = client.get_users(
+            self.__api_key_v2, 
+            'account.first_day_of_the_week',
+            'account.id',
+            'account.name',
+            'account.show_timeline_weekends',
+            'account.slug',
+            'account.logo',
+            ids=int(self.id))
+
+        return Account(self.__api_key_v2, user_id=self.id, **resp[0]['account'])
+
+    
+    def get_teams(self):
+
+        resp = client.get_teams(
+            self.__api_key_v2,
+            'id',
+            'name',
+            'picture_url',
+            'users.id',
+            ids=self.__team_ids)
+
+        return [Team(self.__api_key_v1, self.__api_key_v2, **team_data) for team_data in resp]
+
+
+class Account():
+
+    def __init__(self, api_key_v2: str, **kwargs):
+        self.__api_key_v2 = api_key_v2
+        self.__user_id = kwargs['user_id']
+
+        self.first_day_of_the_week = kwargs['first_day_of_the_week']
+        self.id = kwargs['id']
+        self.name = kwargs['name']
+        self.show_timeline_weekends = kwargs['show_timeline_weekends']
+        self.slug = kwargs['slug']
+
+        for key, value in kwargs.items():
+
+            if key == 'logo':
+                self.logo = value
+
+
+    def get_plan(self):
+
+        resp = client.get_users(
+            self.__api_key_v2, 
+            'account.plan.max_users',
+            'account.plan.period',
+            'account.plan.tier',
+            'account.plan.version',
+            ids=int(self.__user_id))
+
+        return Plan(**resp[0]['account']['plan'])
+
+
+class Team():
+
+    def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
+        self.__api_key_v1 = api_key_v1
+        self.__api_key_v2 = api_key_v2
+        
+        self.id = kwargs['id']
+        self.name = kwargs['name']
+
+        for key, value in kwargs.items():
+
+            if key == 'picture_url':
+                self.picture_url = value
+
+            if key == 'users':
+                self.__user_ids = [int(user['id']) for user in value]
+
+        
+    def get_users(self):
+
+        user_resp = client.get_users(
+            self.__api_key_v2, 
+            'id',
+            'name',
+            'url',
+            'email',
+            'enabled',
+            'account.id',
+            'teams.id',
+            ids=self.__user_ids)
+
+        return [User(self.__api_key_v1, self.__api_key_v2, **user_data) for user_data in user_resp]
+
+
+class Plan():
+
+    def __init__(self, **kwargs):
+
+        for key, value in kwargs.items():
+
+            if key == 'max_users':
+                self.max_users = value
+
+            elif key == 'period':
+                self.period = value
+
+            elif key == 'tier':
+                self.tier = value
+
+            elif key == 'version':
+                self.version = value
+
+
+class AuthorizationError(Exception):
+
+    def __init__(self, user_name: str):
+
+        self.message = 'User {} was not recognized by the applied token'.format(user_name)
 
 class GroupNotFound(Exception):
 

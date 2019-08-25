@@ -1,13 +1,11 @@
 from enum import Enum
 
-# Board kind enum
 class BoardKind(Enum):
     public = 1
     private = 2
     share = 3
 
 
-# Column type enum
 class ColumnType(Enum):
     auto_number = 1
     checkbox = 2
@@ -50,3 +48,15 @@ class State(Enum):
     active = 2
     archived = 3
     deleted = 4
+
+
+class UserKind(Enum):
+    all = 1
+    non_guests = 2
+    guests = 3
+    non_pending = 4
+
+    
+class FirstDayOfTheWeek(Enum):
+    sunday = 1
+    monday = 2
