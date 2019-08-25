@@ -30,12 +30,12 @@ def archive_board(api_key: str, board_id: str, *argv):
         board_id=int(board_id))
 
     
-def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType):
+def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *argv):
 
     return execute_mutation(
         api_key,
         CREATE_COLUMN, 
-        'id',
+        *argv,
         board_id=int(board_id), 
         title=title, 
         column_type=column_type)
@@ -232,6 +232,9 @@ def execute_query(api_key:str, name: str, *argv, **kwargs):
 
 
 def execute_mutation(api_key: str, name: str, *argv, **kwargs):
+
+    if 'id' not in argv:
+        argv += ('id',)
 
     operation = graphql.create_mutation(name, *argv, **kwargs)
     result = requests.execute_query(api_key, operation=operation)

@@ -16,11 +16,11 @@ class MondayClient():
             raise AuthorizationError(user_name)
         
 
-    def create_board(self, board_name: str, board_kind: BoardKind):
+    def create_board(self, board_name: str, board_kind: BoardKind, *argv):
 
-        resp_board = client.create_board(self.__api_key_v2, board_name, board_kind, 'id')
+        resp = client.create_board(self.__api_key_v2, board_name, board_kind, *argv)
 
-        return resp_board['id']
+        return Board(self.__api_key_v1, self.__api_key_v2, **resp)
     
 
     def get_boards(self, **kwargs):
@@ -243,9 +243,11 @@ class Board():
         self.__api_key_v2 = api_key_v2
 
         self.id = kwargs['id']
-        self.name = kwargs['name']
 
         for key, value in kwargs.items():
+
+            if key == 'name':
+                self.name = value
 
             if key == 'board_folder_id':
                 self.board_folder_id = value
@@ -271,6 +273,45 @@ class Board():
             elif key == 'state':
                 self.state = value
 
+
+    def create_column(self, title:str, column_type: ColumnType, *argv):
+
+        if len(argv) == 0:
+            argv = ['id']
+
+        resp = client.create_column(
+            self.__api_key_v2, 
+            self.id, 
+            title, 
+            column_type, 
+            *argv)
+
+        return Column(api_key_v2=self.__api_key_v2, **resp)
+
+    
+    def change_column_value(self, item_id: str, column_id: str, value: str):
+
+        resp = client.change_column_value(
+            self.__api_key_v2, 
+            item_id, 
+            column_id, 
+            self.id,
+            value)
+
+        return Item(self.__api_key_v1, self.__api_key_v2, **resp)
+
+    
+    def change_multiple_column_values(self, item_id: str, column_values: str, *argv):
+
+        resp = client.change_multiple_column_value(
+            self.__api_key_v2,
+            item_id,
+            self.id,
+            column_values,
+            *argv)
+
+        return Item(self.__api_key_v1, self.__api_key_v2, **resp)
+
     
     def get_columns(self):
 
@@ -286,7 +327,7 @@ class Board():
                 'columns.width',
                 ids=int(self.id))[0]
 
-            self.__columns = [Column(**column_data) for column_data in board['columns']]
+            self.__columns = [Column(api_key_v2=self.__api_key_v2, **column_data) for column_data in board['columns']]
 
         return self.__columns
 
@@ -343,6 +384,7 @@ class Board():
 class Column():
 
     def __init__(self, **kwargs):
+        self.__api_key_v2 = kwargs['api_key_v2']
         self.id= kwargs['id']
 
         for key, value in kwargs.items():
