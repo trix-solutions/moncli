@@ -23,10 +23,10 @@ def execute_query(api_key: str, **kwargs):
         headers=headers,
         data=data)
 
-    if resp.status_code != 200:
-        pass
-
     text: dict = resp.json()
+
+    if resp.status_code == 500:
+        raise MondayApiError(json.dumps(data), resp.status_code, [text['error_message']])
 
     if text.__contains__('errors'):
         error_query = json.dumps(data)

@@ -129,12 +129,29 @@ class MondayClient():
 
     
     def get_updates(self, **kwargs):
-        pass
+        
+        resp = client.get_updates(
+            self.__api_key_v2, 
+            'id',
+            'body',
+            **kwargs)
+
+        return [Update(**data) for data in resp]
 
 
-    def create_notification(self, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, payload: str):
+    def create_notification(self, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, **kwargs):
 
-        client.create_notification(self.__api_key_v2, text, user_id, target_id, target_type, payload)
+        resp = client.create_notification(
+            self.__api_key_v2, 
+            text, 
+            user_id, 
+            target_id,
+            target_type,
+            'id',
+            'text',
+            **kwargs)
+
+        return Notification(**resp)
 
 
     def create_or_get_tag(self, tag_name: str, **kwargs):
@@ -474,6 +491,28 @@ class ColumnValue():
                 self.additional_info = value
 
 
+class Update():
+
+    def __init__(self, **kwargs):
+        self.id = kwargs['id']
+        
+        for key, value in kwargs.items():
+
+            if key == 'body':
+                self.body = value
+
+
+class Notification():
+
+    def __init__(self, **kwargs):
+        self.id = kwargs['id']
+
+        for key, value in kwargs.items():
+
+            if key == 'text':
+                self.text = value
+
+
 class Tag():
 
     def __init__(self, **kwargs):
@@ -579,6 +618,11 @@ class User():
             ids=self.__team_ids)
 
         return [Team(self.__api_key_v1, self.__api_key_v2, **team_data) for team_data in resp]
+
+    
+    def send_notification(self, text: str, target_id: str, target_type: NotificationTargetType, *argv, **kwargs):
+
+        client.create_notification(self.__api_key_v2, text, self.id, target_id, target_type, *argv, **kwargs)
 
 
 class Account():

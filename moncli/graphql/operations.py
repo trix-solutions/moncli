@@ -181,8 +181,8 @@ def create_notification(
         user_id: str,
         target_id: str,
         target_type: NotificationTargetType,
-        payload: str,
-        *argv):
+        *argv,
+        **kwargs):
 
     return execute_mutation(
         api_key,
@@ -192,7 +192,7 @@ def create_notification(
         user_id=int(user_id),
         target_id=int(target_id),
         target_type=target_type,
-        payload=payload)
+        **kwargs)
 
 
 def create_or_get_tag(api_key: str, tag_name: str, *argv, **kwargs):
