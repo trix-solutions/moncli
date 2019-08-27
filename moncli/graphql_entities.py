@@ -79,18 +79,11 @@ class GraphQLField(GraphQLNode):
 
         for key, value in kwargs.items():
 
-            if type(value) is str:
-                self.arguments.__setitem__(key, '"{}"'.format(value))
+            arg_value : ArgumentValue = value
+            formatted_value = arg_value.format()
 
-            elif type(value) is dict:
-                # Double the dump to get json arguments to work...
-                self.arguments.__setitem__(key, json.dumps(json.dumps(value)))
-
-            elif isinstance(value, Enum):
-                self.arguments.__setitem__(key, value.name)
-
-            else:
-                self.arguments.__setitem__(key, value)
+            if formatted_value is not None:
+                self.arguments.__setitem__(key, formatted_value)
 
 
     def get_field(self, path: str):
@@ -215,3 +208,29 @@ class JsonValue(ArgumentValue):
     
     def format(self):
         return json.dumps(json.dumps(self.value))
+
+
+class ArgumentValueKind(Enum):
+    String = 1
+    Int = 2
+    Enum = 3
+    List = 4
+    Json = 5
+
+
+def create_value(value, value_type: ArgumentValueKind):
+
+    if value_type == ArgumentValueKind.String:
+        return StringValue(value)
+    
+    elif value_type == ArgumentValueKind.Int:
+        return IntValue(value)
+
+    elif value_type == ArgumentValueKind.Enum:
+        return EnumValue(value)
+
+    elif value_type == ArgumentValueKind.List:
+        return ListValue(value)
+
+    elif value_type == ArgumentValueKind.Json:
+        return JsonValue(value)
