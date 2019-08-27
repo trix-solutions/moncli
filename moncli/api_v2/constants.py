@@ -1,15 +1,11 @@
 from .graphql import ArgumentValueKind
 
+## Operation methods
+
 # Boards
 BOARDS = 'boards'
 CREATE_BOARD = 'create_board'
 ARCHIVE_BOARD = 'archive_board'
-
-BOARDS_OPTIONAL_PARAMS = {
-    'limit': ArgumentValueKind.Int,
-    'page': ArgumentValueKind.Int,
-    
-}
 
 # Columns
 CREATE_COLUMN = 'create_column'
@@ -49,3 +45,14 @@ TEAMS = 'teams'
 
 # Me
 ME = 'me'
+
+
+##
+
+## Optional Parameters
+
+BOARDS_OPTIONAL_PARAMS = {
+    'limit': ArgumentValueKind.Int,
+    'page': ArgumentValueKind.Int,
+    
+}

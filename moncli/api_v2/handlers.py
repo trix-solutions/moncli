@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 
-from ..constants.enums import BoardKind, ColumnType, NotificationTargetType
+from ..enums import BoardKind, ColumnType, NotificationTargetType
 from . import graphql, requests
 from .constants import *
 from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue
