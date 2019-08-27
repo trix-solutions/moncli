@@ -1,9 +1,9 @@
 from typing import List, Dict, Any
 
-from moncli import graphql_entities as graphql
-from moncli.enums import BoardKind, ColumnType, NotificationTargetType
-from moncli.graphql import requests
-from moncli.graphql.constants import *
+from ..constants.enums import BoardKind, ColumnType, NotificationTargetType
+from . import graphql, requests
+from .constants import *
+from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue
 
 
 def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv):
@@ -12,11 +12,31 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv):
         api_key,
         CREATE_BOARD, 
         *argv, 
-        board_name=board_name, 
-        board_kind=board_kind)
+        board_name=StringValue(board_name), 
+        board_kind=EnumValue(board_kind))
 
 
 def get_boards(api_key: str, *argv, **kwargs) -> List[Dict[str, Any]]:
+
+    for key, value in kwargs.items():
+
+        if key == 'limit':
+            kwargs[key] = IntValue(value)
+
+        if key == 'page':
+            kwargs[key] = IntValue(value)
+
+        if key == 'ids':
+            kwargs[key] = ListValue(value)
+
+        if key == 'board_kind':
+            kwargs[key] = EnumValue(value)
+
+        if key == 'state':
+            kwargs[key] = EnumValue(value)
+
+        if key == 'newest_first':
+            kwargs[key] = IntValue(value)
 
     return execute_query(api_key, BOARDS, *argv, **kwargs)
 
@@ -60,7 +80,8 @@ def change_multiple_column_value(api_key: str, item_id: str, board_id: str, colu
         CHANGE_MULTIPLE_COLUMN_VALUES,
         *argv,
         item_id=int(item_id),
-        board_id=int(board_id))
+        board_id=int(board_id),
+        column_values=column_values)
 
 
 def duplicate_group(api_key: str, board_id: str, group_id: str, *argv, **kwargs):

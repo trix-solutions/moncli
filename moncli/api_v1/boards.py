@@ -1,4 +1,4 @@
-from moncli.routes import constants
+from . import constants
 from .requests import execute_get, execute_post, execute_put, execute_delete
 
 def get_boards(api_key, per_page = 25, only_globals = False, order_by_latest = False):

@@ -1,7 +1,7 @@
 import requests, json
 
-from moncli.constants import API_V2_ENDPOINT
-from moncli.graphql.entities import MondayApiError
+from .. import API_V2_ENDPOINT
+from . import MondayApiError
 
 def execute_query(api_key: str, **kwargs):
 

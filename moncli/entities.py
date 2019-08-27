@@ -1,8 +1,9 @@
 from datetime import datetime
 
-from moncli.constants import DATETIME_FORMAT
-from moncli.enums import BoardKind, ColumnType, NotificationTargetType
-from moncli.graphql import operations as client
+from . import api_v2 as client
+from .constants import DATETIME_FORMAT
+from .enums import BoardKind, ColumnType, NotificationTargetType
+
 
 class MondayClient():
 
