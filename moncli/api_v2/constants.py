@@ -124,7 +124,7 @@ ARCHIVE_ITEM_OPTIONAL_PARAMS = {
 }
 
 DELETE_ITEM_OPTIONAL_PARAMS = {
-    
+
 }
 
 UPDATES_OPTIONAL_PARAMS = {
@@ -132,8 +132,20 @@ UPDATES_OPTIONAL_PARAMS = {
     'page': ArgumentValueKind.Int
 }
 
+CREATE_UPDATE_OPTIONAL_PARAMS = {
+
+}
+
+CREATE_NOTIFICATION_OPTIONAL_PARAMS ={
+    'payload': ArgumentValueKind.Json
+}
+
 TAGS_OPTIONAL_PARAMS = {
     'ids': ArgumentValueKind.List
+}
+
+CREATE_OR_GET_TAG_OPTIONAL_PARAMS = {
+    'board_id': ArgumentValueKind.Int
 }
 
 USERS_OPTIONAL_PARAMS = {
