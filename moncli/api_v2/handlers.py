@@ -3,240 +3,198 @@ from typing import List, Dict, Any
 from ..enums import BoardKind, ColumnType, NotificationTargetType
 from . import graphql, requests
 from .constants import *
-from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue
+from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue, create_value
 
 
-def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv):
+def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv, **kwargs):
 
-    return execute_mutation( 
-        api_key,
-        CREATE_BOARD, 
-        *argv, 
-        board_name=StringValue(board_name), 
-        board_kind=EnumValue(board_kind))
+    kwargs = get_method_arguments(CREATE_BOARD_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_name'] = StringValue(board_name)
+    kwargs['board_kind'] = EnumValue(board_kind)
+
+    return execute_mutation(api_key, CREATE_BOARD, *argv,  **kwargs)
 
 
 def get_boards(api_key: str, *argv, **kwargs) -> List[Dict[str, Any]]:
 
-    for key, value in kwargs.items():
-
-        if key == 'limit':
-            kwargs[key] = IntValue(value)
-
-        if key == 'page':
-            kwargs[key] = IntValue(value)
-
-        if key == 'ids':
-            kwargs[key] = ListValue(value)
-
-        if key == 'board_kind':
-            kwargs[key] = EnumValue(value)
-
-        if key == 'state':
-            kwargs[key] = EnumValue(value)
-
-        if key == 'newest_first':
-            kwargs[key] = IntValue(value)
-
+    kwargs = get_method_arguments(BOARDS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, BOARDS, *argv, **kwargs)
 
 
-def archive_board(api_key: str, board_id: str, *argv):
+def archive_board(api_key: str, board_id: str, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,
-        ARCHIVE_BOARD, 
-        *argv, 
-        board_id=int(board_id))
+    kwargs = get_method_arguments(ARCHIVE_BOARD_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = IntValue(board_id)
+
+    return execute_mutation(api_key, ARCHIVE_BOARD, *argv, **kwargs)
 
     
-def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *argv):
+def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,
-        CREATE_COLUMN, 
-        *argv,
-        board_id=int(board_id), 
-        title=title, 
-        column_type=column_type)
+    kwargs = get_method_arguments(CREATE_COLUMN_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['title'] = StringValue(title)
+    kwargs['column_type'] = EnumValue(column_type)
 
-
-def change_column_value(api_key: str, item_id: str, column_id: str, board_id: str, value: str, *argv):
-
-    return execute_mutation(
-        api_key,
-        CHANGE_COLUMN_VALUE,
-        *argv,
-        item_id=int(item_id),
-        column_id=column_id,
-        board_id=int(board_id),
-        value=value)
+    return execute_mutation(api_key, CREATE_COLUMN, *argv, **kwargs)
 
 
-def change_multiple_column_value(api_key: str, item_id: str, board_id: str, column_values: str, *argv):
+def change_column_value(api_key: str, item_id: str, column_id: str, board_id: str, value: str, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,
-        CHANGE_MULTIPLE_COLUMN_VALUES,
-        *argv,
-        item_id=int(item_id),
-        board_id=int(board_id),
-        column_values=column_values)
+    kwargs = get_method_arguments(CHANGE_COLUMN_VALUE_OPTIONAL_PARAMS)
+    kwargs['item_id'] = IntValue(item_id)
+    kwargs['column_id'] = StringValue(column_id)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['value'] = JsonValue(value)
+
+    return execute_mutation(api_key, CHANGE_COLUMN_VALUE, *argv, **kwargs)
+
+
+def change_multiple_column_value(api_key: str, item_id: str, board_id: str, column_values: str, *argv, **kwargs):
+
+    kwargs = get_method_arguments(CHANGE_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS, **kwargs)
+    kwargs['item_id'] = IntValue(item_id)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['column_values'] = JsonValue(column_values)
+
+    return execute_mutation(api_key, CHANGE_MULTIPLE_COLUMN_VALUES, *argv, **kwargs)
 
 
 def duplicate_group(api_key: str, board_id: str, group_id: str, *argv, **kwargs):
+
+    kwargs = get_method_arguments(DUPLICATE_GROUP_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['group_id'] = StringValue(group_id)
     
-    return execute_mutation(
-        api_key,
-        DUPLICATE_GROUP, 
-        *argv, 
-        board_id=int(board_id), 
-        group_id=group_id, 
-        **kwargs)
+    return execute_mutation(api_key, DUPLICATE_GROUP, *argv, **kwargs)
 
 
-def create_group(api_key: str, board_id: str, group_name: str, *argv):
+def create_group(api_key: str, board_id: str, group_name: str, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,
-        CREATE_GROUP, 
-        *argv, 
-        board_id=int(board_id), 
-        group_name=group_name)
+    kwargs = get_method_arguments(CREATE_GROUP_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['group_name'] = StringValue(group_name)
 
-
-def archive_group(api_key: str, board_id: str, group_id: str, *argv):
-
-    return execute_mutation(
-        api_key,
-        ARCHIVE_GROUP, 
-        *argv, 
-        board_id=int(board_id), 
-        group_id=group_id)
+    return execute_mutation(api_key, CREATE_GROUP, *argv, **kwargs)
 
 
-def delete_group(api_key: str, board_id: str, group_id: str, *argv):
+def archive_group(api_key: str, board_id: str, group_id: str, *argv, **kwargs):
+
+    kwargs = get_method_arguments(ARCHIVE_GROUP_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['group_id'] = StringValue(group_id)    
+
+    return execute_mutation(api_key, ARCHIVE_GROUP, *argv, **kwargs)
+
+
+def delete_group(api_key: str, board_id: str, group_id: str, *argv, **kwargs):
+
+    kwargs = get_method_arguments(DELETE_GROUP_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['group_id'] = StringValue(group_id)    
     
-    return execute_mutation(
-        api_key,
-        DELETE_GROUP, 
-        *argv, 
-        board_id=int(board_id), 
-        group_id=group_id)
+    return execute_mutation(api_key, DELETE_GROUP, *argv, **kwargs)
 
 
 def create_item(api_key: str, item_name: str, board_id: str, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,    
-        CREATE_ITEM,
-        *argv,
-        item_name=item_name,
-        board_id=int(board_id),
-        **kwargs)
+    kwargs = get_method_arguments(CREATE_ITEM_OPTIONAL_PARAMS, **kwargs)
+    kwargs['item_name'] = StringValue(item_name)
+    kwargs['board_id'] = IntValue(board_id)    
+
+    return execute_mutation(api_key, CREATE_ITEM, *argv, **kwargs)
 
 
 def get_items(api_key: str, *argv, **kwargs):
 
+    kwargs = get_method_arguments(ITEMS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, ITEMS, *argv, **kwargs)
 
 
 def get_items_by_column_values(api_key: str, board_id: str, column_id: str, column_value: str, *argv, **kwargs):
 
-    return execute_query(
-        api_key,
-        ITEMS_BY_COLUMN_VALUES, 
-        *argv,
-        board_id=int(board_id), 
-        column_id=column_id, 
-        column_value=column_value, 
-        **kwargs)
+    kwargs = get_method_arguments(ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['column_id'] = StringValue(column_id)
+    kwargs['column_value'] = StringValue(column_value)
+
+    return execute_query(api_key, ITEMS_BY_COLUMN_VALUES, *argv, **kwargs)
 
 
-def move_item_to_group(api_key: str, item_id: str, group_id: str, *argv):
+def move_item_to_group(api_key: str, item_id: str, group_id: str, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,
-        MOVE_ITEM_TO_GROUP,
-        *argv,
-        item_id=int(item_id),
-        group_id=group_id)
+    kwargs = get_method_arguments(MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS, **kwargs)
+    kwargs['item_id'] = IntValue(item_id)
+    kwargs['group_id'] = StringValue(group_id)
 
-
-def archive_item(api_key: str, item_id: str, *argv):
-
-    return execute_mutation(
-        api_key,
-        ARCHIVE_ITEM,
-        *argv,
-        item_id=int(item_id))
+    return execute_mutation(api_key, MOVE_ITEM_TO_GROUP, *argv, **kwargs)
 
 
-def delete_item(api_key: str, item_id: str, *argv):
+def archive_item(api_key: str, item_id: str, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,
-        DELETE_ITEM,
-        *argv,
-        item_id=int(item_id))
+    kwargs = get_method_arguments(ARCHIVE_ITEM_OPTIONAL_PARAMS, **kwargs)
+    kwargs['item_id'] = IntValue(item_id)
+
+    return execute_mutation(api_key, ARCHIVE_ITEM, *argv, **kwargs)
 
 
-def create_update(api_key: str, body: str, item_id: str, *argv):
+def delete_item(api_key: str, item_id: str, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,
-        CREATE_UPDATE,
-        *argv,
-        body=body,
-        item_id=int(item_id))
+    kwargs = get_method_arguments(DELETE_ITEM_OPTIONAL_PARAMS, **kwargs)
+    kwargs['item_id'] = IntValue(item_id)
+
+    return execute_mutation(api_key, DELETE_ITEM, *argv, **kwargs)
+
+
+def create_update(api_key: str, body: str, item_id: str, *argv, **kwargs):
+
+    kwargs = get_method_arguments(CREATE_UPDATE_OPTIONAL_PARAMS, **kwargs)
+    kwargs['body'] = StringValue(body)
+    kwargs['item_id'] = IntValue(item_id)
+
+    return execute_mutation(api_key, CREATE_UPDATE, *argv, **kwargs)
 
 
 def get_updates(api_key: str, *argv, **kwargs):
 
+    kwargs = get_method_arguments(UPDATES_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, UPDATES, *argv, **kwargs)
 
 
-def create_notification(
-        api_key: str,
-        text: str,
-        user_id: str,
-        target_id: str,
-        target_type: NotificationTargetType,
-        *argv,
-        **kwargs):
+def create_notification(api_key: str, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,
-        CREATE_NOTIFICATION,
-        *argv,
-        text=text,
-        user_id=int(user_id),
-        target_id=int(target_id),
-        target_type=target_type,
-        **kwargs)
+    kwargs = get_method_arguments(CREATE_NOTIFICATION_OPTIONAL_PARAMS, **kwargs)
+    kwargs['text'] = StringValue(text)
+    kwargs['user_id'] = IntValue(user_id)
+    kwargs['target_id'] = IntValue(target_id)
+    kwargs['target_type'] = EnumValue(target_type)    
+
+    return execute_mutation(api_key, CREATE_NOTIFICATION, *argv, **kwargs)
 
 
 def create_or_get_tag(api_key: str, tag_name: str, *argv, **kwargs):
 
-    return execute_mutation(
-        api_key,
-        CREATE_OR_GET_TAG,
-        *argv,
-        tag_name=tag_name)
+    kwargs = get_method_arguments(CREATE_OR_GET_TAG_OPTIONAL_PARAMS, **kwargs)
+    kwargs['tag_name'] = StringValue(tag_name)
+
+    return execute_mutation(api_key, CREATE_OR_GET_TAG, *argv, **kwargs)
 
 
 def get_tags(api_key: str, *argv, **kwargs):
 
+    kwargs = get_method_arguments(TAGS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, TAGS, *argv, **kwargs)
 
 
 def get_users(api_key: str, *argv, **kwargs):
 
+    kwargs = get_method_arguments(USERS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, USERS, *argv, **kwargs)
 
 
 def get_teams(api_key: str, *argv, **kwargs):
 
+    kwargs = get_method_arguments(TEAMS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, TEAMS, *argv, **kwargs)
 
 
@@ -260,3 +218,15 @@ def execute_mutation(api_key: str, name: str, *argv, **kwargs):
     operation = graphql.create_mutation(name, *argv, **kwargs)
     result = requests.execute_query(api_key, operation=operation)
     return result[name]
+
+
+def get_method_arguments(mappings: dict, **kwargs):
+
+    result = {}
+
+    for key, value in kwargs.items():
+        
+        if mappings.__contains__(key):
+            result[key] = create_value(value, mappings[key])
+
+    return result
