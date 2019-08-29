@@ -54,5 +54,96 @@ ME = 'me'
 BOARDS_OPTIONAL_PARAMS = {
     'limit': ArgumentValueKind.Int,
     'page': ArgumentValueKind.Int,
+    'ids': ArgumentValueKind.List,
+    'board_kind': ArgumentValueKind.Enum,
+    'state': ArgumentValueKind.Enum,
+    'newest_first': ArgumentValueKind.Bool
+}
+
+CREATE_BOARD_OPTIONAL_PARAMS = {
+
+}
+
+ARCHIVE_BOARD_OPTIONAL_PARAMS = {
+
+}
+
+CREATE_COLUMN_OPTIONAL_PARAMS = {
+
+}
+
+CHANGE_COLUMN_VALUE_OPTIONAL_PARAMS = {
+
+}
+
+CHANGE_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS = {
+
+}
+
+DUPLICATE_GROUP_OPTIONAL_PARAMS = {
+    'add_to_top': ArgumentValueKind.Bool,
+    'group_title': ArgumentValueKind.String
+}
+
+CREATE_GROUP_OPTIONAL_PARAMS = {
+
+}
+
+ARCHIVE_GROUP_OPTIONAL_PARAMS = {
+
+}
+
+DELETE_GROUP_OPTIONAL_PARAMS = {
+
+}
+
+ITEMS_OPTIONAL_PARAMS = {
+    'limit': ArgumentValueKind.Int,
+    'page': ArgumentValueKind.Int,
+    'ids': ArgumentValueKind.List,
+    'newest_first': ArgumentValueKind.Bool
+}
+
+ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS = {
+    'limit': ArgumentValueKind.Int,
+    'page': ArgumentValueKind.Int,
+    'column_type': ArgumentValueKind.String,
+    'state': ArgumentValueKind.Enum
+}
+
+CREATE_ITEM_OPTIONAL_PARAMS ={
+    'column_values': ArgumentValueKind.Json
+}
+
+MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS = {
     
 }
+
+ARCHIVE_ITEM_OPTIONAL_PARAMS = {
+
+}
+
+DELETE_ITEM_OPTIONAL_PARAMS = {
+    
+}
+
+UPDATES_OPTIONAL_PARAMS = {
+    'limit': ArgumentValueKind.Int,
+    'page': ArgumentValueKind.Int
+}
+
+TAGS_OPTIONAL_PARAMS = {
+    'ids': ArgumentValueKind.List
+}
+
+USERS_OPTIONAL_PARAMS = {
+    'ids': ArgumentValueKind.List,
+    'kind': ArgumentValueKind.Enum,
+    'newest_first': ArgumentValueKind.String,
+    'limit': ArgumentValueKind.Int
+}
+
+TEAMS_OPTIONAL_PARAMS = {
+    'ids': ArgumentValueKind.List
+}
+

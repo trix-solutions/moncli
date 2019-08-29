@@ -213,9 +213,10 @@ class JsonValue(ArgumentValue):
 class ArgumentValueKind(Enum):
     String = 1
     Int = 2
-    Enum = 3
-    List = 4
-    Json = 5
+    Bool = 3
+    Enum = 4
+    List = 5
+    Json = 6
 
 
 def create_value(value, value_type: ArgumentValueKind):
