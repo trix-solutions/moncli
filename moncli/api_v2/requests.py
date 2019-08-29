@@ -1,6 +1,6 @@
 import requests, json
 
-from .. import API_V2_ENDPOINT
+from .. import constants
 from . import MondayApiError
 
 def execute_query(api_key: str, **kwargs):
@@ -19,7 +19,7 @@ def execute_query(api_key: str, **kwargs):
     data = { 'query': query, 'variables': variables }
 
     resp = requests.post(
-        API_V2_ENDPOINT,
+        constants.API_V2_ENDPOINT,
         headers=headers,
         data=data)
 
