@@ -9,8 +9,7 @@ $ cd \moncli
 The package can then be installed onto your current Python 3 environment when running the following command.
 ```
 $ python3 setup.py install
-```
-\
+```\
 
 ## Using the Monday.com client ##
 ### Creating a Client ###
