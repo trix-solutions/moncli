@@ -277,9 +277,6 @@ class Board():
 
     def create_column(self, title:str, column_type: ColumnType, *argv):
 
-        if len(argv) == 0:
-            argv = ['id']
-
         resp = client.create_column(
             self.__api_key_v2, 
             self.id, 
@@ -290,19 +287,20 @@ class Board():
         return Column(api_key_v2=self.__api_key_v2, **resp)
 
     
-    def change_column_value(self, item_id: str, column_id: str, value: str):
+    def change_column_value(self, item_id: str, column_id: str, value: str, *argv):
 
         resp = client.change_column_value(
             self.__api_key_v2, 
             item_id, 
             column_id, 
             self.id,
-            value)
+            value, 
+            *argv)
 
         return Item(self.__api_key_v1, self.__api_key_v2, **resp)
 
     
-    def change_multiple_column_values(self, item_id: str, column_values: str, *argv):
+    def change_multiple_column_values(self, item_id: str, column_values: dict, *argv):
 
         resp = client.change_multiple_column_value(
             self.__api_key_v2,
