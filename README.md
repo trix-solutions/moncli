@@ -11,6 +11,7 @@ The package can then be installed onto your current Python 3 environment when ru
 $ python3 setup.py install
 ```
 
+
 ## Using the Monday.com client ##
 ### Creating a Client ###
 Before creating a new __MondayClient__, you will first need to retrieve your API v1 and v2 access keys by navigating to __https://<your_instance_name>.monday.com/admin/integrations/api__ and copying both the API v1 (personal or company) and API v2 keys.  
@@ -55,6 +56,7 @@ Please note that the __MondayClient__ object requires that the input 'username' 
 ### Getting... me ###
 
 
+
 ## Using Boards ##
 ### Creating a column ###
 
@@ -75,3 +77,35 @@ Please note that the __MondayClient__ object requires that the input 'username' 
 
 
 ### Adding an item ###
+
+
+
+## Working with Columns and Groups ##
+### Getting group items ###
+
+
+
+## Working with Items ##
+### Getting column values ###
+
+
+
+## Working with Users, Teams, and Accounts ##
+### Get user account ###
+
+
+### Get user's teams ###
+
+
+### Sending a notification ###
+
+
+### Getting users on a team ###
+
+
+### Getting the account payment plan ###
+
+
+
+## Additional Questions/Feature Requests:
+Please feel free to log an issue or request a new feature by submitting a new issue or reaching out to me at andrew.shatz@trix.solutions. Thank you and happy coding!!!
