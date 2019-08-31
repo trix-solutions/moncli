@@ -9,7 +9,8 @@ $ cd \moncli
 The package can then be installed onto your current Python 3 environment when running the following command.
 ```
 $ python3 setup.py install
-```\
+```
+
 
 ## Using the Monday.com client ##
 ### Creating a Client ###
@@ -21,7 +22,7 @@ To create a new Monday.com client, simply run Python 3 and execute the following
 >>> client = MondayClient(username='user@email.com', api_key_v1='api_key_v1', api_key_v2='api_key_v2')
 ```
 Please note that the __MondayClient__ object requires that the input 'username' matches the user declared on the API v2 token for authentication purposes.
-\
+
 
 ### Creating a board ###
 Boards can be created with the __MondayClient__ object using the following command.  The __\*argv__ parameter can be used to determine which fields on the new board to return.  In the example below, only the _id_ field of the __Board__ object is returned after creation.
@@ -32,7 +33,7 @@ Boards can be created with the __MondayClient__ object using the following comma
 >>> new_board = client.create_board(board_name='new_public_board', board_kind=BoardKind.public, *return_fields)
 ```
 Please consult the Monday.com API v2 documentation at https://monday.com/developers/v2 for additional imformation regarding the __Board__ object return fields.
-\
+
 
 ### Getting boards ###
 The following command will retrieve boards by name.  In addition, key-value parameters may be used to refine the search.  By default, the __MondayClient__ will return a list of boards containing only their _id_ and _name_ values.
@@ -57,14 +58,14 @@ Additionally, if you already know the name of the board that you wish to retriev
 >>> retrieved_board = client.get_board(name='some_board')
 ```
 Please note that querying boards by name is not a built-in feature for Monday.com and may be less performant that searching for a board by ID.
-\
+
 
 ### Archiving a board ###
 The following command will archive a board and will return only a __Board__ object with an _id_ property corresponding to the archived board.
 ```
 >>> archived_board = client.archive_board(board_id=retrieved_board.id)
 ```
-\
+
 
 ### Getting items ###
 Items can be retrieved with the __MondayClient__ object using the following command. 
@@ -76,7 +77,7 @@ This example will retrieve the 25 most recently created items.  Optional paramet
 * page (int) - the page index starting at 1
 * ids (list[int]) - the IDs of the items to return
 * newest_first (bool) - indicates whether to sort by created date descending
-\
+
 
 ### Getting updates ###
 Updates can be retrieved with the __MondayClient__ object using the following command.
@@ -86,7 +87,7 @@ Updates can be retrieved with the __MondayClient__ object using the following co
 This example will retrieve the last 10 updates.  Optional parameters to use when querying __Update__ objects include:
 * limit (int) - the maximum number of updates per page to return
 * page (int) - the page index starting at 1
-\
+
 
 ### Creating a notification ###
 The __MondayClient__ object can be used to send notifications between users with the following command.
@@ -97,7 +98,7 @@ The __MondayClient__ object can be used to send notifications between users with
 ```
 Optional parameters to use when creating and sending a notification include:
 * payload (json) - the notification payload
-\
+
 
 ### Creating a new/retriving an existing tag ###
 Creating a new/retrieving an existing tag can be done by the __MondayClient__ object using the following command.
@@ -106,7 +107,7 @@ Creating a new/retrieving an existing tag can be done by the __MondayClient__ ob
 ```
 Optional parameters available when running the above command include:
 * board_id (str) - the ID of the private board using the tag (N/A for public boards)
-\
+
 
 ### Getting tags ###
 The __MondayClient__ can also retrieve __Tag__ objects using the following commannd
@@ -115,7 +116,7 @@ The __MondayClient__ can also retrieve __Tag__ objects using the following comma
 ```
 Optional parameters to use when retrieving __Tag__ objects include:
 * ids (list[int]) - the IDs of the tags to return
-\
+
 
 ### Getting users ###
 Users can be retrieved from the __MondayClient__ object using the following command.
@@ -128,7 +129,7 @@ This example will retrieve the first 25 (default limit) guest users.  Optional p
 * kind (UserKind) - the kind of users (all, non-guests, guests, pending) to return
 * limit (int) - the maximum number of users per page to return
 * newest_first (bool) - indicates whether to sort by created date descending
-\
+
 
 ### Getting teams ###
 Teams can be retrieved from the __MondayClient__ object using the following command.
@@ -137,7 +138,7 @@ Teams can be retrieved from the __MondayClient__ object using the following comm
 ```
 This example will retrieve a list of __Team__ objects containing the input IDs.  Optional parameters when querying __Team__ objects include:
 * ids (list[int]) - the IDs of the teams to return
-\
+
 
 ### Getting... me ###
 Finally, the __MondayClient__ can fetch the user associated with the API v2 token as a __User__ object using the following command.
@@ -145,7 +146,7 @@ Finally, the __MondayClient__ can fetch the user associated with the API v2 toke
 >>> me = client.get_me()
 ```
 This command is currently used by the __MondayClient__ to authorize the use of the API v2 token and can be put to very good use when sending notifications to other users from your own.
-\
+
 
 ## Using Boards ##
 ### Creating a column ###
