@@ -61,7 +61,7 @@ Additionally, if you already know the name of the board that you wish to retriev
 ```
 Please note that querying boards by name is not a built-in feature for Monday.com and may be less performant that searching for a board by ID.
 
-It is also important to note that while it is possible to query data for board columns, groups, and items in addition, the client requires that additional queryies be made for the additional data respectively after the initial board query.  These additional queries will be covered in more detail in the [Using Boards](https://www.google.com) section below.
+It is also important to note that while it is possible to query data for board columns, groups, and items in addition, the client requires that additional queryies be made for the additional data respectively after the initial board query.  These additional queries will be covered in more detail in the [Using Boards](https://github.com/trix-solutions/moncli/blob/initial-documentation/README.md#using-boards) section below.
 
 
 ### Archiving a board ###
