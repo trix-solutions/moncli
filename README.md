@@ -13,6 +13,8 @@ $ python3 setup.py install
 
 
 ## Using the Monday.com client ##
+The __MondayClient__ object is the entry point for all client activities and includes functionality for board, item, tag, and user management.  The following section will briefly overview what can be done with the __MondayClient__ object.
+
 ### Creating a Client ###
 Before creating a new __MondayClient__, you will first need to retrieve your API v1 and v2 access keys by navigating to __https://<your_instance_name>.monday.com/admin/integrations/api__ and copying both the API v1 (personal or company) and API v2 keys.  
 
@@ -32,7 +34,7 @@ Boards can be created with the __MondayClient__ object using the following comma
 >>> return_fields = ['id']
 >>> new_board = client.create_board(board_name='new_public_board', board_kind=BoardKind.public, *return_fields)
 ```
-Please consult the Monday.com API v2 documentation at https://monday.com/developers/v2 for additional imformation regarding the __Board__ object return fields.
+Please consult the Monday.com API v2 documentation [here](https://monday.com/developers/v2) for additional imformation regarding the __Board__ object return fields.
 
 
 ### Getting boards ###
@@ -58,6 +60,8 @@ Additionally, if you already know the name of the board that you wish to retriev
 >>> retrieved_board = client.get_board(name='some_board')
 ```
 Please note that querying boards by name is not a built-in feature for Monday.com and may be less performant that searching for a board by ID.
+
+It is also important to note that while it is possible to query data for board columns, groups, and items in addition, the client requires that additional queryies be made for the additional data respectively after the initial board query.  These additional queries will be covered in more detail in the [Using Boards](https://www.google.com) section below.
 
 
 ### Archiving a board ###
@@ -149,27 +153,47 @@ This command is currently used by the __MondayClient__ to authorize the use of t
 
 
 ## Using Boards ##
+Boards are cornerstones for any Monday.com setup, and __Board__ objects are no exception containing functionality for general data management with columns, groups, and items.  The next sections below will provide an overview of the full board functionality available.
+
 ### Creating a column ###
+To create a column with a __Board__ object, simply execute the command below.  
+```
+>>> from moncli import ColumnType
+>>>
+>>> new_column = board.create_column(title='New Text Column', column_type=ColumnType.text)
+```
+The __Column__ object returned contains only contains data for the _id_ field by default, but data for additional fields may be returned using the __\*argv__ parameter at the end of the function.  Information on additional __Column__ fields can be found in the Monday.com API v2 documentation [here](https://monday.com/developers/v2)
 
+### Changing one or multiple column values ###
+The __Board__ object can also change a single column value for an item using the following command.
+```
+>>> updated_item = board.change_column_value(item_id='1234567', column_id='text1', value='Hello again, world!')
+```
 
-### Changing a column value ###
+In addition to changing single column values, the __Board__ object can also change multiple column values for an item using the following command.
+```
+>>> column_values = {'text1'='Hello again, world!", 'date1'='1970-01-01'}
+>>> updated_item = board.change_multiple_column_values(item_id='1234567', column_values=column_values
+```
+Information on how to change values for different field types can be found [here](https://monday.com/developers/v2#column-values-section)
+It is important to note that the __Item__ object returned contains only contains data for the _id_ field by default, but data for additional fields may be returned using the __\*argv__ parameter at the end of the function.  Information on additional __Item__ fields can be found [here](https://monday.com/developers/v2#queries-section-items)
 
-
-### Changing multiple column values ###
-
-
-### Getting columns ###
-
-
-### Getting groups ###
-
-
-### Getting items ###
-
+### Getting columns, groups, and items ###
+To retrieve all columns, groups, and items associated with a __Board__ object, simply execute the following commands respectively.
+```
+>>> columns = board.get_columns()
+>>>
+>>> groups = board.get_groups()
+>>>
+>>> items = board.get_items()
+```
 
 ### Adding an item ###
-
-
+A new item can be added to a __Board__ object using the following command
+```
+>>> new_item = board.add_item(item_name='New Item')
+```
+An __Item__ object can be created with column values using the optional __column_values__ parameter.  Information on how to change values for different field types can be found [here](https://monday.com/developers/v2#column-values-section)
 
 ## Working with Columns and Groups ##
 ### Getting group items ###
@@ -194,9 +218,8 @@ This command is currently used by the __MondayClient__ to authorize the use of t
 ### Getting users on a team ###
 
 
-### Getting the account payment plan ###
-
-
+## Customized Queries and Mutations ##
+Coming soon...
 
 ## Additional Questions/Feature Requests:
 Please feel free to log an issue or request a new feature by submitting a new issue or reaching out to me at andrew.shatz@trix.solutions. Thank you and happy coding!!!
