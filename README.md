@@ -173,7 +173,7 @@ The __Board__ object can also change a single column value for an item using the
 In addition to changing single column values, the __Board__ object can also change multiple column values for an item using the following command.
 ```
 >>> column_values = {'text1'='Hello again, world!", 'date1'='1970-01-01'}
->>> updated_item = board.change_multiple_column_values(item_id='1234567', column_values=column_values
+>>> updated_item = board.change_multiple_column_values(item_id='1234567', column_values=column_values)
 ```
 Information on how to change values for different field types can be found [here](https://monday.com/developers/v2#column-values-section)
 It is important to note that the __Item__ object returned contains only contains data for the _id_ field by default, but data for additional fields may be returned using the __\*argv__ parameter at the end of the function.  Information on additional __Item__ fields can be found [here](https://monday.com/developers/v2#queries-section-items)
