@@ -197,12 +197,18 @@ An __Item__ object can be created with column values using the optional __column
 
 ## Working with Columns and Groups ##
 ### Getting group items ###
-
+Similar to __Board__ objects, __Group__ objects can return a list of contained items using the following command.
+```
+>>> items = group.get_items()
+```
 
 
 ## Working with Items ##
 ### Getting column values ###
-
+To reduce the query complexity for retrieving __Item__ objects from the Monday.com API, the full list of column values for an item can be acquired using the following command.
+```
+>>> column_values = item.get_column_values()
+```
 
 
 ## Working with Users, Teams, and Accounts ##
