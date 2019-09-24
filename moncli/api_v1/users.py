@@ -1,5 +1,5 @@
-from moncli.routes import constants
-from moncli.routes.requests import execute_get
+from moncli.api_v1 import constants
+from moncli.api_v1.requests import execute_get
 
 def get_users(api_key, page = 1, per_page = 25, offset = 0, order_by_latest = False):
 
