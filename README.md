@@ -197,25 +197,51 @@ An __Item__ object can be created with column values using the optional __column
 
 ## Working with Columns and Groups ##
 ### Getting group items ###
-
+Similar to __Board__ objects, __Group__ objects can return a list of contained items using the following command.
+```
+>>> items = group.get_items()
+```
 
 
 ## Working with Items ##
 ### Getting column values ###
-
+To reduce the query complexity for retrieving __Item__ objects from the Monday.com API, the full list of column values for an item can be acquired using the following command.
+```
+>>> column_values = item.get_column_values()
+``'
 
 
 ## Working with Users, Teams, and Accounts ##
 ### Get user account ###
-
+The __Account__ object contains information pertaining to the Monday.com service subscription and can be retrieved from the __User__ object with the following command.
+```
+>>> account = user.get_account()
+```
+The __Account__ object also contains the payment plan information via the __Plan__ object and can be retrieved using the following command.
+```
+>>> plan = account.get_plan()
+```
 
 ### Get user's teams ###
-
+Any given user can be assigned to multiple different teams, and a list of these __Team__ objects can be retrieved from the __User__ object with the following command.
+```
+>>> teams = user.get_teams()
+```
 
 ### Sending a notification ###
-
+Similar to sending notifications from the __MondayClient__ object, the __User__ object can send notifications with the following command.
+```
+>>> from moncli import NotificationTargetType
+>>>
+>>> notification = user.send_notification(text='text', target_id='2345678', target_type=NotificationTargetType.Project)
+```
+Please consult the Monday.com API v2 guide [here](https://monday.com/developers/v2#mutations-section-notifications) regarding additional optional parameters and return fields.
 
 ### Getting users on a team ###
+Similar to retrieving __Team__ objects from a __User__ object, __Team__ objects can also retrieve all containing users as __User__ objects with the following command.
+```
+>>> team_users = team.get_users()
+```
 
 
 ## Customized Queries and Mutations ##
