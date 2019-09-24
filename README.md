@@ -208,7 +208,7 @@ Similar to __Board__ objects, __Group__ objects can return a list of contained i
 To reduce the query complexity for retrieving __Item__ objects from the Monday.com API, the full list of column values for an item can be acquired using the following command.
 ```
 >>> column_values = item.get_column_values()
-```
+``'
 
 
 ## Working with Users, Teams, and Accounts ##
