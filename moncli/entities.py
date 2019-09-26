@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from . import api_v2 as client
 from .constants import DATETIME_FORMAT
 from .enums import BoardKind, ColumnType, NotificationTargetType
@@ -9,8 +8,7 @@ class MondayClient():
 
     def __init__(self, user_name: str, api_key_v1: str, api_key_v2: str):
      
-        self.__api_key_v1 = api_key_v1
-        self.__api_key_v2 = api_key_v2
+        self.__creds: MondayClientCredentials = MondayClientCredentials(api_key_v1, api_key_v2)
 
         me: User = self.get_me()
         if me.email.lower() != user_name.lower():
@@ -19,21 +17,28 @@ class MondayClient():
 
     def create_board(self, board_name: str, board_kind: BoardKind, *argv):
 
-        resp = client.create_board(self.__api_key_v2, board_name, board_kind, *argv)
+        board_data = client.create_board(
+            self.__creds.api_key_v2, 
+            board_name, 
+            board_kind, 
+            *argv)
 
-        return Board(self.__api_key_v1, self.__api_key_v2, **resp)
+        return Board(creds=self.__creds, **board_data)
     
 
     def get_boards(self, **kwargs):
 
-        result = []
+        boards_data = client.get_boards(
+            self.__creds.api_key_v2, 
+            'id', 
+            'name', 
+            **kwargs)
 
-        resp_boards = client.get_boards(self.__api_key_v2, 'id', 'name', **kwargs)
-
-        for board_data in resp_boards:
-            result.append(Board(self.__api_key_v1, self.__api_key_v2, **board_data))
-
-        return result
+        return [
+            Board(creds=self.__creds, **board_data)
+            for board_data
+            in boards_data
+        ]
 
 
     def get_board(self, id: str = None, name: str = None):
@@ -58,16 +63,16 @@ class MondayClient():
 
         # Search for single board by ID
         elif id != None:
-            resp_boards = client.get_boards(
-                self.__api_key_v2, 
+            boards_data = client.get_boards(
+                self.__creds.api_key_v2, 
                 *field_list,
                 ids=int(id),
                 limit=1)
 
-            if len(resp_boards) == 0:
+            if len(boards_data) == 0:
                 raise BoardNotFound('id', id)
 
-            return Board(self.__api_key_v1, self.__api_key_v2, **resp_boards[0])
+            return Board(creds=self.__creds, **boards_data[0])
 
         # Page through boards until name match appears.
         else:
@@ -77,20 +82,21 @@ class MondayClient():
             page_limit = 1000
             record_count = 1000
             while record_count >= page_limit:
-                resp_boards = client.get_boards(
-                    self.__api_key_v2, 
+
+                boards_data = client.get_boards(
+                    self.__creds.api_key_v2, 
                     *field_list,
                     limit=page_limit,
                     page=page)
 
-                target_boards = [board for board in resp_boards if board['name'].lower() == name.lower()]
+                target_boards = [board for board in boards_data if board['name'].lower() == name.lower()]
 
                 if len(target_boards) == 0:
                     page += 1
-                    record_count = len(resp_boards)
+                    record_count = len(boards_data)
                     continue
 
-                return Board(self.__api_key_v1, self.__api_key_v2, **resp_boards[0])
+                return Board(creds=self.__creds, **boards_data[0])
         
             if len(target_boards) == 0:
                 raise BoardNotFound('name', name)        
@@ -98,18 +104,18 @@ class MondayClient():
 
     def archive_board(self, board_id: str):
 
-        archive_board_resp = client.archive_board(
-            self.__api_key_v2, 
+        board_data = client.archive_board(
+            self.__creds.api_key_v2, 
             board_id,
             'id')
 
-        return Board(self.__api_key_v1, self.__api_key_v2, **archive_board_resp)
+        return Board(creds=self.__creds, **board_data)
 
     
     def get_items(self, ids, **kwargs):
 
         items_resp = client.get_items(
-            self.__api_key_v2, 
+            self.__creds.api_key_v2, 
             'id',
             'name',
             'board.id',
@@ -126,24 +132,24 @@ class MondayClient():
             ids=ids, 
             limit=1000)
 
-        return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp] 
+        return [Item(creds=self.__creds, **item_data) for item_data in items_resp] 
 
     
     def get_updates(self, **kwargs):
         
-        resp = client.get_updates(
-            self.__api_key_v2, 
+        updates_data = client.get_updates(
+            self.__creds.api_key_v2, 
             'id',
             'body',
             **kwargs)
 
-        return [Update(**data) for data in resp]
+        return [Update(**update_data) for update_data in updates_data]
 
 
     def create_notification(self, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, **kwargs):
 
-        resp = client.create_notification(
-            self.__api_key_v2, 
+        notification_data = client.create_notification(
+            self.__creds.api_key_v2, 
             text, 
             user_id, 
             target_id,
@@ -152,37 +158,37 @@ class MondayClient():
             'text',
             **kwargs)
 
-        return Notification(**resp)
+        return Notification(**notification_data)
 
 
     def create_or_get_tag(self, tag_name: str, **kwargs):
         
-        resp = client.create_or_get_tag(
-            self.__api_key_v2, 
+        tag_data = client.create_or_get_tag(
+            self.__creds.api_key_v2, 
             tag_name,
             'id',
             'name',
             'color')
 
-        return Tag(**resp)
+        return Tag(**tag_data)
 
     
     def get_tags(self, **kwargs):
         
-        resp = client.get_tags(
-            self.__api_key_v2,
+        tags_data = client.get_tags(
+            self.__creds.api_key_v2,
             'id',
             'name',
             'color',
             **kwargs)
 
-        return [Tag(**tag_data) for tag_data in resp]
+        return [Tag(**tag_data) for tag_data in tags_data]
 
 
     def get_users(self, **kwargs):
         
-        resp = client.get_users(
-            self.__api_key_v2, 
+        users_data = client.get_users(
+            self.__creds.api_key_v2, 
             'id',
             'name',
             'url',
@@ -198,26 +204,26 @@ class MondayClient():
             'join_date',
             **kwargs)
 
-        return [User(self.__api_key_v1, self.__api_key_v2, **user_data) for user_data in resp]
+        return [User(creds=self.__creds, **user_data) for user_data in users_data]
 
 
     def get_teams(self, **kwargs):
         
-        resp = client.get_teams(
-            self.__api_key_v2,
+        teams_data = client.get_teams(
+            self.__creds.api_key_v2,
             'id',
             'name',
             'picture_url',
             'users.id',
             **kwargs)
 
-        return [Team(self.__api_key_v1, self.__api_key_v2, **team_data) for team_data in resp]
+        return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
 
     
     def get_me(self):
 
-        resp = client.get_me(
-            self.__api_key_v2, 
+        user_data = client.get_me(
+            self.__creds.api_key_v2, 
             'id',
             'name',
             'url',
@@ -232,16 +238,15 @@ class MondayClient():
             'is_pending',
             'join_date')
 
-        return User(self.__api_key_v1, self.__api_key_v2, **resp)
+        return User(creds=self.__creds, **user_data)
 
 
 class Board():
 
-    def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
+    def __init__(self, **kwargs):
         self.__columns = None
         self.__groups = None
-        self.__api_key_v1 = api_key_v1
-        self.__api_key_v2 = api_key_v2
+        self.__creds = kwargs['creds']
 
         self.id = kwargs['id']
 
@@ -275,43 +280,19 @@ class Board():
                 self.state = value
 
 
-    def create_column(self, title:str, column_type: ColumnType, *argv):
+    def add_column(self, title:str, column_type: ColumnType, *argv):
 
         if len(argv) == 0:
             argv = ['id']
 
-        resp = client.create_column(
-            self.__api_key_v2, 
+        column_data = client.create_column(
+            self.__creds.api_key_v2, 
             self.id, 
             title, 
             column_type, 
             *argv)
 
-        return Column(api_key_v2=self.__api_key_v2, **resp)
-
-    
-    def change_column_value(self, item_id: str, column_id: str, value: str):
-
-        resp = client.change_column_value(
-            self.__api_key_v2, 
-            item_id, 
-            column_id, 
-            self.id,
-            value)
-
-        return Item(self.__api_key_v1, self.__api_key_v2, **resp)
-
-    
-    def change_multiple_column_values(self, item_id: str, column_values: str, *argv):
-
-        resp = client.change_multiple_column_value(
-            self.__api_key_v2,
-            item_id,
-            self.id,
-            column_values,
-            *argv)
-
-        return Item(self.__api_key_v1, self.__api_key_v2, **resp)
+        return Column(api_key_v2=self.__api_key_v2, **column_data)
 
     
     def get_columns(self):
@@ -332,6 +313,31 @@ class Board():
 
         return self.__columns
 
+    
+    def change_column_value(self, item_id: str, column_id: str, value: str):
+
+        resp = client.change_column_value(
+            self.__api_key_v2, 
+            item_id, 
+            column_id, 
+            self.id,
+            value)
+
+        return Item(self.__api_key_v1, self.__api_key_v2, **resp)
+
+    
+    def change_multiple_column_value(self, item_id: str, column_values: str, *argv):
+
+        resp = client.change_multiple_column_value(
+            self.__api_key_v2,
+            item_id,
+            self.id,
+            column_values,
+            *argv)
+
+        return Item(self.__api_key_v1, self.__api_key_v2, **resp)
+
+
     def get_groups(self):
 
         if self.__groups == None:
@@ -349,7 +355,14 @@ class Board():
 
             self.__groups = [Group(**group_data) for group_data in board['groups']]
 
-        return self.__groups
+        return self.__groups 
+
+
+    def add_item(self, item_name: str, **kwargs):
+
+        item = client.create_item(self.__api_key_v2, item_name, self.id, 'id', **kwargs)
+
+        return item['id']
 
 
     def get_items(self):
@@ -372,14 +385,7 @@ class Board():
             ids=self.__item_ids, 
             limit=1000)
 
-        return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp] 
-
-
-    def add_item(self, item_name: str, **kwargs):
-
-        item = client.create_item(self.__api_key_v2, item_name, self.id, 'id', **kwargs)
-
-        return item['id']
+        return [Item(self.__api_key_v1, self.__api_key_v2, **item_data) for item_data in items_resp]
 
 
 class Column():
@@ -750,6 +756,13 @@ class Plan():
 
             elif key == 'version':
                 self.version = value
+
+
+class MondayClientCredentials():
+
+    def __init__(self, api_key_v1: str, api_key_v2: str):
+        self.api_key_v1 = api_key_v1
+        self.api_key_v2 = api_key_v2
 
 
 class AuthorizationError(Exception):
