@@ -506,8 +506,7 @@ class Board():
 class Column():
 
     def __init__(self, **kwargs):
-        self.__api_key_v1 = kwargs['api_key_v1']
-        self.__api_key_v2 = kwargs['api_key_v2']
+        self.__creds = kwargs['creds']
         self.id = kwargs['id']
 
         for key, value in kwargs.items():
@@ -534,26 +533,26 @@ class Column():
     def change_value(self, item_id, value: str, *argv):
 
         item_data = client.change_column_value(
-            self.__api_key_v2,
+            self.__creds.api_key_v2,
             item_id,
             self.id,
             self.board_id,
             value,
             *argv)
         
-        return Item(self.__api_key_v1, self.__api_key_v2, **item_data)
+        return Item(creds=self.__creds, **item_data)
 
 
     def change_multiple_value(self, item_id: str, column_values: str, *argv):
         
         item_data = client.change_multiple_column_value(
-            self.__api_key_v2,
+            self.__creds.api_key_v2,
             item_id,
             self.board_id,
             column_values,
             *argv)
 
-        return Item(self.__api_key_v1, self.__api_key_v2, **item_data)
+        return Item(creds=self.__creds, **item_data)
 
 
 class Group():
