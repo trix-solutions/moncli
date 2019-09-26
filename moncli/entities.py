@@ -712,8 +712,7 @@ class Group():
 class Item():
 
     def __init__(self, **kwargs):
-        self.__api_key_v1 = kwargs['api_key_v1']
-        self.__api_key_v2 = kwargs['api_key_v2']
+        self.__creds = kwargs['creds']
         self.__column_values = None
         self.id = kwargs['id']
         self.name = kwargs['name']
@@ -728,7 +727,7 @@ class Item():
                 elif type(value) is dict:
                     
                     if value.__contains__('name'):
-                        self.board = Board(self.__api_key_v1, self.__api_key_v2, **value)
+                        self.board = Board(creds=self.__creds, **value)
 
                     else:
                         self.__board_id = value['id']
@@ -753,7 +752,7 @@ class Item():
 
         if self.__column_values == None:           
             item = client.get_items(
-                self.__api_key_v2,
+                self.__creds.api_key_v2,
                 'column_values.id',
                 'column_values.text',
                 'column_values.title',
@@ -769,7 +768,7 @@ class Item():
     def change_column_value(self, column_id: str, value: str, *argv):
         
         item_data = client.change_column_value(
-            self.__api_key_v2,
+            self.__creds.api_key_v2,
             self.id,
             column_id,
             self.board.id,
@@ -777,70 +776,55 @@ class Item():
             *argv)
 
 
-        return Item(
-            api_key_v1=self.__api_key_v1,
-            api_key_v2=self.__api_key_v2,
-            **item_data)
+        return Item(creds=self.__creds, **item_data)
 
     
     def change_multiple_column_values(self, column_values: str, *argv):
         
         item_data = client.change_multiple_column_value(
-            self.__api_key_v2,
+            self.__creds.api_key_v2,
             self.id,
             self.board.id,
             column_values,
             *argv)
 
-        return Item(
-            api_key_v1=self.__api_key_v1,
-            api_key_v2=self.__api_key_v2,
-            **item_data)
+        return Item(creds=self.__creds, **item_data)
 
     
     def move_to_group(self, group_id: str, *argv):
         
         item_data = client.move_item_to_group(
-            self.__api_key_v2,
+            self.__creds.api_key_v2,
             self.id,
             group_id)
 
-        return Item(
-            api_key_v1=self.__api_key_v1,
-            api_key_v2=self.__api_key_v2,
-            **item_data)
+        return Item(creds=self.__creds, **item_data)
 
 
     def archive(self, *argv):
         
         item_data = client.archive_item(
-            self.__api_key_v2,
+            self.__creds.api_key_v2,
             self.id,
             *argv)
 
-        return Item(
-            api_key_v1=self.__api_key_v1,
-            api_key_v2=self.__api_key_v2,
-            **item_data)
+        return Item(creds=self.__creds, **item_data)
 
 
     def delete(self, *argv):
         
         item_data = client.delete_item(
-            self.__api_key_v2,
+            self.__creds.api_key_v2,
             self.id,
             *argv)
 
-        return Item(
-            api_key_v1=self.__api_key_v1,
-            api_key_v2=self.__api_key_v2,
-            **item_data)
+        return Item(creds=self.__creds, **item_data)
 
 
     def add_update(self, body: str, *argv):
         
         update_data = client.create_update(
-            self.__api_key_v2, 
+            self.__creds.api_key_v2, 
             body, 
             self.id,
             *argv)
@@ -850,7 +834,10 @@ class Item():
     
     def get_updates(self, *argv, **kwargs):
         
-        updates_data = client.get_updates(*argv, **kwargs)
+        updates_data = client.get_updates(
+            self.__creds.api_key_v2,
+            *argv, 
+            **kwargs)
 
         return [Update(**update_data) for update_data in updates_data]
 
