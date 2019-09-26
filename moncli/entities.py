@@ -901,7 +901,7 @@ class Tag():
 
 class User():
 
-    def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
+    def __init__(self, **kwargs):
         self.__creds = kwargs['creds']
           
         self.id = kwargs['id']
@@ -975,7 +975,10 @@ class User():
             'account.logo',
             ids=int(self.id))
 
-        return Account(creds=self.__creds, **users_data[0]['account'])
+        return Account(
+            creds=self.__creds, 
+            user_id=self.id,
+            **users_data[0]['account'])
 
     
     def get_teams(self):
@@ -1007,8 +1010,8 @@ class User():
 
 class Account():
 
-    def __init__(self, api_key_v2: str, **kwargs):
-        self.__api_key_v2 = api_key_v2
+    def __init__(self, **kwargs):
+        self.__creds = kwargs['creds']
         self.__user_id = kwargs['user_id']
 
         self.first_day_of_the_week = kwargs['first_day_of_the_week']
@@ -1026,7 +1029,7 @@ class Account():
     def get_plan(self):
 
         resp = client.get_users(
-            self.__api_key_v2, 
+            self.__creds.api_key_v2, 
             'account.plan.max_users',
             'account.plan.period',
             'account.plan.tier',
@@ -1038,9 +1041,8 @@ class Account():
 
 class Team():
 
-    def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
-        self.__api_key_v1 = api_key_v1
-        self.__api_key_v2 = api_key_v2
+    def __init__(self, **kwargs):
+        self.__creds = kwargs['creds']
         
         self.id = kwargs['id']
         self.name = kwargs['name']
@@ -1057,7 +1059,7 @@ class Team():
     def get_users(self):
 
         user_resp = client.get_users(
-            self.__api_key_v2, 
+            self.__creds.api_key_v2, 
             'id',
             'name',
             'url',
@@ -1067,7 +1069,7 @@ class Team():
             'teams.id',
             ids=self.__user_ids)
 
-        return [User(self.__api_key_v1, self.__api_key_v2, **user_data) for user_data in user_resp]
+        return [User(creds=self.__creds, **user_data) for user_data in user_resp]
 
 
 class Plan():
