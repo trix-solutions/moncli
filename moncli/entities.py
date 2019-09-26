@@ -898,11 +898,11 @@ class Tag():
             elif key == 'color':
                 self.color = value
 
+
 class User():
 
     def __init__(self, api_key_v1: str, api_key_v2: str, **kwargs):
-        self.__api_key_v1 = api_key_v1
-        self.__api_key_v2 = api_key_v2
+        self.__creds = kwargs['creds']
           
         self.id = kwargs['id']
 
@@ -965,8 +965,8 @@ class User():
         
     def get_account(self):
 
-        resp = client.get_users(
-            self.__api_key_v2, 
+        users_data = client.get_users(
+            self.__creds.api_key_v2, 
             'account.first_day_of_the_week',
             'account.id',
             'account.name',
@@ -975,25 +975,34 @@ class User():
             'account.logo',
             ids=int(self.id))
 
-        return Account(self.__api_key_v2, user_id=self.id, **resp[0]['account'])
+        return Account(creds=self.__creds, **users_data[0]['account'])
 
     
     def get_teams(self):
 
         resp = client.get_teams(
-            self.__api_key_v2,
+            self.__creds.api_key_v2,
             'id',
             'name',
             'picture_url',
             'users.id',
             ids=self.__team_ids)
 
-        return [Team(self.__api_key_v1, self.__api_key_v2, **team_data) for team_data in resp]
+        return [Team(creds=self.__creds, **team_data) for team_data in resp]
 
     
     def send_notification(self, text: str, target_id: str, target_type: NotificationTargetType, *argv, **kwargs):
 
-        client.create_notification(self.__api_key_v2, text, self.id, target_id, target_type, *argv, **kwargs)
+        notification_data = client.create_notification(
+            self.__creds.api_key_v2, 
+            text, 
+            self.id, 
+            target_id, 
+            target_type, 
+            *argv, 
+            **kwargs)
+
+        return Notification(**notification_data)
 
 
 class Account():
