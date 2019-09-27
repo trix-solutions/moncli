@@ -5,6 +5,33 @@ class MondayClientCredentials():
         self.api_key_v2 = api_key_v2
 
 
+class Column():
+
+    def __init__(self, **kwargs):
+        self.__creds = kwargs['creds']
+        self.id = kwargs['id']
+
+        for key, value in kwargs.items():
+
+            if key == 'archived':
+                self.archived = value
+
+            elif key == 'settings_str':
+                self.settings_str = value
+
+            elif key == 'title':
+                self.title = value
+            
+            elif key == 'type':
+                self.type = value
+
+            elif key == 'width':
+                self.width = value
+
+            elif key == 'board_id':
+                self.board_id = value
+
+
 class ColumnValue():
 
     def __init__(self, **kwargs):
