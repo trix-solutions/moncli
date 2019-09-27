@@ -66,7 +66,7 @@ class MondayClient():
             boards_data = client.get_boards(
                 self.__creds.api_key_v2, 
                 *field_list,
-                ids=int(id),
+                ids=[int(id)],
                 limit=1)
 
             if len(boards_data) == 0:
@@ -96,7 +96,7 @@ class MondayClient():
                     record_count = len(boards_data)
                     continue
 
-                return Board(creds=self.__creds, **boards_data[0])
+                return Board(creds=self.__creds, **target_boards[0])
         
             if len(target_boards) == 0:
                 raise BoardNotFound('name', name)        
@@ -112,7 +112,7 @@ class MondayClient():
         return Board(creds=self.__creds, **board_data)
 
     
-    def get_items(self, ids, **kwargs):
+    def get_items(self, **kwargs):
 
         items_resp = client.get_items(
             self.__creds.api_key_v2, 
@@ -129,8 +129,7 @@ class MondayClient():
             'group.id',
             'state',
             'subscribers.id',
-            ids=ids, 
-            limit=1000)
+            **kwargs)
 
         return [Item(creds=self.__creds, **item_data) for item_data in items_resp] 
 
