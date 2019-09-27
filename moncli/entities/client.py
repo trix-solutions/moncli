@@ -1,0 +1,273 @@
+from .. import api_v2 as client
+from ..enums import BoardKind, NotificationTargetType
+from .objects import MondayClientCredentials, Tag, Update, Notification
+from .board import Board
+from .item import Item
+from .user import User, Team
+
+class MondayClient():
+
+    def __init__(self, user_name: str, api_key_v1: str, api_key_v2: str):
+     
+        self.__creds: MondayClientCredentials = MondayClientCredentials(api_key_v1, api_key_v2)
+
+        me: User = self.get_me()
+        if me.email.lower() != user_name.lower():
+            raise AuthorizationError(user_name)
+        
+
+    def create_board(self, board_name: str, board_kind: BoardKind, *argv):
+
+        board_data = client.create_board(
+            self.__creds.api_key_v2, 
+            board_name, 
+            board_kind, 
+            *argv)
+
+        return Board(creds=self.__creds, **board_data)
+    
+
+    def get_boards(self, **kwargs):
+
+        boards_data = client.get_boards(
+            self.__creds.api_key_v2, 
+            'id', 
+            'name', 
+            **kwargs)
+
+        return [
+            Board(creds=self.__creds, **board_data)
+            for board_data
+            in boards_data
+        ]
+
+
+    def get_board(self, id: str = None, name: str = None):
+
+        field_list = [
+            'id', 
+            'name', 
+            'board_folder_id', 
+            'board_kind', 
+            'description', 
+            'items.id', 
+            'owner.id', 
+            'permissions',
+            'pos',
+            'state']
+
+        if id != None and name != None:
+            raise TooManyGetBoardParameters()
+
+        elif id == None and name == None:
+            raise NotEnoughGetBoardParameters()
+
+        # Search for single board by ID
+        elif id != None:
+            boards_data = client.get_boards(
+                self.__creds.api_key_v2, 
+                *field_list,
+                ids=[int(id)],
+                limit=1)
+
+            if len(boards_data) == 0:
+                raise BoardNotFound('id', id)
+
+            return Board(creds=self.__creds, **boards_data[0])
+
+        # Page through boards until name match appears.
+        else:
+
+            # Hard configure the pagination rate.
+            page = 1
+            page_limit = 1000
+            record_count = 1000
+            while record_count >= page_limit:
+
+                boards_data = client.get_boards(
+                    self.__creds.api_key_v2, 
+                    *field_list,
+                    limit=page_limit,
+                    page=page)
+
+                target_boards = [board for board in boards_data if board['name'].lower() == name.lower()]
+
+                if len(target_boards) == 0:
+                    page += 1
+                    record_count = len(boards_data)
+                    continue
+
+                return Board(creds=self.__creds, **target_boards[0])
+        
+            if len(target_boards) == 0:
+                raise BoardNotFound('name', name)        
+
+
+    def archive_board(self, board_id: str):
+
+        board_data = client.archive_board(
+            self.__creds.api_key_v2, 
+            board_id,
+            'id')
+
+        return Board(creds=self.__creds, **board_data)
+
+    
+    def get_items(self, **kwargs):
+
+        items_resp = client.get_items(
+            self.__creds.api_key_v2, 
+            'id',
+            'name',
+            'board.id',
+            'creator_id',
+            'column_values.id',
+            'column_values.text',
+            'column_values.title',
+            'column_values.value',
+            'column_values.additional_info',
+            'group.id',
+            'state',
+            'subscribers.id',
+            **kwargs)
+
+        return [Item(creds=self.__creds, **item_data) for item_data in items_resp] 
+
+    
+    def get_updates(self, **kwargs):
+        
+        updates_data = client.get_updates(
+            self.__creds.api_key_v2, 
+            'id',
+            'body',
+            **kwargs)
+
+        return [Update(**update_data) for update_data in updates_data]
+
+
+    def create_notification(self, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, **kwargs):
+
+        notification_data = client.create_notification(
+            self.__creds.api_key_v2, 
+            text, 
+            user_id, 
+            target_id,
+            target_type,
+            'id',
+            'text',
+            **kwargs)
+
+        return Notification(**notification_data)
+
+
+    def create_or_get_tag(self, tag_name: str, **kwargs):
+        
+        tag_data = client.create_or_get_tag(
+            self.__creds.api_key_v2, 
+            tag_name,
+            'id',
+            'name',
+            'color')
+
+        return Tag(**tag_data)
+
+    
+    def get_tags(self, **kwargs):
+        
+        tags_data = client.get_tags(
+            self.__creds.api_key_v2,
+            'id',
+            'name',
+            'color',
+            **kwargs)
+
+        return [Tag(**tag_data) for tag_data in tags_data]
+
+
+    def get_users(self, **kwargs):
+        
+        users_data = client.get_users(
+            self.__creds.api_key_v2, 
+            'id',
+            'name',
+            'url',
+            'email',
+            'enabled',
+            'account.id',
+            'teams.id',
+            'birthday',
+            'country_code',
+            'created_at',
+            'is_guest',
+            'is_pending',
+            'join_date',
+            **kwargs)
+
+        return [User(creds=self.__creds, **user_data) for user_data in users_data]
+
+
+    def get_teams(self, **kwargs):
+        
+        teams_data = client.get_teams(
+            self.__creds.api_key_v2,
+            'id',
+            'name',
+            'picture_url',
+            'users.id',
+            **kwargs)
+
+        return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
+
+    
+    def get_me(self):
+
+        user_data = client.get_me(
+            self.__creds.api_key_v2, 
+            'id',
+            'name',
+            'url',
+            'email',
+            'enabled',
+            'account.id',
+            'teams.id',
+            'birthday',
+            'country_code',
+            'created_at',
+            'is_guest',
+            'is_pending',
+            'join_date')
+
+        return User(creds=self.__creds, **user_data)
+
+
+class AuthorizationError(Exception):
+
+    def __init__(self, user_name: str):
+
+        self.message = 'User {} was not recognized by the applied token'.format(user_name)
+
+
+class BoardNotFound(Exception):
+
+    def __init__(self, search_type, value):
+        
+        if search_type == 'id':
+            self.message = 'Unable to find board with name: "{}".'.format(value)
+        
+        elif search_type == 'name':
+            self.message = 'Unable to find board with the ID: "{}".'.format(value)
+
+        else:
+            self.message = 'Unable to find the requested board.'
+
+
+class TooManyGetBoardParameters(Exception):
+
+    def __init__(self):
+        self.message = "Unable to use both 'id' and 'name' when querying for a board."
+        
+
+class NotEnoughGetBoardParameters(Exception):
+
+    def __init__(self):
+        self.message = "Either the 'id' or 'name' is required when querying a board."
