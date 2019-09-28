@@ -128,11 +128,6 @@ class Board():
             'board.id',
             'board.name',
             'creator_id',
-            'column_values.id',
-            'column_values.text',
-            'column_values.title',
-            'column_values.value',
-            'column_values.additional_info',
             'group.id',
             'state',
             'subscribers.id'

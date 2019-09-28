@@ -159,4 +159,3 @@ USERS_OPTIONAL_PARAMS = {
 TEAMS_OPTIONAL_PARAMS = {
     'ids': ArgumentValueKind.List
 }
-

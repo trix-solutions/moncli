@@ -1,4 +1,6 @@
 from .. import api_v2 as client
+from ..enums import ColumnType
+from ..constants import COLUMN_TYPE_MAPPINGS
 from .objects import ColumnValue, Update
 
 class Item():
@@ -31,17 +33,29 @@ class Item():
         
     def get_column_values(self):
 
-        if self.__column_values == None:           
-            items = client.get_items(
+        if self.__column_values == None: 
+
+            # Pulls the columns from the board containing the item and maps 
+            # column ID to type.
+            column_types_map = {
+                column['id']: ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
+                for column
+                in client.get_items(
+                    self.__creds.api_key_v2,
+                    'board.columns.id', 'board.columns.type',
+                    ids=[int(self.id)])[0]['board']['columns']
+            }
+
+            column_values_data = client.get_items(
                 self.__creds.api_key_v2,
-                'column_values.id',
-                'column_values.text',
-                'column_values.title',
-                'column_values.value',
-                'column_values.additional_info',
-                ids=[int(self.id)])
-                
-            self.__column_values = [ColumnValue(**column_values) for column_values in items[0]['column_values']]
+                'column_values.id', 'column_values.title', 'column_values.value',
+                ids=[int(self.id)])[0]['column_values']
+
+            self.__column_values = [
+                ColumnValue(type=column_types_map[column_value_data['id']], **column_value_data) 
+                for column_value_data 
+                in column_values_data
+            ]
 
         return self.__column_values
 
