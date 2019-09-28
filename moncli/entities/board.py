@@ -77,13 +77,13 @@ class Board():
         return self.__columns
 
 
-    def add_group(self, group_name: str, *argv):
+    def add_group(self, group_name: str):
 
         group_data = client.create_group(
             self.__creds.api_key_v2,
             self.id,
             group_name,
-            *argv)
+            'id', 'title')
 
         return Group(
             creds=self.__creds,

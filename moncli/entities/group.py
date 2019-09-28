@@ -24,19 +24,19 @@ class Group():
                 self.deleted = value
 
             elif key == 'items':
-                self.__item_ids = [int(item['id'] for item in value)]
+                self.__item_ids = [int(item['id']) for item in value]
 
             elif key == 'position':
                 self.position = value
     
 
-    def duplicate(self, group_title: str, add_to_top: bool = False, *argv):
+    def duplicate(self, group_title: str, add_to_top: bool = False):
         
         group_data = client.duplicate_group(
             self.__creds.api_key_v2, 
             self.board_id, 
             self.id, 
-            *argv)
+            'id', 'title', 'items.id')
 
         return Group(
             creds=self.__creds,
@@ -44,13 +44,13 @@ class Group():
             **group_data)
 
 
-    def archive(self, *argv):
+    def archive(self):
         
         group_data = client.archive_group(
             self.__creds.api_key_v2,
             self.board_id,
             self.id,
-            *argv)
+            'id', 'title', 'archived')
 
         return Group(
             creds=self.__creds,
@@ -58,35 +58,47 @@ class Group():
             **group_data)
 
 
-    def delete(self, *argv):
+    def delete(self):
         
         group_data = client.delete_group(
             self.__creds.api_key_v2,
             self.board_id,
             self.id,
-            *argv)
+            'id', 'title', 'deleted')
 
         return Group(
             creds=self.__creds,
-            board_id=self.board_id
+            board_id=self.board_id,
             **group_data)
 
 
-    def add_item(self, item_name: str, column_values: str = None, *argv):
+    def add_item(self, item_name: str, **kwargs):
         
         item_data = client.create_item(
             self.__creds.api_key_v2,
             item_name,
             self.board_id,
-            *argv,
-            column_values=column_values)
+            'id', 'name', 'board.id',
+            group_id=self.id,
+            **kwargs)
 
         return Item(creds=self.__creds, **item_data)
 
 
     def get_items(self):
 
-        items_resp = client.get_items(
+        if not hasattr(self, '__item_ids'):
+
+            board = client.get_boards(
+                self.__creds.api_key_v2,
+                'groups.id', 'groups.items.id', 
+                ids=[int(self.board_id)])[0]
+
+            group = [group for group in board['groups'] if group['id'] == self.id][0]
+            self.__item_ids = [int(item['id']) for item in group['items']]
+
+
+        items_data = client.get_items(
             self.__creds.api_key_v2, 
             'id',
             'name',
@@ -104,52 +116,4 @@ class Group():
             ids=self.__item_ids, 
             limit=1000)
 
-        return [Item(creds=self.__creds, **item_data) for item_data in items_resp] 
-
-
-    def get_items_by_column_values(self, column_id: str, column_value: str, *argv, **kwargs):
-        
-        items_data = client.get_items_by_column_values(
-            self.__creds.api_key_v2,
-            self.board_id,
-            self.id,
-            column_value,
-            *argv,
-            **kwargs)
-
-        return [
-            Item(creds=self.__creds, **item_data)
-            for item_data
-            in items_data
-        ]
-
-    
-    def move_item(self, item_id: str, group_id: str, *argv):
-        
-        item_data = client.move_item_to_group(
-            self.__creds, 
-            item_id, 
-            group_id,
-            *argv)
-
-        return Item(creds=self.__creds, **item_data)
-
-
-    def archive_item(self, item_id: str, *argv):
-        
-        item_data = client.archive_item(
-            self.__creds.api_key_v2,
-            item_id,
-            *argv)
-
-        return Item(creds=self.__creds, **item_data)
-
-    
-    def delete_item(self, item_id: str, *argv):
-        
-        item_data = client.delete_item(
-            self.__creds.api_key_v2,
-            item_id, 
-            *argv)
-            
-        return Item(creds=self.__creds, **item_data)
+        return [Item(creds=self.__creds, **item_data) for item_data in items_data]
