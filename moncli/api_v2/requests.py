@@ -25,7 +25,7 @@ def execute_query(api_key: str, **kwargs):
 
     text: dict = resp.json()
 
-    if resp.status_code == 500:
+    if resp.status_code == 403 or resp.status_code == 500:
         raise MondayApiError(json.dumps(data), resp.status_code, [text['error_message']])
 
     if text.__contains__('errors'):
