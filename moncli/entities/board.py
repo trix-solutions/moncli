@@ -43,17 +43,14 @@ class Board():
                 self.state = value
 
 
-    def add_column(self, title:str, column_type: ColumnType, *argv):
-
-        if len(argv) == 0:
-            argv = ['id']
-
+    def add_column(self, title:str, column_type: ColumnType):
+        
         column_data = client.create_column(
             self.__creds.api_key_v2, 
             self.id, 
             title, 
             column_type, 
-            *argv)
+            'id', 'title', 'type')
 
         return Column(creds=self.__creds, **column_data)
 

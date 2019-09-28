@@ -32,21 +32,21 @@ class Item():
     def get_column_values(self):
 
         if self.__column_values == None:           
-            item = client.get_items(
+            items = client.get_items(
                 self.__creds.api_key_v2,
                 'column_values.id',
                 'column_values.text',
                 'column_values.title',
                 'column_values.value',
                 'column_values.additional_info',
-                ids=int(self.id))
+                ids=[int(self.id)])
                 
-            self.__column_values = [ColumnValue(**column_values) for column_values in item['column_values']]
+            self.__column_values = [ColumnValue(**column_values) for column_values in items[0]['column_values']]
 
         return self.__column_values
 
     
-    def change_column_value(self, column_id: str, value: str, *argv):
+    def change_column_value(self, column_id: str, value):
         
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
@@ -54,70 +54,71 @@ class Item():
             column_id,
             self.__board_id,
             value,
-            *argv)
+            'id', 'name', 'board.id')
 
 
         return Item(creds=self.__creds, **item_data)
 
     
-    def change_multiple_column_values(self, column_values: str, *argv):
+    def change_multiple_column_values(self, column_values):
         
         item_data = client.change_multiple_column_value(
             self.__creds.api_key_v2,
             self.id,
             self.__board_id,
             column_values,
-            *argv)
+            'id', 'name', 'board.id')
 
         return Item(creds=self.__creds, **item_data)
 
     
-    def move_to_group(self, group_id: str, *argv):
+    def move_to_group(self, group_id: str):
         
         item_data = client.move_item_to_group(
             self.__creds.api_key_v2,
             self.id,
-            group_id)
+            group_id,
+            'id', 'name', 'board.id')
 
         return Item(creds=self.__creds, **item_data)
 
 
-    def archive(self, *argv):
+    def archive(self):
         
         item_data = client.archive_item(
             self.__creds.api_key_v2,
             self.id,
-            *argv)
+            'id', 'name', 'board.id')
 
         return Item(creds=self.__creds, **item_data)
 
 
-    def delete(self, *argv):
+    def delete(self):
         
         item_data = client.delete_item(
             self.__creds.api_key_v2,
             self.id,
-            *argv)
+            'id', 'name', 'board.id')
 
         return Item(creds=self.__creds, **item_data)
 
 
-    def add_update(self, body: str, *argv):
+    def add_update(self, body: str):
         
         update_data = client.create_update(
             self.__creds.api_key_v2, 
             body, 
             self.id,
-            *argv)
+            'id', 'body')
 
         return Update(**update_data)
 
     
-    def get_updates(self, *argv, **kwargs):
+    def get_updates(self, **kwargs):
         
         updates_data = client.get_updates(
             self.__creds.api_key_v2,
-            *argv, 
+            'id', 'body', 
             **kwargs)
 
         return [Update(**update_data) for update_data in updates_data]
