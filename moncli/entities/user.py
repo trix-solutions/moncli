@@ -76,7 +76,7 @@ class User():
             'account.show_timeline_weekends',
             'account.slug',
             'account.logo',
-            ids=int(self.id))
+            ids=[int(self.id)])
 
         return Account(
             creds=self.__creds, 
@@ -86,7 +86,7 @@ class User():
     
     def get_teams(self):
 
-        resp = client.get_teams(
+        teams_data = client.get_teams(
             self.__creds.api_key_v2,
             'id',
             'name',
@@ -94,7 +94,7 @@ class User():
             'users.id',
             ids=self.__team_ids)
 
-        return [Team(creds=self.__creds, **team_data) for team_data in resp]
+        return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
 
     
     def send_notification(self, text: str, target_id: str, target_type: NotificationTargetType, *argv, **kwargs):
@@ -130,7 +130,7 @@ class Team():
         
     def get_users(self):
 
-        user_resp = client.get_users(
+        users_data = client.get_users(
             self.__creds.api_key_v2, 
             'id',
             'name',
@@ -141,7 +141,7 @@ class Team():
             'teams.id',
             ids=self.__user_ids)
 
-        return [User(creds=self.__creds, **user_data) for user_data in user_resp]
+        return [User(creds=self.__creds, **user_data) for user_data in users_data]
 
 
 class Account():
@@ -164,12 +164,12 @@ class Account():
 
     def get_plan(self):
 
-        resp = client.get_users(
+        plan_data = client.get_users(
             self.__creds.api_key_v2, 
             'account.plan.max_users',
             'account.plan.period',
             'account.plan.tier',
             'account.plan.version',
-            ids=int(self.__user_id))
+            ids=[int(self.__user_id)])
 
-        return Plan(**resp[0]['account']['plan'])
+        return Plan(**plan_data[0]['account']['plan'])
