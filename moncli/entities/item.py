@@ -1,7 +1,11 @@
+import json
+from typing import List
+
 from .. import api_v2 as client
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
-from .objects import ColumnValue, Update
+from ..columnvalue import create_column_value, ColumnValue
+from .objects import Update
 
 class Item():
 
@@ -15,10 +19,7 @@ class Item():
 
         for key, value in kwargs.items():
 
-            if key == 'column_values':
-                self.__column_values = [ColumnValue(**column_values) for column_values in value]
-
-            elif key == 'creator_id':
+            if key == 'creator_id':
                 self.creator_id = value
 
             elif key == 'group':
@@ -46,41 +47,54 @@ class Item():
                     ids=[int(self.id)])[0]['board']['columns']
             }
 
-            column_values_data = client.get_items(
+            item_data = client.get_items(
                 self.__creds.api_key_v2,
                 'column_values.id', 'column_values.title', 'column_values.value',
-                ids=[int(self.id)])[0]['column_values']
+                ids=[int(self.id)])[0]
 
-            self.__column_values = [
-                ColumnValue(type=column_types_map[column_value_data['id']], **column_value_data) 
-                for column_value_data 
-                in column_values_data
-            ]
+            column_values_data = item_data['column_values']
+
+            self.__column_values = []
+
+            for data in column_values_data:
+
+                id = data['id']
+                title = data['title']
+                column_type = column_types_map[id]
+                value = json.loads(data['value'])
+                column_value = create_column_value(id, title, column_type, value)
+
+                self.__column_values.append(column_value)          
 
         return self.__column_values
 
     
-    def change_column_value(self, column_id: str, value):
+    def change_column_value(self, column_value: ColumnValue):
         
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
             self.id,
-            column_id,
+            column_value.id,
             self.__board_id,
-            value,
+            column_value.format(),
             'id', 'name', 'board.id')
-
 
         return Item(creds=self.__creds, **item_data)
 
     
     def change_multiple_column_values(self, column_values):
         
+        if column_values is dict:
+            values = column_values
+
+        elif column_values is List[ColumnValue]:
+            values = { value.id: value.format() for value in column_values }
+
         item_data = client.change_multiple_column_value(
             self.__creds.api_key_v2,
             self.id,
             self.__board_id,
-            column_values,
+            values,
             'id', 'name', 'board.id')
 
         return Item(creds=self.__creds, **item_data)

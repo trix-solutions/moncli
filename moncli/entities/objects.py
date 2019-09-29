@@ -1,4 +1,4 @@
-import json
+from ..enums import ColumnType
 
 class MondayClientCredentials():
 
@@ -32,19 +32,6 @@ class Column():
 
             elif key == 'board_id':
                 self.board_id = value
-
-
-class ColumnValue():
-
-    def __init__(self, **kwargs):
-        self.id = kwargs['id']
-        self.title = kwargs['title']
-        self.type = kwargs['type']
-
-        if kwargs['value'] is not None:
-            self.value = json.loads(kwargs['value'])
-        else:
-            self.value = None
 
 
 class Update():
@@ -101,3 +88,6 @@ class Plan():
 
             elif key == 'version':
                 self.version = value
+
+
+
