@@ -1,5 +1,3 @@
-from ..enums import ColumnType
-
 class MondayClientCredentials():
 
     def __init__(self, api_key_v1: str, api_key_v2: str):

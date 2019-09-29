@@ -82,13 +82,9 @@ class Item():
         return Item(creds=self.__creds, **item_data)
 
     
-    def change_multiple_column_values(self, column_values):
+    def change_multiple_column_values(self, column_values: List[ColumnValue]):
         
-        if column_values is dict:
-            values = column_values
-
-        elif column_values is List[ColumnValue]:
-            values = { value.id: value.format() for value in column_values }
+        values = { value.id: value.format() for value in column_values }
 
         item_data = client.change_multiple_column_value(
             self.__creds.api_key_v2,
