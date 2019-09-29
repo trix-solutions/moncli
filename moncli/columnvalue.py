@@ -186,6 +186,48 @@ class NumberValue(ColumnValue):
         return a == b
 
 
+class PeopleValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(PeopleValue, self).__init__(id, title)
+
+        self.persons_and_teams = None
+
+        for key, value in kwargs.items():
+
+            if key == 'persons_and_teams':
+                self.persons_and_teams = value
+
+    
+    def format(self):
+
+        if self.persons_and_teams is None:
+            return self.persons_and_teams
+
+        return { 'personsAndTeams': self.persons_and_teams }
+
+
+class PhoneValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(PhoneValue, self).__init__(id, title)
+
+        self.phone = None
+        self.country_short_name = None
+
+        if kwargs.__contains__('phone') or kwargs.__contains__('country_short_name'):
+            self.phone = kwargs['phone']
+            self.country_short_name = kwargs['country_short_name']
+
+    
+    def format(self):
+
+        if self.phone is None or self.country_short_name is None:
+            return None
+
+        return { 'phone': self.phone, 'countryShortName': self.country_short_name }
+
+
 class StatusValue(ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -211,7 +253,28 @@ class StatusValue(ColumnValue):
         if self.index is not None:
             return { 'index': self.index }
 
-            
+
+class TeamValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(TeamValue, self).__init__(id, title)
+
+        self.team_id = None
+
+        for key, value in kwargs.items():
+
+            if key == 'team_id':
+                self.team_id: int = value
+
+
+    def format(self):
+
+        if self.team_id is not None:
+            return { 'team_id': self.team_id }
+
+        return self.team_id
+
+
 class TextValue(ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -228,14 +291,35 @@ class TextValue(ColumnValue):
         return self.text
 
 
-def create_column_value(id: str, title: str, column_type: ColumnType, value = None):
+class TimezoneValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(TimezoneValue, self).__init__(id, title)
+
+        self.timezone = None
+
+        for key, value in kwargs.items():
+
+            if key == 'timezone':
+                self.timezone = value
+
+
+    def format(self):
+
+        if self.timezone is not None:
+            return { 'timezone': self.timezone }
+
+        return self.timezone
+
+
+def create_column_value(id: str, column_type: ColumnType, title: str = None, value = None):
 
     if column_type == ColumnType.checkbox:
 
         if value is None:
             return CheckboxValue(id, title)
 
-        return CheckboxValue(id, title, checked=value['checked'])
+        return CheckboxValue(id, title, **value)
 
 
     elif column_type == ColumnType.country:
@@ -251,11 +335,11 @@ def create_column_value(id: str, title: str, column_type: ColumnType, value = No
         if value is None: 
             return DropdownValue(id, title)
 
-        if value.__contains__('id'):
-            return DropdownValue(id, title, label_id=value['id'])
-
         if value.__contains__('label'):
             return DropdownValue(id, title, label=value['label'])
+
+        if value.__contains__('id'):
+            return DropdownValue(id, title, label_id=value['id'])
 
 
     elif column_type == ColumnType.email:
@@ -263,7 +347,7 @@ def create_column_value(id: str, title: str, column_type: ColumnType, value = No
         if value is None:
             return EmailValue(id, title)
 
-        return EmailValue(id, title, email=value['email'], text=value['text'])
+        return EmailValue(id, title, **value)
 
 
     elif column_type == ColumnType.long_text:
@@ -271,7 +355,7 @@ def create_column_value(id: str, title: str, column_type: ColumnType, value = No
         if value is None:
             return LongTextValue(id, title)
 
-        return LongTextValue(id, title, text=value['text'])
+        return LongTextValue(id, title, **value)
 
 
     elif column_type == ColumnType.name:
@@ -286,16 +370,40 @@ def create_column_value(id: str, title: str, column_type: ColumnType, value = No
         return NumberValue(id, title, number=value)
 
 
+    elif column_type == ColumnType.people:
+
+        if value is None:
+            return PeopleValue(id, title)
+
+        return PeopleValue(id, title, persons_and_teams=value['personsAndTeams'])
+
+
+    elif column_type == ColumnType.phone:
+
+        if value is None:
+            return PhoneValue(id, title)
+
+        return PhoneValue(id, title, phone=value['phone'], country_short_name=value['countryShortName'])
+    
+    
     elif column_type == ColumnType.status:
 
         if value is None:
             return StatusValue(id, title)
 
+        if value.__contains__('label'):
+            return StatusValue(id, title, label=value['label'])
+
         if value.__contains__('index'):
             return StatusValue(id, title, index=value['index'])
 
-        if value.__contains__('label'):
-            return StatusValue(id, title, label=value['label'])
+
+    elif column_type == ColumnType.team:
+
+        if value is None:
+            return TeamValue(id, title)
+
+        return TeamValue(id, title, **value)
 
 
     elif column_type == ColumnType.text:
@@ -304,3 +412,11 @@ def create_column_value(id: str, title: str, column_type: ColumnType, value = No
             return TextValue(id, title)
 
         return TextValue(id, title, text=value)
+
+
+    elif column_type == ColumnType.world_clock:
+
+        if value is None:
+            return TimezoneValue(id, title)
+
+        return TimezoneValue(id, title, **value)
