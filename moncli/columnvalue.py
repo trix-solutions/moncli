@@ -25,12 +25,10 @@ class CheckboxValue(ColumnValue):
     
     def format(self):
 
-        value: str = 'false'
+        if self.checked:
+            return { 'checked': 'true' }
 
-        if hasattr(self, 'checked') and self.checked:
-            value = 'true'
-
-        return { "checked": value }
+        return {}
 
 
 class CountryValue(ColumnValue):
@@ -52,11 +50,39 @@ class CountryValue(ColumnValue):
     
     def format(self):
 
+        if self.country_code is None or self.country_value is None:
+            return {}
+
         return {
             'countryCode': self.country_code,
             'countryName': self.country_name
         }
         
+
+class DateValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(DateValue, self).__init__(id, title)
+
+        self.date = None
+        self.time = None
+
+        for key, value in kwargs.items():
+
+            if key == 'date':
+                self.date = value
+
+            if key == 'time':
+                self.time = value
+
+
+    def format(self):
+
+        if self.date is None:
+            return {}
+
+        return { 'date': self.date, 'time': self.time }
+
 
 class DropdownValue(ColumnValue):
 
@@ -83,6 +109,8 @@ class DropdownValue(ColumnValue):
         if self.label_id is not None:
             return { 'id': self.label_id}
 
+        return {}
+
 
 class EmailValue(ColumnValue):
 
@@ -103,10 +131,66 @@ class EmailValue(ColumnValue):
     
     def format(self):
 
-        return {
-            'email': self.email,
-            'text': self.text
-        }
+        if self.email is None:
+            return {}
+
+        result = { 'email': self.email }
+
+        if self.text is not None:
+            result['text'] = self.text
+
+        return result
+
+
+class HourValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(HourValue, self).__init__(id, title)
+
+        self.hour = None
+        self.minute = None
+
+        if kwargs.__contains__('hour'):
+            self.hour = kwargs['hour']
+            self.minute = kwargs['minute']
+
+    
+    def format(self):
+
+        if self.hour is None:
+            return {}
+
+        return { 'hour': self.hour, 'minute': self.minute }
+
+
+class LinkValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(LinkValue, self).__init__(id, title)
+
+        self.url = None
+        self.text = None
+
+        for key, value in kwargs.items():
+
+            if key == 'url':
+                self.url = value
+
+            if key == 'text':
+                self.text = value
+
+
+    def format(self):
+
+        if self.url is None:
+            {}
+
+        result = { 'url': self.url}
+
+        if self.text is not None:
+            result['text'] = self.text
+
+        return result
 
 
 class LongTextValue(ColumnValue):
@@ -121,6 +205,9 @@ class LongTextValue(ColumnValue):
 
 
     def format(self):
+
+        if self.text is None:
+            return {}
 
         return { 'text': self.text}
 
@@ -160,7 +247,7 @@ class NumberValue(ColumnValue):
         if self.number is not None:
             return str(self.number)
 
-        return self.number
+        return ''
 
 
     def __isfloat(self, value):
@@ -202,7 +289,7 @@ class PeopleValue(ColumnValue):
     def format(self):
 
         if self.persons_and_teams is None:
-            return self.persons_and_teams
+            return {}
 
         return { 'personsAndTeams': self.persons_and_teams }
 
@@ -223,9 +310,28 @@ class PhoneValue(ColumnValue):
     def format(self):
 
         if self.phone is None or self.country_short_name is None:
-            return None
+            return {}
 
         return { 'phone': self.phone, 'countryShortName': self.country_short_name }
+
+
+class RatingValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(RatingValue, self).__init__(id, title)
+
+        self.rating: int = None
+
+        if kwargs.__contains__('rating'):
+            self.rating = kwargs['rating']
+
+
+    def format(self):
+
+        if self.rating is None:
+            return {}
+
+        return { 'rating': self.rating }
 
 
 class StatusValue(ColumnValue):
@@ -253,6 +359,29 @@ class StatusValue(ColumnValue):
         if self.index is not None:
             return { 'index': self.index }
 
+        return {}
+
+
+class TagsValue(ColumnValue):
+    
+    def __init__(self, id: str, title: str, **kwargs):
+        super(TagsValue, self).__init__(id, title)
+
+        self.tag_ids = None
+
+        for key, value in kwargs.items():
+
+            if key == 'tag_ids':
+                self.tag_ids = value
+
+
+    def format(self):
+
+        if self.tag_ids is not None:
+            return { 'tag_ids': self.tag_ids }
+
+        return {}
+
 
 class TeamValue(ColumnValue):
 
@@ -272,7 +401,7 @@ class TeamValue(ColumnValue):
         if self.team_id is not None:
             return { 'team_id': self.team_id }
 
-        return self.team_id
+        return {}
 
 
 class TextValue(ColumnValue):
@@ -288,7 +417,35 @@ class TextValue(ColumnValue):
 
     def format(self):
         
+        if self.text is None:
+            return ''
+
         return self.text
+
+
+class TimelineValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(TimelineValue, self).__init__(id, title)
+
+        self.from_time = None
+        self.to = None
+
+        for key, value in kwargs.items():
+
+            if key == 'from':
+                self.from_time = value
+
+            if key == 'to':
+                self.to_time = value
+
+
+    def format(self):
+
+        if self.from_time is None or self.to_time is None:
+            return {}
+
+        return { 'from': self.from_time, 'to': self.to_time }
 
 
 class TimezoneValue(ColumnValue):
@@ -309,7 +466,28 @@ class TimezoneValue(ColumnValue):
         if self.timezone is not None:
             return { 'timezone': self.timezone }
 
-        return self.timezone
+        return {}
+
+
+class WeekValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(WeekValue, self).__init__(id, title)
+
+        self.start_date = None
+        self.end_date = None
+
+        if kwargs.__contains__('week'):
+            self.start_date = kwargs['week']['startDate']
+            self.end_date = kwargs['week']['endDate']
+
+
+    def format(self):
+
+        if self.start_date is None or self.end_date is None:
+            return {}
+
+        return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
 
 
 def create_column_value(id: str, column_type: ColumnType, title: str = None, value = None):
@@ -350,6 +528,22 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, val
         return EmailValue(id, title, **value)
 
 
+    elif column_type == ColumnType.hour:
+
+        if value is None:
+            return HourValue(id, title)
+
+        return HourValue(id, title, **value)
+    
+    
+    elif column_type == ColumnType.link:
+
+        if value is None:
+            return LinkValue(id, title)
+
+        return LinkValue(id, title, **value)
+    
+    
     elif column_type == ColumnType.long_text:
 
         if value is None:
@@ -398,6 +592,14 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, val
             return StatusValue(id, title, index=value['index'])
 
 
+    elif column_type == ColumnType.tags:
+
+        if value is None:
+            return TagsValue(id, title)
+
+        return TagsValue(id, title, **value)
+    
+    
     elif column_type == ColumnType.team:
 
         if value is None:
@@ -414,9 +616,25 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, val
         return TextValue(id, title, text=value)
 
 
+    elif column_type == ColumnType.timeline:
+
+        if value is None:
+            return TimelineValue(id, title)
+
+        return TimelineValue(id, title, **value)
+    
+    
     elif column_type == ColumnType.world_clock:
 
         if value is None:
             return TimezoneValue(id, title)
 
         return TimezoneValue(id, title, **value)
+
+
+    elif column_type == ColumnType.week:
+
+        if value is None: 
+            return WeekValue(id, title)
+
+        return WeekValue(id, title, **value)
