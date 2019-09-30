@@ -1,3 +1,5 @@
+from typing import List
+
 from .enums import ColumnType
 
 
@@ -18,8 +20,7 @@ class CheckboxValue(ColumnValue):
         
         self.checked: bool = False
 
-        value: str = kwargs['checked']
-        if value == 'true':
+        if kwargs.__contains__('checked') and kwargs['checked'] == 'true':
             self.checked = True
 
     
@@ -37,20 +38,20 @@ class CountryValue(ColumnValue):
         super(CountryValue, self).__init__(id, title)
 
         self.country_code = None
-        self.country_value = None
+        self.country_name = None
 
         for key, value in kwargs.items():
 
             if key == 'country_code':
                 self.country_code = value
 
-            if key == 'country_name':
+            elif key == 'country_name':
                 self.country_name = value
 
     
     def format(self):
 
-        if self.country_code is None or self.country_value is None:
+        if self.country_code is None or self.country_name is None:
             return {}
 
         return {
@@ -72,7 +73,7 @@ class DateValue(ColumnValue):
             if key == 'date':
                 self.date = value
 
-            if key == 'time':
+            elif key == 'time':
                 self.time = value
 
 
@@ -81,7 +82,12 @@ class DateValue(ColumnValue):
         if self.date is None:
             return {}
 
-        return { 'date': self.date, 'time': self.time }
+        result = { 'date': self.date }
+
+        if self.time is not None:
+            result['time'] = self.time
+
+        return result
 
 
 class DropdownValue(ColumnValue):
@@ -89,15 +95,15 @@ class DropdownValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(DropdownValue, self).__init__(id, title)
 
-        self.label_id: int = None
+        self.ids: List[int] = None
         self.label: str = None
 
         for key, value in kwargs.items():
 
-            if key == 'label_id':
-                self.label_id = value
+            if key == 'ids':
+                self.ids = value
 
-            if key == 'label':
+            elif key == 'label':
                 self.label = value
 
 
@@ -106,8 +112,8 @@ class DropdownValue(ColumnValue):
         if self.label is not None:
             return { 'label': self.label }
 
-        if self.label_id is not None:
-            return { 'id': self.label_id}
+        if self.ids is not None:
+            return { 'ids': self.ids }
 
         return {}
 
@@ -136,7 +142,9 @@ class EmailValue(ColumnValue):
 
         result = { 'email': self.email }
 
-        if self.text is not None:
+        if self.text is None:
+            result['text'] = self.email
+        else:
             result['text'] = self.text
 
         return result
@@ -148,7 +156,7 @@ class HourValue(ColumnValue):
         super(HourValue, self).__init__(id, title)
 
         self.hour = None
-        self.minute = None
+        self.minute = 0
 
         if kwargs.__contains__('hour'):
             self.hour = kwargs['hour']
@@ -176,18 +184,20 @@ class LinkValue(ColumnValue):
             if key == 'url':
                 self.url = value
 
-            if key == 'text':
+            elif key == 'text':
                 self.text = value
 
 
     def format(self):
 
         if self.url is None:
-            {}
+            return {}
 
         result = { 'url': self.url}
 
-        if self.text is not None:
+        if self.text is None:
+            result['text'] = self.url
+        else:
             result['text'] = self.text
 
         return result
@@ -310,7 +320,7 @@ class PhoneValue(ColumnValue):
     def format(self):
 
         if self.phone is None or self.country_short_name is None:
-            return {}
+            return {'phone': '', 'countryShortName': ''}
 
         return { 'phone': self.phone, 'countryShortName': self.country_short_name }
 
@@ -347,7 +357,7 @@ class StatusValue(ColumnValue):
             if key == 'index':
                 self.index: int = value
 
-            if key == 'label':
+            elif key == 'label':
                 self.label: str = value
 
 
@@ -359,7 +369,7 @@ class StatusValue(ColumnValue):
         if self.index is not None:
             return { 'index': self.index }
 
-        return {}
+        return { 'label': ''}
 
 
 class TagsValue(ColumnValue):
@@ -377,10 +387,10 @@ class TagsValue(ColumnValue):
 
     def format(self):
 
-        if self.tag_ids is not None:
-            return { 'tag_ids': self.tag_ids }
+        if self.tag_ids is None:
+            return { 'tag_ids': [] }
 
-        return {}
+        return { 'tag_ids': self.tag_ids }
 
 
 class TeamValue(ColumnValue):
@@ -428,24 +438,24 @@ class TimelineValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TimelineValue, self).__init__(id, title)
 
-        self.from_time = None
-        self.to = None
+        self.from_date = None
+        self.to_date = None
 
         for key, value in kwargs.items():
 
             if key == 'from':
-                self.from_time = value
+                self.from_date = value
 
-            if key == 'to':
-                self.to_time = value
+            elif key == 'to':
+                self.to_date = value
 
 
     def format(self):
 
-        if self.from_time is None or self.to_time is None:
+        if self.from_date is None or self.to_date is None:
             return {}
 
-        return { 'from': self.from_time, 'to': self.to_time }
+        return { 'from': self.from_date, 'to': self.to_date }
 
 
 class TimezoneValue(ColumnValue):
@@ -477,7 +487,7 @@ class WeekValue(ColumnValue):
         self.start_date = None
         self.end_date = None
 
-        if kwargs.__contains__('week'):
+        if kwargs.__contains__('week') and kwargs['week'] != '':
             self.start_date = kwargs['week']['startDate']
             self.end_date = kwargs['week']['endDate']
 
@@ -508,6 +518,14 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, val
         return CountryValue(id, title, country_code=value['countryCode'], country_name=value['countryName'])
 
 
+    elif column_type == ColumnType.date:
+
+        if value is None:
+            return DateValue(id, title)
+
+        return DateValue(id, title, **value)
+
+
     elif column_type == ColumnType.dropdown:
 
         if value is None: 
@@ -516,8 +534,8 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, val
         if value.__contains__('label'):
             return DropdownValue(id, title, label=value['label'])
 
-        if value.__contains__('id'):
-            return DropdownValue(id, title, label_id=value['id'])
+        if value.__contains__('ids'):
+            return DropdownValue(id, title, label_id=value['ids'])
 
 
     elif column_type == ColumnType.email:
@@ -578,6 +596,14 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, val
             return PhoneValue(id, title)
 
         return PhoneValue(id, title, phone=value['phone'], country_short_name=value['countryShortName'])
+
+
+    elif column_type == ColumnType.rating:
+
+        if value is None:
+            return RatingValue(id, title)
+
+        return RatingValue(id, title, **value)
     
     
     elif column_type == ColumnType.status:

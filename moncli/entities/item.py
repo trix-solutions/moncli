@@ -54,19 +54,42 @@ class Item():
 
             column_values_data = item_data['column_values']
 
-            self.__column_values = []
+            self.__column_values = {}
 
             for data in column_values_data:
 
                 id = data['id']
                 title = data['title']
                 column_type = column_types_map[id]
-                value = json.loads(data['value'])
-                column_value = create_column_value(id, title, column_type, value)
 
-                self.__column_values.append(column_value)          
+                value = data['value']
+                if value is None:
+                    column_value = create_column_value(id, column_type, title)
+                else:
+                    value = json.loads(value)
+                    column_value = create_column_value(id, column_type, title, value)
 
-        return self.__column_values
+                self.__column_values[id] = column_value          
+
+        return self.__column_values.values()
+
+
+    def get_column_value(self, id = None, title = None):
+
+        self.get_column_values()
+
+        if id is not None:
+
+            if title is not None:
+                raise TooManyGetColumnValueParameters()
+
+            return self.__column_values[id]
+
+        if title is not None:
+
+            return [column_value for column_value in self.__column_values.values() if column_value.title == title][0]
+
+        raise NotEnoughGetColumnValueParameters()
 
     
     def change_column_value(self, column_value: ColumnValue):
@@ -137,12 +160,14 @@ class Item():
 
         return Update(**update_data)
 
-    
-    def get_updates(self, **kwargs):
-        
-        updates_data = client.get_updates(
-            self.__creds.api_key_v2,
-            'id', 'body', 
-            **kwargs)
 
-        return [Update(**update_data) for update_data in updates_data]
+class TooManyGetColumnValueParameters(Exception):
+
+    def __init__(self):
+        self.message = "Unable to use both 'id' and 'title' when querying for a column value."
+        
+
+class NotEnoughGetColumnValueParameters(Exception):
+
+    def __init__(self):
+        self.message = "Either the 'id' or 'title' is required when querying a column value."
