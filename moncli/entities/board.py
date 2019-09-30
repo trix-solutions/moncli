@@ -1,5 +1,6 @@
 from .. import api_v2 as client
 from ..enums import ColumnType
+from ..columnvalue import ColumnValue
 from .objects import Update, Column
 from .group import Group
 from .item import Item
@@ -128,11 +129,6 @@ class Board():
             'board.id',
             'board.name',
             'creator_id',
-            'column_values.id',
-            'column_values.text',
-            'column_values.title',
-            'column_values.value',
-            'column_values.additional_info',
             'group.id',
             'state',
             'subscribers.id'
@@ -156,19 +152,13 @@ class Board():
         return [Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
 
-    def get_items_by_column_values(self, column_id: str, column_value: str, **kwargs):
+    def get_items_by_column_values(self, column_value: ColumnValue, **kwargs):
         
         field_list = [
             'id',
             'name',
             'board.id',
             'board.name',
-            'creator_id',
-            'column_values.id',
-            'column_values.text',
-            'column_values.title',
-            'column_values.value',
-            'column_values.additional_info',
             'group.id',
             'state',
             'subscribers.id'
@@ -177,8 +167,8 @@ class Board():
         items_data = client.get_items_by_column_values(
             self.__creds.api_key_v2, 
             self.id, 
-            column_id, 
-            column_value, 
+            column_value.id, 
+            str(column_value.format()), 
             *field_list,
             **kwargs)
 

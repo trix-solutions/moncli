@@ -32,26 +32,6 @@ class Column():
                 self.board_id = value
 
 
-class ColumnValue():
-
-    def __init__(self, **kwargs):
-        self.id = kwargs['id']
-
-        for key, value in kwargs.items():
-
-            if key == 'text':
-                self.text = value
-
-            elif key == 'title':
-                self.title = value
-
-            elif key == 'value':
-                self.value = value
-
-            elif key == 'additional_info':
-                self.additional_info = value
-
-
 class Update():
 
     def __init__(self, **kwargs):
@@ -106,3 +86,6 @@ class Plan():
 
             elif key == 'version':
                 self.version = value
+
+
+
