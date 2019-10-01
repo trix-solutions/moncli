@@ -17,7 +17,8 @@ config = {
     'packages': [
         'moncli',
         'moncli.api_v1',
-        'moncli.api_v2'
+        'moncli.api_v2',
+        'moncli.entities'
     ],    
     'scripts': [],
     'name': 'moncli'
