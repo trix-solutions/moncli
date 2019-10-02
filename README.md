@@ -2,13 +2,9 @@
 A Python Client and CLI tool for Monday.com
 
 ## Setup ##
-To install the moncli package, downlaod the source code from the __master__ branch and navigate to the _moncli_ directory containing the _setup.py_ script. 
+To add the moncli package to your project, simply execute the following command within your Python 3 environment using pip.  Please note that this package is currently available for Python 3
 ```
-$ cd \moncli
-```
-The package can then be installed onto your current Python 3 environment when running the following command.
-```
-$ python3 setup.py install
+$ pip3 install moncli
 ```
 
 
@@ -31,8 +27,12 @@ Boards can be created with the __MondayClient__ object using the following comma
 ```
 >>> from moncli import BoardKind
 >>>
->>> return_fields = ['id']
->>> new_board = client.create_board(board_name='new_public_board', board_kind=BoardKind.public, *return_fields)
+>>> # Create a new board with default fields
+>>> new_board = client.create_board(board_name='New Public Board', board_kind=BoardKind.public)
+>>>
+>>> # Create a new board with customized return fields
+>>> field_list = ['id', 'name']
+>>> new_board_with_custom_fields = client.create_board(board_name='New Public Board With Fields', board_kind=BoardKind.public, *field_list)
 ```
 Please consult the Monday.com API v2 documentation [here](https://monday.com/developers/v2) for additional imformation regarding the __Board__ object return fields.
 
