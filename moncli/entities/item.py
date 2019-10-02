@@ -92,22 +92,46 @@ class Item():
         raise NotEnoughGetColumnValueParameters()
 
     
-    def change_column_value(self, column_value: ColumnValue):
+    def change_column_value(self, column_id: str = None, column_value = None):
         
+        if column_id is None:
+
+            if column_value is None:
+                raise ColumnValueRequired()
+
+            if column_value is dict:
+                value = column_value
+            elif column_value is ColumnValue:
+                value = column_value.format()
+            else:
+                raise InvalidColumnValue(type(column_value).__name__)
+
+        else:
+            
+            if column_value is str or column_value is dict:
+                value = column_value
+            else:
+                raise InvalidColumnValue(type(column_value).__name__)
+
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
             self.id,
             column_value.id,
             self.__board_id,
-            column_value.format(),
+            value,
             'id', 'name', 'board.id')
 
         return Item(creds=self.__creds, **item_data)
 
     
-    def change_multiple_column_values(self, column_values: List[ColumnValue]):
-        
-        values = { value.id: value.format() for value in column_values }
+    def change_multiple_column_values(self, column_values):
+
+        if column_values is dict:
+            values = column_values
+        elif column_values is List[ColumnValue]:
+            values = { value.id: value.format() for value in column_values }
+        else:
+            raise InvalidColumnValue(type(column_values).__name__)
 
         item_data = client.change_multiple_column_value(
             self.__creds.api_key_v2,
@@ -171,3 +195,15 @@ class NotEnoughGetColumnValueParameters(Exception):
 
     def __init__(self):
         self.message = "Either the 'id' or 'title' is required when querying a column value."
+
+
+class ColumnValueRequired(Exception):
+
+    def __init__(self):
+        self.message = "A column value is required if no 'column_id' value is present."
+
+
+class InvalidColumnValue(Exception):
+
+    def __init__(self, column_value_type: str):
+        self.message = "Unable to use column value of type '{}' with the given set of input parameters".format(column_value_type)
