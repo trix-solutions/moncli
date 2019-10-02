@@ -155,28 +155,50 @@ This command is currently used by the __MondayClient__ to authorize the use of t
 ## Using Boards ##
 Boards are cornerstones for any Monday.com setup, and __Board__ objects are no exception containing functionality for general data management with columns, groups, and items.  The next sections below will provide an overview of the full board functionality available.
 
-### Creating a column ###
-To create a column with a __Board__ object, simply execute the command below.  
+
+### Adding a column ###
+To add a column to a board, simply execute the _add_column_ method on the __Board__ object as shown below.  
 ```
 >>> from moncli import ColumnType
 >>>
->>> new_column = board.create_column(title='New Text Column', column_type=ColumnType.text)
+>>> new_column = board.add_column(title='New Text Column', column_type=ColumnType.text)
 ```
-The __Column__ object returned contains only contains data for the _id_ field by default, but data for additional fields may be returned using the __\*argv__ parameter at the end of the function.  Information on additional __Column__ fields can be found in the Monday.com API v2 documentation [here](https://monday.com/developers/v2)
+The __Column__ object returned contains the _id_, _name_, and _type_ fields of the newly created column.
 
-### Changing one or multiple column values ###
-The __Board__ object can also change a single column value for an item using the following command.
+
+### Adding a group ###
+A group can be added to a board using the _add_group_ method on the __Board__ object as shown below.
 ```
->>> updated_item = board.change_column_value(item_id='1234567', column_id='text1', value='Hello again, world!')
+>>> new_group = board.add_group(group_name='New Group')
+```
+The __Group__ object returned contains the _id_ and _title_ fields of the newly created group.
+
+
+### Adding an item ###
+A new item can be added to the default group of a board using the _add_item_ method on the  __Board__ object as shown below.
+```
+>>> new_item = board.add_item(item_name='New Item')
+```
+The __Item__ object returned contains the _id_ and _name_ fields of the newly created item. 
+
+An __Item__ object can be created with column values using the optional _column_values_ parameter.  Values for this parameter can be input as a dictionary in which each key represents the ID of the column to update and the value represents the value to add.  
+```
+>>> column_values = {'text_column_1': 'New Text Value'}
+>>> new_item_with_values = board.add_item(item_name='New Item With Text Value', column_values=column_values)
 ```
 
-In addition to changing single column values, the __Board__ object can also change multiple column values for an item using the following command.
+This method also accepts a list of __ColumnValue__ objects for adding column values to new items.  
 ```
->>> column_values = {'text1'='Hello again, world!", 'date1'='1970-01-01'}
->>> updated_item = board.change_multiple_column_values(item_id='1234567', column_values=column_values)
+>>> from moncli import create_column_value
+>>>
+>>> column_values = []
+>>> text_column = create_column_value(id='text_column_1', text='New Text Value created using TextValue object')
+>>> column_values.append(text_column)
+>>>
+>>> new_item_with_values_2 = board.add_item(item_name='New Item Using Column Values', column_values=column_values)
 ```
-Information on how to change values for different field types can be found [here](https://monday.com/developers/v2#column-values-section)
-It is important to note that the __Item__ object returned contains only contains data for the _id_ field by default, but data for additional fields may be returned using the __\*argv__ parameter at the end of the function.  Information on additional __Item__ fields can be found [here](https://monday.com/developers/v2#queries-section-items)
+More information about the __ColumnValue__ object and its various types can be found futher down in the Readme document. Information on how to change values for different field types can be found [here](https://monday.com/developers/v2#column-values-section)
+
 
 ### Getting columns, groups, and items ###
 To retrieve all columns, groups, and items associated with a __Board__ object, simply execute the following commands respectively.
@@ -188,12 +210,7 @@ To retrieve all columns, groups, and items associated with a __Board__ object, s
 >>> items = board.get_items()
 ```
 
-### Adding an item ###
-A new item can be added to a __Board__ object using the following command
-```
->>> new_item = board.add_item(item_name='New Item')
-```
-An __Item__ object can be created with column values using the optional __column_values__ parameter.  Information on how to change values for different field types can be found [here](https://monday.com/developers/v2#column-values-section)
+
 
 ## Working with Columns and Groups ##
 ### Getting group items ###
