@@ -262,11 +262,97 @@ Please note that only items associated to the group will be returned.  The metho
 
 
 ## Working with Items ##
+The __Item__ object gives users access to functionality for managing items within and between groups, updating column values, and creating updates. The full list of of functionality is described in detail in the following section.
+
 ### Getting column values ###
-To reduce the query complexity for retrieving __Item__ objects from the Monday.com API, the full list of column values for an item can be acquired using the following command.
+Column values for an item can be retrieved from the __Item__ object using the _get_column_values_ method as shown below.
 ```
 >>> column_values = item.get_column_values()
 ```
+This method returns a list of __ColumnValue__ objects containing the current state of the item's column values.  These objects can be used for retrieving items by column value and updating one or many column values for an item.  Please consult the section on the __ColumnValue__ object below for more information.
+
+### Getting a column value ###
+In addition to retrieving all column values for an item, the __Item__ object also contains the _get_column_value_ method which can retrieve a single column value as a __ColumnValue__ object by either id or name.  Examples of both are demonstrated below.
+```
+>>> # Get column value by ID
+>>> column_value = item.get_column_value(id='text_column_1')
+>>>
+>>> # Get column value by name
+>>> column_value = item.get_column_value(name='My Text Column')
+```
+Please note that the _get_column_value_ method can only accept either the id or name parameter and will raise an exception if either both or none of the parameters are used.
+
+
+### Changing a column value ###
+The __Item__ object can be used to update the value of a single column using the _change_column_value_ method.  This method can accept a __ColumnValue__ when performing an update as shown below.
+```
+>>> from moncli import create_column_value, ColumnType
+>>>
+>>> column_value = create_column_value(id='number_column_1', column_type=ColumnType.numbers, number=8675309)
+>>> item = item.change_column_value(column_value=column_value)
+```
+
+The _change_column_value_ method can also update individual column values using raw data in the form of dictionaries.  However, the _column_id_ parameter is required in addition to the _column_value_ parameter.  For numeric and text types, the column value is a string, but for complex column types the value for the _column_value_ parameter is a dictionary.  Examples of both are shown below.
+```
+>>> # Updating a numeric column value
+>>> item = item.change_column_value(id='number_column_1', column_value=str(8675309))
+>>>
+>>> # Updating a complex column value
+>>> column_value = {'timezone': 'America/New_York'}
+>>> item = item.change_column_value(id='world_clock_column_1', column_value=column_value)
+```
+
+The _create_column_value_ method returns an __Item__ object containing the _id_ and _name_ fields of the updated item.
+
+
+### Updating multiple column values ###
+In addition to updating a single column value, the __Item__ object can update multiple column values using the _change_multiple_column_values_ method.  This method accepts a list of __ColumnValue__ objects in the example demonstrated below.
+```
+>>> number_value = create_column_value(id='number_column_1', column_type=ColumnType.numbers, number=43770)
+>>> timezone_value = create_column_value(id='world_clock_column_1', column_type=ColumnType.world_clock, timezone='America/Chicago')
+>>>
+>>> item = item.change_multiple_column_values(column_values=[number_value, timezone_value]
+```
+
+The _change_multiple_column_values_ method also accepts a dictionary type in which the keys represent the IDs of the columns to be updated and the values are the value to update as shown below.
+```
+>>> column_values = {'number_column_1': 43770, 'world_clock_column_1': {'timezone: 'America/Chicago'}}
+>>>
+>>> item = item.change_multiple_column_values(column_values=column_values)
+```
+This method returns a list of __Item__ objects with the _id_ and _name_ fields of the updated items.
+
+
+### Moving an item between groups ###
+Items can be moved from one group to another using the _move_to_group_ method on the __Item__ object as shown below.
+```
+>>> moved_item = item.move_to_group(group_id='other_group_1')
+```
+This method returns an __Item__ object containing the _id_ and _name_ fields of the moved item.
+
+
+### Archiving an item ###
+Items can be archived using the _archive_ method on the __Item__ object as shown below.
+```
+>>> archived_item = item.archive()
+```
+This method returns an __Item__ object containing the _id_ and _name_ fields of the archived item.
+
+
+### Deleting an item ###
+Items can be deleted using the _delete_ method on the __Item__ object as shown below.
+```
+>>> deleted_item = item.delete()
+```
+This method returns an __Item__ object containing the _id_ and _name_ fields of the deleted item.
+
+
+### Adding an update ###
+Updates can be added to items using the _add_update_ method on the __Item__ object as shown below.
+```
+>>> update = item.add_update(body='This is the body for an update')
+```
+This method creates an update for the item on behalf of the user that owns the API V2 token and returns an __Update__ object containing the _id_ and _body_ fields of the added update.
 
 
 ## Working with Users, Teams, and Accounts ##
