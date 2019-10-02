@@ -191,11 +191,9 @@ This method also accepts a list of __ColumnValue__ objects for adding column val
 ```
 >>> from moncli import create_column_value, ColumnType
 >>>
->>> column_values = []
->>> text_column = create_column_value(id='text_column_1', column_type=ColumnType.text, text='New Text Value created using TextValue object')
->>> column_values.append(text_column)
+>>> column_value = create_column_value(id='text_column_1', column_type=ColumnType.text, text='New Text Value created using TextValue object')
 >>>
->>> new_item_with_values_2 = board.add_item(item_name='New Item Using Column Values', column_values=column_values)
+>>> new_item_with_values_2 = board.add_item(item_name='New Item Using Column Values', column_values=[column_value])
 ```
 More information about the __ColumnValue__ object and its various types can be found futher down in the Readme document. Information on how to change values for different field types can be found [here](https://monday.com/developers/v2#column-values-section)
 
@@ -210,7 +208,7 @@ To retrieve all columns, groups, and items associated with a __Board__ object, s
 >>> items = board.get_items()
 ```
 
-### Getting Items by Column Value ###
+### Getting items by column value ###
 The __Board__ object can also retrieve contained items by column value using the _get_items_by_column_values_ method as shown below.
 ```
 >>> from moncli import create_column_value, ColumnType
@@ -218,14 +216,49 @@ The __Board__ object can also retrieve contained items by column value using the
 >>> status_value = create_column_value(id='status_column_1', column_type=ColumnType.status, label='Done')
 >>> board.get_items_by_column_values(column_value=status_value)
 ```
+The method returns a list of __Item__ objects containing the same fields as mentioned in the _get_items_ method above.
+
+## Working with Groups ##
+Groups serve as collections of items for a board.  Once created by the __Board__ object using the _get_groups_ method, the __Group__ object gives users various methods for modification and item management as discussed in the following section.
+
+### Duplicating a group ###
+The __Group__ object can duplicate an existing group using the _duplicate_ method as shown below.
+```
+>>> duplicate_group = group.duplicate(group_title='New Duplicate Group', add_to_top=True)
+```
+The method above creates a new group and adds it to the first group position on the associated board and returns a __Group__ object with the _id_ and _title_ fields of the duplicated group.
 
 
-## Working with Columns and Groups ##
+### Archiving a group ###
+The __Group__ object can also archive a group using the _archive_ method as shown below.
+```
+>>> archived_group = group.archive()
+```
+
+This method returns a __Group__ object with the _id_, _title_, and _archived_ fields of the archived group.
+
+
+### Delete the group ###
+The __Group__ object can also delete the corresponding group using the _delete_ method as shown below.
+```
+>>> deleted_group = group.delete()
+```
+This method returns a __Group__ object with the _id_, _title_, and _archived_ fields of the deleted group.
+
+### Adding an item to a board ###
+In addition to modifying the group, the __Group__ object can both add and retrieve items.  Items can be added to groups using the _add_item_ method on the __Group__ object as shown below.
+```
+>>> group.add_item(item_name='New Item in Group')
+```
+Similar to the _add_item_ method on the __Board__ object, this method is also capable of adding column values to newly created items.  Please refer to the _add_item_ method on the __Board__ object for a detailed example.
+
+
 ### Getting group items ###
-Similar to __Board__ objects, __Group__ objects can return a list of contained items using the following command.
+Much like __Board__ objects, __Group__ objects can return a list of contained items using the following command.
 ```
 >>> items = group.get_items()
 ```
+Please note that only items associated to the group will be returned.  The method returns a list of __Item__ objects containing the same return fields as mentioned in the __Board__ _get_items_ method.
 
 
 ## Working with Items ##
