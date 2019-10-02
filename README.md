@@ -189,10 +189,10 @@ An __Item__ object can be created with column values using the optional _column_
 
 This method also accepts a list of __ColumnValue__ objects for adding column values to new items.  
 ```
->>> from moncli import create_column_value
+>>> from moncli import create_column_value, ColumnType
 >>>
 >>> column_values = []
->>> text_column = create_column_value(id='text_column_1', text='New Text Value created using TextValue object')
+>>> text_column = create_column_value(id='text_column_1', column_type=ColumnType.text, text='New Text Value created using TextValue object')
 >>> column_values.append(text_column)
 >>>
 >>> new_item_with_values_2 = board.add_item(item_name='New Item Using Column Values', column_values=column_values)
@@ -210,6 +210,14 @@ To retrieve all columns, groups, and items associated with a __Board__ object, s
 >>> items = board.get_items()
 ```
 
+### Getting Items by Column Value ###
+The __Board__ object can also retrieve contained items by column value using the _get_items_by_column_values_ method as shown below.
+```
+>>> from moncli import create_column_value, ColumnType
+>>>
+>>> status_value = create_column_value(id='status_column_1', column_type=ColumnType.status, label='Done')
+>>> board.get_items_by_column_values(column_value=status_value)
+```
 
 
 ## Working with Columns and Groups ##
