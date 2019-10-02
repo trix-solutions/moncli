@@ -159,6 +159,7 @@ class Board():
             'name',
             'board.id',
             'board.name',
+            'creator_id',
             'group.id',
             'state',
             'subscribers.id'
