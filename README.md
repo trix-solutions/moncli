@@ -598,12 +598,49 @@ Properties:
 * _time_ (str, default: '00:00:00') - UTC time string in hh:mm:ss format
 
 
-#### Timeline Value ####
+#### TimelineValue ####
 ColumnType: timeline
 
 Properties:
 * _from_date_ (str) - UTC date string in 'YYYY-MM-dd' format (required)
 * _to_date_ (str) - UTC date string in 'YYYY-MM-dd' format (required)
+
+
+#### TagsValue ####
+ColumnType: tags
+
+Properties:
+* _tag_ids_ (list\[int\]) - tag IDs
+
+
+#### HourValue ####
+ColumnType: hour
+
+Properties:
+* _hour_ (int) - hour value
+* _minute_ (int, default: 0) - minute value
+
+
+#### WeekValue ####
+ColumnType: week
+
+Properties:
+* _start_date_ (str) - UTC date string in 'YYYY-MM-dd' format (required)
+* _end_date_ (str) - UTC date string in 'YYYY-MM-dd' format (required)
+
+
+#### CheckboxColumn ####
+ColumnType: checkbox
+
+Properties:
+* _checked_ (bool) - is checked
+
+
+#### RatingValue ####
+ColumnType: rating
+
+Properties:
+* _rating_ (int) - rating value (0-5)
 
 
 ## Customized Queries and Mutations ##
