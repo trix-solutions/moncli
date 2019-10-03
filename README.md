@@ -393,6 +393,34 @@ When adding or changing column values for new and existing items, the __ColumnVa
 This section provides and overview retrieving, creating, and using available __ColumnValue__ object types.
 
 ### Retrieving column values ###
+__ColumnValue__ objects can be retrieved from either __Board__ or __Item__ objects.  
+A __ColumnValue__ with the mapped _id_ and _title_ fields but no value can be retrieved from a __Board__ object using the _get_column_value_ method as shown below.
+```
+>>> # Empty column values may be retrieved from boards by column id or title
+>>> empty_column_value_by_id = board.get_column_value(id='text_column_1')
+>>> empty_column_value_by_title = board.get_column_value(title='Address')
+```
+
+__Item__ objects on the other hand will return the value state of the column in addition to the _id_ and _title_ mapping fields.  However, if the current value of the item column value is empty, then the retrieved __ColumnValue__ object will also be empty.  
+The _get_column_values_ method will return a list of all column values for the item. 
+```
+>>> column_values = item.get_column_values()
+>>>
+>>> # Assume column 1 is a text column with a value
+>>> column_values[0].text
+'Hello, world!'
+>>>
+>>> # Assume column 2 is a numbers column with no value
+>>> column_values[1].number
+>>>
+```
+
+Much like the __Board__ object, A single column value can be retrieved from __Item__ objects using the _get_column_value_ method using either the column _id_ or _title_ fields.
+```
+>>> # Column values may be retrieved from items by column id or title
+>>> column_value_by_id = item.get_column_value(id='text_column_1')
+>>> column_value_by_title = item.get_column_value(title='Salutation')
+```
 
 
 ### Creating column values ###
