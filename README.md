@@ -448,6 +448,8 @@ A __ColumnValue__ can also be created without the need for __Board__ or __Item__
 An example for creating a new __ColumnValue__ object is shown below.  In addition to the _id_ and _column_type_ parameters, column values can be added to the __ColumnValue__ objects when using the type-specific __ColumnValue__ properties as a named argument. Please note that the board column IDs must be pre-defined and know prior to using this function effectively.
 ```
 >>> # Empty checkbox column value
+>>> from moncli import create_column_value
+>>>
 >>> new_empty_checkbox_column_value = create_column_value(id='checkbox_column_1', column_type=ColumnType.checkbox)
 >>> new_empty_checkbox_column.checked
 False
