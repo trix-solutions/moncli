@@ -464,6 +464,17 @@ For more information regarding the __ColumnValue__ object type specific properti
 
 
 ### Using column values ###
+With access to the __ColumnValue__ objects, item column values can effectively be updated using the API.  Updating the value of the __ColumnValue__ object is simply a matter of updating the value of the type-specific property for the column value to be updated.  An example with a simple text column and more complex week column are shown below.
+```
+>>> # Updating the value of a text column
+>>> text_column_value.text = 'Changed text here'
+>>>
+>>> # Updating the value of a week column
+>>> week_column_value.start_date = '2019-09-09'
+>>> week_column_value.end_date = '2019-09-15'
+```
+
+For more information regarding the __ColumnValue__ object type specific properties, please refer to the __Available column value types__ section below.
 
 
 ### Available column value types ###
