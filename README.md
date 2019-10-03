@@ -119,7 +119,7 @@ The __MondayClient__ can also retrieve __Tag__ objects using the following comma
 >>> tags = client.get_tags()
 ```
 Optional parameters to use when retrieving __Tag__ objects include:
-* ids (list[int]) - the IDs of the tags to return
+* ids (list\[int\]) - the IDs of the tags to return
 
 
 ### Getting users ###
@@ -129,7 +129,7 @@ Users can be retrieved from the __MondayClient__ object using the following comm
 >>> users = client.get_users(kind=UserKind.guests)
 ```
 This example will retrieve the first 25 (default limit) guest users.  Optional parameters when querying __Users__ include:
-* ids (list[int]) - the IDs of the users to return
+* ids (list\[int\]) - the IDs of the users to return
 * kind (UserKind) - the kind of users (all, non-guests, guests, pending) to return
 * limit (int) - the maximum number of users per page to return
 * newest_first (bool) - indicates whether to sort by created date descending
@@ -141,7 +141,7 @@ Teams can be retrieved from the __MondayClient__ object using the following comm
 >>> teams = client.get_teams(ids=[1234567,2345678])
 ```
 This example will retrieve a list of __Team__ objects containing the input IDs.  Optional parameters when querying __Team__ objects include:
-* ids (list[int]) - the IDs of the teams to return
+* ids (list\[int\]) - the IDs of the teams to return
 
 
 ### Getting... me ###
@@ -540,6 +540,70 @@ Usage:
 >>> people_value.persons_and_teams 
 [{'id': 12345, 'kind': 'person'}]
 ```
+
+
+#### Timezone Value ####
+ColumnType: world_clock
+
+Properties:
+* _timezone_ (str) - input tz database timezone string
+
+Notes:
+* Full list of timezones avaliable [here] (https://momentjs.com/timezone/).
+
+
+#### CountryValue ####
+ColumnType: country
+
+Properties:
+* _country_code_ (str) - input ISO2 country code string (required)
+* _country_name_ (str) - input country name (required)
+
+Notes:
+* Full list of _country_code_ and _country_name_ values available [here] (http://country.io/names.json)
+
+
+#### EmailValue ####
+ColumnType: country
+
+Properties:
+* _email_ (str) - input email address (required)
+* _text_ (str, default: _email_) - input email value label
+
+
+#### PhoneValue ####
+ColumnType: phone
+
+Properties:
+* _phone_ (str) - input phone number string as only digits (required)
+* _country_short_name_ (str) - input ISO2 country code string (required)
+
+Notes:
+* Full list of _country_code_ and _country_name_ values available [here] (http://country.io/names.json)
+
+
+#### LinkValue ####
+ColumnType: link
+
+Properties:
+* _url_ (str) - input link url (required)
+* _text_ (str, default: _url_) - input link value label
+
+
+#### DateValue ####
+ColumnType: date
+
+Properties:
+* _date_ (str) - UTC date string in 'YYYY-MM-dd' format (required)
+* _time_ (str, default: '00:00:00') - UTC time string in hh:mm:ss format
+
+
+#### Timeline Value ####
+ColumnType: timeline
+
+Properties:
+* _from_date_ (str) - UTC date string in 'YYYY-MM-dd' format (required)
+* _to_date_ (str) - UTC date string in 'YYYY-MM-dd' format (required)
 
 
 ## Customized Queries and Mutations ##
