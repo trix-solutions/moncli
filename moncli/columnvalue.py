@@ -664,3 +664,12 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, val
             return WeekValue(id, title)
 
         return WeekValue(id, title, **value)
+
+    
+    else:
+        raise InvalidColumnValueType(column_type)
+
+class InvalidColumnValueType(Exception):
+
+    def __init__(self, column_type: ColumnType):
+        self.message = "Cannot create column value with type '{}'.".format(column_type._name_)

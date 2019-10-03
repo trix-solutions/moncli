@@ -390,40 +390,18 @@ Similar to retrieving __Team__ objects from a __User__ object, __Team__ objects 
 ## Working with Column Values ##
 When adding or changing column values for new and existing items, the __ColumnValue__ object serves to simplify and streamline the process of mapping data to and from items in Monday.com.  Each __ColumnValue__ comes with an _id_ and _title_ that are intrinsic with any column value model.  Each column value type that can be updated corresponds with one of many subclasses of the __ColumnValue__ object containing additional properties that are unique for the given column data type.  
 
-This section lists all of the available __ColumnValue__ object subclasses for all item column values that can be updated.
+This section provides and overview retrieving, creating, and using available __ColumnValue__ object types.
 
-### Name ###
-The __NameValue__ object is used for updating the names of items and contains the following properties:
-* name (str) - the name of the item.
-
-Usage:
-```
->>> name_value = create_column_value(id='name_column_1', name='New Item Name')
->>> name_value.name
-'New Item Name'
-```
-
-### Text ###
-The __TextValue__ object updates text column values and contains the following properties:
-* text (str) - the text value
-
-Usage:
-```
->>> text_value = create_column_value(id='text_column_1', title='First Name', text='Andrew')
->>> text_value.text = 'Andrew J.'
-```
+### Retrieving column values ###
 
 
-### Long Text ###
-The __LongTextValue__ object updates long text values and contains the following properties:
-* text (str) - the long-text value
+### Creating column values ###
 
-Usage:
-```
->>> long_text_value = create_column_value(id='long_text_column_1', title='Brief Bio', text='Insert brief biographic description here...')
->>> long_text_value.text = 'tl;dr'
-```
 
+### Using column values ###
+
+
+### Available column value types ###
 
 
 ## Customized Queries and Mutations ##
