@@ -306,6 +306,9 @@ class PeopleValue(ColumnValue):
     
     def add_people(self, id: int, kind: PeopleKind):
 
+        if self.persons_and_teams is None:
+            self.persons_and_teams = []
+
         self.persons_and_teams.append({ 'id': id, 'kind': kind.name })
 
 
@@ -313,6 +316,9 @@ class PeopleValue(ColumnValue):
 
         people_to_remove = [people for people in self.persons_and_teams if people['id'] == id]
         self.persons_and_teams.remove(people_to_remove)
+
+        if len(self.persons_and_teams) == 0:
+            self.persons_and_teams = None
 
 
 class PhoneValue(ColumnValue):

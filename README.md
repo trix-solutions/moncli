@@ -480,12 +480,66 @@ For more information regarding the __ColumnValue__ object type specific properti
 ### Available column value types ###
 Column values are managed by various __ColumnValue__ subclasses that contain the type-specific properties for updating. This section provides an exhastive list of all available __ColumnValue__ subclasses that can be used for updating item column values.
 
-#### NameValue ####
-ColumnType: name
+
+#### TextValue ####
+ColumnType: text
 
 Properties:
-* name (str) - the name of the item (required)
+* _text_ (str) - input text string
 
+
+#### NumberValue ####
+ColumnType: numbers
+
+Properties:
+* _number_ (int/flt) - input integer or float value
+
+
+#### StatusValue ####
+ColumnType: status
+
+Properties:
+* _index_ (int) - the index of the status (required)
+* _label_ (str) - the label of the status (required)
+
+Notes:
+* index and label properties are mutually exclusive and cannot both be used
+
+
+#### DropdownValue ####
+ColumnType: dropdown
+
+Properties:
+* _ids_ (list\[int\]) - dropdown value IDs (required)
+* _labels_ (list\[str\]) - dropdown value labels (required)
+
+Notes:
+* _ids_ and _labels_ properties are mutually exclusive and cannot both be used
+
+
+#### PeopleColumn ####
+ColumnType: people
+
+Properties:
+* _persons_and_teams_ (list) - people by ID and kind ('person' or 'team')
+
+Methods:
+* _add_people_ (id: int, kind: __PeopleKind__) - adds a person or team
+* _remove_people_ (id: int) - removes a person or team by id
+
+Usage:
+```
+>>> # Adding people
+>>> people_value.add_people(id=12345, kind=PeopleKind.person)
+>>> people_value.add_people(id=67890, kind=PeopleKind.team)
+>>> people_value.persons_and_teams
+[{'id': 12345, 'kind': 'person'}, {'id': 67890, 'kind': 'team'}]
+>>>
+>>> # Removing people
+>>> people_value.remove_people(id=67890)
+>>> people_value.persons_and_teams 
+[{'id': 12345, 'kind': 'person'}]
+```
 
 
 ## Customized Queries and Mutations ##
