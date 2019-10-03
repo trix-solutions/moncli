@@ -1,6 +1,6 @@
 from typing import List
 
-from .enums import ColumnType
+from .enums import ColumnType, PeopleKind
 
 
 class ColumnValue():
@@ -288,7 +288,7 @@ class PeopleValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(PeopleValue, self).__init__(id, title)
 
-        self.persons_and_teams = None
+        self.persons_and_teams: list = None
 
         for key, value in kwargs.items():
 
@@ -302,6 +302,17 @@ class PeopleValue(ColumnValue):
             return {}
 
         return { 'personsAndTeams': self.persons_and_teams }
+
+    
+    def add_people(self, id: int, kind: PeopleKind):
+
+        self.persons_and_teams.append({ 'id': id, 'kind': kind.name })
+
+
+    def remove_people(self, id: int):
+
+        people_to_remove = [people for people in self.persons_and_teams if people['id'] == id]
+        self.persons_and_teams.remove(people_to_remove)
 
 
 class PhoneValue(ColumnValue):
