@@ -424,6 +424,41 @@ Much like the __Board__ object, A single column value can be retrieved from __It
 
 
 ### Creating column values ###
+A __ColumnValue__ can also be created without the need for __Board__ or __Item__ objects using the universal _create_column_value_ function.  This method creates a __ColumnValue__ object from the input column _id_ and _column_type_ parameter (with an optional _title_ field). The __ColumnType__ enum is used for the _column_type_ parameter, and all values available for column value updating are listed below:
+* name
+* text
+* long_text
+* numbers
+* status
+* dropdown
+* people
+* world_clock
+* country
+* email
+* phone
+* link
+* date
+* timeline
+* tags
+* hour
+* week
+* checkbox
+* rating
+
+An example for creating a new __ColumnValue__ object is shown below.  In addition to the _id_ and _column_type_ parameters, column values can be added to the __ColumnValue__ objects when using the type-specific __ColumnValue__ properties as a named argument. Please note that the board column IDs must be pre-defined and know prior to using this function effectively.
+```
+>>> # Empty checkbox column value
+>>> new_empty_checkbox_column_value = create_column_value(id='checkbox_column_1', column_type=ColumnType.checkbox)
+>>> new_empty_checkbox_column.checked
+False
+>>>
+>>> # Checkbox column value with input value
+>>> new_checkbox_column_value = create_column_value(id='checkbox_column_1', column_type=ColumnType.checkbox, checked=True)
+>>> new_checkbox_column_value
+True
+```
+
+For more information regarding the __ColumnValue__ object type specific properties, please refer to the __Available column value types__ section below.
 
 
 ### Using column values ###
