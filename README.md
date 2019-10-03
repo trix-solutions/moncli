@@ -481,7 +481,8 @@ For more information regarding the __ColumnValue__ object type specific properti
 Column values are managed by various __ColumnValue__ subclasses that contain the type-specific properties for updating. This section provides an exhastive list of all available __ColumnValue__ subclasses that can be used for updating item column values.
 
 #### NameValue ####
-Column type: Name
+ColumnType: name
+
 Properties:
 * name (str) - the name of the item (required)
 
