@@ -549,7 +549,7 @@ Properties:
 * _timezone_ (str) - input tz database timezone string
 
 Notes:
-* Full list of timezones avaliable [here] (https://momentjs.com/timezone/).
+* Full list of timezones avaliable [here](https://momentjs.com/timezone/).
 
 
 #### CountryValue ####
@@ -560,7 +560,7 @@ Properties:
 * _country_name_ (str) - input country name (required)
 
 Notes:
-* Full list of _country_code_ and _country_name_ values available [here] (http://country.io/names.json)
+* Full list of _country_code_ and _country_name_ values available [here](http://country.io/names.json)
 
 
 #### EmailValue ####
@@ -579,7 +579,7 @@ Properties:
 * _country_short_name_ (str) - input ISO2 country code string (required)
 
 Notes:
-* Full list of _country_code_ and _country_name_ values available [here] (http://country.io/names.json)
+* Full list of _country_code_ and _country_name_ values available [here](http://country.io/names.json)
 
 
 #### LinkValue ####
