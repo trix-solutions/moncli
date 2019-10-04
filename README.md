@@ -456,7 +456,7 @@ False
 >>>
 >>> # Checkbox column value with input value
 >>> new_checkbox_column_value = create_column_value(id='checkbox_column_1', column_type=ColumnType.checkbox, checked=True)
->>> new_checkbox_column_value
+>>> new_checkbox_column_value.checked
 True
 ```
 
