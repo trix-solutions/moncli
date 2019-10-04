@@ -1,6 +1,8 @@
+import moncli.entities.exceptions as ex
 from .. import api_v2 as client
 from ..enums import ColumnType
-from ..columnvalue import ColumnValue
+from ..columnvalue import ColumnValue, create_column_value
+from ..constants import COLUMN_TYPE_MAPPINGS
 from .objects import Update, Column
 from .group import Group
 from .item import Item
@@ -70,9 +72,9 @@ class Board():
                 'columns.width',
                 ids=[int(self.id)])
 
-            self.__columns = [Column(creds=self.__creds, **column_data) for column_data in board[0]['columns']]
+            self.__columns = { column_data['id']: Column(creds=self.__creds, **column_data) for column_data in board[0]['columns'] }
 
-        return self.__columns
+        return self.__columns.values()
 
 
     def add_group(self, group_name: str):
@@ -159,6 +161,7 @@ class Board():
             'name',
             'board.id',
             'board.name',
+            'creator_id',
             'group.id',
             'state',
             'subscribers.id'
@@ -173,3 +176,28 @@ class Board():
             **kwargs)
 
         return [Item(creds=self.__creds, **item_data) for item_data in items_data]
+
+
+    def get_column_value(self, id: str = None, title: str = None):
+
+        if id is None and title is None:
+            raise ex.NotEnoughGetColumnValueParameters()
+
+        if id is not None and title is not None:
+            raise ex.TooManyGetColumnValueParameters()
+
+        self.get_columns()
+
+        if id is not None:
+
+            column = self.__columns[id]
+            column_type = COLUMN_TYPE_MAPPINGS[column['type']]
+            return create_column_value(id, column_type, column['title'])
+
+        elif title is not None:
+
+            column = [column for column in self.__columns.values() if column.title == title][0]
+            column_type = COLUMN_TYPE_MAPPINGS[column['type']]
+            return create_column_value(column['id'], column_type, title)
+
+        

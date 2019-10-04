@@ -1,6 +1,6 @@
 from typing import List
 
-from .enums import ColumnType
+from .enums import ColumnType, PeopleKind
 
 
 class ColumnValue():
@@ -288,7 +288,7 @@ class PeopleValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(PeopleValue, self).__init__(id, title)
 
-        self.persons_and_teams = None
+        self.persons_and_teams: list = None
 
         for key, value in kwargs.items():
 
@@ -302,6 +302,23 @@ class PeopleValue(ColumnValue):
             return {}
 
         return { 'personsAndTeams': self.persons_and_teams }
+
+    
+    def add_people(self, id: int, kind: PeopleKind):
+
+        if self.persons_and_teams is None:
+            self.persons_and_teams = []
+
+        self.persons_and_teams.append({ 'id': id, 'kind': kind.name })
+
+
+    def remove_people(self, id: int):
+
+        people_to_remove = [people for people in self.persons_and_teams if people['id'] == id]
+        self.persons_and_teams.remove(people_to_remove)
+
+        if len(self.persons_and_teams) == 0:
+            self.persons_and_teams = None
 
 
 class PhoneValue(ColumnValue):
@@ -664,3 +681,12 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, val
             return WeekValue(id, title)
 
         return WeekValue(id, title, **value)
+
+    
+    else:
+        raise InvalidColumnValueType(column_type)
+
+class InvalidColumnValueType(Exception):
+
+    def __init__(self, column_type: ColumnType):
+        self.message = "Cannot create column value with type '{}'.".format(column_type._name_)

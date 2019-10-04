@@ -1,6 +1,7 @@
 import json
 from typing import List
 
+import moncli.entities.exceptions as ex
 from .. import api_v2 as client
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
@@ -81,7 +82,7 @@ class Item():
         if id is not None:
 
             if title is not None:
-                raise TooManyGetColumnValueParameters()
+                raise ex.TooManyGetColumnValueParameters()
 
             return self.__column_values[id]
 
@@ -89,25 +90,49 @@ class Item():
 
             return [column_value for column_value in self.__column_values.values() if column_value.title == title][0]
 
-        raise NotEnoughGetColumnValueParameters()
+        raise ex.NotEnoughGetColumnValueParameters()
 
     
-    def change_column_value(self, column_value: ColumnValue):
+    def change_column_value(self, column_id: str = None, column_value = None):
         
+        if column_id is None:
+
+            if column_value is None:
+                raise ex.ColumnValueRequired()
+
+            if column_value is dict:
+                value = column_value
+            elif column_value is ColumnValue:
+                value = column_value.format()
+            else:
+                raise ex.InvalidColumnValue(type(column_value).__name__)
+
+        else:
+            
+            if column_value is str or column_value is dict:
+                value = column_value
+            else:
+                raise ex.InvalidColumnValue(type(column_value).__name__)
+
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
             self.id,
             column_value.id,
             self.__board_id,
-            column_value.format(),
+            value,
             'id', 'name', 'board.id')
 
         return Item(creds=self.__creds, **item_data)
 
     
-    def change_multiple_column_values(self, column_values: List[ColumnValue]):
-        
-        values = { value.id: value.format() for value in column_values }
+    def change_multiple_column_values(self, column_values):
+
+        if column_values is dict:
+            values = column_values
+        elif column_values is List[ColumnValue]:
+            values = { value.id: value.format() for value in column_values }
+        else:
+            raise ex.InvalidColumnValue(type(column_values).__name__)
 
         item_data = client.change_multiple_column_value(
             self.__creds.api_key_v2,
@@ -159,15 +184,3 @@ class Item():
             'id', 'body')
 
         return Update(**update_data)
-
-
-class TooManyGetColumnValueParameters(Exception):
-
-    def __init__(self):
-        self.message = "Unable to use both 'id' and 'title' when querying for a column value."
-        
-
-class NotEnoughGetColumnValueParameters(Exception):
-
-    def __init__(self):
-        self.message = "Either the 'id' or 'title' is required when querying a column value."

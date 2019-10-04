@@ -1,3 +1,4 @@
+import moncli.entities.exceptions as ex
 from .. import api_v2 as client
 from ..enums import BoardKind, NotificationTargetType
 from .objects import MondayClientCredentials, Tag, Update, Notification
@@ -13,16 +14,30 @@ class MondayClient():
 
         me: User = self.get_me()
         if me.email.lower() != user_name.lower():
-            raise AuthorizationError(user_name)
+            raise ex.AuthorizationError(user_name)
         
 
     def create_board(self, board_name: str, board_kind: BoardKind, *argv):
+
+        if len(argv) == 0:
+            field_list = [
+                'id', 
+                'name', 
+                'board_folder_id', 
+                'board_kind', 
+                'description', 
+                'owner.id', 
+                'permissions',
+                'pos',
+                'state']
+        else:
+            field_list = argv
 
         board_data = client.create_board(
             self.__creds.api_key_v2, 
             board_name, 
             board_kind, 
-            *argv)
+            *field_list)
 
         return Board(creds=self.__creds, **board_data)
     
@@ -57,10 +72,10 @@ class MondayClient():
             'state']
 
         if id != None and name != None:
-            raise TooManyGetBoardParameters()
+            raise ex.TooManyGetBoardParameters()
 
         elif id == None and name == None:
-            raise NotEnoughGetBoardParameters()
+            raise ex.NotEnoughGetBoardParameters()
 
         # Search for single board by ID
         elif id != None:
@@ -71,7 +86,7 @@ class MondayClient():
                 limit=1)
 
             if len(boards_data) == 0:
-                raise BoardNotFound('id', id)
+                raise ex.BoardNotFound('id', id)
 
             return Board(creds=self.__creds, **boards_data[0])
 
@@ -100,7 +115,7 @@ class MondayClient():
                 return Board(creds=self.__creds, **target_boards[0])
         
             if len(target_boards) == 0:
-                raise BoardNotFound('name', name)        
+                raise ex.BoardNotFound('name', name)        
 
 
     def archive_board(self, board_id: str):
@@ -238,36 +253,3 @@ class MondayClient():
             'join_date')
 
         return User(creds=self.__creds, **user_data)
-
-
-class AuthorizationError(Exception):
-
-    def __init__(self, user_name: str):
-
-        self.message = 'User {} was not recognized by the applied token'.format(user_name)
-
-
-class BoardNotFound(Exception):
-
-    def __init__(self, search_type, value):
-        
-        if search_type == 'id':
-            self.message = 'Unable to find board with name: "{}".'.format(value)
-        
-        elif search_type == 'name':
-            self.message = 'Unable to find board with the ID: "{}".'.format(value)
-
-        else:
-            self.message = 'Unable to find the requested board.'
-
-
-class TooManyGetBoardParameters(Exception):
-
-    def __init__(self):
-        self.message = "Unable to use both 'id' and 'name' when querying for a board."
-        
-
-class NotEnoughGetBoardParameters(Exception):
-
-    def __init__(self):
-        self.message = "Either the 'id' or 'name' is required when querying a board."

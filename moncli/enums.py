@@ -61,3 +61,8 @@ class UserKind(Enum):
 class FirstDayOfTheWeek(Enum):
     sunday = 1
     monday = 2
+
+
+class PeopleKind(Enum):
+    person = 1
+    team = 2
