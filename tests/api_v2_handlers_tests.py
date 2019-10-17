@@ -297,29 +297,38 @@ def test_create_notification(execute_query):
     ok_(type(notification) is dict)
     ok_(notification['text'] == text)
 
-'''
+
 @patch(EXECUTE_QUERY_PATCH)
 def test_create_or_get_tag(execute_query):
 
     # Arrange
-
+    name = 'Tag One'
+    execute_query.return_value = {constants.CREATE_OR_GET_TAG : {'id': '1', 'name': 'Tag One'}}
+    
     # Act
+    tag = handlers.create_or_get_tag('', name, 'id', 'name')
     
     # Assert
-    pass
+    ok_(tag != None)
+    ok_(type(tag) is dict)
+    ok_(tag['name'] == name)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_tags(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.TAGS: [{'id': '1'}, {'id': '2'}, {'id': '3'}]}
 
     # Act
+    tags = handlers.get_tags('', page=1, limit=3)
     
     # Assert
-    pass
+    ok_(tags != None)
+    ok_(type(tags) is list)
+    ok_(len(tags) == 3)
 
-
+'''
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_users(execute_query):
 
