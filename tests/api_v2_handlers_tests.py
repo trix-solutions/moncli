@@ -2,7 +2,7 @@ from unittest.mock import patch
 from nose.tools import ok_
 
 from moncli.api_v2 import handlers, constants
-from moncli.enums import BoardKind, ColumnType
+from moncli.enums import BoardKind, ColumnType, State
 
 EXECUTE_QUERY_PATCH = 'moncli.api_v2.requests.execute_query'
 
@@ -24,6 +24,7 @@ def test_create_board(execute_query):
     
     # Assert
     ok_(board != None)
+    ok_(type(board) is dict)
     ok_(board['name'] == 'Test')
     ok_(board['board_kind'] == 'public')
 
@@ -38,6 +39,8 @@ def test_get_board(execute_query):
     boards = handlers.get_boards('', 'id', limit=5)
     
     # Assert
+    ok_(boards != None)
+    ok_(type(boards) is list)
     ok_(len(boards) == 5)
 
 
@@ -52,6 +55,7 @@ def test_archive_board(execute_query):
     
     # Assert
     ok_(archived_board != None)
+    ok_(type(archived_board) is dict)
     ok_(archived_board['state'] == 'archived')
 
 
@@ -67,6 +71,7 @@ def test_create_column(execute_query):
     
     # Assert
     ok_(new_column != None)
+    ok_(type(new_column) is dict)
     ok_(new_column['title'] == title)
     ok_(new_column['type'] == ColumnType.text.name)
 
@@ -82,6 +87,7 @@ def test_change_column_value(execute_query):
     
     # Assert
     ok_(updated_item != None)
+    ok_(type(updated_item) is dict)
     ok_(updated_item['id'] == '1')
 
 
@@ -97,6 +103,7 @@ def test_change_multiple_column_value(execute_query):
     
     # Assert
     ok_(updated_item != None)
+    ok_(type(updated_item) is dict)
     ok_(updated_item['id'] == '1')
 
 
@@ -128,6 +135,7 @@ def test_create_group(execute_query):
     
     # Assert
     ok_(new_group != None)
+    ok_(type(new_group) is dict)
     ok_(new_group['id'] == group_id)
     ok_(new_group['title'] == group_name)
 
@@ -143,6 +151,8 @@ def test_archive_group(execute_query):
     
     # Assert
     ok_(archived_group != None)
+    ok_(type(archived_group) is dict)
+    ok_(archived_group.__contains__('id'))
     ok_(archived_group['archived'] == True)
 
 
@@ -157,64 +167,88 @@ def test_delete_group(execute_query):
     
     # Assert
     ok_(deleted_group != None)
+    ok_(type(deleted_group) is dict)
+    ok_(deleted_group.__contains__('id'))
     ok_(deleted_group['deleted'] == True)
 
-'''
+
 @patch(EXECUTE_QUERY_PATCH)
 def test_create_item(execute_query):
 
     # Arrange
+    item_name = 'Item One'
+    execute_query.return_value = {constants.CREATE_ITEM: {'id': '1', 'name': item_name}}
 
     # Act
+    new_item = handlers.create_item('', item_name, '1', 'id', 'name')
     
     # Assert
-    pass
+    ok_(new_item != None)
+    ok_(type(new_item) is dict)
+    ok_(new_item.__contains__('id'))
+    ok_(new_item['name'] == item_name)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_items(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.ITEMS: [{'id': '1', 'name': 'Item One'}, {'id': '2', 'name': 'Item Two'}]}
 
     # Act
+    items = handlers.get_items('', page=1, limit=2)
     
     # Assert
-    pass
+    ok_(items != None)
+    ok_(type(items) is list)
+    ok_(len(items) == 2)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_items_by_column_values(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.ITEMS_BY_COLUMN_VALUES: [{'id': '1', 'name': 'Item One'}]}
 
     # Act
+    items = handlers.get_items_by_column_values('', '1', 'name', 'Item One', 'id', 'name')
     
     # Assert
-    pass
+    ok_(items != None)
+    ok_(type(items) is list)
+    ok_(len(items) == 1)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_archive_item(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.ARCHIVE_ITEM: {'id': '1', 'state': 'archived'}}
 
     # Act
+    archived_item = handlers.archive_item('', '1', 'id', 'state')
     
     # Assert
-    pass
+    ok_(archived_item != None)
+    ok_(type(archived_item) is dict)
+    ok_(archived_item['state'] == State.archived.name)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_delete_item(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.DELETE_ITEM: {'id': '1', 'state': 'deleted'}}
 
     # Act
+    deleted_item = handlers.delete_item('', '1', 'id', 'state')
     
     # Assert
-    pass
+    ok_(deleted_item != None)
+    ok_(type(deleted_item) is dict)
+    ok_(deleted_item['state'] == State.deleted.name)
 
-
+'''
 @patch(EXECUTE_QUERY_PATCH)
 def test_create_update(execute_query):
 
