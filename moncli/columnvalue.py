@@ -517,170 +517,170 @@ class WeekValue(ColumnValue):
         return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
 
 
-def create_column_value(id: str, column_type: ColumnType, title: str = None, value = None):
+def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
 
     if column_type == ColumnType.checkbox:
 
-        if value is None:
+        if len(kwargs) == 0:
             return CheckboxValue(id, title)
 
-        return CheckboxValue(id, title, **value)
+        return CheckboxValue(id, title, checked=kwargs['checked'])
 
 
     elif column_type == ColumnType.country:
 
-        if value is None:
+        if len(kwargs) == 0:
             return CountryValue(id, title)
 
-        return CountryValue(id, title, country_code=value['countryCode'], country_name=value['countryName'])
+        return CountryValue(id, title, country_code=kwargs['countryCode'], country_name=kwargs['countryName'])
 
 
     elif column_type == ColumnType.date:
 
-        if value is None:
+        if len(kwargs) == 0:
             return DateValue(id, title)
 
-        return DateValue(id, title, **value)
+        return DateValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.dropdown:
 
-        if value is None: 
+        if len(kwargs) == 0:
             return DropdownValue(id, title)
 
-        if value.__contains__('label'):
-            return DropdownValue(id, title, label=value['label'])
+        if kwargs.__contains__('label'):
+            return DropdownValue(id, title, label=kwargs['label'])
 
-        if value.__contains__('ids'):
-            return DropdownValue(id, title, label_id=value['ids'])
+        if kwargs.__contains__('ids'):
+            return DropdownValue(id, title, label_id=kwargs['ids'])
 
 
     elif column_type == ColumnType.email:
 
-        if value is None:
+        if len(kwargs) == 0:
             return EmailValue(id, title)
 
-        return EmailValue(id, title, **value)
+        return EmailValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.hour:
 
-        if value is None:
+        if len(kwargs) == 0:
             return HourValue(id, title)
 
-        return HourValue(id, title, **value)
+        return HourValue(id, title, **kwargs)
     
     
     elif column_type == ColumnType.link:
 
-        if value is None:
+        if len(kwargs) == 0:
             return LinkValue(id, title)
 
-        return LinkValue(id, title, **value)
+        return LinkValue(id, title, **kwargs)
     
     
     elif column_type == ColumnType.long_text:
 
-        if value is None:
+        if len(kwargs) == 0:
             return LongTextValue(id, title)
 
-        return LongTextValue(id, title, **value)
+        return LongTextValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.name:
-        return NameValue(id, title, name=value)
+        return NameValue(id, title, name=kwargs)
 
 
     elif column_type == ColumnType.numbers:
 
-        if value is None:
+        if len(kwargs) == 0:
             return NumberValue(id, title)
 
-        return NumberValue(id, title, number=value)
+        return NumberValue(id, title, number=kwargs)
 
 
     elif column_type == ColumnType.people:
 
-        if value is None:
+        if len(kwargs) == 0:
             return PeopleValue(id, title)
 
-        return PeopleValue(id, title, persons_and_teams=value['personsAndTeams'])
+        return PeopleValue(id, title, persons_and_teams=kwargs['personsAndTeams'])
 
 
     elif column_type == ColumnType.phone:
 
-        if value is None:
+        if len(kwargs) == 0:
             return PhoneValue(id, title)
 
-        return PhoneValue(id, title, phone=value['phone'], country_short_name=value['countryShortName'])
+        return PhoneValue(id, title, phone=kwargs['phone'], country_short_name=kwargs['countryShortName'])
 
 
     elif column_type == ColumnType.rating:
 
-        if value is None:
+        if len(kwargs) == 0:
             return RatingValue(id, title)
 
-        return RatingValue(id, title, **value)
+        return RatingValue(id, title, **kwargs)
     
     
     elif column_type == ColumnType.status:
 
-        if value is None:
+        if len(kwargs) == 0:
             return StatusValue(id, title)
 
-        if value.__contains__('label'):
-            return StatusValue(id, title, label=value['label'])
+        if kwargs.__contains__('label'):
+            return StatusValue(id, title, label=kwargs['label'])
 
-        if value.__contains__('index'):
-            return StatusValue(id, title, index=value['index'])
+        if kwargs.__contains__('index'):
+            return StatusValue(id, title, index=kwargs['index'])
 
 
     elif column_type == ColumnType.tags:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TagsValue(id, title)
 
-        return TagsValue(id, title, **value)
+        return TagsValue(id, title, **kwargs)
     
     
     elif column_type == ColumnType.team:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TeamValue(id, title)
 
-        return TeamValue(id, title, **value)
+        return TeamValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.text:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TextValue(id, title)
 
-        return TextValue(id, title, text=value)
+        return TextValue(id, title, text=kwargs)
 
 
     elif column_type == ColumnType.timeline:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TimelineValue(id, title)
 
-        return TimelineValue(id, title, **value)
+        return TimelineValue(id, title, **kwargs)
     
     
     elif column_type == ColumnType.world_clock:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TimezoneValue(id, title)
 
-        return TimezoneValue(id, title, **value)
+        return TimezoneValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.week:
 
-        if value is None: 
+        if len(kwargs) == 0: 
             return WeekValue(id, title)
 
-        return WeekValue(id, title, **value)
+        return WeekValue(id, title, **kwargs)
 
     
     else:
