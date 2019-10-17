@@ -2,7 +2,7 @@ from unittest.mock import patch
 from nose.tools import ok_
 
 from moncli.api_v2 import handlers, constants
-from moncli.enums import BoardKind, ColumnType, State
+from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType
 
 EXECUTE_QUERY_PATCH = 'moncli.api_v2.requests.execute_query'
 
@@ -248,40 +248,56 @@ def test_delete_item(execute_query):
     ok_(type(deleted_item) is dict)
     ok_(deleted_item['state'] == State.deleted.name)
 
-'''
+
 @patch(EXECUTE_QUERY_PATCH)
 def test_create_update(execute_query):
 
     # Arrange
+    body = 'Hello, world! Let\'s eat, Grandma!'
+    item_id = '1'
+    execute_query.return_value = {constants.CREATE_UPDATE: {'id': '1', 'body': body, 'item_id': item_id}}
 
     # Act
+    new_update = handlers.create_update('', body, item_id, 'id', 'body', 'item_id')
     
     # Assert
-    pass
+    ok_(new_update != None)
+    ok_(type(new_update) is dict)
+    ok_(new_update['body'] == body)
+    ok_(new_update['item_id'] == item_id)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_updates(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.UPDATES: [{'id': '1'}, {'id': '2'}, {'id': '3'}, {'id': '4'}, {'id': '5'}]}
 
     # Act
+    updates = handlers.get_updates('', 'id', limit=5)
     
     # Assert
-    pass
+    ok_(updates != None)
+    ok_(type(updates) is list)
+    ok_(len(updates) == 5)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_create_notification(execute_query):
 
     # Arrange
-
+    text = 'Did you eat, Grandma?'
+    execute_query.return_value = {constants.CREATE_NOTIFICATION : {'text': text}}
+    
     # Act
+    notification = handlers.create_notification('', text, '1', '2', NotificationTargetType.Project)
     
     # Assert
-    pass
+    ok_(notification != None)
+    ok_(type(notification) is dict)
+    ok_(notification['text'] == text)
 
-
+'''
 @patch(EXECUTE_QUERY_PATCH)
 def test_create_or_get_tag(execute_query):
 
