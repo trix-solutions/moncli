@@ -104,46 +104,62 @@ def test_change_multiple_column_value(execute_query):
 def test_duplicate_group(execute_query):
 
     # Arrange
+    group_id = 'group_2'
+    execute_query.return_value = {constants.DUPLICATE_GROUP: {'id': group_id}}
 
     # Act
+    duplicated_group = handlers.duplicate_group('', '1', 'group_1', 'id')
     
     # Assert
-    pass
+    ok_(duplicated_group != None)
+    ok_(duplicated_group['id'] == 'group_2')
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_create_group(execute_query):
 
     # Arrange
+    group_id = 'group_1'
+    group_name = 'New Group One'
+    execute_query.return_value = {constants.CREATE_GROUP: {'id': group_id, 'title': group_name}}
 
     # Act
+    new_group = handlers.create_group('', '1', group_name, 'id', 'title')
     
     # Assert
-    pass
+    ok_(new_group != None)
+    ok_(new_group['id'] == group_id)
+    ok_(new_group['title'] == group_name)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_archive_group(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.ARCHIVE_GROUP: {'id': 'group_1', 'archived': True}}
 
     # Act
+    archived_group = handlers.archive_group('', '1', 'group_1', 'archived')
     
     # Assert
-    pass
+    ok_(archived_group != None)
+    ok_(archived_group['archived'] == True)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_delete_group(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.DELETE_GROUP: {'id': 'group_1', 'deleted': True}}
 
     # Act
+    deleted_group = handlers.delete_group('', '1', 'group_1', 'deleted')
     
     # Assert
-    pass
+    ok_(deleted_group != None)
+    ok_(deleted_group['deleted'] == True)
 
-
+'''
 @patch(EXECUTE_QUERY_PATCH)
 def test_create_item(execute_query):
 
@@ -285,3 +301,4 @@ def test_get_me(execute_query):
     
     # Assert
     pass
+'''
