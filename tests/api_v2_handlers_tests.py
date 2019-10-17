@@ -290,7 +290,7 @@ def test_create_notification(execute_query):
     execute_query.return_value = {constants.CREATE_NOTIFICATION : {'text': text}}
     
     # Act
-    notification = handlers.create_notification('', text, '1', '2', NotificationTargetType.Project)
+    notification = handlers.create_notification('', text, '1', '2', NotificationTargetType.Project, 'text')
     
     # Assert
     ok_(notification != None)
@@ -321,43 +321,57 @@ def test_get_tags(execute_query):
     execute_query.return_value = {constants.TAGS: [{'id': '1'}, {'id': '2'}, {'id': '3'}]}
 
     # Act
-    tags = handlers.get_tags('', page=1, limit=3)
+    tags = handlers.get_tags('', 'id')
     
     # Assert
     ok_(tags != None)
     ok_(type(tags) is list)
     ok_(len(tags) == 3)
 
-'''
+
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_users(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.USERS: [{'id': '1', 'name': 'Grandma'}, {'id': '2', 'name': 'Osamu Dazai'}]}
 
     # Act
+    users = handlers.get_users('', 'id', 'name')
     
     # Assert
-    pass
+    ok_(users != None)
+    ok_(type(users) is list)
+    ok_(len(users) == 2)
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_teams(execute_query):
 
     # Arrange
+    team_name = 'Grandma\'s House'
+    execute_query.return_value = {constants.TEAMS: [{'id': '1', 'name': team_name}]}
 
     # Act
+    teams = handlers.get_teams('', 'id', 'name')
     
     # Assert
-    pass
+    ok_(teams != None)
+    ok_(type(teams) is list)
+    ok_(len(teams) == 1)
+    
 
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_me(execute_query):
 
     # Arrange
+    name = 'Meeeeeeeeee!'
+    execute_query.return_value = {constants.ME: {'id': '1', 'name': name}}
 
     # Act
+    me = handlers.get_me('')
     
     # Assert
-    pass
-'''
+    ok_(me != None)
+    ok_(type(me) is dict)
+    ok_(me['name'] == name)
