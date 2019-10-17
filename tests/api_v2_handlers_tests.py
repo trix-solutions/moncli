@@ -45,11 +45,14 @@ def test_get_board(execute_query):
 def test_archive_board(execute_query):
 
     # Arrange
+    execute_query.return_value = {constants.ARCHIVE_BOARD: {'id': '1', 'state': 'archived'}}
 
     # Act
+    archived_board = handlers.archive_board('', '1', 'id', 'state')
     
     # Assert
-    pass
+    ok_(archived_board != None)
+    ok_(archived_board['state'] == 'archived')
 
 
 @patch(EXECUTE_QUERY_PATCH)
