@@ -208,6 +208,8 @@ class LongTextValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(LongTextValue, self).__init__(id, title)
 
+        self.text = None
+
         for key, value in kwargs.items():
 
             if key == 'text':

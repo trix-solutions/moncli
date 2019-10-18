@@ -357,7 +357,7 @@ def test_should_return_link_column_value_with_url_and_text():
 
     # Arrange
     id = 'link_3'
-    column_type = ColumnType.email
+    column_type = ColumnType.link
     title = 'Link Three'
     url = 'https://link.three'
     text = 'Link Three'
@@ -371,3 +371,39 @@ def test_should_return_link_column_value_with_url_and_text():
     eq_(column_value.url, url)
     eq_(column_value.text, text)
     eq_(format, {'url': url, 'text': text})
+
+
+def test_should_return_an_empty_long_text_column_value():
+
+    # Arrange
+    id = 'long_text_0'
+    column_type = ColumnType.long_text
+    title = 'Long Test 0'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.text, None)
+    eq_(format, {})
+
+
+def test_should_return_long_text_column_value_with_text():
+
+    # Arrange
+    id = 'long_text_1'
+    column_type = ColumnType.long_text
+    title = 'Long Test 1'
+    text = 'LOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, text=text)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.text, text)
+    eq_(format, {'text': text})
+    
