@@ -568,3 +568,40 @@ def test_should_return_a_people_column_value_with_added_persons_and_teams():
     ok_(column_value != None)
     eq_(column_value.persons_and_teams, persons_and_teams)
     eq_(format, {'personsAndTeams': persons_and_teams})
+
+
+def test_should_return_an_empty_phone_column_value():
+
+    # Arrange
+    id = 'phone_0'
+    column_type = ColumnType.phone
+    title = 'Phone Zero'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.phone, None)
+    eq_(column_value.country_short_name, None)
+    eq_(format, {'phone': '', 'countryShortName': ''})
+
+
+def test_should_return_a_phone_column_value_with_data():
+
+    # Arrange
+    id = 'phone_1'
+    column_type = ColumnType.phone
+    title = 'Phone One'
+    country_short_name = 'US'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.phone, None)
+    eq_(column_value.country_short_name, None)
+    eq_(format, {'phone': '', 'countryShortName': ''})

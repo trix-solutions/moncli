@@ -68,7 +68,7 @@ class Item():
                     column_value = create_column_value(id, column_type, title)
                 else:
                     value = json.loads(value)
-                    column_value = create_column_value(id, column_type, title, value)
+                    column_value = create_column_value(id, column_type, title, **value)
 
                 self.__column_values[id] = column_value          
 

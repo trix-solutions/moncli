@@ -42,10 +42,11 @@ class CountryValue(ColumnValue):
 
         for key, value in kwargs.items():
 
-            if key == 'country_code':
+            # TODO: Create collection of acceptable data mappings
+            if key == 'country_code' or 'countryCode':
                 self.country_code = value
 
-            elif key == 'country_name':
+            elif key == 'country_name' or 'countryName':
                 self.country_name = value
 
     
@@ -519,20 +520,14 @@ class WeekValue(ColumnValue):
         return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
 
 
-def create_column_value(id: str, column_type: ColumnType, title: str = None, value: dict = None, **kwargs):
-
-    if value is not None:
-
-        for key, value in value.items():
-            kwargs[key] = value
-
+def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
 
     if column_type == ColumnType.checkbox:
 
         if len(kwargs) == 0:
             return CheckboxValue(id, title)
 
-        return CheckboxValue(id, title, checked=kwargs['checked'])
+        return CheckboxValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.country:
@@ -620,7 +615,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, val
         if len(kwargs) == 0:
             return PhoneValue(id, title)
 
-        return PhoneValue(id, title, phone=kwargs['phone'], country_short_name=kwargs['country_short_name'])
+        return PhoneValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.rating:
