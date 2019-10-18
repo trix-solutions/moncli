@@ -276,3 +276,41 @@ def test_should_return_email_column_value_with_email_and_text():
     eq_(column_value.email, email)
     eq_(column_value.text, text)
     eq_(format, {'email': email, 'text': text})
+
+
+def test_should_return_empty_hour_column_value():
+
+    # Arrange
+    id = 'hour_1'
+    column_type = ColumnType.hour
+    title = 'Hour One'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.hour, None)
+    eq_(column_value.minute, 0)
+    eq_(format, {})
+
+
+def test_should_return_hour_column_value_with_hour_and_minute():
+
+    # Arrange
+    id = 'hour_2'
+    column_type = ColumnType.hour
+    title = 'Hour Two'
+    hour = '7'
+    minute = '6'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, hour=hour, minute=minute)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.hour, hour)
+    eq_(column_value.minute, minute)
+    eq_(format, {'hour': hour, 'minute': minute})
