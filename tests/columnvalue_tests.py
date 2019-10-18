@@ -407,3 +407,20 @@ def test_should_return_long_text_column_value_with_text():
     eq_(column_value.text, text)
     eq_(format, {'text': text})
     
+
+def test_should_return_name_column_value_with_name():
+
+    # Arrange
+    id = 'name_1'
+    column_type = ColumnType.name
+    title = 'Name 1'
+    name = 'Name'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, name=name)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.name, name)
+    eq_(format, name)

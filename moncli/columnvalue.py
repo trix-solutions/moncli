@@ -590,7 +590,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
 
     elif column_type == ColumnType.name:
-        return NameValue(id, title, name=kwargs)
+        return NameValue(id, title, name=kwargs['name'])
 
 
     elif column_type == ColumnType.numbers:
