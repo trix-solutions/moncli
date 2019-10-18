@@ -424,3 +424,75 @@ def test_should_return_name_column_value_with_name():
     ok_(column_value != None)
     eq_(column_value.name, name)
     eq_(format, name)
+
+
+def test_should_return_an_empty_number_column_value():
+
+    # Arrange
+    id = 'number_0'
+    column_type = ColumnType.numbers
+    title = 'Number 0'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.number, None)
+    eq_(format, '')
+
+
+def test_should_return_a_number_column_value_with_int():
+
+    # Arrange
+    id = 'number_1'
+    column_type = ColumnType.numbers
+    title = 'Number 1'
+    number = 8675309
+
+    # Act
+    column_value = create_column_value(id, column_type, title, number=number)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.number, number)
+    eq_(format, str(number))
+
+
+def test_should_return_a_number_column_value_with_float():
+
+    # Arrange
+    id = 'number_2'
+    column_type = ColumnType.numbers
+    title = 'Number 2'
+    number = 23.333333333
+
+    # Act
+    column_value = create_column_value(id, column_type, title, number=number)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.number, number)
+    eq_(format, str(number))
+
+
+def test_should_return_an_empty_number_column_value_when_input_is_text():
+
+    # Arrange
+    id = 'number_x'
+    column_type = ColumnType.numbers
+    title = 'Number X'
+    number = 'x'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, number=number)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.number, None)
+    eq_(format, '')
+

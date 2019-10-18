@@ -598,7 +598,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return NumberValue(id, title)
 
-        return NumberValue(id, title, number=kwargs)
+        return NumberValue(id, title, number=kwargs['number'])
 
 
     elif column_type == ColumnType.people:
