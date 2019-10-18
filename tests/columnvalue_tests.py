@@ -314,3 +314,60 @@ def test_should_return_hour_column_value_with_hour_and_minute():
     eq_(column_value.hour, hour)
     eq_(column_value.minute, minute)
     eq_(format, {'hour': hour, 'minute': minute})
+
+
+def test_should_return_empty_link_column_value():
+
+    # Arrange
+    id = 'link_1'
+    column_type = ColumnType.link
+    title = 'Link One'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.url, None)
+    eq_(column_value.text, None)
+    eq_(format, {})
+
+
+def test_should_return_link_column_value_with_url():
+
+    # Arrange
+    id = 'link_2'
+    column_type = ColumnType.link
+    title = 'Link Two'
+    url = 'https://link.two'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, url=url)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.url, url)
+    eq_(column_value.text, None)
+    eq_(format, {'url': url, 'text': url})
+
+
+def test_should_return_link_column_value_with_url_and_text():
+
+    # Arrange
+    id = 'link_3'
+    column_type = ColumnType.email
+    title = 'Link Three'
+    url = 'https://link.three'
+    text = 'Link Three'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, url=url, text=text)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.url, url)
+    eq_(column_value.text, text)
+    eq_(format, {'url': url, 'text': text})
