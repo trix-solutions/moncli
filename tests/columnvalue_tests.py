@@ -220,3 +220,59 @@ def test_should_return_dropdown_column_value_by_label_with_preference():
     eq_(column_value.label, label)
     eq_(format, {'label': label})
     
+
+def test_should_return_empty_email_column_value():
+
+    # Arrange
+    id = 'email_1'
+    column_type = ColumnType.email
+    title = 'Email One'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.email, None)
+    eq_(column_value.text, None)
+    eq_(format, {})
+
+
+def test_should_return_email_column_value_with_email():
+
+    # Arrange
+    id = 'email_2'
+    column_type = ColumnType.email
+    title = 'Email Two'
+    email = 'email@test.com'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, email=email)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.email, email)
+    eq_(column_value.text, None)
+    eq_(format, {'email': email, 'text': email})
+
+
+def test_should_return_email_column_value_with_email_and_text():
+
+    # Arrange
+    id = 'email_2'
+    column_type = ColumnType.email
+    title = 'Email Two'
+    email = 'email@test.com'
+    text = 'Test Email'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, email=email, text=text)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.email, email)
+    eq_(column_value.text, text)
+    eq_(format, {'email': email, 'text': text})
