@@ -82,7 +82,7 @@ def test_should_return_country_column_value():
     format = column_value.format()
 
     # Assert
-    ok_(columnvalue != None)
+    ok_(column_value != None)
     eq_(column_value.country_code, country_code)
     eq_(column_value.country_name, country_name)
     eq_(format, {'countryCode': country_code, 'countryName': country_name})
@@ -119,7 +119,7 @@ def test_should_return_date_column_value_with_default_time():
     format = column_value.format()
 
     # Assert
-    ok_(columnvalue != None)
+    ok_(column_value != None)
     eq_(column_value.date, date)
     eq_(column_value.time, None)
     eq_(format, {'date': date})
@@ -139,8 +139,84 @@ def test_should_return_date_column_value_with_time():
     format = column_value.format()
 
     # Assert
-    ok_(columnvalue != None)
+    ok_(column_value != None)
     eq_(column_value.date, date)
     eq_(column_value.time, time)
     eq_(format, {'date': date, 'time': time})
+
+
+def test_should_return_empty_dropdown_column_value():
+
+    # Arrange
+    id = 'dropdown_1'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown One'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.label, None)
+    eq_(column_value.ids, None)
+    eq_(format, {})
+
+
+def test_should_return_dropdown_column_value_by_ids():
+
+    # Arrange
+    id = 'dropdown_2'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown Two'
+    ids = [1,2,3]
+
+    # Act 
+    column_value = create_column_value(id, column_type, title, ids=ids)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.ids, [1,2,3])
+    eq_(column_value.label, None)
+    eq_(format, {'ids': [1,2,3]})
+
+
+def test_should_return_dropdown_column_value_by_label():
+
+    # Arrange
+    id = 'dropdown_3'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown Three'
+    label = 'Status 1'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, label=label)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.ids, None)
+    eq_(column_value.label, label)
+    eq_(format, {'label': label})
+
+
+def test_should_return_dropdown_column_value_by_label_with_preference():
+
+    # Arrange
+    id = 'dropdown_4'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown Four'
+    label = 'Status 2'
+    ids = [1,2,3]
+
+    # Act
+    column_value = create_column_value(id, column_type, title, label=label, ids=ids)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.ids, None)
+    eq_(column_value.label, label)
+    eq_(format, {'label': label})
     

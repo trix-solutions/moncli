@@ -552,7 +552,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
             return DropdownValue(id, title, label=kwargs['label'])
 
         if kwargs.__contains__('ids'):
-            return DropdownValue(id, title, label_id=kwargs['ids'])
+            return DropdownValue(id, title, ids=kwargs['ids'])
 
 
     elif column_type == ColumnType.email:
