@@ -316,7 +316,7 @@ class PeopleValue(ColumnValue):
 
     def remove_people(self, id: int):
 
-        people_to_remove = [people for people in self.persons_and_teams if people['id'] == id]
+        people_to_remove = [people for people in self.persons_and_teams if people['id'] == id][0]
         self.persons_and_teams.remove(people_to_remove)
 
         if len(self.persons_and_teams) == 0:
@@ -519,7 +519,13 @@ class WeekValue(ColumnValue):
         return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
 
 
-def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
+def create_column_value(id: str, column_type: ColumnType, title: str = None, value: dict = None, **kwargs):
+
+    if value is not None:
+
+        for key, value in value.items():
+            kwargs[key] = value
+
 
     if column_type == ColumnType.checkbox:
 
@@ -606,7 +612,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return PeopleValue(id, title)
 
-        return PeopleValue(id, title, persons_and_teams=kwargs['personsAndTeams'])
+        return PeopleValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.phone:
@@ -614,7 +620,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return PhoneValue(id, title)
 
-        return PhoneValue(id, title, phone=kwargs['phone'], country_short_name=kwargs['countryShortName'])
+        return PhoneValue(id, title, phone=kwargs['phone'], country_short_name=kwargs['country_short_name'])
 
 
     elif column_type == ColumnType.rating:

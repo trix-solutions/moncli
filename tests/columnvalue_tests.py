@@ -2,7 +2,7 @@ from nose.tools import ok_, eq_, raises
 
 from moncli import columnvalue
 from moncli.columnvalue import create_column_value
-from moncli.enums import ColumnType
+from moncli.enums import ColumnType, PeopleKind
 
 @raises(columnvalue.InvalidColumnValueType)
 def test_should_fail_for_non_writeable_column_type():
@@ -496,3 +496,75 @@ def test_should_return_an_empty_number_column_value_when_input_is_text():
     eq_(column_value.number, None)
     eq_(format, '')
 
+
+def test_should_return_an_empty_people_column_value():
+
+    # Arrange
+    id = 'people_0'
+    column_type = ColumnType.people
+    title = 'People 0'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.persons_and_teams, None)
+    eq_(format, {})
+
+
+def test_should_return_a_people_column_value_with_persons_and_teams():
+
+    # Arrange
+    id = 'people_1'
+    column_type = ColumnType.people
+    title = 'People 1'
+    persons_and_teams = [{'id': 1, 'kind': PeopleKind.person}]
+
+    # Act
+    column_value = create_column_value(id, column_type, title, persons_and_teams=persons_and_teams)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.persons_and_teams, persons_and_teams)
+    eq_(format, {'personsAndTeams': persons_and_teams})
+
+
+def test_should_return_an_empty_people_column_value_after_remove():
+
+    # Arrange
+    id = 'people_2'
+    column_type = ColumnType.people
+    title = 'People 2'
+    persons_and_teams = [{'id': 1, 'kind': PeopleKind.person}]
+
+    # Act
+    column_value = create_column_value(id, column_type, title, persons_and_teams=persons_and_teams)
+    column_value.remove_people(1)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.persons_and_teams, None)
+    eq_(format, {})
+
+
+def test_should_return_a_people_column_value_with_added_persons_and_teams():
+
+    # Arrange
+    id = 'people_1'
+    column_type = ColumnType.people
+    title = 'People 1'
+    persons_and_teams = [{'id': 1, 'kind': PeopleKind.person.name}]
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    column_value.add_people(1, PeopleKind.person)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.persons_and_teams, persons_and_teams)
+    eq_(format, {'personsAndTeams': persons_and_teams})
