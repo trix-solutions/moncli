@@ -124,11 +124,13 @@ class EmailValue(ColumnValue):
             self.email = kwargs['email']
         except KeyError:
             self.email = None
+            self.text = None
+            return
 
         try: 
             self.text = kwargs['text']
         except KeyError:
-            self.text = None
+            self.text = kwargs['email']
 
     
     def format(self):
@@ -136,21 +138,14 @@ class EmailValue(ColumnValue):
         if self.email is None:
             return {}
 
-        result = { 'email': self.email }
-
-        if self.text is None:
-            result['text'] = self.email
-        else:
-            result['text'] = self.text
-
-        return result
+        return { 'email': self.email, 'text': self.text }
 
 
 class HourValue(ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(HourValue, self).__init__(id, title)
-        
+
         try:
             self.hour = kwargs['hour']
 
@@ -177,16 +172,17 @@ class LinkValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(LinkValue, self).__init__(id, title)
 
-        self.url = None
-        self.text = None
+        try:
+            self.url = kwargs['url']
+        except KeyError:
+            self.url = None
+            self.text = None
+            return
 
-        for key, value in kwargs.items():
-
-            if key == 'url':
-                self.url = value
-
-            elif key == 'text':
-                self.text = value
+        try: 
+            self.text = kwargs['text']
+        except KeyError:
+            self.text = kwargs['url']
 
 
     def format(self):
@@ -194,14 +190,7 @@ class LinkValue(ColumnValue):
         if self.url is None:
             return {}
 
-        result = { 'url': self.url}
-
-        if self.text is None:
-            result['text'] = self.url
-        else:
-            result['text'] = self.text
-
-        return result
+        return { 'url': self.url, 'text': self.text }
 
 
 class LongTextValue(ColumnValue):
@@ -209,12 +198,10 @@ class LongTextValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(LongTextValue, self).__init__(id, title)
 
-        self.text = None
-
-        for key, value in kwargs.items():
-
-            if key == 'text':
-                self.text = value
+        try:
+            self.text = kwargs['text']
+        except KeyError:
+            self.text = None
 
 
     def format(self):
@@ -245,14 +232,16 @@ class NumberValue(ColumnValue):
 
         self.number = None
 
-        for key, value in kwargs.items():
+        try:
+            value = kwargs['number']
 
-            if key == 'number':
-                if self.__isint(value):
-                    self.number = int(value)
+            if self.__isint(value):
+                self.number = int(value)
 
-                elif self.__isfloat(value):
-                    self.number = float(value)
+            elif self.__isfloat(value):
+                self.number = float(value)
+        except KeyError:
+            self.number = None
 
 
     def format(self):
@@ -293,10 +282,10 @@ class PeopleValue(ColumnValue):
 
         self.persons_and_teams: list = None
 
-        for key, value in kwargs.items():
-
-            if key == 'persons_and_teams':
-                self.persons_and_teams = value
+        try:
+            self.persons_and_teams = kwargs['persons_and_teams']
+        except KeyError:
+            self.persons_and_teams = None
 
     
     def format(self):
@@ -329,12 +318,12 @@ class PhoneValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(PhoneValue, self).__init__(id, title)
 
-        self.phone = None
-        self.country_short_name = None
-
-        if kwargs.__contains__('phone') or kwargs.__contains__('country_short_name'):
+        try:
             self.phone = kwargs['phone']
             self.country_short_name = kwargs['country_short_name']
+        except:
+            self.phone = None
+            self.country_short_name = None
 
     
     def format(self):
@@ -639,7 +628,15 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return PeopleValue(id, title)
 
-        return PeopleValue(id, title, **kwargs)
+        try:
+            persons_and_teams = kwargs['personsAndTeams']
+        except KeyError:
+            try:
+                persons_and_teams = kwargs['persons_and_teams']
+            except KeyError:
+                persons_and_teams = None
+
+        return PeopleValue(id, title, persons_and_teams=persons_and_teams)
 
 
     elif column_type == ColumnType.phone:
@@ -647,7 +644,20 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return PhoneValue(id, title)
 
-        return PhoneValue(id, title, **kwargs)
+        try:
+            phone = kwargs['phone']
+        except KeyError:
+            phone = None
+
+        try:
+            country_short_name = kwargs['countryShortName']
+        except KeyError:
+            try:
+                country_short_name = kwargs['country_short_name']
+            except KeyError:
+                country_short_name = None
+
+        return PhoneValue(id, title, phone=phone, country_short_name=country_short_name)
 
 
     elif column_type == ColumnType.rating:

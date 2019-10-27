@@ -255,7 +255,7 @@ def test_should_return_email_column_value_with_email():
     # Assert
     ok_(column_value != None)
     eq_(column_value.email, email)
-    eq_(column_value.text, None)
+    eq_(column_value.text, email)
     eq_(format, {'email': email, 'text': email})
 
 
@@ -369,7 +369,7 @@ def test_should_return_link_column_value_with_url():
     # Assert
     ok_(column_value != None)
     eq_(column_value.url, url)
-    eq_(column_value.text, None)
+    eq_(column_value.text, url)
     eq_(format, {'url': url, 'text': url})
 
 
