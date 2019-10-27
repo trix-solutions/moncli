@@ -504,12 +504,12 @@ class WeekValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(WeekValue, self).__init__(id, title)
 
-        self.start_date = None
-        self.end_date = None
-
-        if kwargs.__contains__('week') and kwargs['week'] != '':
+        try:
             self.start_date = kwargs['week']['startDate']
             self.end_date = kwargs['week']['endDate']
+        except KeyError:
+            self.start_date = None
+            self.end_date = None
 
 
     def format(self):
@@ -518,6 +518,22 @@ class WeekValue(ColumnValue):
             return {}
 
         return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
+
+
+class ReadonlyValue(ColumnValue):
+    
+    def __init__(self, id: str, title, **kwargs):
+        super(ReadonlyValue, self).__init__(id, title)
+
+        try:
+            self.value = kwargs['value']
+        except KeyError: 
+            self.value = None
+
+    
+    def format(self):
+
+        raise ColumnValueIsReadOnly(self.id, self.title)
 
 
 def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
@@ -687,9 +703,11 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
     
     else:
-        raise InvalidColumnValueType(column_type)
 
-class InvalidColumnValueType(Exception):
+        return ReadonlyValue(id, title, **kwargs)
 
-    def __init__(self, column_type: ColumnType):
-        self.message = "Cannot create column value with type '{}'.".format(column_type._name_)
+
+class ColumnValueIsReadOnly(Exception):
+
+    def __init__(self, id: str, title: str):
+        self.message = "Cannot format read-only column value '{}' ('{}') for updating.".format(title, id)

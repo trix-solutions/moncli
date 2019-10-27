@@ -74,7 +74,7 @@ class Board():
 
             self.__columns = { column_data['id']: Column(creds=self.__creds, **column_data) for column_data in board[0]['columns'] }
 
-        return self.__columns.values()
+        return list(self.__columns.values())
 
 
     def add_group(self, group_name: str):
