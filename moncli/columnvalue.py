@@ -444,16 +444,12 @@ class TimelineValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TimelineValue, self).__init__(id, title)
 
-        self.from_date = None
-        self.to_date = None
-
-        for key, value in kwargs.items():
-
-            if key == 'from':
-                self.from_date = value
-
-            elif key == 'to':
-                self.to_date = value
+        try:
+            self.from_date = kwargs['from_date']
+            self.to_date = kwargs['to_date']
+        except KeyError:
+            self.from_date = None
+            self.to_date = None
 
 
     def format(self):
@@ -706,7 +702,23 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return TimelineValue(id, title)
 
-        return TimelineValue(id, title, **kwargs)
+        try:
+            from_date = kwargs['from']
+        except KeyError:
+            try:
+                from_date = kwargs['from_date']
+            except KeyError:
+                from_date = None
+
+        try:
+            to_date = kwargs['to']
+        except KeyError:
+            try:
+                to_date = kwargs['to_date']
+            except KeyError:
+                to_date = None
+
+        return TimelineValue(id, title, from_date=from_date, to_date=to_date)
     
     
     elif column_type == ColumnType.world_clock:

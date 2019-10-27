@@ -842,3 +842,41 @@ def test_should_return_text_column_value_with_text():
     ok_(column_value != None)
     eq_(column_value.text, text)
     eq_(format, text)
+
+
+def test_should_return_an_empty_timeline_column_value():
+
+    # Arrange
+    id = 'timeline_1'
+    column_type = ColumnType.timeline
+    title = 'Timeline 1'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.from_date, None)
+    eq_(column_value.to_date, None)
+    eq_(format, {})
+
+
+def test_should_return_a_timeline_column_value_with_data():
+
+    # Arrange
+    id = 'timeline_2'
+    column_type = ColumnType.timeline
+    title = 'Timeline Two'
+    from_date = '1990-08-30'
+    to_date = '2013-08-23'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, from_date=from_date, to_date=to_date)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.from_date, from_date)
+    eq_(column_value.to_date, to_date)
+    eq_(format, {'from': from_date, 'to': to_date})
