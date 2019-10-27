@@ -20,8 +20,11 @@ class CheckboxValue(ColumnValue):
         
         self.checked: bool = False
 
-        if kwargs.__contains__('checked') and kwargs['checked'] == 'true':
-            self.checked = True
+        try:
+            if kwargs['checked'] == 'true':
+                self.checked = True
+        except KeyError:
+            self.checked = False
 
     
     def format(self):
@@ -37,17 +40,12 @@ class CountryValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(CountryValue, self).__init__(id, title)
 
-        self.country_code = None
-        self.country_name = None
-
-        for key, value in kwargs.items():
-
-            # TODO: Create collection of acceptable data mappings
-            if key == 'country_code' or 'countryCode':
-                self.country_code = value
-
-            elif key == 'country_name' or 'countryName':
-                self.country_name = value
+        try:
+            self.country_name = kwargs['country_name']
+            self.country_code = kwargs['country_code']
+        except:
+            self.country_name = None
+            self.country_code = None
 
     
     def format(self):
@@ -66,16 +64,15 @@ class DateValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(DateValue, self).__init__(id, title)
 
-        self.date = None
-        self.time = None
+        try:
+            self.date = kwargs['date']
+        except KeyError:
+            self.date = None
 
-        for key, value in kwargs.items():
-
-            if key == 'date':
-                self.date = value
-
-            elif key == 'time':
-                self.time = value
+        try: 
+            self.time = kwargs['time']
+        except KeyError:
+            self.time = None
 
 
     def format(self):
@@ -96,16 +93,15 @@ class DropdownValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(DropdownValue, self).__init__(id, title)
 
-        self.ids: List[int] = None
-        self.label: str = None
+        try:
+            self.ids = kwargs['ids']
+        except KeyError:
+            self.ids = None
 
-        for key, value in kwargs.items():
-
-            if key == 'ids':
-                self.ids = value
-
-            elif key == 'label':
-                self.label = value
+        try: 
+            self.label = kwargs['label']
+        except KeyError:
+            self.label = None
 
 
     def format(self):
@@ -124,16 +120,15 @@ class EmailValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(EmailValue, self).__init__(id, title)
 
-        self.email = None
-        self.text = None
+        try:
+            self.email = kwargs['email']
+        except KeyError:
+            self.email = None
 
-        for key, value in kwargs.items():
-
-            if key == 'email':
-                self.email = value
-
-            elif key == 'text':
-                self.text = value
+        try: 
+            self.text = kwargs['text']
+        except KeyError:
+            self.text = None
 
     
     def format(self):
@@ -155,13 +150,18 @@ class HourValue(ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(HourValue, self).__init__(id, title)
-
-        self.hour = None
-        self.minute = 0
-
-        if kwargs.__contains__('hour'):
+        
+        try:
             self.hour = kwargs['hour']
-            self.minute = kwargs['minute']
+
+            try:
+                self.minute = kwargs['minute']
+            except KeyError:
+                self.minute = 0
+
+        except KeyError:
+            self.hour = None
+            self.minute = None
 
     
     def format(self):
@@ -551,7 +551,23 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return CountryValue(id, title)
 
-        return CountryValue(id, title, country_code=kwargs['countryCode'], country_name=kwargs['countryName'])
+        try:
+            country_name = kwargs['country_name']
+        except KeyError:
+            try:
+                country_name = kwargs['countryName']
+            except KeyError:
+                country_name = None
+
+        try:
+            country_code = kwargs['country_code']
+        except KeyError:
+            try:
+                country_code = kwargs['countryCode']
+            except KeyError:
+                country_code = None
+
+        return CountryValue(id, title, country_name=country_name, country_code=country_code)
 
 
     elif column_type == ColumnType.date:

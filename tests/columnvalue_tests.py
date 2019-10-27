@@ -4,7 +4,7 @@ from moncli import columnvalue
 from moncli.columnvalue import create_column_value
 from moncli.enums import ColumnType, PeopleKind
 
-@raises(columnvalue.InvalidColumnValueType)
+@raises(columnvalue.ColumnValueIsReadOnly)
 def test_should_fail_for_non_writeable_column_type():
 
     # Arrange
@@ -13,7 +13,8 @@ def test_should_fail_for_non_writeable_column_type():
     title = 'should fail'
 
     # Act
-    create_column_value(id, column_type, title)
+    column_value = create_column_value(id, column_type, title)
+    column_value.format()
 
 
 def test_should_return_an_empty_checkbox_column_value():
@@ -78,7 +79,7 @@ def test_should_return_country_column_value():
     country_name = 'United States'
 
     # Act
-    column_value = create_column_value(id, column_type, title, countryCode=country_code, countryName=country_name)
+    column_value = create_column_value(id, column_type, title, country_name=country_name, country_code=country_code)
     format = column_value.format()
 
     # Assert
@@ -292,16 +293,35 @@ def test_should_return_empty_hour_column_value():
     # Assert
     ok_(column_value != None)
     eq_(column_value.hour, None)
-    eq_(column_value.minute, 0)
+    eq_(column_value.minute, None)
     eq_(format, {})
 
 
-def test_should_return_hour_column_value_with_hour_and_minute():
+def test_should_return_hour_column_value_with_hour_and_default_minute():
 
     # Arrange
     id = 'hour_2'
     column_type = ColumnType.hour
     title = 'Hour Two'
+    hour = '6'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, hour=hour)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.hour, hour)
+    eq_(column_value.minute, 0)
+    eq_(format, {'hour': hour, 'minute': 0})
+
+
+def test_should_return_hour_column_value_with_hour_and_minute():
+
+    # Arrange
+    id = 'hour_3'
+    column_type = ColumnType.hour
+    title = 'Hour Tree'
     hour = '7'
     minute = '6'
 
