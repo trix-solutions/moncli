@@ -791,7 +791,7 @@ def test_should_return_empty_team_column_value():
     eq_(format, {})
 
 
-def test_should_return_team_column_value_with_tag_ids():
+def test_should_return_team_column_value_with_team_id():
 
     # Arrange
     id = 'team_2'
@@ -807,3 +807,38 @@ def test_should_return_team_column_value_with_tag_ids():
     ok_(column_value != None)
     eq_(column_value.team_id, team_id)
     eq_(format, {'team_id': team_id})
+
+
+def test_should_return_empty_text_column_value():
+
+    # Arrange
+    id = 'text_1'
+    column_type = ColumnType.text
+    title = 'Text 1'
+    
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.text, None)
+    eq_(format, '')
+
+
+def test_should_return_text_column_value_with_text():
+
+    # Arrange
+    id = 'text_2'
+    column_type = ColumnType.text
+    title = 'Text 2'
+    text = 'Hello, Grandma!'
+    
+    # Act
+    column_value = create_column_value(id, column_type, title, text=text)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.text, text)
+    eq_(format, text)

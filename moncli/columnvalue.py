@@ -425,10 +425,10 @@ class TextValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TextValue, self).__init__(id, title)
 
-        for key, value in kwargs.items():
-
-            if key == 'text':
-                self.text: str = value
+        try:
+            self.text = kwargs['text']
+        except KeyError:
+            self.text = None
 
 
     def format(self):
@@ -698,7 +698,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return TextValue(id, title)
 
-        return TextValue(id, title, text=kwargs)
+        return TextValue(id, title, text=kwargs['text'])
 
 
     elif column_type == ColumnType.timeline:
