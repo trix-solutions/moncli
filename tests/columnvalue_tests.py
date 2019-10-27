@@ -661,3 +661,79 @@ def test_should_return_a_rating_column_value_with_rating():
     ok_(column_value != None)
     eq_(column_value.rating, 5)
     eq_(format, {'rating': rating})
+
+
+def test_should_return_empty_status_column_value():
+
+    # Arrange
+    id = 'status_1'
+    column_type = ColumnType.status
+    title = 'Status One'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.index, None)
+    eq_(column_value.label, None)
+    eq_(format, {'label': ''})
+
+
+def test_should_return_status_column_value_by_index():
+
+    # Arrange
+    id = 'status_2'
+    column_type = ColumnType.status
+    title = 'Status Two'
+    index = 1
+
+    # Act 
+    column_value = create_column_value(id, column_type, title, index=index)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.index, index)
+    eq_(column_value.label, None)
+    eq_(format, {'index': index})
+
+
+def test_should_return_status_column_value_by_label():
+
+    # Arrange
+    id = 'status_3'
+    column_type = ColumnType.status
+    title = 'Status Three'
+    label = 'Status 3'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, label=label)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.index, None)
+    eq_(column_value.label, label)
+    eq_(format, {'label': label})
+
+
+def test_should_return_status_column_value_by_label_with_preference():
+
+    # Arrange
+    id = 'status_4'
+    column_type = ColumnType.status
+    title = 'Status Four'
+    label = 'Status 2'
+    index = 4
+
+    # Act
+    column_value = create_column_value(id, column_type, title, label=label, index=index)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.index, None)
+    eq_(column_value.label, label)
+    eq_(format, {'label': label})
