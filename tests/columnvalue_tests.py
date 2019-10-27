@@ -880,3 +880,38 @@ def test_should_return_a_timeline_column_value_with_data():
     eq_(column_value.from_date, from_date)
     eq_(column_value.to_date, to_date)
     eq_(format, {'from': from_date, 'to': to_date})
+
+
+def test_should_return_empty_timezone_column_value():
+
+    # Arrange
+    id = 'timezone_1'
+    column_type = ColumnType.world_clock
+    title = 'Time zone 1'
+    
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.timezone, None)
+    eq_(format, {})
+
+
+def test_should_return_timezone_column_value_with_text():
+
+    # Arrange
+    id = 'timezone_2'
+    column_type = ColumnType.world_clock
+    title = 'Timezone 2'
+    timezone = 'America/Phoenix'
+    
+    # Act
+    column_value = create_column_value(id, column_type, title, timezone=timezone)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.timezone, timezone)
+    eq_(format, {'timezone': timezone})

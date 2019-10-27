@@ -465,12 +465,10 @@ class TimezoneValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TimezoneValue, self).__init__(id, title)
 
-        self.timezone = None
-
-        for key, value in kwargs.items():
-
-            if key == 'timezone':
-                self.timezone = value
+        try:
+            self.timezone = kwargs['timezone']
+        except:
+            self.timezone = None
 
 
     def format(self):
