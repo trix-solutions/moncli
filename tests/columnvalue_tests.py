@@ -615,6 +615,25 @@ def test_should_return_a_phone_column_value_with_data():
     column_type = ColumnType.phone
     title = 'Phone One'
     country_short_name = 'US'
+    phone = '1234567890'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, phone=phone, country_short_name=country_short_name)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.phone, phone)
+    eq_(column_value.country_short_name, country_short_name)
+    eq_(format, {'phone': phone, 'countryShortName': country_short_name})
+
+
+def test_should_return_empty_rating_column_value():
+
+    # Arrange
+    id = 'rating_1'
+    column_type = ColumnType.rating
+    title = 'Rating One'
 
     # Act
     column_value = create_column_value(id, column_type, title)
@@ -622,6 +641,23 @@ def test_should_return_a_phone_column_value_with_data():
 
     # Assert
     ok_(column_value != None)
-    eq_(column_value.phone, None)
-    eq_(column_value.country_short_name, None)
-    eq_(format, {'phone': '', 'countryShortName': ''})
+    eq_(column_value.rating, None)
+    eq_(format, {})
+
+
+def test_should_return_a_rating_column_value_with_rating():
+
+    # Arrange
+    id = 'rating_2'
+    column_type = ColumnType.rating
+    title = 'Rating Two'
+    rating = 5
+
+    # Act
+    column_value = create_column_value(id, column_type, title, rating=rating)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.rating, 5)
+    eq_(format, {'rating': rating})

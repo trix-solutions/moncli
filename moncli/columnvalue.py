@@ -241,7 +241,7 @@ class NumberValue(ColumnValue):
             elif self.__isfloat(value):
                 self.number = float(value)
         except KeyError:
-            self.number = None
+            pass
 
 
     def format(self):
@@ -341,8 +341,10 @@ class RatingValue(ColumnValue):
 
         self.rating: int = None
 
-        if kwargs.__contains__('rating'):
+        try:
             self.rating = kwargs['rating']
+        except KeyError:
+            pass
 
 
     def format(self):
@@ -358,16 +360,15 @@ class StatusValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(StatusValue, self).__init__(id, title)
 
-        self.index = None
-        self.label = None
+        try:
+            self.index = kwargs['index']
+        except KeyError:
+            self.index = None
 
-        for key, value in kwargs.items():
-
-            if key == 'index':
-                self.index: int = value
-
-            elif key == 'label':
-                self.label: str = value
+        try:
+            self.label = kwargs['label']
+        except KeyError:
+            self.label = None
 
 
     def format(self):
@@ -386,12 +387,10 @@ class TagsValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TagsValue, self).__init__(id, title)
 
-        self.tag_ids = None
-
-        for key, value in kwargs.items():
-
-            if key == 'tag_ids':
-                self.tag_ids = value
+        try:
+            self.tag_ids = kwargs['tag_ids']
+        except KeyError:
+            self.tag_ids = None
 
 
     def format(self):
