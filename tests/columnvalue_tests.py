@@ -737,3 +737,38 @@ def test_should_return_status_column_value_by_label_with_preference():
     eq_(column_value.index, None)
     eq_(column_value.label, label)
     eq_(format, {'label': label})
+
+
+def test_should_return_empty_tags_column_value():
+
+    # Arrange
+    id = 'tags_1'
+    column_type = ColumnType.tags
+    title = 'Tags 1'
+    
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.tag_ids, None)
+    eq_(format, {'tag_ids': []})
+
+
+def test_should_return_tags_column_value_with_tag_ids():
+
+    # Arrange
+    id = 'tags_2'
+    column_type = ColumnType.tags
+    title = 'Tags 2'
+    tag_ids = [1,2,3]
+    
+    # Act
+    column_value = create_column_value(id, column_type, title, tag_ids=tag_ids)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.tag_ids, tag_ids)
+    eq_(format, {'tag_ids': tag_ids})
