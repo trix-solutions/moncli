@@ -406,12 +406,10 @@ class TeamValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TeamValue, self).__init__(id, title)
 
-        self.team_id = None
-
-        for key, value in kwargs.items():
-
-            if key == 'team_id':
-                self.team_id: int = value
+        try:
+            self.team_id = kwargs['team_id']
+        except KeyError:
+            self.team_id = None
 
 
     def format(self):

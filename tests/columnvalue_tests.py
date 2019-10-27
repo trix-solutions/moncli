@@ -772,3 +772,38 @@ def test_should_return_tags_column_value_with_tag_ids():
     ok_(column_value != None)
     eq_(column_value.tag_ids, tag_ids)
     eq_(format, {'tag_ids': tag_ids})
+
+
+def test_should_return_empty_team_column_value():
+
+    # Arrange
+    id = 'team_1'
+    column_type = ColumnType.team
+    title = 'Team 1'
+    
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.team_id, None)
+    eq_(format, {})
+
+
+def test_should_return_team_column_value_with_tag_ids():
+
+    # Arrange
+    id = 'team_2'
+    column_type = ColumnType.team
+    title = 'Team 2'
+    team_id = 12345
+    
+    # Act
+    column_value = create_column_value(id, column_type, title, team_id=team_id)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.team_id, team_id)
+    eq_(format, {'team_id': team_id})
