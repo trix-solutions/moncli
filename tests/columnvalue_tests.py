@@ -915,3 +915,41 @@ def test_should_return_timezone_column_value_with_text():
     ok_(column_value != None)
     eq_(column_value.timezone, timezone)
     eq_(format, {'timezone': timezone})
+
+
+def test_should_return_empty_week_column_value():
+
+    # Arrange
+    id = 'week_1'
+    column_type = ColumnType.week
+    title = 'Week 1'
+
+    # Act
+    column_value = create_column_value(id, column_type, title)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.start_date, None)
+    eq_(column_value.end_date, None)
+    eq_(format, {})
+
+
+def test_should_return_week_column_value_with_data():
+
+    # Arrange
+    id = 'week_1'
+    column_type = ColumnType.week
+    title = 'Week 1'
+    start_date = '2019-10-21'
+    end_date = '2019-10-27'
+
+    # Act
+    column_value = create_column_value(id, column_type, title, start_date=start_date, end_date=end_date)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.start_date, start_date)
+    eq_(column_value.end_date, end_date)
+    eq_(format, {'week': {'startDate': start_date, 'endDate': end_date}})

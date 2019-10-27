@@ -485,8 +485,8 @@ class WeekValue(ColumnValue):
         super(WeekValue, self).__init__(id, title)
 
         try:
-            self.start_date = kwargs['week']['startDate']
-            self.end_date = kwargs['week']['endDate']
+            self.start_date = kwargs['start_date']
+            self.end_date = kwargs['end_date']
         except KeyError:
             self.start_date = None
             self.end_date = None
@@ -732,7 +732,23 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0: 
             return WeekValue(id, title)
 
-        return WeekValue(id, title, **kwargs)
+        try:
+            start_date = kwargs['week']['startDate']
+        except KeyError:
+            try:
+                start_date = kwargs['start_date']
+            except KeyError:
+                start_date = None
+
+        try:
+            end_date = kwargs['week']['endDate']
+        except KeyError:
+            try:
+                end_date = kwargs['end_date']
+            except:
+                end_date = None
+
+        return WeekValue(id, title, start_date=start_date, end_date=end_date)
 
     
     else:
