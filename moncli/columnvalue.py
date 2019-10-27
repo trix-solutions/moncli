@@ -20,8 +20,11 @@ class CheckboxValue(ColumnValue):
         
         self.checked: bool = False
 
-        if kwargs.__contains__('checked') and kwargs['checked'] == 'true':
-            self.checked = True
+        try:
+            if kwargs['checked'] == 'true':
+                self.checked = True
+        except KeyError:
+            self.checked = False
 
     
     def format(self):
@@ -37,16 +40,12 @@ class CountryValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(CountryValue, self).__init__(id, title)
 
-        self.country_code = None
-        self.country_name = None
-
-        for key, value in kwargs.items():
-
-            if key == 'country_code':
-                self.country_code = value
-
-            elif key == 'country_name':
-                self.country_name = value
+        try:
+            self.country_name = kwargs['country_name']
+            self.country_code = kwargs['country_code']
+        except:
+            self.country_name = None
+            self.country_code = None
 
     
     def format(self):
@@ -65,16 +64,15 @@ class DateValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(DateValue, self).__init__(id, title)
 
-        self.date = None
-        self.time = None
+        try:
+            self.date = kwargs['date']
+        except KeyError:
+            self.date = None
 
-        for key, value in kwargs.items():
-
-            if key == 'date':
-                self.date = value
-
-            elif key == 'time':
-                self.time = value
+        try: 
+            self.time = kwargs['time']
+        except KeyError:
+            self.time = None
 
 
     def format(self):
@@ -95,16 +93,15 @@ class DropdownValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(DropdownValue, self).__init__(id, title)
 
-        self.ids: List[int] = None
-        self.label: str = None
+        try:
+            self.ids = kwargs['ids']
+        except KeyError:
+            self.ids = None
 
-        for key, value in kwargs.items():
-
-            if key == 'ids':
-                self.ids = value
-
-            elif key == 'label':
-                self.label = value
+        try: 
+            self.label = kwargs['label']
+        except KeyError:
+            self.label = None
 
 
     def format(self):
@@ -123,16 +120,17 @@ class EmailValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(EmailValue, self).__init__(id, title)
 
-        self.email = None
-        self.text = None
+        try:
+            self.email = kwargs['email']
+        except KeyError:
+            self.email = None
+            self.text = None
+            return
 
-        for key, value in kwargs.items():
-
-            if key == 'email':
-                self.email = value
-
-            elif key == 'text':
-                self.text = value
+        try: 
+            self.text = kwargs['text']
+        except KeyError:
+            self.text = kwargs['email']
 
     
     def format(self):
@@ -140,14 +138,7 @@ class EmailValue(ColumnValue):
         if self.email is None:
             return {}
 
-        result = { 'email': self.email }
-
-        if self.text is None:
-            result['text'] = self.email
-        else:
-            result['text'] = self.text
-
-        return result
+        return { 'email': self.email, 'text': self.text }
 
 
 class HourValue(ColumnValue):
@@ -155,12 +146,17 @@ class HourValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(HourValue, self).__init__(id, title)
 
-        self.hour = None
-        self.minute = 0
-
-        if kwargs.__contains__('hour'):
+        try:
             self.hour = kwargs['hour']
-            self.minute = kwargs['minute']
+
+            try:
+                self.minute = kwargs['minute']
+            except KeyError:
+                self.minute = 0
+
+        except KeyError:
+            self.hour = None
+            self.minute = None
 
     
     def format(self):
@@ -176,16 +172,17 @@ class LinkValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(LinkValue, self).__init__(id, title)
 
-        self.url = None
-        self.text = None
+        try:
+            self.url = kwargs['url']
+        except KeyError:
+            self.url = None
+            self.text = None
+            return
 
-        for key, value in kwargs.items():
-
-            if key == 'url':
-                self.url = value
-
-            elif key == 'text':
-                self.text = value
+        try: 
+            self.text = kwargs['text']
+        except KeyError:
+            self.text = kwargs['url']
 
 
     def format(self):
@@ -193,14 +190,7 @@ class LinkValue(ColumnValue):
         if self.url is None:
             return {}
 
-        result = { 'url': self.url}
-
-        if self.text is None:
-            result['text'] = self.url
-        else:
-            result['text'] = self.text
-
-        return result
+        return { 'url': self.url, 'text': self.text }
 
 
 class LongTextValue(ColumnValue):
@@ -208,10 +198,10 @@ class LongTextValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(LongTextValue, self).__init__(id, title)
 
-        for key, value in kwargs.items():
-
-            if key == 'text':
-                self.text = value
+        try:
+            self.text = kwargs['text']
+        except KeyError:
+            self.text = None
 
 
     def format(self):
@@ -242,14 +232,16 @@ class NumberValue(ColumnValue):
 
         self.number = None
 
-        for key, value in kwargs.items():
+        try:
+            value = kwargs['number']
 
-            if key == 'number':
-                if self.__isint(value):
-                    self.number = int(value)
+            if self.__isint(value):
+                self.number = int(value)
 
-                elif self.__isfloat(value):
-                    self.number = float(value)
+            elif self.__isfloat(value):
+                self.number = float(value)
+        except KeyError:
+            pass
 
 
     def format(self):
@@ -290,10 +282,10 @@ class PeopleValue(ColumnValue):
 
         self.persons_and_teams: list = None
 
-        for key, value in kwargs.items():
-
-            if key == 'persons_and_teams':
-                self.persons_and_teams = value
+        try:
+            self.persons_and_teams = kwargs['persons_and_teams']
+        except KeyError:
+            self.persons_and_teams = None
 
     
     def format(self):
@@ -314,7 +306,7 @@ class PeopleValue(ColumnValue):
 
     def remove_people(self, id: int):
 
-        people_to_remove = [people for people in self.persons_and_teams if people['id'] == id]
+        people_to_remove = [people for people in self.persons_and_teams if people['id'] == id][0]
         self.persons_and_teams.remove(people_to_remove)
 
         if len(self.persons_and_teams) == 0:
@@ -326,12 +318,12 @@ class PhoneValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(PhoneValue, self).__init__(id, title)
 
-        self.phone = None
-        self.country_short_name = None
-
-        if kwargs.__contains__('phone') or kwargs.__contains__('country_short_name'):
+        try:
             self.phone = kwargs['phone']
             self.country_short_name = kwargs['country_short_name']
+        except:
+            self.phone = None
+            self.country_short_name = None
 
     
     def format(self):
@@ -349,8 +341,10 @@ class RatingValue(ColumnValue):
 
         self.rating: int = None
 
-        if kwargs.__contains__('rating'):
+        try:
             self.rating = kwargs['rating']
+        except KeyError:
+            pass
 
 
     def format(self):
@@ -366,16 +360,15 @@ class StatusValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(StatusValue, self).__init__(id, title)
 
-        self.index = None
-        self.label = None
+        try:
+            self.index = kwargs['index']
+        except KeyError:
+            self.index = None
 
-        for key, value in kwargs.items():
-
-            if key == 'index':
-                self.index: int = value
-
-            elif key == 'label':
-                self.label: str = value
+        try:
+            self.label = kwargs['label']
+        except KeyError:
+            self.label = None
 
 
     def format(self):
@@ -394,12 +387,10 @@ class TagsValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TagsValue, self).__init__(id, title)
 
-        self.tag_ids = None
-
-        for key, value in kwargs.items():
-
-            if key == 'tag_ids':
-                self.tag_ids = value
+        try:
+            self.tag_ids = kwargs['tag_ids']
+        except KeyError:
+            self.tag_ids = None
 
 
     def format(self):
@@ -415,12 +406,10 @@ class TeamValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TeamValue, self).__init__(id, title)
 
-        self.team_id = None
-
-        for key, value in kwargs.items():
-
-            if key == 'team_id':
-                self.team_id: int = value
+        try:
+            self.team_id = kwargs['team_id']
+        except KeyError:
+            self.team_id = None
 
 
     def format(self):
@@ -436,10 +425,10 @@ class TextValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TextValue, self).__init__(id, title)
 
-        for key, value in kwargs.items():
-
-            if key == 'text':
-                self.text: str = value
+        try:
+            self.text = kwargs['text']
+        except KeyError:
+            self.text = None
 
 
     def format(self):
@@ -455,16 +444,12 @@ class TimelineValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TimelineValue, self).__init__(id, title)
 
-        self.from_date = None
-        self.to_date = None
-
-        for key, value in kwargs.items():
-
-            if key == 'from':
-                self.from_date = value
-
-            elif key == 'to':
-                self.to_date = value
+        try:
+            self.from_date = kwargs['from_date']
+            self.to_date = kwargs['to_date']
+        except KeyError:
+            self.from_date = None
+            self.to_date = None
 
 
     def format(self):
@@ -480,12 +465,10 @@ class TimezoneValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(TimezoneValue, self).__init__(id, title)
 
-        self.timezone = None
-
-        for key, value in kwargs.items():
-
-            if key == 'timezone':
-                self.timezone = value
+        try:
+            self.timezone = kwargs['timezone']
+        except:
+            self.timezone = None
 
 
     def format(self):
@@ -501,12 +484,12 @@ class WeekValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(WeekValue, self).__init__(id, title)
 
-        self.start_date = None
-        self.end_date = None
-
-        if kwargs.__contains__('week') and kwargs['week'] != '':
-            self.start_date = kwargs['week']['startDate']
-            self.end_date = kwargs['week']['endDate']
+        try:
+            self.start_date = kwargs['start_date']
+            self.end_date = kwargs['end_date']
+        except KeyError:
+            self.start_date = None
+            self.end_date = None
 
 
     def format(self):
@@ -517,176 +500,263 @@ class WeekValue(ColumnValue):
         return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
 
 
-def create_column_value(id: str, column_type: ColumnType, title: str = None, value = None):
+class ReadonlyValue(ColumnValue):
+    
+    def __init__(self, id: str, title, **kwargs):
+        super(ReadonlyValue, self).__init__(id, title)
+
+        try:
+            self.value = kwargs['value']
+        except KeyError: 
+            self.value = None
+
+    
+    def format(self):
+
+        raise ColumnValueIsReadOnly(self.id, self.title)
+
+
+def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
 
     if column_type == ColumnType.checkbox:
 
-        if value is None:
+        if len(kwargs) == 0:
             return CheckboxValue(id, title)
 
-        return CheckboxValue(id, title, **value)
+        return CheckboxValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.country:
 
-        if value is None:
+        if len(kwargs) == 0:
             return CountryValue(id, title)
 
-        return CountryValue(id, title, country_code=value['countryCode'], country_name=value['countryName'])
+        try:
+            country_name = kwargs['country_name']
+        except KeyError:
+            try:
+                country_name = kwargs['countryName']
+            except KeyError:
+                country_name = None
+
+        try:
+            country_code = kwargs['country_code']
+        except KeyError:
+            try:
+                country_code = kwargs['countryCode']
+            except KeyError:
+                country_code = None
+
+        return CountryValue(id, title, country_name=country_name, country_code=country_code)
 
 
     elif column_type == ColumnType.date:
 
-        if value is None:
+        if len(kwargs) == 0:
             return DateValue(id, title)
 
-        return DateValue(id, title, **value)
+        return DateValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.dropdown:
 
-        if value is None: 
+        if len(kwargs) == 0:
             return DropdownValue(id, title)
 
-        if value.__contains__('label'):
-            return DropdownValue(id, title, label=value['label'])
+        if kwargs.__contains__('label'):
+            return DropdownValue(id, title, label=kwargs['label'])
 
-        if value.__contains__('ids'):
-            return DropdownValue(id, title, label_id=value['ids'])
+        if kwargs.__contains__('ids'):
+            return DropdownValue(id, title, ids=kwargs['ids'])
 
 
     elif column_type == ColumnType.email:
 
-        if value is None:
+        if len(kwargs) == 0:
             return EmailValue(id, title)
 
-        return EmailValue(id, title, **value)
+        return EmailValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.hour:
 
-        if value is None:
+        if len(kwargs) == 0:
             return HourValue(id, title)
 
-        return HourValue(id, title, **value)
+        return HourValue(id, title, **kwargs)
     
     
     elif column_type == ColumnType.link:
 
-        if value is None:
+        if len(kwargs) == 0:
             return LinkValue(id, title)
 
-        return LinkValue(id, title, **value)
+        return LinkValue(id, title, **kwargs)
     
     
     elif column_type == ColumnType.long_text:
 
-        if value is None:
+        if len(kwargs) == 0:
             return LongTextValue(id, title)
 
-        return LongTextValue(id, title, **value)
+        return LongTextValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.name:
-        return NameValue(id, title, name=value)
+        return NameValue(id, title, name=kwargs['name'])
 
 
     elif column_type == ColumnType.numbers:
 
-        if value is None:
+        if len(kwargs) == 0:
             return NumberValue(id, title)
 
-        return NumberValue(id, title, number=value)
+        return NumberValue(id, title, number=kwargs['number'])
 
 
     elif column_type == ColumnType.people:
 
-        if value is None:
+        if len(kwargs) == 0:
             return PeopleValue(id, title)
 
-        return PeopleValue(id, title, persons_and_teams=value['personsAndTeams'])
+        try:
+            persons_and_teams = kwargs['personsAndTeams']
+        except KeyError:
+            try:
+                persons_and_teams = kwargs['persons_and_teams']
+            except KeyError:
+                persons_and_teams = None
+
+        return PeopleValue(id, title, persons_and_teams=persons_and_teams)
 
 
     elif column_type == ColumnType.phone:
 
-        if value is None:
+        if len(kwargs) == 0:
             return PhoneValue(id, title)
 
-        return PhoneValue(id, title, phone=value['phone'], country_short_name=value['countryShortName'])
+        try:
+            phone = kwargs['phone']
+        except KeyError:
+            phone = None
+
+        try:
+            country_short_name = kwargs['countryShortName']
+        except KeyError:
+            try:
+                country_short_name = kwargs['country_short_name']
+            except KeyError:
+                country_short_name = None
+
+        return PhoneValue(id, title, phone=phone, country_short_name=country_short_name)
 
 
     elif column_type == ColumnType.rating:
 
-        if value is None:
+        if len(kwargs) == 0:
             return RatingValue(id, title)
 
-        return RatingValue(id, title, **value)
+        return RatingValue(id, title, **kwargs)
     
     
     elif column_type == ColumnType.status:
 
-        if value is None:
+        if len(kwargs) == 0:
             return StatusValue(id, title)
 
-        if value.__contains__('label'):
-            return StatusValue(id, title, label=value['label'])
+        if kwargs.__contains__('label'):
+            return StatusValue(id, title, label=kwargs['label'])
 
-        if value.__contains__('index'):
-            return StatusValue(id, title, index=value['index'])
+        if kwargs.__contains__('index'):
+            return StatusValue(id, title, index=kwargs['index'])
 
 
     elif column_type == ColumnType.tags:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TagsValue(id, title)
 
-        return TagsValue(id, title, **value)
+        return TagsValue(id, title, **kwargs)
     
     
     elif column_type == ColumnType.team:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TeamValue(id, title)
 
-        return TeamValue(id, title, **value)
+        return TeamValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.text:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TextValue(id, title)
 
-        return TextValue(id, title, text=value)
+        return TextValue(id, title, text=kwargs['text'])
 
 
     elif column_type == ColumnType.timeline:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TimelineValue(id, title)
 
-        return TimelineValue(id, title, **value)
+        try:
+            from_date = kwargs['from']
+        except KeyError:
+            try:
+                from_date = kwargs['from_date']
+            except KeyError:
+                from_date = None
+
+        try:
+            to_date = kwargs['to']
+        except KeyError:
+            try:
+                to_date = kwargs['to_date']
+            except KeyError:
+                to_date = None
+
+        return TimelineValue(id, title, from_date=from_date, to_date=to_date)
     
     
     elif column_type == ColumnType.world_clock:
 
-        if value is None:
+        if len(kwargs) == 0:
             return TimezoneValue(id, title)
 
-        return TimezoneValue(id, title, **value)
+        return TimezoneValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.week:
 
-        if value is None: 
+        if len(kwargs) == 0: 
             return WeekValue(id, title)
 
-        return WeekValue(id, title, **value)
+        try:
+            start_date = kwargs['week']['startDate']
+        except KeyError:
+            try:
+                start_date = kwargs['start_date']
+            except KeyError:
+                start_date = None
+
+        try:
+            end_date = kwargs['week']['endDate']
+        except KeyError:
+            try:
+                end_date = kwargs['end_date']
+            except:
+                end_date = None
+
+        return WeekValue(id, title, start_date=start_date, end_date=end_date)
 
     
     else:
-        raise InvalidColumnValueType(column_type)
 
-class InvalidColumnValueType(Exception):
+        return ReadonlyValue(id, title, **kwargs)
 
-    def __init__(self, column_type: ColumnType):
-        self.message = "Cannot create column value with type '{}'.".format(column_type._name_)
+
+class ColumnValueIsReadOnly(Exception):
+
+    def __init__(self, id: str, title: str):
+        self.message = "Cannot format read-only column value '{}' ('{}') for updating.".format(title, id)
