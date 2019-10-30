@@ -50,3 +50,23 @@ def test_should_create_a_new_board(get_me, create_board):
     ok_(board != None)
     eq_(board.name, board_name)
     eq_(board.board_kind, board_kind.name)
+
+
+@patch('moncli.api_v2.get_boards')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_retrieve_a_list_of_boards(get_me, get_boards):
+
+    # Arrange
+    test_boards = [{'id': '1', 'name': 'Board 1'}]
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_boards.return_value = test_boards
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act
+    boards = client.get_boards()
+
+    # Assert
+    ok_(boards != None)
+    eq_(len(boards), 1)
+    eq_(boards[0].id, test_boards[0]['id'])
+    eq_(boards[0].name, test_boards[0]['name'])
