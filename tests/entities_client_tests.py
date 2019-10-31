@@ -93,4 +93,24 @@ def test_should_fail_to_retrieve_single_board_due_to_too_many_parameters(get_me)
     client = c.MondayClient(USERNAME, '', '')
 
     # Act
-    client.get_board(id='1', name='Name')
+    client.get_board(id='1', name='Test Board 1')
+
+
+@patch('moncli.api_v2.get_boards')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_retrieve_a_board_by_id(get_me, get_boards):
+
+    # Arrange 
+    id = '1'
+    name = 'Test Board 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_boards.return_value = [{'id': id, 'name': name}]
+    client = c.MondayClient(USERNAME, '', '')
+    
+    # Act
+    board = client.get_board(id=id)
+
+    # Assert
+    ok_(board != None)
+    eq_(board.id, id)
+    eq_(board.name, name)
