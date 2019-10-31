@@ -135,7 +135,7 @@ class MondayClient():
     
     def get_items(self, **kwargs):
 
-        items_resp = client.get_items(
+        items_data = client.get_items(
             self.__creds.api_key_v2, 
             'id',
             'name',
@@ -151,7 +151,7 @@ class MondayClient():
             'subscribers.id',
             **kwargs)
 
-        return [Item(creds=self.__creds, **item_data) for item_data in items_resp] 
+        return [Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
     
     def get_updates(self, **kwargs):
