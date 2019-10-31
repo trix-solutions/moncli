@@ -82,3 +82,15 @@ def test_should_fail_to_retrieve_single_board_due_to_too_few_parameters(get_me):
 
     # Act
     client.get_board()
+
+
+@patch.object(c.MondayClient, 'get_me')
+@raises(ex.TooManyGetBoardParameters)
+def test_should_fail_to_retrieve_single_board_due_to_too_many_parameters(get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act
+    client.get_board(id='1', name='Name')
