@@ -17,21 +17,18 @@ class MondayClient():
             raise ex.AuthorizationError(user_name)
         
 
-    def create_board(self, board_name: str, board_kind: BoardKind, *argv):
+    def create_board(self, board_name: str, board_kind: BoardKind):
 
-        if len(argv) == 0:
-            field_list = [
-                'id', 
-                'name', 
-                'board_folder_id', 
-                'board_kind', 
-                'description', 
-                'owner.id', 
-                'permissions',
-                'pos',
-                'state']
-        else:
-            field_list = argv
+        field_list = [
+            'id', 
+            'name', 
+            'board_folder_id', 
+            'board_kind', 
+            'description', 
+            'owner.id', 
+            'permissions',
+            'pos',
+            'state']
 
         board_data = client.create_board(
             self.__creds.api_key_v2, 
