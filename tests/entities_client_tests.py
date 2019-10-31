@@ -70,3 +70,15 @@ def test_should_retrieve_a_list_of_boards(get_me, get_boards):
     eq_(len(boards), 1)
     eq_(boards[0].id, test_boards[0]['id'])
     eq_(boards[0].name, test_boards[0]['name'])
+
+
+@patch.object(c.MondayClient, 'get_me')
+@raises(ex.NotEnoughGetBoardParameters)
+def test_should_fail_to_retrieve_single_board_due_to_too_few_parameters(get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act
+    client.get_board()
