@@ -285,3 +285,21 @@ def test_should_retrieve_list_of_teams(get_me, get_teams):
     ok_(teams != None)
     eq_(len(teams), 1)
     eq_(teams[0].name, name)
+
+
+@patch('moncli.api_v2.get_me')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_retrieve_me(get_me, get_me_client):
+
+    # Arrange 
+    name = 'User 2'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_me_client.return_value = {'id': '1', 'name': name, 'email': USERNAME}
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act 
+    user = client.get_me()
+
+    # Assert
+    ok_(user != None)
+    eq_(user.email, USERNAME)
