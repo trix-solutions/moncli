@@ -226,3 +226,22 @@ def test_should_create_or_get_a_tag(get_me, create_or_get_tag):
     # Assert
     ok_(tag != None)
     eq_(tag.name, name)
+
+
+@patch('moncli.api_v2.get_tags')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_retrieve_list_of_tags(get_me, get_tags):
+
+    # Arrange 
+    name = 'Tag 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_tags.return_value = [{'id': '1', 'name': name, 'color': 'Black'}]
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act 
+    tags = client.get_tags()
+
+    # Assert
+    ok_(tags != None)
+    eq_(len(tags), 1)
+    eq_(tags[0].name, name)
