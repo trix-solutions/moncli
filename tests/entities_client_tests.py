@@ -208,3 +208,21 @@ def test_should_create_a_notification(get_me, create_notification):
     # Assert
     ok_(notification != None)
     ok_(notification.text, text)
+
+
+@patch('moncli.api_v2.create_or_get_tag')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_create_or_get_a_tag(get_me, create_or_get_tag):
+
+    # Arrange 
+    name = 'Tag 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_or_get_tag.return_value = {'id': '1', 'name': name, 'color': 'Black'}
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act 
+    tag = client.create_or_get_tag(name)
+
+    # Assert
+    ok_(tag != None)
+    eq_(tag.name, name)
