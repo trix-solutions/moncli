@@ -74,3 +74,24 @@ def test_should_create_a_new_group(create_group, create_board, get_me):
     ok_(group != None)
     eq_(group.title, title)
 
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.get_boards')
+def test_should_retrieve_a_list_of_groups(get_boards, create_board, get_me):
+
+    # Arrange
+    title = 'Group 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    get_boards.return_value = [{'id': '1', 'groups': [{'id': '1', 'title': title}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    groups = board.get_groups()
+
+    # Assert
+    ok_(groups != None)
+    eq_(len(groups), 1)
+    eq_(groups[0].title, title)
