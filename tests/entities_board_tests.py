@@ -53,3 +53,24 @@ def test_should_retrieve_list_of_columns(get_columns, create_board, get_me):
     eq_(columns[0].title, title)
     eq_(columns[0].type, column_type)
 
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_group')
+def test_should_create_a_new_group(create_group, create_board, get_me):
+
+    # Arrange
+    title = 'Group 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    create_group.return_value = {'id': '1', 'title': title}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    group = board.add_group(title)
+
+    # Assert
+    ok_(group != None)
+    eq_(group.title, title)
+
