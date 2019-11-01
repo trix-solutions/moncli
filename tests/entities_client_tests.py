@@ -135,3 +135,37 @@ def test_should_retrieve_a_board_by_name(get_me, get_boards):
     eq_(board.id, id)
     eq_(board.name, name)
 
+
+@patch('moncli.api_v2.archive_board')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_archive_a_board(get_me, archive_board):
+
+    # Arrange 
+    id = '1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    archive_board.return_value = {'id': id}
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act 
+    board = client.archive_board(id)
+
+    # Assert
+    ok_(board != None)
+    eq_(board.id, id)
+
+
+@patch('moncli.api_v2.get_items')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_get_items(get_me, get_items):
+
+    # Arrange 
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act 
+    items = client.get_items()
+
+    # Assert
+    ok_(items != None)
+    ok_(len(items), 1)
