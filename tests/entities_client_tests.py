@@ -3,7 +3,7 @@ from nose.tools import ok_, eq_, raises
 
 from moncli.api_v2 import constants
 from moncli.entities import client as c, user as u, exceptions as ex
-from moncli.enums import BoardKind
+from moncli.enums import BoardKind, NotificationTargetType
 
 USERNAME = 'test.user@foobar.org' 
 GET_ME_RETURN_VALUE = u.User(**{'creds': None, 'id': '1', 'email': USERNAME})
@@ -169,3 +169,42 @@ def test_should_get_items(get_me, get_items):
     # Assert
     ok_(items != None)
     ok_(len(items), 1)
+
+
+@patch('moncli.api_v2.get_updates')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_get_updates(get_me, get_updates):
+
+    # Arrange 
+    id = '1'
+    body = 'Hello, world!'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_updates.return_value = [{'id': id, 'body': body}]
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act 
+    items = client.get_updates()
+
+    # Assert
+    ok_(items != None)
+    ok_(len(items), 1)
+    eq_(items[0].id, id)
+    eq_(items[0].body, body)
+
+
+@patch('moncli.api_v2.create_notification')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_create_a_notification(get_me, create_notification):
+
+    # Arrange 
+    text = 'Text 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_notification.return_value = {'id': '1', 'text': text}
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act 
+    notification = client.create_notification(text, '1', '2', NotificationTargetType.Post)
+
+    # Assert
+    ok_(notification != None)
+    ok_(notification.text, text)
