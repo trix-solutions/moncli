@@ -29,3 +29,27 @@ def test_should_add_new_column(create_column, create_board, get_me):
     eq_(column.title, title)
     eq_(column.type, column_type)
 
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.get_boards')
+def test_should_retrieve_list_of_columns(get_columns, create_board, get_me):
+
+    # Arrange
+    title = 'Text Column 1'
+    column_type = ColumnType.text
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    get_columns.return_value = [{'id': '1', 'columns': [{'id': '1', 'title': title, 'type': column_type}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    columns = board.get_columns()
+
+    # Assert
+    ok_(columns != None)
+    eq_(len(columns), 1)
+    eq_(columns[0].title, title)
+    eq_(columns[0].type, column_type)
+
