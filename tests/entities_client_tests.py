@@ -245,3 +245,43 @@ def test_should_retrieve_list_of_tags(get_me, get_tags):
     ok_(tags != None)
     eq_(len(tags), 1)
     eq_(tags[0].name, name)
+
+
+@patch('moncli.api_v2.get_users')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_retrieve_list_of_users(get_me, get_users):
+
+    # Arrange 
+    name = 'User 1'
+    email = 'user.one@test.com'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_users.return_value = [{'id': '1', 'name': name, 'email': email}]
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act 
+    users = client.get_users()
+
+    # Assert
+    ok_(users != None)
+    eq_(len(users), 1)
+    eq_(users[0].name, name)
+    eq_(users[0].email, email)
+
+
+@patch('moncli.api_v2.get_teams')
+@patch.object(c.MondayClient, 'get_me')
+def test_should_retrieve_list_of_teams(get_me, get_teams):
+
+    # Arrange 
+    name = 'User 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_teams.return_value = [{'id': '1', 'name': name}]
+    client = c.MondayClient(USERNAME, '', '')
+
+    # Act 
+    teams = client.get_teams()
+
+    # Assert
+    ok_(teams != None)
+    eq_(len(teams), 1)
+    eq_(teams[0].name, name)
