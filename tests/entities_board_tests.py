@@ -167,3 +167,18 @@ def test_should_retrieve_a_list_of_items_by_column_value(get_items_by_column_val
     ok_(items != None)
     eq_(len(items), 1)
     eq_(items[0].name, name)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@raises(e.exceptions.NotEnoughGetColumnValueParameters)
+def test_should_fail_from_too_few_parameters(create_board, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    board.get_column_value()
