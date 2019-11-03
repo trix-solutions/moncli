@@ -191,13 +191,13 @@ class Board():
         if id is not None:
 
             column = self.__columns[id]
-            column_type = COLUMN_TYPE_MAPPINGS[column['type']]
-            return create_column_value(id, column_type, column['title'])
+            column_type = COLUMN_TYPE_MAPPINGS[column.type]
+            return create_column_value(id, column_type, column.title)
 
         elif title is not None:
 
             column = [column for column in self.__columns.values() if column.title == title][0]
-            column_type = COLUMN_TYPE_MAPPINGS[column['type']]
-            return create_column_value(column['id'], column_type, title)
+            column_type = COLUMN_TYPE_MAPPINGS[column.type]
+            return create_column_value(column.id, column_type, title)
 
         

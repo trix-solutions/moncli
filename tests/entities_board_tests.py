@@ -1,9 +1,9 @@
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
+import moncli.columnvalue as cv
 import moncli.entities as e
 from moncli.enums import ColumnType, BoardKind
-from moncli.columnvalue import create_column_value
 
 USERNAME = 'test.user@foobar.org' 
 GET_ME_RETURN_VALUE = e.user.User(**{'creds': None, 'id': '1', 'email': USERNAME})
@@ -160,7 +160,7 @@ def test_should_retrieve_a_list_of_items_by_column_value(get_items_by_column_val
     board = client.create_board('Test Board 1', BoardKind.public)
 
     # Act 
-    column_value = create_column_value('text_column_01', ColumnType.text, text='Some Value')
+    column_value = cv.create_column_value('text_column_01', ColumnType.text, text='Some Value')
     items = board.get_items_by_column_values(column_value)
 
     # Assert
@@ -197,3 +197,24 @@ def test_should_fail_from_too_many_parameters(create_board, get_me):
 
     # Act 
     board.get_column_value(id='text_column_01', title='Text Column 01')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.get_boards')
+def test_should_get_column_value_by_id(get_boards, create_board, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    get_boards.return_value = [{'id': '1', 'columns':[{'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    column_value = board.get_column_value(id='text_column_01')
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.id, 'text_column_01')
+    eq_(column_value.title, 'Text Column 01')
