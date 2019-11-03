@@ -117,3 +117,28 @@ def test_should_create_an_item(create_item, create_board, get_me):
     # Assert
     ok_(item != None)
     eq_(item.name, name)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.get_boards')
+@patch('moncli.api_v2.get_items')
+def test_should_retrieve_a_list_of_items(get_items, get_boards, create_board, get_me):
+
+    # Arrange
+    board_id = '1'
+    name = 'Item 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    get_boards = [{'id': '1', 'items': [{'id': '1'}]}]
+    get_items.return_value = [{'id': '1', 'name': name, 'board': {'id': board_id}}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    items = board.get_items()
+
+    # Assert
+    ok_(items != None)
+    eq_(len(items), 1)
+    eq_(items[0].name, name)
