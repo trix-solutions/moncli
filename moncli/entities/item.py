@@ -39,11 +39,11 @@ class Item():
 
             # Pulls the columns from the board containing the item and maps 
             # column ID to type.
-            column_data = client.get_items(
+            column_data = client.get_boards(
                 self.__creds.api_key_v2,
-                'board.columns.id', 'board.columns.type',
-                ids=[int(self.id)]
-            )[0]['board']['columns']
+                'columns.id', 'columns.type',
+                ids=[int(self.__board_id)]
+            )[0]['columns']
 
             column_types_map = {}
             for column in column_data:
