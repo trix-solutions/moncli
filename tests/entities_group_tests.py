@@ -76,3 +76,26 @@ def test_should_delete_a_group(delete_group, create_group, create_board, get_me)
     ok_(group != None)
     eq_(group.title, 'Group 1')
     eq_(group.deleted, 'true')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_group')
+@patch('moncli.api_v2.create_item')
+def test_should_create_an_item(create_item, create_group, create_board, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    create_group.return_value = {'id': 'group_01', 'title': 'Group 1'}
+    create_item.return_value = {'id': '1', 'name': 'Item 1', 'board': {'id': '1'}}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+    group = board.add_group('Group 1')
+
+    # Act 
+    item = group.add_item('Item 1')
+
+    # Assert
+    ok_(item != None)
+    eq_(item.name, 'Item 1')
