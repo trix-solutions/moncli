@@ -109,10 +109,8 @@ class Item():
 
             if column_value is None:
                 raise ex.ColumnValueRequired()
-
-            if column_value is dict:
-                value = column_value
-            elif column_value is ColumnValue:
+            if isinstance(column_value, ColumnValue):
+                column_id = column_value.id
                 value = column_value.format()
             else:
                 raise ex.InvalidColumnValue(type(column_value).__name__)
@@ -127,7 +125,7 @@ class Item():
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
             self.id,
-            column_value.id,
+            column_id,
             self.__board_id,
             value,
             'id', 'name', 'board.id')
