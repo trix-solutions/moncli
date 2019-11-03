@@ -182,3 +182,18 @@ def test_should_fail_from_too_few_parameters(create_board, get_me):
 
     # Act 
     board.get_column_value()
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@raises(e.exceptions.TooManyGetColumnValueParameters)
+def test_should_fail_from_too_many_parameters(create_board, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    board.get_column_value(id='text_column_01', title='Text Column 01')
