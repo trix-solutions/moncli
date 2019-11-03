@@ -67,3 +67,24 @@ def test_user_should_send_a_notification(create_notification, get_users, get_me)
     # Assert
     ok_(notification != None)
     ok_(notification.text, 'Text 1')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.get_teams')
+@patch('moncli.api_v2.get_users')
+def test_team_should_retrieve_list_of_users(get_users, get_teams, get_me):
+
+    # Arrange 
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_teams.return_value = [{'id': '1', 'name': 'Team 1', 'users': [{'id': '1'}]}]
+    get_users.return_value = [{'id': '1', 'email': 'test.user@foobar.org', 'teams': [{'id': '1'}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    team = client.get_teams()[0]
+
+    # Act 
+    users = team.get_users()
+
+    # Assert
+    ok_(users != None)
+    eq_(len(users), 1)
+    eq_(users[0].email, 'test.user@foobar.org')
