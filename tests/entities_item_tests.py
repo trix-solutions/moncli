@@ -119,8 +119,8 @@ def test_item_should_get_column_value_by_title(get_boards, get_items, get_me):
 
 @patch.object(e.client.MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@raises(e.exceptions.ColumnValueRequired)
-def test_item_should_fail_to_update_column_value_with_missing_column_value(get_items, get_me):
+@raises(e.exceptions.InvalidColumnValue)
+def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
@@ -129,4 +129,4 @@ def test_item_should_fail_to_update_column_value_with_missing_column_value(get_i
     item = client.get_items()[0]
 
     # Act
-    item.change_column_value()
+    item.change_column_value(column_value='5')
