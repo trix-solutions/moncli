@@ -48,10 +48,12 @@ class Item():
             column_types_map = {}
             for column in column_data:
                 try:
-                    column_types_map['id'] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
+                    column_types_map[column['id']] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
                 except:
                     # Using auto-number to trigger read-only value
-                    column_types_map['id'] = ColumnType.auto_number
+                    column_types_map[column['id']] = ColumnType.auto_number
+
+            print(column_types_map)
 
             item_data = client.get_items(
                 self.__creds.api_key_v2,
@@ -73,7 +75,10 @@ class Item():
                     column_value = create_column_value(id, column_type, title)
                 else:
                     value = json.loads(value)
-                    column_value = create_column_value(id, column_type, title, **value)
+                    if value is dict:
+                        column_value = create_column_value(id, column_type, title, **value)
+                    else:
+                        column_value = create_column_value(id, column_type, title, value=value)
 
                 self.__column_values[id] = column_value          
 

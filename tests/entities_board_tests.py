@@ -160,7 +160,7 @@ def test_should_retrieve_a_list_of_items_by_column_value(get_items_by_column_val
     board = client.create_board('Test Board 1', BoardKind.public)
 
     # Act 
-    column_value = cv.create_column_value('text_column_01', ColumnType.text, text='Some Value')
+    column_value = cv.create_column_value('text_column_01', ColumnType.text, value='Some Value')
     items = board.get_items_by_column_values(column_value)
 
     # Assert
