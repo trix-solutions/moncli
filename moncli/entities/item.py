@@ -72,7 +72,7 @@ class Item():
 
                 self.__column_values[id] = column_value          
 
-        return self.__column_values.values()
+        return list(self.__column_values.values())
 
 
     def get_column_value(self, id = None, title = None):
