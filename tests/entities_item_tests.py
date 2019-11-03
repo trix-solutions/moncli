@@ -115,3 +115,18 @@ def test_item_should_get_column_value_by_title(get_boards, get_items, get_me):
     ok_(column_value != None)
     eq_(column_value.title, 'Text Column 01')
     eq_(column_value.text, 'Hello, Grandma')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+@raises(e.exceptions.ColumnValueRequired)
+def test_item_should_fail_to_update_column_value_with_missing_column_value(get_items, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    # Act
+    item.change_column_value()
