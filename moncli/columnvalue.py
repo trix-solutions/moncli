@@ -753,7 +753,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     
     else:
 
-        return ReadonlyValue(id, title, **kwargs)
+        return ReadonlyValue(id, title, value=kwargs)
 
 
 class ColumnValueIsReadOnly(Exception):

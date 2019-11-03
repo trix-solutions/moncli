@@ -39,14 +39,19 @@ class Item():
 
             # Pulls the columns from the board containing the item and maps 
             # column ID to type.
-            column_types_map = {
-                column['id']: ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
-                for column
-                in client.get_items(
-                    self.__creds.api_key_v2,
-                    'board.columns.id', 'board.columns.type',
-                    ids=[int(self.id)])[0]['board']['columns']
-            }
+            column_data = client.get_items(
+                self.__creds.api_key_v2,
+                'board.columns.id', 'board.columns.type',
+                ids=[int(self.id)]
+            )[0]['board']['columns']
+
+            column_types_map = {}
+            for column in column_data:
+                try:
+                    column_types_map['id'] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
+                except:
+                    # Using auto-number to trigger read-only value
+                    column_types_map['id'] = ColumnType.auto_number
 
             item_data = client.get_items(
                 self.__creds.api_key_v2,
