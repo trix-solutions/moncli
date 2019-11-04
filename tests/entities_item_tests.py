@@ -266,3 +266,23 @@ def test_item_should_delete_item(delete_item, get_items, get_me):
     # Assert 
     ok_(item != None)
     eq_(item.name, 'Test Item 01')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.create_update')
+def test_item_should_add_update(create_update, get_items, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
+    create_update.return_value = {'id': '1', 'body': 'This is a text body'}
+    client = e.client.MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    # Act
+    update = item.add_update('This is a text body')
+
+    # Assert 
+    ok_(update != None)
+    eq_(update.body, 'This is a text body')
