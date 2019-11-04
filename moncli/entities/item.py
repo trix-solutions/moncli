@@ -137,7 +137,7 @@ class Item():
 
         if type(column_values) == dict:
             values = column_values
-        elif type(column_values) == List[ColumnValue]:
+        elif type(column_values) == list:
             values = { value.id: value.format() for value in column_values }
         else:
             raise ex.InvalidColumnValue(type(column_values).__name__)
