@@ -603,7 +603,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
 
     elif column_type == ColumnType.name:
-        return NameValue(id, title, name=kwargs['name'])
+        return NameValue(id, title, name=kwargs['value'])
 
 
     elif column_type == ColumnType.numbers:
@@ -611,7 +611,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return NumberValue(id, title)
 
-        return NumberValue(id, title, number=kwargs['number'])
+        return NumberValue(id, title, number=kwargs['value'])
 
 
     elif column_type == ColumnType.people:
@@ -692,7 +692,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return TextValue(id, title)
 
-        return TextValue(id, title, text=kwargs['text'])
+        return TextValue(id, title, text=kwargs['value'])
 
 
     elif column_type == ColumnType.timeline:
@@ -753,7 +753,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     
     else:
 
-        return ReadonlyValue(id, title, **kwargs)
+        return ReadonlyValue(id, title, value=kwargs)
 
 
 class ColumnValueIsReadOnly(Exception):

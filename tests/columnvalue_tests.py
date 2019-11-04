@@ -437,7 +437,7 @@ def test_should_return_name_column_value_with_name():
     name = 'Name'
 
     # Act
-    column_value = create_column_value(id, column_type, title, name=name)
+    column_value = create_column_value(id, column_type, title, value=name)
     format = column_value.format()
 
     # Assert
@@ -472,7 +472,7 @@ def test_should_return_a_number_column_value_with_int():
     number = 8675309
 
     # Act
-    column_value = create_column_value(id, column_type, title, number=number)
+    column_value = create_column_value(id, column_type, title, value=number)
     format = column_value.format()
 
     # Assert
@@ -490,7 +490,7 @@ def test_should_return_a_number_column_value_with_float():
     number = 23.333333333
 
     # Act
-    column_value = create_column_value(id, column_type, title, number=number)
+    column_value = create_column_value(id, column_type, title, value=number)
     format = column_value.format()
 
     # Assert
@@ -508,7 +508,7 @@ def test_should_return_an_empty_number_column_value_when_input_is_text():
     number = 'x'
 
     # Act
-    column_value = create_column_value(id, column_type, title, number=number)
+    column_value = create_column_value(id, column_type, title, value=number)
     format = column_value.format()
 
     # Assert
@@ -835,7 +835,7 @@ def test_should_return_text_column_value_with_text():
     text = 'Hello, Grandma!'
     
     # Act
-    column_value = create_column_value(id, column_type, title, text=text)
+    column_value = create_column_value(id, column_type, title, value=text)
     format = column_value.format()
 
     # Assert

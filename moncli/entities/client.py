@@ -6,6 +6,19 @@ from .board import Board
 from .item import Item
 from .user import User, Team
 
+
+GET_BOARD_FIELD_LIST = [
+    'id', 
+    'name', 
+    'board_folder_id', 
+    'board_kind', 
+    'description', 
+    'items.id', 
+    'owner.id', 
+    'permissions',
+    'pos',
+    'state']
+
 class MondayClient():
 
     def __init__(self, user_name: str, api_key_v1: str, api_key_v2: str):
@@ -17,21 +30,18 @@ class MondayClient():
             raise ex.AuthorizationError(user_name)
         
 
-    def create_board(self, board_name: str, board_kind: BoardKind, *argv):
+    def create_board(self, board_name: str, board_kind: BoardKind):
 
-        if len(argv) == 0:
-            field_list = [
-                'id', 
-                'name', 
-                'board_folder_id', 
-                'board_kind', 
-                'description', 
-                'owner.id', 
-                'permissions',
-                'pos',
-                'state']
-        else:
-            field_list = argv
+        field_list = [
+            'id', 
+            'name', 
+            'board_folder_id', 
+            'board_kind', 
+            'description', 
+            'owner.id', 
+            'permissions',
+            'pos',
+            'state']
 
         board_data = client.create_board(
             self.__creds.api_key_v2, 
@@ -59,63 +69,58 @@ class MondayClient():
 
     def get_board(self, id: str = None, name: str = None):
 
-        field_list = [
-            'id', 
-            'name', 
-            'board_folder_id', 
-            'board_kind', 
-            'description', 
-            'items.id', 
-            'owner.id', 
-            'permissions',
-            'pos',
-            'state']
-
         if id != None and name != None:
             raise ex.TooManyGetBoardParameters()
 
-        elif id == None and name == None:
+        if id == None and name == None:
             raise ex.NotEnoughGetBoardParameters()
 
-        # Search for single board by ID
-        elif id != None:
+        if id != None:         
+            return self.get_board_by_id(id)
+        else:
+            return self.get_board_by_name(name)
+
+
+    def get_board_by_id(self, id: str):
+
+        boards_data = client.get_boards(
+            self.__creds.api_key_v2, 
+            *GET_BOARD_FIELD_LIST,
+            ids=[int(id)],
+            limit=1)
+
+        if len(boards_data) == 0:
+            raise ex.BoardNotFound('id', id)
+
+        return Board(creds=self.__creds, **boards_data[0])
+
+
+    def get_board_by_name(self, name: str):
+
+        # Hard configure the pagination rate.
+        page = 1
+        page_limit = 1000
+        record_count = 1000
+
+        while record_count >= page_limit:
+
             boards_data = client.get_boards(
                 self.__creds.api_key_v2, 
-                *field_list,
-                ids=[int(id)],
-                limit=1)
+                *GET_BOARD_FIELD_LIST,
+                limit=page_limit,
+                page=page)
 
-            if len(boards_data) == 0:
-                raise ex.BoardNotFound('id', id)
+            target_boards = [board for board in boards_data if board['name'].lower() == name.lower()]
 
-            return Board(creds=self.__creds, **boards_data[0])
-
-        # Page through boards until name match appears.
-        else:
-
-            # Hard configure the pagination rate.
-            page = 1
-            page_limit = 1000
-            record_count = 1000
-            while record_count >= page_limit:
-
-                boards_data = client.get_boards(
-                    self.__creds.api_key_v2, 
-                    *field_list,
-                    limit=page_limit,
-                    page=page)
-
-                target_boards = [board for board in boards_data if board['name'].lower() == name.lower()]
-
-                if len(target_boards) == 0:
-                    page += 1
-                    record_count = len(boards_data)
-                    continue
-
-                return Board(creds=self.__creds, **target_boards[0])
-        
             if len(target_boards) == 0:
-                raise ex.BoardNotFound('name', name)        
+                page += 1
+                record_count = len(boards_data)
+                continue
+
+            return Board(creds=self.__creds, **target_boards[0])
+    
+        if len(target_boards) == 0:
+            raise ex.BoardNotFound('name', name)   
 
 
     def archive_board(self, board_id: str):
@@ -130,7 +135,7 @@ class MondayClient():
     
     def get_items(self, **kwargs):
 
-        items_resp = client.get_items(
+        items_data = client.get_items(
             self.__creds.api_key_v2, 
             'id',
             'name',
@@ -146,7 +151,7 @@ class MondayClient():
             'subscribers.id',
             **kwargs)
 
-        return [Item(creds=self.__creds, **item_data) for item_data in items_resp] 
+        return [Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
     
     def get_updates(self, **kwargs):

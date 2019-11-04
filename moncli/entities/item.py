@@ -39,14 +39,21 @@ class Item():
 
             # Pulls the columns from the board containing the item and maps 
             # column ID to type.
-            column_types_map = {
-                column['id']: ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
-                for column
-                in client.get_items(
-                    self.__creds.api_key_v2,
-                    'board.columns.id', 'board.columns.type',
-                    ids=[int(self.id)])[0]['board']['columns']
-            }
+            column_data = client.get_boards(
+                self.__creds.api_key_v2,
+                'columns.id', 'columns.type',
+                ids=[int(self.__board_id)]
+            )[0]['columns']
+
+            column_types_map = {}
+            for column in column_data:
+                try:
+                    column_types_map[column['id']] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
+                except:
+                    # Using auto-number to trigger read-only value
+                    column_types_map[column['id']] = ColumnType.auto_number
+
+            print(column_types_map)
 
             item_data = client.get_items(
                 self.__creds.api_key_v2,
@@ -68,11 +75,14 @@ class Item():
                     column_value = create_column_value(id, column_type, title)
                 else:
                     value = json.loads(value)
-                    column_value = create_column_value(id, column_type, title, **value)
+                    if value is dict:
+                        column_value = create_column_value(id, column_type, title, **value)
+                    else:
+                        column_value = create_column_value(id, column_type, title, value=value)
 
                 self.__column_values[id] = column_value          
 
-        return self.__column_values.values()
+        return list(self.__column_values.values())
 
 
     def get_column_value(self, id = None, title = None):
@@ -99,17 +109,15 @@ class Item():
 
             if column_value is None:
                 raise ex.ColumnValueRequired()
-
-            if column_value is dict:
-                value = column_value
-            elif column_value is ColumnValue:
-                value = column_value.format()
-            else:
+            if not isinstance(column_value, ColumnValue):
                 raise ex.InvalidColumnValue(type(column_value).__name__)
+            else:
+                column_id = column_value.id
+                value = column_value.format()
 
         else:
             
-            if column_value is str or column_value is dict:
+            if type(column_value) == str or type(column_value) == dict:
                 value = column_value
             else:
                 raise ex.InvalidColumnValue(type(column_value).__name__)
@@ -117,7 +125,7 @@ class Item():
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
             self.id,
-            column_value.id,
+            column_id,
             self.__board_id,
             value,
             'id', 'name', 'board.id')
@@ -127,9 +135,9 @@ class Item():
     
     def change_multiple_column_values(self, column_values):
 
-        if column_values is dict:
+        if type(column_values) == dict:
             values = column_values
-        elif column_values is List[ColumnValue]:
+        elif type(column_values) == list:
             values = { value.id: value.format() for value in column_values }
         else:
             raise ex.InvalidColumnValue(type(column_values).__name__)

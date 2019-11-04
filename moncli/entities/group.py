@@ -30,7 +30,7 @@ class Group():
                 self.position = value
     
 
-    def duplicate(self, group_title: str, add_to_top: bool = False):
+    def duplicate(self, add_to_top: bool = False):
         
         group_data = client.duplicate_group(
             self.__creds.api_key_v2, 

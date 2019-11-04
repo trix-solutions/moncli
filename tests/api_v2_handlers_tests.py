@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from nose.tools import ok_
+from nose.tools import ok_, eq_
 
 from moncli.api_v2 import handlers, constants
 from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType
