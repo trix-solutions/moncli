@@ -150,7 +150,7 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_
 @patch.object(e.client.MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.change_column_value')
-def test_item_should_change_column_value_with_column_value(change_column_value, get_items, get_me):
+def test_item_should_change_column_value_with_string(change_column_value, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
@@ -160,8 +160,27 @@ def test_item_should_change_column_value_with_column_value(change_column_value, 
     item = client.get_items()[0]
 
     # Act
-    column_value = cv.create_column_value(id='text_column_01', column_type=ColumnType.text, title='Text Column O1', value='Hello, Grandma')
-    item = item.change_column_value(column_value=column_value)
+    item = item.change_column_value(column_id='text_column_01', column_value='Let\'s eat grandma!')
+
+    # Assert 
+    ok_(item != None)
+    eq_(item.name, 'Test Item 01')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.change_multiple_column_value')
+def test_item_should_change_multiple_column_values_with_dictionary(change_multiple_column_value, get_items, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
+    change_multiple_column_value.return_value = {'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}
+    client = e.client.MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    # Act
+    item = item.change_multiple_column_values({'text_column_01': 'Hello, world!'})
 
     # Assert 
     ok_(item != None)

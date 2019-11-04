@@ -109,15 +109,15 @@ class Item():
 
             if column_value is None:
                 raise ex.ColumnValueRequired()
-            if isinstance(column_value, ColumnValue):
+            if not isinstance(column_value, ColumnValue):
+                raise ex.InvalidColumnValue(type(column_value).__name__)
+            else:
                 column_id = column_value.id
                 value = column_value.format()
-            else:
-                raise ex.InvalidColumnValue(type(column_value).__name__)
 
         else:
             
-            if column_value is str or column_value is dict:
+            if type(column_value) == str or type(column_value) == dict:
                 value = column_value
             else:
                 raise ex.InvalidColumnValue(type(column_value).__name__)
@@ -135,9 +135,9 @@ class Item():
     
     def change_multiple_column_values(self, column_values):
 
-        if column_values is dict:
+        if type(column_values) == dict:
             values = column_values
-        elif column_values is List[ColumnValue]:
+        elif type(column_values) == List[ColumnValue]:
             values = { value.id: value.format() for value in column_values }
         else:
             raise ex.InvalidColumnValue(type(column_values).__name__)
