@@ -206,3 +206,23 @@ def test_item_should_change_multiple_column_values_with_column_value_list(change
     # Assert 
     ok_(item != None)
     eq_(item.name, 'Test Item 01')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.move_item_to_group')
+def test_item_should_move_item_to_group(move_item_to_group, get_items, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
+    move_item_to_group.return_value = {'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}
+    client = e.client.MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    # Act
+    item = item.move_to_group('group_01')
+
+    # Assert 
+    ok_(item != None)
+    eq_(item.name, 'Test Item 01')
