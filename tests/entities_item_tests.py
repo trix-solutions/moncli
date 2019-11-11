@@ -92,6 +92,7 @@ def test_item_should_get_column_value_by_id(get_boards, get_items, get_me):
     ok_(column_value != None)
     eq_(column_value.title, 'Text Column 01')
     eq_(column_value.text, 'Hello, Grandma')
+    eq_(type(column_value), cv.TextValue)
 
 
 @patch.object(e.client.MondayClient, 'get_me')
@@ -115,6 +116,31 @@ def test_item_should_get_column_value_by_title(get_boards, get_items, get_me):
     ok_(column_value != None)
     eq_(column_value.title, 'Text Column 01')
     eq_(column_value.text, 'Hello, Grandma')
+    eq_(type(column_value), cv.TextValue)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.get_boards')
+def test_item_should_get_column_value_with_extra_id(get_boards, get_items, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    get_boards.return_value = [{'id': '1', 'columns': [{'id': 'text_column_01', 'type': 'long-text'}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'text_column_01', 'title': 'Text Column 01', 'value': json.dumps({'id': '1', 'text': 'Hello, Grandma'})}]}]
+
+    # Act
+    column_value = item.get_column_value(title='Text Column 01')
+
+    # Assert 
+    ok_(column_value != None)
+    eq_(column_value.title, 'Text Column 01')
+    eq_(column_value.text, 'Hello, Grandma')
+    eq_(type(column_value), cv.LongTextValue)
 
 
 @patch.object(e.client.MondayClient, 'get_me')
