@@ -4,7 +4,6 @@ from nose.tools import ok_, eq_, raises
 import moncli.columnvalue as cv
 import moncli.entities as e
 from moncli.enums import ColumnType, BoardKind
-from moncli.columnvalue import create_column_value
 
 USERNAME = 'test.user@foobar.org' 
 GET_ME_RETURN_VALUE = e.user.User(**{'creds': None, 'id': '1', 'email': USERNAME})
@@ -181,7 +180,7 @@ def test_board_should_create_an_item_with_list_column_values(create_item, create
     create_item.return_value = {'id': '4', 'name': name, 'board': {'id': board_id}}
     client = e.client.MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
-    status_column = create_column_value('status', ColumnType.status, 'Status', index=0)
+    status_column = cv.create_column_value('status', ColumnType.status, 'Status', index=0)
 
     # Act 
     item = board.add_item(name, group_id=group_id, column_values=[status_column])
@@ -289,6 +288,7 @@ def test_should_get_column_value_by_id(get_boards, create_board, get_me):
     ok_(column_value != None)
     eq_(column_value.id, 'text_column_01')
     eq_(column_value.title, 'Text Column 01')
+    eq_(type(column_value), cv.TextValue)
 
 
 @patch.object(e.client.MondayClient, 'get_me')
@@ -310,3 +310,4 @@ def test_should_get_column_value_by_title(get_boards, create_board, get_me):
     ok_(column_value != None)
     eq_(column_value.id, 'text_column_01')
     eq_(column_value.title, 'Text Column 01')
+    eq_(type(column_value), cv.TextValue)
