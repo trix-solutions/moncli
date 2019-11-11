@@ -118,13 +118,13 @@ class Board():
         if group_id is not None:
             kwargs['group_id'] = group_id
 
-        if type(column_values) == dict:
-            kwargs['column_values'] = column_values
-
-        elif type(column_values) == list:
-            kwargs['column_values'] = { value.id: value.format() for value in column_values }
-        else:
-            raise ex.InvalidColumnValue(type(column_values).__name__)
+        if column_values is not None:
+            if type(column_values) == dict:
+                kwargs['column_values'] = column_values
+            elif type(column_values) == list:
+                kwargs['column_values'] = { value.id: value.format() for value in column_values }
+            else:
+                raise ex.InvalidColumnValue(type(column_values).__name__)
 
         item_data = client.create_item(
             self.__creds.api_key_v2, 

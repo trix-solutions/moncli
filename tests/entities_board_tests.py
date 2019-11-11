@@ -4,6 +4,7 @@ from nose.tools import ok_, eq_, raises
 import moncli.columnvalue as cv
 import moncli.entities as e
 from moncli.enums import ColumnType, BoardKind
+from moncli.columnvalue import create_column_value
 
 USERNAME = 'test.user@foobar.org' 
 GET_ME_RETURN_VALUE = e.user.User(**{'creds': None, 'id': '1', 'email': USERNAME})
@@ -114,6 +115,76 @@ def test_should_create_an_item(create_item, create_board, get_me):
 
     # Act 
     item = board.add_item(name)
+
+    # Assert
+    ok_(item != None)
+    eq_(item.name, name)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_item')
+def test_board_should_create_an_item_within_group(create_item, create_board, get_me):
+
+    # Arrange
+    board_id = '2'
+    name = 'Item 2'
+    group_id = 'group2'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    create_item.return_value = {'id': '2', 'name': name, 'board': {'id': board_id}}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    item = board.add_item(name, group_id=group_id)
+
+    # Assert
+    ok_(item != None)
+    eq_(item.name, name)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_item')
+def test_board_should_create_an_item_with_dict_column_values(create_item, create_board, get_me):
+
+    # Arrange
+    board_id = '3'
+    name = 'Item 3'
+    group_id = 'group2'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    create_item.return_value = {'id': '3', 'name': name, 'board': {'id': board_id}}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    item = board.add_item(name, group_id=group_id, column_values={'status':{'index': 0}})
+
+    # Assert
+    ok_(item != None)
+    eq_(item.name, name)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_item')
+def test_board_should_create_an_item_with_list_column_values(create_item, create_board, get_me):
+
+    # Arrange
+    board_id = '3'
+    name = 'Item 4'
+    group_id = 'group2'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    create_item.return_value = {'id': '4', 'name': name, 'board': {'id': board_id}}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+    status_column = create_column_value('status', ColumnType.status, 'Status', index=0)
+
+    # Act 
+    item = board.add_item(name, group_id=group_id, column_values=[status_column])
 
     # Assert
     ok_(item != None)
