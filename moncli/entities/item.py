@@ -53,8 +53,6 @@ class Item():
                     # Using auto-number to trigger read-only value
                     column_types_map[column['id']] = ColumnType.auto_number
 
-            print(column_types_map)
-
             item_data = client.get_items(
                 self.__creds.api_key_v2,
                 'column_values.id', 'column_values.title', 'column_values.value',
@@ -75,7 +73,12 @@ class Item():
                     column_value = create_column_value(id, column_type, title)
                 else:
                     value = json.loads(value)
-                    if value is dict:
+                    if type(value) is dict:
+                        try:
+                            del value['id']
+                        except:
+                            pass
+
                         column_value = create_column_value(id, column_type, title, **value)
                     else:
                         column_value = create_column_value(id, column_type, title, value=value)
@@ -98,7 +101,10 @@ class Item():
 
         if title is not None:
 
-            return [column_value for column_value in self.__column_values.values() if column_value.title == title][0]
+            column_values_list = list(self.__column_values.values())
+            for column_value in column_values_list:
+                if column_value.title == title:
+                    return column_value
 
         raise ex.NotEnoughGetColumnValueParameters()
 

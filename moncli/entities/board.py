@@ -111,7 +111,20 @@ class Board():
         return self.__groups 
 
 
-    def add_item(self, item_name: str, **kwargs):
+    def add_item(self, item_name: str, group_id: str = None, column_values = None):
+
+        kwargs = {}
+
+        if group_id is not None:
+            kwargs['group_id'] = group_id
+
+        if type(column_values) == dict:
+            kwargs['column_values'] = column_values
+
+        elif type(column_values) == list:
+            kwargs['column_values'] = { value.id: value.format() for value in column_values }
+        else:
+            raise ex.InvalidColumnValue(type(column_values).__name__)
 
         item_data = client.create_item(
             self.__creds.api_key_v2, 
@@ -192,12 +205,12 @@ class Board():
 
             column = self.__columns[id]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
-            return create_column_value(id, column_type, column.title)
+            return create_column_value(id, ColumnType[column_type], column.title)
 
         elif title is not None:
 
             column = [column for column in self.__columns.values() if column.title == title][0]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
-            return create_column_value(column.id, column_type, title)
+            return create_column_value(column.id, ColumnType[column_type], title)
 
         
