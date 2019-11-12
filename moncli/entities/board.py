@@ -191,7 +191,7 @@ class Board():
         return [Item(creds=self.__creds, **item_data) for item_data in items_data]
 
 
-    def get_column_value(self, id: str = None, title: str = None):
+    def get_column_value(self, id: str = None, title: str = None, **kwargs):
 
         if id is None and title is None:
             raise ex.NotEnoughGetColumnValueParameters()
@@ -205,12 +205,12 @@ class Board():
 
             column = self.__columns[id]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
-            return create_column_value(id, ColumnType[column_type], column.title)
+            return create_column_value(id, ColumnType[column_type], column.title, **kwargs)
 
         elif title is not None:
 
             column = [column for column in self.__columns.values() if column.title == title][0]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
-            return create_column_value(column.id, ColumnType[column_type], title)
+            return create_column_value(column.id, ColumnType[column_type], title, **kwargs)
 
         

@@ -218,6 +218,16 @@ The __Board__ object can also retrieve contained items by column value using the
 ```
 The method returns a list of __Item__ objects containing the same fields as mentioned in the _get_items_ method above.
 
+### Getting a column value ###
+The __Board__ object can also return a new __ColumnValue__ object with an empty or a user-populated value using the _get_column_value_ method as shown below
+```
+>>> # Get empty column value from board
+>>> empty_column = board.get_column_value(id='text_column_01')
+>>>
+>>> # Get column value from board with user-populated data
+>>> not_empty_column = board.get_column_value(title='Text Column 01', value='Za Waarudo!')
+```
+
 ## Working with Groups ##
 Groups serve as collections of items for a board.  Once created by the __Board__ object using the _get_groups_ method, the __Group__ object gives users various methods for modification and item management as discussed in the following section.
 
