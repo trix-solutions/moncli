@@ -102,17 +102,28 @@ class Board():
                 *field_list,
                 ids=[int(self.id)])[0]
 
-            self.__groups = [
-                Group(creds=self.__creds, board_id=self.id, **group_data)
+            self.__groups = {
+                group_data['id']: Group(creds=self.__creds, board_id=self.id, **group_data)
                 for group_data
                 in board['groups']
-            ]
+            }
 
-        return self.__groups 
+        return list(self.__groups.values()) 
 
     
     def get_group(self, id: str = None, title: str = None):
-        pass
+        
+        if id is None and title is None:
+            raise ex.NotEnoughGetGroupParameters()
+
+        if id is not None and title is not None:
+            raise ex.TooManyGetGroupParameters()
+
+        groups = self.get_groups()
+        if id is not None:
+            return self.__groups[id]
+        else:
+            return [group for group in groups if group.title == title][0]
 
 
     def add_item(self, item_name: str, group_id: str = None, column_values = None):

@@ -31,6 +31,18 @@ class NotEnoughGetBoardParameters(Exception):
         self.message = "Either the 'id' or 'name' is required when querying a board."
 
 
+class TooManyGetGroupParameters(Exception):
+
+    def __init__(self):
+        self.message = "Unable to use both 'id' and 'title' when querying for a group."
+        
+
+class NotEnoughGetGroupParameters(Exception):
+
+    def __init__(self):
+        self.message = "Either the 'id' or 'title' is required when querying a group."
+
+
 class TooManyGetColumnValueParameters(Exception):
 
     def __init__(self):
