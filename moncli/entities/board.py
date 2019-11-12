@@ -110,6 +110,10 @@ class Board():
 
         return self.__groups 
 
+    
+    def get_group(self, id: str = None, title: str = None):
+        pass
+
 
     def add_item(self, item_name: str, group_id: str = None, column_values = None):
 
