@@ -100,6 +100,82 @@ def test_should_retrieve_a_list_of_groups(get_boards, create_board, get_me):
 
 @patch.object(e.client.MondayClient, 'get_me')
 @patch('moncli.api_v2.create_board')
+@raises(e.exceptions.NotEnoughGetGroupParameters)
+def test_board_should_fail_to_retrieve_a_group_from_too_few_parameters(create_board, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    board.get_group()
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@raises(e.exceptions.TooManyGetGroupParameters)
+def test_board_should_fail_to_retrieve_a_group_from_too_many_parameters(create_board, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    board.get_group(id='group1', title='Group 1')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.get_boards')
+def test_should_retrieve_a_group_by_id(get_boards, create_board, get_me):
+
+    # Arrange
+    id = '1'
+    title = 'Group 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    get_boards.return_value = [{'id': '1', 'groups': [{'id': id, 'title': title}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    group = board.get_group(id=id)
+
+    # Assert
+    ok_(group != None)
+    eq_(group.id, id)
+    eq_(group.title, title)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.get_boards')
+def test_should_retrieve_a_group_by_title(get_boards, create_board, get_me):
+
+    # Arrange
+    id = '1'
+    title = 'Group 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    get_boards.return_value = [{'id': '1', 'groups': [{'id': id, 'title': title}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    group = board.get_group(title=title)
+
+    # Assert
+    ok_(group != None)
+    eq_(group.id, id)
+    eq_(group.title, title)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
 @patch('moncli.api_v2.create_item')
 def test_should_create_an_item(create_item, create_board, get_me):
 
