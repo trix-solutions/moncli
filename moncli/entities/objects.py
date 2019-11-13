@@ -8,7 +8,6 @@ class MondayClientCredentials():
 class Column():
 
     def __init__(self, **kwargs):
-        self.__creds = kwargs['creds']
         self.id = kwargs['id']
 
         for key, value in kwargs.items():
