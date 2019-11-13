@@ -205,6 +205,8 @@ class Board():
 
         return [Item(creds=self.__creds, **item_data) for item_data in items_data]
 
+    def get_column_values(self):
+        pass
 
     def get_column_value(self, id: str = None, title: str = None, **kwargs):
 
