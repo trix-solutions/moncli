@@ -10,7 +10,6 @@ from .item import Item
 class Board():
 
     def __init__(self, **kwargs):
-        self.__columns = None
         self.__groups = None
         self.__creds = kwargs['creds']
 
@@ -60,21 +59,17 @@ class Board():
     
     def get_columns(self):
 
-        if self.__columns == None:
+        board = client.get_boards(
+            self.__creds.api_key_v2,
+            'columns.id',
+            'columns.archived',
+            'columns.settings_str',
+            'columns.title',
+            'columns.type',
+            'columns.width',
+            ids=[int(self.id)])
 
-            board = client.get_boards(
-                self.__creds.api_key_v2,
-                'columns.id',
-                'columns.archived',
-                'columns.settings_str',
-                'columns.title',
-                'columns.type',
-                'columns.width',
-                ids=[int(self.id)])
-
-            self.__columns = { column_data['id']: Column(creds=self.__creds, **column_data) for column_data in board[0]['columns'] }
-
-        return list(self.__columns.values())
+        return [Column(creds=self.__creds, **column_data) for column_data in board[0]['columns']]
 
 
     def add_group(self, group_name: str):
@@ -205,8 +200,10 @@ class Board():
 
         return [Item(creds=self.__creds, **item_data) for item_data in items_data]
 
+
     def get_column_values(self):
         pass
+
 
     def get_column_value(self, id: str = None, title: str = None, **kwargs):
 
@@ -216,17 +213,17 @@ class Board():
         if id is not None and title is not None:
             raise ex.TooManyGetColumnValueParameters()
 
-        self.get_columns()
+        columns = { column.id: column for column in self.get_columns() }
 
         if id is not None:
 
-            column = self.__columns[id]
+            column = columns[id]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
             return create_column_value(id, ColumnType[column_type], column.title, **kwargs)
 
         elif title is not None:
 
-            column = [column for column in self.__columns.values() if column.title == title][0]
+            column = [column for column in columns.values() if column.title == title][0]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
             return create_column_value(column.id, ColumnType[column_type], title, **kwargs)
 
