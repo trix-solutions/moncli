@@ -99,14 +99,14 @@ class MondayClient():
 
         # Hard configure the pagination rate.
         page = 1
-        page_limit = 1000
-        record_count = 1000
+        page_limit = 500
+        record_count = 500
 
         while record_count >= page_limit:
 
             boards_data = client.get_boards(
                 self.__creds.api_key_v2, 
-                *GET_BOARD_FIELD_LIST,
+                'id', 'name',
                 limit=page_limit,
                 page=page)
 
@@ -117,7 +117,7 @@ class MondayClient():
                 record_count = len(boards_data)
                 continue
 
-            return Board(creds=self.__creds, **target_boards[0])
+            return self.get_board_by_id(target_boards[0]['id'])
     
         if len(target_boards) == 0:
             raise ex.BoardNotFound('name', name)   

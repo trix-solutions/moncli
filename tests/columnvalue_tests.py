@@ -1,5 +1,6 @@
 from nose.tools import ok_, eq_, raises
 
+import moncli.entities.objects as o
 from moncli import columnvalue
 from moncli.columnvalue import create_column_value
 from moncli.enums import ColumnType, PeopleKind
@@ -687,10 +688,10 @@ def test_should_return_status_column_value_by_index():
     id = 'status_2'
     column_type = ColumnType.status
     title = 'Status Two'
-    index = 1
+    index = 2
 
     # Act 
-    column_value = create_column_value(id, column_type, title, index=index)
+    column_value = create_column_value(id, column_type, title, index=index, settings=o.StatusSettings(**{'labels': {'2': 'Status Two'}}))
     format = column_value.format()
 
     # Assert
@@ -709,12 +710,12 @@ def test_should_return_status_column_value_by_label():
     label = 'Status 3'
 
     # Act
-    column_value = create_column_value(id, column_type, title, label=label)
+    column_value = create_column_value(id, column_type, title, label=label, settings=o.StatusSettings(**{'labels': {'3': 'Status 3'}}))
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
-    eq_(column_value.index, None)
+    eq_(column_value.index, 3)
     eq_(column_value.label, label)
     eq_(format, {'label': label})
 
@@ -725,16 +726,15 @@ def test_should_return_status_column_value_by_label_with_preference():
     id = 'status_4'
     column_type = ColumnType.status
     title = 'Status Four'
-    label = 'Status 2'
-    index = 4
+    label = 'Status 4'
 
     # Act
-    column_value = create_column_value(id, column_type, title, label=label, index=index)
+    column_value = create_column_value(id, column_type, title, label=label, index=3, settings=o.StatusSettings(**{'labels': {'4': "Status 4"}}))
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
-    eq_(column_value.index, None)
+    eq_(column_value.index, 4)
     eq_(column_value.label, label)
     eq_(format, {'label': label})
 

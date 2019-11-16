@@ -1,12 +1,11 @@
 import json
 from typing import List
 
-import moncli.entities.exceptions as ex
+import moncli.entities.exceptions as ex, moncli.entities.objects as o
 from .. import api_v2 as client
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
 from ..columnvalue import create_column_value, ColumnValue
-from .objects import Update
 
 class Item():
 
@@ -35,52 +34,63 @@ class Item():
         
     def get_column_values(self):
 
-        if self.__column_values == None: 
+        # Pulls the columns from the board containing the item and maps 
+        # column ID to type.
+        column_data = client.get_boards(
+            self.__creds.api_key_v2,
+            'columns.id', 'columns.type', 'columns.settings_str',
+            ids=[int(self.__board_id)]
+        )[0]['columns']
 
-            # Pulls the columns from the board containing the item and maps 
-            # column ID to type.
-            column_data = client.get_boards(
-                self.__creds.api_key_v2,
-                'columns.id', 'columns.type',
-                ids=[int(self.__board_id)]
-            )[0]['columns']
+        column_types_map = {}
+        for column in column_data:
+            try:
+                column_types_map[column['id']] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
+            except:
+                # Using auto-number to trigger read-only value
+                column_types_map[column['id']] = ColumnType.auto_number
 
-            column_types_map = {}
-            for column in column_data:
-                try:
-                    column_types_map[column['id']] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
-                except:
-                    # Using auto-number to trigger read-only value
-                    column_types_map[column['id']] = ColumnType.auto_number
+        item_data = client.get_items(
+            self.__creds.api_key_v2,
+            'column_values.id', 'column_values.title', 'column_values.value',
+            ids=[int(self.id)])[0]
 
-            print(column_types_map)
+        column_values_data = item_data['column_values']
 
-            item_data = client.get_items(
-                self.__creds.api_key_v2,
-                'column_values.id', 'column_values.title', 'column_values.value',
-                ids=[int(self.id)])[0]
+        self.__column_values = {}
 
-            column_values_data = item_data['column_values']
+        for data in column_values_data:
 
-            self.__column_values = {}
+            id = data['id']
+            title = data['title']
+            column_type = column_types_map[id]
 
-            for data in column_values_data:
+            value = data['value']
+            if value is None:
+                column_value = create_column_value(id, column_type, title)
+            else:
+                value = json.loads(value)
 
-                id = data['id']
-                title = data['title']
-                column_type = column_types_map[id]
+                def _strip_id():
+                    try:
+                        del value['id']
+                    except:
+                        pass
+                
+                # There may be more type switches to come
+                def _handle_before():
+                    if column_type == ColumnType.status:
+                        value['settings'] = o.StatusSettings(**column_data['settings_str'])
 
-                value = data['value']
-                if value is None:
-                    column_value = create_column_value(id, column_type, title)
+                if type(value) is dict:
+                    _strip_id()
+                    _handle_before()
+                    column_value = create_column_value(id, column_type, title, **value)
+                # This case pertains to number and text fields
                 else:
-                    value = json.loads(value)
-                    if value is dict:
-                        column_value = create_column_value(id, column_type, title, **value)
-                    else:
-                        column_value = create_column_value(id, column_type, title, value=value)
+                    column_value = create_column_value(id, column_type, title, value=value)
 
-                self.__column_values[id] = column_value          
+            self.__column_values[id] = column_value   
 
         return list(self.__column_values.values())
 
@@ -98,7 +108,10 @@ class Item():
 
         if title is not None:
 
-            return [column_value for column_value in self.__column_values.values() if column_value.title == title][0]
+            column_values_list = list(self.__column_values.values())
+            for column_value in column_values_list:
+                if column_value.title == title:
+                    return column_value
 
         raise ex.NotEnoughGetColumnValueParameters()
 
@@ -191,4 +204,4 @@ class Item():
             self.id,
             'id', 'body')
 
-        return Update(**update_data)
+        return o.Update(**update_data)

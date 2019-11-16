@@ -100,6 +100,82 @@ def test_should_retrieve_a_list_of_groups(get_boards, create_board, get_me):
 
 @patch.object(e.client.MondayClient, 'get_me')
 @patch('moncli.api_v2.create_board')
+@raises(e.exceptions.NotEnoughGetGroupParameters)
+def test_board_should_fail_to_retrieve_a_group_from_too_few_parameters(create_board, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    board.get_group()
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@raises(e.exceptions.TooManyGetGroupParameters)
+def test_board_should_fail_to_retrieve_a_group_from_too_many_parameters(create_board, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    board.get_group(id='group1', title='Group 1')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.get_boards')
+def test_should_retrieve_a_group_by_id(get_boards, create_board, get_me):
+
+    # Arrange
+    id = '1'
+    title = 'Group 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    get_boards.return_value = [{'id': '1', 'groups': [{'id': id, 'title': title}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    group = board.get_group(id=id)
+
+    # Assert
+    ok_(group != None)
+    eq_(group.id, id)
+    eq_(group.title, title)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.get_boards')
+def test_should_retrieve_a_group_by_title(get_boards, create_board, get_me):
+
+    # Arrange
+    id = '1'
+    title = 'Group 1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
+    get_boards.return_value = [{'id': '1', 'groups': [{'id': id, 'title': title}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    group = board.get_group(title=title)
+
+    # Assert
+    ok_(group != None)
+    eq_(group.id, id)
+    eq_(group.title, title)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
 @patch('moncli.api_v2.create_item')
 def test_should_create_an_item(create_item, create_board, get_me):
 
@@ -114,6 +190,76 @@ def test_should_create_an_item(create_item, create_board, get_me):
 
     # Act 
     item = board.add_item(name)
+
+    # Assert
+    ok_(item != None)
+    eq_(item.name, name)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_item')
+def test_board_should_create_an_item_within_group(create_item, create_board, get_me):
+
+    # Arrange
+    board_id = '2'
+    name = 'Item 2'
+    group_id = 'group2'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    create_item.return_value = {'id': '2', 'name': name, 'board': {'id': board_id}}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    item = board.add_item(name, group_id=group_id)
+
+    # Assert
+    ok_(item != None)
+    eq_(item.name, name)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_item')
+def test_board_should_create_an_item_with_dict_column_values(create_item, create_board, get_me):
+
+    # Arrange
+    board_id = '3'
+    name = 'Item 3'
+    group_id = 'group2'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    create_item.return_value = {'id': '3', 'name': name, 'board': {'id': board_id}}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act 
+    item = board.add_item(name, group_id=group_id, column_values={'status':{'index': 0}})
+
+    # Assert
+    ok_(item != None)
+    eq_(item.name, name)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_item')
+def test_board_should_create_an_item_with_list_column_values(create_item, create_board, get_me):
+
+    # Arrange
+    board_id = '3'
+    name = 'Item 4'
+    group_id = 'group2'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    create_item.return_value = {'id': '4', 'name': name, 'board': {'id': board_id}}
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+    status_column = cv.create_column_value('status', ColumnType.status, 'Status', index=0, settings=e.objects.StatusSettings(labels={'0':'Test'}))
+
+    # Act 
+    item = board.add_item(name, group_id=group_id, column_values=[status_column])
 
     # Assert
     ok_(item != None)
@@ -218,17 +364,18 @@ def test_should_get_column_value_by_id(get_boards, create_board, get_me):
     ok_(column_value != None)
     eq_(column_value.id, 'text_column_01')
     eq_(column_value.title, 'Text Column 01')
+    eq_(type(column_value), cv.TextValue)
 
 
 @patch.object(e.client.MondayClient, 'get_me')
 @patch('moncli.api_v2.create_board')
-@patch('moncli.api_v2.get_boards')
-def test_should_get_column_value_by_title(get_boards, create_board, get_me):
+@patch.object(e.board.Board, 'get_columns')
+def test_should_get_column_value_by_title(get_columns, create_board, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
-    get_boards.return_value = [{'id': '1', 'columns':[{'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'}]}]
+    get_columns.return_value = [e.objects.Column(**{'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})]
     client = e.client.MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 
@@ -239,3 +386,4 @@ def test_should_get_column_value_by_title(get_boards, create_board, get_me):
     ok_(column_value != None)
     eq_(column_value.id, 'text_column_01')
     eq_(column_value.title, 'Text Column 01')
+    eq_(type(column_value), cv.TextValue)
