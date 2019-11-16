@@ -512,8 +512,9 @@ Properties:
 * _index_ (int) - the index of the status (required)
 * _label_ (str) - the label of the status (required)
 
-Notes:
-* index and label properties are mutually exclusive and cannot both be used
+Methods:
+* _change_status_by_index_ (index: int) - changes the status by the index according to status settings
+* _change_status_by_label_ (label: str) - changes the status by the label according to status settings
 
 
 #### DropdownValue ####
