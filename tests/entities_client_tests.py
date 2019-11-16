@@ -2,7 +2,7 @@ from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
 from moncli.api_v2 import constants
-from moncli.entities import client as c, user as u, exceptions as ex
+from moncli.entities import client as c, user as u, board as b, exceptions as ex
 from moncli.enums import BoardKind, NotificationTargetType
 
 USERNAME = 'test.user@foobar.org' 
@@ -117,14 +117,16 @@ def test_should_retrieve_a_board_by_id(get_me, get_boards):
 
 
 @patch('moncli.api_v2.get_boards')
+@patch.object(c.MondayClient, 'get_board_by_id')
 @patch.object(c.MondayClient, 'get_me')
-def test_should_retrieve_a_board_by_name(get_me, get_boards):
+def test_should_retrieve_a_board_by_name(get_me, get_board_by_id, get_boards):
 
     # Arrange 
     id = '2'
     name = 'Test Board 2'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_boards.return_value = [{'id': '1', 'name': 'Test Board 1'}, {'id': id, 'name': name}]
+    get_board_by_id.return_value = b.Board(creds={}, id=id, name=name)
     client = c.MondayClient(USERNAME, '', '')
 
     # Act 

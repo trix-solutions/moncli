@@ -106,7 +106,7 @@ class MondayClient():
 
             boards_data = client.get_boards(
                 self.__creds.api_key_v2, 
-                *GET_BOARD_FIELD_LIST,
+                'id', 'name',
                 limit=page_limit,
                 page=page)
 
@@ -117,7 +117,7 @@ class MondayClient():
                 record_count = len(boards_data)
                 continue
 
-            return Board(creds=self.__creds, **target_boards[0])
+            return self.get_board_by_id(target_boards[0]['id'])
     
         if len(target_boards) == 0:
             raise ex.BoardNotFound('name', name)   
