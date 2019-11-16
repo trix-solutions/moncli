@@ -360,13 +360,16 @@ class StatusValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(StatusValue, self).__init__(id, title)
 
+        if len(kwargs) > 0:
+            self.__settings = kwargs['settings']
+
         try:
-            self.index = kwargs['index']
+            self.change_status_by_index(kwargs['index'])
         except KeyError:
             self.index = None
 
         try:
-            self.label = kwargs['label']
+            self.change_status_by_label(kwargs['label'])
         except KeyError:
             self.label = None
 
@@ -380,6 +383,17 @@ class StatusValue(ColumnValue):
             return { 'index': self.index }
 
         return { 'label': ''}
+
+
+    def change_status_by_index(self, index: int):
+        
+        self.index = index
+        self.label = self.__settings.labels[str(index)]
+
+    def change_status_by_label(self, label: str):
+        
+        self.label = label
+        self.index = self.__settings.get_index(label)
 
 
 class TagsValue(ColumnValue):
@@ -665,10 +679,10 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
             return StatusValue(id, title)
 
         if kwargs.__contains__('label'):
-            return StatusValue(id, title, label=kwargs['label'])
+            return StatusValue(id, title, label=kwargs['label'], settings=kwargs['settings'])
 
         if kwargs.__contains__('index'):
-            return StatusValue(id, title, index=kwargs['index'])
+            return StatusValue(id, title, index=kwargs['index'], settings=kwargs['settings'])
 
 
     elif column_type == ColumnType.tags:

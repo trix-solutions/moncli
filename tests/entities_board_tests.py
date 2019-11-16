@@ -256,7 +256,7 @@ def test_board_should_create_an_item_with_list_column_values(create_item, create
     create_item.return_value = {'id': '4', 'name': name, 'board': {'id': board_id}}
     client = e.client.MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
-    status_column = cv.create_column_value('status', ColumnType.status, 'Status', index=0)
+    status_column = cv.create_column_value('status', ColumnType.status, 'Status', index=0, settings=e.objects.StatusSettings(labels={'0':'Test'}))
 
     # Act 
     item = board.add_item(name, group_id=group_id, column_values=[status_column])
@@ -369,13 +369,13 @@ def test_should_get_column_value_by_id(get_boards, create_board, get_me):
 
 @patch.object(e.client.MondayClient, 'get_me')
 @patch('moncli.api_v2.create_board')
-@patch('moncli.api_v2.get_boards')
-def test_should_get_column_value_by_title(get_boards, create_board, get_me):
+@patch.object(e.board.Board, 'get_columns')
+def test_should_get_column_value_by_title(get_columns, create_board, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
-    get_boards.return_value = [{'id': '1', 'columns':[{'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'}]}]
+    get_columns.return_value = [e.objects.Column(**{'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})]
     client = e.client.MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 

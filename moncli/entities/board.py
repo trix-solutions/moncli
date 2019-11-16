@@ -1,9 +1,8 @@
-import moncli.entities.exceptions as ex
+import moncli.entities.exceptions as ex, moncli.entities.objects as o
 import moncli.columnvalue as cv
 from .. import api_v2 as client
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
-from .objects import Update, Column
 from .group import Group
 from .item import Item
 
@@ -54,7 +53,7 @@ class Board():
             column_type, 
             'id', 'title', 'type')
 
-        return Column(creds=self.__creds, **column_data)
+        return o.Column(creds=self.__creds, **column_data)
 
     
     def get_columns(self):
@@ -69,7 +68,7 @@ class Board():
             'columns.width',
             ids=[int(self.id)])
 
-        return [Column(creds=self.__creds, **column_data) for column_data in board[0]['columns']]
+        return [o.Column(creds=self.__creds, **column_data) for column_data in board[0]['columns']]
 
 
     def add_group(self, group_name: str):
@@ -226,12 +225,16 @@ class Board():
 
             column = columns[id]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
-            return cv.create_column_value(id, ColumnType[column_type], column.title, **kwargs)
+            
 
         elif title is not None:
 
             column = [column for column in columns.values() if column.title == title][0]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
-            return cv.create_column_value(column.id, ColumnType[column_type], title, **kwargs)
+
+        if column_type == ColumnType.status:
+            kwargs['settings'] = column.settings
+        
+        return cv.create_column_value(column.id, ColumnType[column_type], column.title, **kwargs)
 
         

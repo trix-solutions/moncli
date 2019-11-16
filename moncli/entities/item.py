@@ -1,12 +1,11 @@
 import json
 from typing import List
 
-import moncli.entities.exceptions as ex
+import moncli.entities.exceptions as ex, moncli.entities.objects as o
 from .. import api_v2 as client
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
 from ..columnvalue import create_column_value, ColumnValue
-from .objects import Update
 
 class Item():
 
@@ -39,7 +38,7 @@ class Item():
         # column ID to type.
         column_data = client.get_boards(
             self.__creds.api_key_v2,
-            'columns.id', 'columns.type',
+            'columns.id', 'columns.type', 'columns.settings_str',
             ids=[int(self.__board_id)]
         )[0]['columns']
 
@@ -71,13 +70,23 @@ class Item():
                 column_value = create_column_value(id, column_type, title)
             else:
                 value = json.loads(value)
-                if type(value) is dict:
+
+                def _strip_id():
                     try:
                         del value['id']
                     except:
                         pass
+                
+                # There may be more type switches to come
+                def _handle_before():
+                    if column_type == ColumnType.status:
+                        value['settings'] = o.StatusSettings(**column_data['settings_str'])
 
+                if type(value) is dict:
+                    _strip_id()
+                    _handle_before()
                     column_value = create_column_value(id, column_type, title, **value)
+                # This case pertains to number and text fields
                 else:
                     column_value = create_column_value(id, column_type, title, value=value)
 
@@ -195,4 +204,4 @@ class Item():
             self.id,
             'id', 'body')
 
-        return Update(**update_data)
+        return o.Update(**update_data)
