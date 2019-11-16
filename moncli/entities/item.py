@@ -35,55 +35,53 @@ class Item():
         
     def get_column_values(self):
 
-        if self.__column_values == None: 
+        # Pulls the columns from the board containing the item and maps 
+        # column ID to type.
+        column_data = client.get_boards(
+            self.__creds.api_key_v2,
+            'columns.id', 'columns.type',
+            ids=[int(self.__board_id)]
+        )[0]['columns']
 
-            # Pulls the columns from the board containing the item and maps 
-            # column ID to type.
-            column_data = client.get_boards(
-                self.__creds.api_key_v2,
-                'columns.id', 'columns.type',
-                ids=[int(self.__board_id)]
-            )[0]['columns']
+        column_types_map = {}
+        for column in column_data:
+            try:
+                column_types_map[column['id']] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
+            except:
+                # Using auto-number to trigger read-only value
+                column_types_map[column['id']] = ColumnType.auto_number
 
-            column_types_map = {}
-            for column in column_data:
-                try:
-                    column_types_map[column['id']] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
-                except:
-                    # Using auto-number to trigger read-only value
-                    column_types_map[column['id']] = ColumnType.auto_number
+        item_data = client.get_items(
+            self.__creds.api_key_v2,
+            'column_values.id', 'column_values.title', 'column_values.value',
+            ids=[int(self.id)])[0]
 
-            item_data = client.get_items(
-                self.__creds.api_key_v2,
-                'column_values.id', 'column_values.title', 'column_values.value',
-                ids=[int(self.id)])[0]
+        column_values_data = item_data['column_values']
 
-            column_values_data = item_data['column_values']
+        self.__column_values = {}
 
-            self.__column_values = {}
+        for data in column_values_data:
 
-            for data in column_values_data:
+            id = data['id']
+            title = data['title']
+            column_type = column_types_map[id]
 
-                id = data['id']
-                title = data['title']
-                column_type = column_types_map[id]
+            value = data['value']
+            if value is None:
+                column_value = create_column_value(id, column_type, title)
+            else:
+                value = json.loads(value)
+                if type(value) is dict:
+                    try:
+                        del value['id']
+                    except:
+                        pass
 
-                value = data['value']
-                if value is None:
-                    column_value = create_column_value(id, column_type, title)
+                    column_value = create_column_value(id, column_type, title, **value)
                 else:
-                    value = json.loads(value)
-                    if type(value) is dict:
-                        try:
-                            del value['id']
-                        except:
-                            pass
+                    column_value = create_column_value(id, column_type, title, value=value)
 
-                        column_value = create_column_value(id, column_type, title, **value)
-                    else:
-                        column_value = create_column_value(id, column_type, title, value=value)
-
-                self.__column_values[id] = column_value          
+            self.__column_values[id] = column_value   
 
         return list(self.__column_values.values())
 

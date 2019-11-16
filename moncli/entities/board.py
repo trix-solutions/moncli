@@ -1,7 +1,7 @@
 import moncli.entities.exceptions as ex
+import moncli.columnvalue as cv
 from .. import api_v2 as client
 from ..enums import ColumnType
-from ..columnvalue import ColumnValue, create_column_value
 from ..constants import COLUMN_TYPE_MAPPINGS
 from .objects import Update, Column
 from .group import Group
@@ -177,7 +177,7 @@ class Board():
         return [Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
 
-    def get_items_by_column_values(self, column_value: ColumnValue, **kwargs):
+    def get_items_by_column_values(self, column_value: cv.ColumnValue, **kwargs):
         
         field_list = [
             'id',
@@ -190,11 +190,18 @@ class Board():
             'subscribers.id'
         ]
 
+        if type(column_value) == cv.DateValue:
+            value = column_value.date
+        elif type(column_value) == cv.StatusValue:
+            value = column_value.label
+        else:
+            value = column_value.format()
+
         items_data = client.get_items_by_column_values(
             self.__creds.api_key_v2, 
             self.id, 
             column_value.id, 
-            str(column_value.format()), 
+            value, 
             *field_list,
             **kwargs)
 
@@ -219,12 +226,12 @@ class Board():
 
             column = columns[id]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
-            return create_column_value(id, ColumnType[column_type], column.title, **kwargs)
+            return cv.create_column_value(id, ColumnType[column_type], column.title, **kwargs)
 
         elif title is not None:
 
             column = [column for column in columns.values() if column.title == title][0]
             column_type = COLUMN_TYPE_MAPPINGS[column.type]
-            return create_column_value(column.id, ColumnType[column_type], title, **kwargs)
+            return cv.create_column_value(column.id, ColumnType[column_type], title, **kwargs)
 
         
