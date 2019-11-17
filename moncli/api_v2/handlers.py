@@ -49,7 +49,7 @@ def change_column_value(api_key: str, item_id: str, column_id: str, board_id: st
     return execute_mutation(api_key, constants.CHANGE_COLUMN_VALUE, *argv, **kwargs)
 
 
-def change_multiple_column_value(api_key: str, item_id: str, board_id: str, column_values: str, *argv, **kwargs):
+def change_multiple_column_value(api_key: str, item_id: str, board_id: str, column_values: dict, *argv, **kwargs):
 
     kwargs = get_method_arguments(constants.CHANGE_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = IntValue(item_id)

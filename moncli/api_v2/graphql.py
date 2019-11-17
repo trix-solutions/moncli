@@ -180,6 +180,16 @@ class IntValue(ArgumentValue):
         return self.value
 
 
+class BoolValue(ArgumentValue):
+
+    def __init__(self, value):
+        super(BoolValue, self).__init__(value)
+
+    
+    def format(self):
+        return str(self.value).lower()
+
+
 class ListValue(ArgumentValue):
 
     def __init__(self, value):
@@ -197,7 +207,7 @@ class EnumValue(ArgumentValue):
 
     def format(self):
         enum : Enum = self.value
-        return enum.value
+        return enum.name
 
 
 class JsonValue(ArgumentValue):
@@ -226,6 +236,9 @@ def create_value(value, value_type: ArgumentValueKind):
     
     elif value_type == ArgumentValueKind.Int:
         return IntValue(value)
+
+    elif value_type == ArgumentValueKind.Bool:
+        return BoolValue(value)
 
     elif value_type == ArgumentValueKind.Enum:
         return EnumValue(value)

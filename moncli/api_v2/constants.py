@@ -112,6 +112,7 @@ ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS = {
 }
 
 CREATE_ITEM_OPTIONAL_PARAMS ={
+    'group_id': ArgumentValueKind.String,
     'column_values': ArgumentValueKind.Json
 }
 
@@ -158,4 +159,3 @@ USERS_OPTIONAL_PARAMS = {
 TEAMS_OPTIONAL_PARAMS = {
     'ids': ArgumentValueKind.List
 }
-

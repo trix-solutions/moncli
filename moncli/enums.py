@@ -35,6 +35,7 @@ class ColumnType(Enum):
     vote = 26
     week = 27
     world_clock = 28
+    name = 99999 # This column is a text type but comes standard with every board.
 
 
 class NotificationTargetType(Enum):
@@ -60,3 +61,8 @@ class UserKind(Enum):
 class FirstDayOfTheWeek(Enum):
     sunday = 1
     monday = 2
+
+
+class PeopleKind(Enum):
+    person = 1
+    team = 2
