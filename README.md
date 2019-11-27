@@ -16,7 +16,7 @@ Before creating a new __MondayClient__, you will first need to retrieve your API
 
 To create a new Monday.com client, simply run Python 3 and execute the following commands.
 ```
->>> import moncli
+>>> from moncli import MondayClient
 >>> client = MondayClient(username='user@email.com', api_key_v1='api_key_v1', api_key_v2='api_key_v2')
 ```
 Please note that the __MondayClient__ object requires that the input 'username' matches the user declared on the API v2 token for authentication purposes.
