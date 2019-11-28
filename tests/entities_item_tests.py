@@ -36,6 +36,30 @@ def test_item_should_get_column_values(get_boards, get_items, get_me):
 @patch.object(e.client.MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.get_boards')
+def test_item_should_get_column_values_for_status_column(get_boards, get_items, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    get_boards.return_value = [{'id': '1', 'columns': [{'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})}]}]
+    client = e.client.MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'value': json.dumps({'index': 1})}]}]
+
+    # Act
+    column_values = item.get_column_values()
+
+    # Assert 
+    ok_(column_values != None)
+    eq_(len(column_values), 1)
+    eq_(column_values[0].title, 'Status Column 01')
+    eq_(column_values[0].index, 1)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.get_boards')
 @raises(e.exceptions.NotEnoughGetColumnValueParameters)
 def test_item_should_fail_to_retrieve_column_value_from_too_few_parameters(get_boards, get_items, get_me):
 
