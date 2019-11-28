@@ -1,11 +1,12 @@
 import json
 from typing import List
 
-import moncli.entities.exceptions as ex, moncli.entities.objects as o
+import moncli.entities.exceptions as ex, moncli.entities as e
 from .. import api_v2 as client
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
 from ..columnvalue import create_column_value, ColumnValue
+
 
 class Item():
 
@@ -41,6 +42,7 @@ class Item():
             'columns.id', 'columns.type', 'columns.settings_str',
             ids=[int(self.__board_id)]
         )[0]['columns']
+        columns_map = { data['id']: e.objects.Column(**data) for data in column_data }
 
         column_types_map = {}
         for column in column_data:
@@ -64,7 +66,6 @@ class Item():
             id = data['id']
             title = data['title']
             column_type = column_types_map[id]
-
             value = data['value']
             if value is None:
                 column_value = create_column_value(id, column_type, title)
@@ -80,7 +81,7 @@ class Item():
                 # There may be more type switches to come
                 def _handle_before():
                     if column_type == ColumnType.status:
-                        value['settings'] = o.StatusSettings(**column_data['settings_str'])
+                        value['settings'] = columns_map[id].settings
 
                 if type(value) is dict:
                     _strip_id()
@@ -204,4 +205,4 @@ class Item():
             self.id,
             'id', 'body')
 
-        return o.Update(**update_data)
+        return e.objects.Update(**update_data)
