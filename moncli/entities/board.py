@@ -1,47 +1,36 @@
+from schematics.models import Model
+from schematics.types import StringType, IntType, ListType, ModelType
+
 import moncli.entities.exceptions as ex, moncli.entities.objects as o
 import moncli.columnvalue as cv
 from .. import api_v2 as client
+from .. import config
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
 from .group import Group
 from .item import Item
 
-class Board():
+class _Board(Model):
+
+    id = StringType(required=True)
+    name = StringType(required=True)
+    board_folder_id = IntType()
+    board_kind = StringType()
+    description = StringType()
+    #items = ListType(ModelType(Item))
+    #owner = ModelType(User)
+    permissions = StringType()
+    pos = StringType()
+    state = StringType()
+
+
+class Board(_Board):
 
     def __init__(self, **kwargs):
+        self.__creds = kwargs.pop('creds', None)
         self.__groups = None
-        self.__creds = kwargs['creds']
 
-        self.id = kwargs['id']
-
-        for key, value in kwargs.items():
-
-            if key == 'name':
-                self.name = value
-
-            if key == 'board_folder_id':
-                self.board_folder_id = value
-            
-            elif key == 'board_kind':
-                self.board_kind = value
-
-            elif key == 'description':
-                self.description = value
-
-            elif key == 'items':
-                self.__item_ids = [int(item['id']) for item in value]
-
-            elif key == 'owner':
-                self.__owner_id: str = value['id']
-
-            elif key == 'permissions':
-                self.permissions = value
-
-            elif key == 'pos':
-                self.position = value
-
-            elif key == 'state':
-                self.state = value
+        super(Board, self).__init__(kwargs)
 
 
     def add_column(self, title:str, column_type: ColumnType):
