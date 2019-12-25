@@ -17,8 +17,6 @@ class _Board(Model):
     board_folder_id = IntType()
     board_kind = StringType()
     description = StringType()
-    #items = ListType(ModelType(Item))
-    #owner = ModelType(User)
     permissions = StringType()
     pos = StringType()
     state = StringType()
@@ -31,6 +29,10 @@ class Board(_Board):
         self.__groups = None
 
         super(Board, self).__init__(kwargs)
+
+
+    def __repr__(self):
+        return str(self.to_primitive())
 
 
     def add_column(self, title:str, column_type: ColumnType):
