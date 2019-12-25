@@ -1,5 +1,6 @@
 import moncli.entities.exceptions as ex
 from .. import api_v2 as client
+from .. import config
 from ..enums import BoardKind, NotificationTargetType
 from .objects import MondayClientCredentials, Tag, Update, Notification
 from .board import Board
@@ -7,17 +8,7 @@ from .item import Item
 from .user import User, Team
 
 
-GET_BOARD_FIELD_LIST = [
-    'id', 
-    'name', 
-    'board_folder_id', 
-    'board_kind', 
-    'description', 
-    'items.id', 
-    'owner.id', 
-    'permissions',
-    'pos',
-    'state']
+
 
 class MondayClient():
 
@@ -85,10 +76,10 @@ class MondayClient():
 
         boards_data = client.get_boards(
             self.__creds.api_key_v2, 
-            *GET_BOARD_FIELD_LIST,
+            *config.DEFAULT_BOARD_QUERY_FIELDS,
             ids=[int(id)],
             limit=1)
-
+            
         if len(boards_data) == 0:
             raise ex.BoardNotFound('id', id)
 
