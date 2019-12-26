@@ -13,7 +13,7 @@ from .item import Item
 class _Board(Model):
 
     id = StringType(required=True)
-    name = StringType(required=True)
+    name = StringType()
     board_folder_id = IntType()
     board_kind = StringType()
     description = StringType()
@@ -27,12 +27,24 @@ class Board(_Board):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
         self.__groups = None
+        self.__items = None
 
         super(Board, self).__init__(kwargs)
 
 
     def __repr__(self):
-        return str(self.to_primitive())
+        o = self.to_primitive()
+        if self.__items:
+            o['items'] = [item.to_primitive() for item in self.__items]
+        
+        return str(o)
+
+
+    @property
+    def items(self):
+        if not self.__items:
+            self.__items = self.get_items()
+        return self.__items
 
 
     def add_column(self, title:str, column_type: ColumnType):
@@ -136,33 +148,17 @@ class Board(_Board):
         return Item(creds=self.__creds, **item_data)
 
 
-    def get_items(self):
+    def get_items(self, *args):
         
-        field_list = [
-            'id',
-            'name',
-            'board.id',
-            'board.name',
-            'creator_id',
-            'group.id',
-            'state',
-            'subscribers.id'
-        ]
+        if len(args) == 0:
+            field_list = config.DEFAULT_ITEM_QUERY_FIELDS
 
-        if not hasattr(self, '__item_ids'):
+        field_list = ['items.' + field for field in field_list]
 
-            items = client.get_boards(
-                self.__creds.api_key_v2,
-                'items.id', 
-                ids=[int(self.id)])[0]['items']
-
-            self.__item_ids = [int(item['id']) for item in items]
-
-        items_data = client.get_items(
-            self.__creds.api_key_v2, 
-            *field_list,
-            ids=self.__item_ids, 
-            limit=1000)
+        items_data = client.get_boards(
+            self.__creds.api_key_v2,
+            *field_list, 
+            ids=[int(self.id)])[0]['items']
 
         return [Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
