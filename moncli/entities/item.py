@@ -1,46 +1,74 @@
 import json
 from typing import List
 
-import moncli.entities.exceptions as ex, moncli.entities as e
+from schematics.models import Model
+from schematics.types import StringType, DateType
+
+import moncli.entities.exceptions as ex
+from .. import entities as e
 from .. import api_v2 as client
+from .. import config
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
 from ..columnvalue import create_column_value, ColumnValue
 
 
-class Item():
+class _Item(Model):
+    id = StringType(required=True)
+    name = StringType()
+    created_at = StringType()
+    creator_id = StringType()
+    state = StringType()
+    updated_at = StringType()
+
+
+class Item(_Item):
 
     def __init__(self, **kwargs):
-        self.__creds = kwargs['creds']
-        self.__board_id = kwargs['board']['id']
+        self.__creds = kwargs.pop('creds')
+        self.__board = None
         self.__column_values = None
+        super(Item, self).__init__(kwargs)
 
-        self.id = kwargs['id']
-        self.name = kwargs['name']
 
-        for key, value in kwargs.items():
+    def __repr__(self):
+        o = self.to_primitive()
+        if self.__board:
+            o['board'] = self.__board
 
-            if key == 'creator_id':
-                self.creator_id = value
+        return str(o)
 
-            elif key == 'group':
-                self.__group_id = value['id']
 
-            elif key == 'state':
-                self.state = value
-            
-            elif key == 'subscribers':
-                self.__subscriber_ids = [int(item['id']) for item in value]
+
+    @property
+    def board(self):
+        if self.__board:
+            return self.__board
+
+        field_list = ['board.' + field for field in config.DEFAULT_BOARD_QUERY_FIELDS]
+        board_data = client.get_items(
+            self.__creds.api_key_v2,
+            *field_list,
+            ids=[int(self.id)])[0]['board']
+
+        self.__board = e.Board(**board_data)
+
+        return self.__board
 
         
     def get_column_values(self):
 
         # Pulls the columns from the board containing the item and maps 
         # column ID to type.
+        try:
+            board_id = self.__board.id
+        except AttributeError:
+            board_id = self.board.id
+
         column_data = client.get_boards(
             self.__creds.api_key_v2,
             'columns.id', 'columns.type', 'columns.settings_str',
-            ids=[int(self.__board_id)]
+            ids=[int(board_id)]
         )[0]['columns']
         columns_map = { data['id']: e.objects.Column(**data) for data in column_data }
 
