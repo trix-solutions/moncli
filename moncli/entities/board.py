@@ -6,7 +6,7 @@ import moncli.columnvalue as cv
 from .. import api_v2 as client
 from .. import config
 from ..enums import ColumnType
-from ..constants import COLUMN_TYPE_MAPPINGS
+from ..config import COLUMN_TYPE_MAPPINGS
 from .group import Group
 from .item import Item
 

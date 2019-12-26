@@ -9,7 +9,7 @@ from .. import entities as e
 from .. import api_v2 as client
 from .. import config
 from ..enums import ColumnType
-from ..constants import COLUMN_TYPE_MAPPINGS
+from ..config import COLUMN_TYPE_MAPPINGS
 from ..columnvalue import create_column_value, ColumnValue
 
 
@@ -60,22 +60,12 @@ class Item(_Item):
 
         # Pulls the columns from the board containing the item and maps 
         # column ID to type.
-        try:
-            board_id = self.__board.id
-        except AttributeError:
-            board_id = self.board.id
-
-        column_data = client.get_boards(
-            self.__creds.api_key_v2,
-            'columns.id', 'columns.type', 'columns.settings_str',
-            ids=[int(board_id)]
-        )[0]['columns']
-        columns_map = { data['id']: e.objects.Column(**data) for data in column_data }
+        columns_map = { column.id: column for column in self.board.columns }
 
         column_types_map = {}
-        for column in column_data:
+        for column in self.board.columns:
             try:
-                column_types_map[column['id']] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
+                column_types_map[column.id] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
             except:
                 # Using auto-number to trigger read-only value
                 column_types_map[column['id']] = ColumnType.auto_number
@@ -146,7 +136,6 @@ class Item(_Item):
 
     
     def change_column_value(self, column_id: str = None, column_value = None):
-        
         if column_id is None:
 
             if column_value is None:
@@ -168,7 +157,7 @@ class Item(_Item):
             self.__creds.api_key_v2,
             self.id,
             column_id,
-            self.__board_id,
+            self.board.id,
             value,
             'id', 'name', 'board.id')
 
@@ -187,7 +176,7 @@ class Item(_Item):
         item_data = client.change_multiple_column_value(
             self.__creds.api_key_v2,
             self.id,
-            self.__board_id,
+            self.board.id,
             values,
             'id', 'name', 'board.id')
 

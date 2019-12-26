@@ -3,6 +3,9 @@ import json
 from schematics.models import Model
 from schematics.types import StringType, BooleanType, IntType, DictType
 
+from .. import config
+from ..enums import ColumnType
+
 class MondayClientCredentials():
 
     def __init__(self, api_key_v1: str, api_key_v2: str):
@@ -29,6 +32,12 @@ class Column(Model):
         settings_str = json.loads(self.settings_str)
         if self.type == 'color':
             return StatusSettings(settings_str)
+
+    
+    @property
+    def column_type(self):
+        # TODO - Find something else other than auto-number to default to.
+        return config.COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
 
 
 class Update():
