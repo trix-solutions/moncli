@@ -150,7 +150,7 @@ class Board(_Board):
             self.__creds.api_key_v2, 
             item_name, 
             self.id, 
-            'id', 'name', 'board.id', 
+            'id', 
             **kwargs)
 
         return Item(creds=self.__creds, **item_data)
@@ -173,16 +173,7 @@ class Board(_Board):
 
     def get_items_by_column_values(self, column_value: cv.ColumnValue, **kwargs):
         
-        field_list = [
-            'id',
-            'name',
-            'board.id',
-            'board.name',
-            'creator_id',
-            'group.id',
-            'state',
-            'subscribers.id'
-        ]
+        field_list = config.DEFAULT_ITEM_QUERY_FIELDS
 
         if type(column_value) == cv.DateValue:
             value = column_value.date
