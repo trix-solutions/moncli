@@ -4,8 +4,6 @@ DEFAULT_BOARD_QUERY_FIELDS = [
     'board_folder_id', 
     'board_kind', 
     'description', 
-    #'items.id', 
-    #'owner.id', 
     'permissions',
     'pos',
     'state']
@@ -13,10 +11,7 @@ DEFAULT_BOARD_QUERY_FIELDS = [
 DEFAULT_ITEM_QUERY_FIELDS = [
     'id',
     'name',
-    'board.id',
-    'board.name',
+    'created_at',
     'creator_id',
-    'group.id',
-    'state',
-    'subscribers.id'
+    'state'
 ]
