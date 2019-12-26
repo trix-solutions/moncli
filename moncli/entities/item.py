@@ -62,14 +62,6 @@ class Item(_Item):
         # column ID to type.
         columns_map = { column.id: column for column in self.board.columns }
 
-        column_types_map = {}
-        for column in self.board.columns:
-            try:
-                column_types_map[column.id] = ColumnType[COLUMN_TYPE_MAPPINGS[column['type']]]
-            except:
-                # Using auto-number to trigger read-only value
-                column_types_map[column['id']] = ColumnType.auto_number
-
         item_data = client.get_items(
             self.__creds.api_key_v2,
             'column_values.id', 'column_values.title', 'column_values.value',
@@ -83,7 +75,7 @@ class Item(_Item):
 
             id = data['id']
             title = data['title']
-            column_type = column_types_map[id]
+            column_type = columns_map[id].column_type
             value = data['value']
             if value is None:
                 column_value = create_column_value(id, column_type, title)
