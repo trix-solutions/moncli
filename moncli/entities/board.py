@@ -26,6 +26,7 @@ class Board(_Board):
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
+        self.__columns = None
         self.__groups = None
         self.__items = None
 
@@ -34,6 +35,9 @@ class Board(_Board):
 
     def __repr__(self):
         o = self.to_primitive()
+
+        if self.__columns:
+            o['columns'] = [column.to_primitive() for column in self.__columns]
         if self.__items:
             o['items'] = [item.to_primitive() for item in self.__items]
         
@@ -45,6 +49,13 @@ class Board(_Board):
         if not self.__items:
             self.__items = self.get_items()
         return self.__items
+
+    
+    @property
+    def columns(self):
+        if not self.__columns:
+            self.__columns = self.get_columns()
+        return self.__columns
 
 
     def add_column(self, title:str, column_type: ColumnType):
@@ -61,17 +72,14 @@ class Board(_Board):
     
     def get_columns(self):
 
-        board = client.get_boards(
+        field_list = ['columns.' + field for field in config.DEFAULT_COLUMN_QUERY_FIELDS]
+        column_data = client.get_boards(
             self.__creds.api_key_v2,
-            'columns.id',
-            'columns.archived',
-            'columns.settings_str',
-            'columns.title',
-            'columns.type',
-            'columns.width',
-            ids=[int(self.id)])
+            *field_list,
+            ids=[int(self.id)],
+            limit=1)[0]['columns']
 
-        return [o.Column(creds=self.__creds, **column_data) for column_data in board[0]['columns']]
+        return [o.Column(data) for data in column_data]
 
 
     def add_group(self, group_name: str):

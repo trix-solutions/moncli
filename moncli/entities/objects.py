@@ -1,5 +1,8 @@
 import json
 
+from schematics.models import Model
+from schematics.types import StringType, BooleanType, IntType, DictType
+
 class MondayClientCredentials():
 
     def __init__(self, api_key_v1: str, api_key_v2: str):
@@ -7,38 +10,25 @@ class MondayClientCredentials():
         self.api_key_v2 = api_key_v2
 
 
-class Column():
+class Column(Model):
 
-    def __init__(self, **kwargs):
-        self.id = kwargs['id']
+    id = StringType(required=True)
+    title = StringType()
+    archived = BooleanType()
+    settings_str = StringType()
+    type = StringType()
+    width = IntType()
 
-        for key, value in kwargs.items():
+    
+    def __repr__(self):
+        return str(self.to_primitive())
 
-            if key == 'archived':
-                self.archived = value
 
-            elif key == 'settings_str':
-                self.settings_str = value
-
-            elif key == 'title':
-                self.title = value
-            
-            elif key == 'type':
-                self.type = value
-
-            elif key == 'width':
-                self.width = value
-
-            elif key == 'board_id':
-                self.board_id = value
-
-        # Load settings string
-        try:
-            settings_str = json.loads(self.settings_str)
-            if self.type == 'color':
-                self.settings = StatusSettings(**settings_str)
-        except:
-            pass
+    @property
+    def settings(self):
+        settings_str = json.loads(self.settings_str)
+        if self.type == 'color':
+            return StatusSettings(settings_str)
 
 
 class Update():
@@ -97,24 +87,14 @@ class Plan():
                 self.version = value
 
 
-class StatusSettings():
+class StatusSettings(Model):
 
-    def __init__(self, **kwargs):
-        self.labels = kwargs['labels']
+    labels = DictType(StringType())
+    labels_positions_v2 = DictType(StringType())
 
-        for key, value in kwargs.items():
 
-            if key == 'done_colors':
-                self.done_colors = value
-
-            elif key == 'sumType':
-                self.sum_type = value
-
-            elif key == 'color_mapping':
-                self.color_mapping = value
-
-            elif key == 'labels_positions_v2':
-                self.labels_positions_v2 = value
+    def __repr__(self):
+        return str(self.to_primitive())
 
 
     def get_index(self, label: str):
