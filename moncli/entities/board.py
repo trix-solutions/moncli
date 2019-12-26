@@ -97,7 +97,7 @@ class Board(_Board):
             self.__creds.api_key_v2,
             self.id,
             group_name,
-            'id', 'title')
+            'id')
 
         return Group(
             creds=self.__creds,
@@ -125,11 +125,10 @@ class Board(_Board):
         if id is not None and title is not None:
             raise ex.TooManyGetGroupParameters()
 
-        groups = self.get_groups()
         if id is not None:
-            return self.__groups[id]
+            return [group for group in self.groups if group.id == id][0]
         else:
-            return [group for group in groups if group.title == title][0]
+            return [group for group in self.groups if group.title == title][0]
 
 
     def add_item(self, item_name: str, group_id: str = None, column_values = None):
