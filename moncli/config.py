@@ -19,6 +19,15 @@ DEFAULT_COLUMN_QUERY_FIELDS = [
     'width'
 ]
 
+DEFAULT_GROUP_QUERY_FIELDS = [
+    'id', 
+    'title', 
+    'archived', 
+    'color', 
+    'deleted', 
+    'position'
+]
+
 DEFAULT_ITEM_QUERY_FIELDS = [
     'id',
     'name',

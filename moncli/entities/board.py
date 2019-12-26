@@ -38,17 +38,12 @@ class Board(_Board):
 
         if self.__columns:
             o['columns'] = [column.to_primitive() for column in self.__columns]
+        if self.__groups:
+            o['groups'] = [group.to_primitive() for group in self.__groups]
         if self.__items:
             o['items'] = [item.to_primitive() for item in self.__items]
         
         return str(o)
-
-
-    @property
-    def items(self):
-        if not self.__items:
-            self.__items = self.get_items()
-        return self.__items
 
     
     @property
@@ -56,6 +51,20 @@ class Board(_Board):
         if not self.__columns:
             self.__columns = self.get_columns()
         return self.__columns
+
+
+    @property
+    def groups(self):
+        if not self.__groups:
+            self.__groups = self.get_groups()
+        return self.__groups
+
+
+    @property
+    def items(self):
+        if not self.__items:
+            self.__items = self.get_items()
+        return self.__items
 
 
     def add_column(self, title:str, column_type: ColumnType):
@@ -98,22 +107,14 @@ class Board(_Board):
 
     def get_groups(self):
 
-        field_list = ['groups.id', 'groups.title', 'groups.archived', 'groups.color', 'groups.deleted', 'groups.items.id', 'groups.position']
+        field_list = ['groups.' + field for field in config.DEFAULT_GROUP_QUERY_FIELDS]
 
-        if self.__groups == None:
-            
-            board = client.get_boards(
-                self.__creds.api_key_v2,
-                *field_list,
-                ids=[int(self.id)])[0]
+        groups_data = client.get_boards(
+            self.__creds.api_key_v2,
+            *field_list,
+            ids=[int(self.id)])[0]['groups']
 
-            self.__groups = {
-                group_data['id']: Group(creds=self.__creds, board_id=self.id, **group_data)
-                for group_data
-                in board['groups']
-            }
-
-        return list(self.__groups.values()) 
+        return [Group(creds=self.__creds, board_id=self.id, **data) for data in groups_data]
 
     
     def get_group(self, id: str = None, title: str = None):
