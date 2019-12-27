@@ -1,22 +1,16 @@
 from typing import List
 
+from schematics.models import Model
+from schematics.types import StringType
+
 from .enums import ColumnType, PeopleKind
+from .entities import column_value as cv
 
 
-class ColumnValue():
+class CheckboxValue(cv.ColumnValue):
 
-    def __init__(self, id: str, title: str):
-        self.id = id
-        self.title = title
-
-    def format(self):
-        pass
-
-
-class CheckboxValue(ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(CheckboxValue, self).__init__(id, title)
+    def __init__(self, **kwargs):
+        super(CheckboxValue, self).__init__(kwargs)
         
         self.checked: bool = False
 
@@ -35,7 +29,7 @@ class CheckboxValue(ColumnValue):
         return {}
 
 
-class CountryValue(ColumnValue):
+class CountryValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(CountryValue, self).__init__(id, title)
@@ -59,7 +53,7 @@ class CountryValue(ColumnValue):
         }
         
 
-class DateValue(ColumnValue):
+class DateValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(DateValue, self).__init__(id, title)
@@ -88,7 +82,7 @@ class DateValue(ColumnValue):
         return result
 
 
-class DropdownValue(ColumnValue):
+class DropdownValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(DropdownValue, self).__init__(id, title)
@@ -115,7 +109,7 @@ class DropdownValue(ColumnValue):
         return {}
 
 
-class EmailValue(ColumnValue):
+class EmailValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(EmailValue, self).__init__(id, title)
@@ -141,7 +135,7 @@ class EmailValue(ColumnValue):
         return { 'email': self.email, 'text': self.text }
 
 
-class HourValue(ColumnValue):
+class HourValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(HourValue, self).__init__(id, title)
@@ -167,7 +161,7 @@ class HourValue(ColumnValue):
         return { 'hour': self.hour, 'minute': self.minute }
 
 
-class LinkValue(ColumnValue):
+class LinkValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(LinkValue, self).__init__(id, title)
@@ -193,7 +187,7 @@ class LinkValue(ColumnValue):
         return { 'url': self.url, 'text': self.text }
 
 
-class LongTextValue(ColumnValue):
+class LongTextValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(LongTextValue, self).__init__(id, title)
@@ -212,7 +206,7 @@ class LongTextValue(ColumnValue):
         return { 'text': self.text}
 
 
-class NameValue(ColumnValue):
+class NameValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(NameValue, self).__init__(id, title)
@@ -225,7 +219,7 @@ class NameValue(ColumnValue):
         return self.name
         
 
-class NumberValue(ColumnValue):
+class NumberValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(NumberValue, self).__init__(id, title)
@@ -275,7 +269,7 @@ class NumberValue(ColumnValue):
         return a == b
 
 
-class PeopleValue(ColumnValue):
+class PeopleValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(PeopleValue, self).__init__(id, title)
@@ -313,7 +307,7 @@ class PeopleValue(ColumnValue):
             self.persons_and_teams = None
 
 
-class PhoneValue(ColumnValue):
+class PhoneValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(PhoneValue, self).__init__(id, title)
@@ -334,7 +328,7 @@ class PhoneValue(ColumnValue):
         return { 'phone': self.phone, 'countryShortName': self.country_short_name }
 
 
-class RatingValue(ColumnValue):
+class RatingValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(RatingValue, self).__init__(id, title)
@@ -355,7 +349,7 @@ class RatingValue(ColumnValue):
         return { 'rating': self.rating }
 
 
-class StatusValue(ColumnValue):
+class StatusValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(StatusValue, self).__init__(id, title)
@@ -396,7 +390,7 @@ class StatusValue(ColumnValue):
         self.index = self.__settings.get_index(label)
 
 
-class TagsValue(ColumnValue):
+class TagsValue(cv.ColumnValue):
     
     def __init__(self, id: str, title: str, **kwargs):
         super(TagsValue, self).__init__(id, title)
@@ -415,7 +409,7 @@ class TagsValue(ColumnValue):
         return { 'tag_ids': self.tag_ids }
 
 
-class TeamValue(ColumnValue):
+class TeamValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(TeamValue, self).__init__(id, title)
@@ -434,26 +428,7 @@ class TeamValue(ColumnValue):
         return {}
 
 
-class TextValue(ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(TextValue, self).__init__(id, title)
-
-        try:
-            self.text = kwargs['text']
-        except KeyError:
-            self.text = None
-
-
-    def format(self):
-        
-        if self.text is None:
-            return ''
-
-        return self.text
-
-
-class TimelineValue(ColumnValue):
+class TimelineValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(TimelineValue, self).__init__(id, title)
@@ -474,7 +449,7 @@ class TimelineValue(ColumnValue):
         return { 'from': self.from_date, 'to': self.to_date }
 
 
-class TimezoneValue(ColumnValue):
+class TimezoneValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(TimezoneValue, self).__init__(id, title)
@@ -493,7 +468,7 @@ class TimezoneValue(ColumnValue):
         return {}
 
 
-class WeekValue(ColumnValue):
+class WeekValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
         super(WeekValue, self).__init__(id, title)
@@ -514,7 +489,7 @@ class WeekValue(ColumnValue):
         return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
 
 
-class ReadonlyValue(ColumnValue):
+class ReadonlyValue(cv.ColumnValue):
     
     def __init__(self, id: str, title, **kwargs):
         super(ReadonlyValue, self).__init__(id, title)
@@ -532,13 +507,13 @@ class ReadonlyValue(ColumnValue):
 
 def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
 
+    if id:
+        kwargs['id'] = id
+    if title:
+        kwargs['title'] = title
+
     if column_type == ColumnType.checkbox:
-
-        if len(kwargs) == 0:
-            return CheckboxValue(id, title)
-
-        return CheckboxValue(id, title, **kwargs)
-
+        return CheckboxValue(**kwargs)
 
     elif column_type == ColumnType.country:
 
@@ -702,11 +677,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
 
     elif column_type == ColumnType.text:
-
-        if len(kwargs) == 0:
-            return TextValue(id, title)
-
-        return TextValue(id, title, text=kwargs['value'])
+        return cv.TextValue(**kwargs)
 
 
     elif column_type == ColumnType.timeline:

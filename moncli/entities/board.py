@@ -1,7 +1,7 @@
 from schematics.models import Model
 from schematics.types import StringType, IntType, ListType, ModelType
 
-import moncli.entities.exceptions as ex, moncli.entities.objects as o
+import moncli.entities.exceptions as ex, moncli.entities as e
 import moncli.columnvalue as cv
 from .. import api_v2 as client
 from .. import config
@@ -76,7 +76,7 @@ class Board(_Board):
             column_type, 
             'id', 'title', 'type')
 
-        return o.Column(column_data)
+        return e.objects.Column(column_data)
 
     
     def get_columns(self):
@@ -88,7 +88,7 @@ class Board(_Board):
             ids=[int(self.id)],
             limit=1)[0]['columns']
 
-        return [o.Column(data) for data in column_data]
+        return [e.objects.Column(data) for data in column_data]
 
 
     def add_group(self, group_name: str):
@@ -171,7 +171,7 @@ class Board(_Board):
         return [Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
 
-    def get_items_by_column_values(self, column_value: cv.ColumnValue, **kwargs):
+    def get_items_by_column_values(self, column_value: e.column_value.ColumnValue, **kwargs):
         
         field_list = config.DEFAULT_ITEM_QUERY_FIELDS
 
