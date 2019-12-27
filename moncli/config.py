@@ -67,3 +67,11 @@ COLUMN_TYPE_MAPPINGS = {
     'week': ColumnType.week,
     'timezone': ColumnType.world_clock
 }
+
+COLUMN_TYPE_VALUE_MAPPINGS = {
+    ColumnType.dropdown: 'DropdownValue',
+    ColumnType.long_text: 'LongTextValue',
+    ColumnType.numbers: 'NumberValue',
+    ColumnType.status: 'StatusValue',
+    ColumnType.text: 'TextValue'
+}

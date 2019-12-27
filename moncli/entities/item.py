@@ -86,11 +86,13 @@ class Item(_Item):
             if value:
                 value = json.loads(value)
                 if type(value) is dict:
+                    """
                     try:
                         del value['id']
                     except:
                         pass
-                    if column_type == ColumnType.status:
+                    """
+                    if column_type is ColumnType.status or column_type :
                         data['settings'] = columns_map[id].settings
 
             values.append(cv.create_column_value(column_type, **data))

@@ -82,33 +82,6 @@ class DateValue(cv.ColumnValue):
         return result
 
 
-class DropdownValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(DropdownValue, self).__init__(id, title)
-
-        try:
-            self.ids = kwargs['ids']
-        except KeyError:
-            self.ids = None
-
-        try: 
-            self.label = kwargs['label']
-        except KeyError:
-            self.label = None
-
-
-    def format(self):
-
-        if self.label is not None:
-            return { 'label': self.label }
-
-        if self.ids is not None:
-            return { 'ids': self.ids }
-
-        return {}
-
-
 class EmailValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -441,15 +414,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
 
     elif column_type == ColumnType.dropdown:
-
-        if len(kwargs) == 0:
-            return DropdownValue(id, title)
-
-        if kwargs.__contains__('label'):
-            return DropdownValue(id, title, label=kwargs['label'])
-
-        if kwargs.__contains__('ids'):
-            return DropdownValue(id, title, ids=kwargs['ids'])
+            return cv.DropdownValue(**kwargs)
 
 
     elif column_type == ColumnType.email:
@@ -481,7 +446,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
     elif column_type == ColumnType.name:
         return NameValue(id, title, name=kwargs['value'])
-        
+
     elif column_type == ColumnType.numbers:
         return cv.NumberValue(**kwargs)
 

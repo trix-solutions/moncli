@@ -27,9 +27,11 @@ class Column(Model):
 
     @property
     def settings(self):
-        settings_str = json.loads(self.settings_str)
-        if self.type == 'color':
-            return StatusSettings(settings_str)
+        settings_obj = json.loads(self.settings_str)
+        if self.column_type is ColumnType.status:
+            return StatusSettings(settings_obj)
+        elif self.column_type is ColumnType.dropdown:
+            return DropdownSettings(settings_obj)
     
     @property
     def column_type(self):
@@ -122,4 +124,14 @@ class DropdownSettings(Model):
     labels = ListType(ModelType(DropdownLabel))
 
     def __repr__(self):
-        return str(self.to_primitive())
+        o = self.to_primitive()
+
+        if self.labels:
+            o['labels'] = [label.to_primitive() for label in self.labels]
+
+        return str(o)
+
+    def __getitem__(self, id):
+        for label in self.labels:
+            if label.id is id:
+                return label

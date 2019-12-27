@@ -1,8 +1,10 @@
 import json
+from importlib import import_module
 
 from schematics.models import Model
 from schematics.types import StringType
 
+from .. import config
 from ..enums import ColumnType
 
 class ColumnValue(Model):
@@ -18,6 +20,26 @@ class ColumnValue(Model):
 
     def format(self):
         return self.to_primitive()
+
+
+class DropdownValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        try:
+            self.__settings = kwargs.pop('settings')
+        except KeyError:
+            raise ColumnValueSettingsError('dropdown')
+
+        super(DropdownValue, self).__init__(kwargs)
+
+    def format(self):
+        """
+        if self.label is not None:
+            return { 'label': self.label }
+        if self.ids is not None:
+            return { 'ids': self.ids }
+        """
+        return {} 
 
 
 class LongTextValue(ColumnValue):
@@ -99,7 +121,7 @@ class StatusValue(ColumnValue):
         try:
             self.__settings = kwargs.pop('settings')
         except KeyError:
-            raise StatusValueSettingsError()
+            raise ColumnValueSettingsError('status')
 
         super(StatusValue, self).__init__(kwargs)
 
@@ -151,21 +173,15 @@ class TextValue(ColumnValue):
 
 
 def create_column_value(column_type: ColumnType, **kwargs):
-
-    if column_type is ColumnType.long_text:
-        return LongTextValue(**kwargs)
-    elif column_type.numbers:
-        return NumberValue(**kwargs)
-    elif column_type is ColumnType.status:
-        return StatusValue(**kwargs)
-    elif column_type is ColumnType.text:
-        return TextValue(**kwargs)
+    return getattr(
+        import_module(__name__), 
+        config.COLUMN_TYPE_VALUE_MAPPINGS[column_type])(**kwargs)
 
 
-class StatusValueSettingsError(Exception):
+class ColumnValueSettingsError(Exception):
 
-    def __init__(self):
-        self.message = 'Settings attribute is missing from input status column data.'
+    def __init__(self, column_type: str):
+        self.message = 'Settings attribute is missing from input {} column data.'.format(column_type)
 
 
 class NumberValueError(Exception):
