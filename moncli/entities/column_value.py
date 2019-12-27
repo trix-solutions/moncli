@@ -28,14 +28,16 @@ class LongTextValue(ColumnValue):
     @property
     def long_text(self):
         if self.value:
-            return json.loads(self.value)
+            return json.loads(self.value)['text']
         return self.value
     
     @long_text.setter
     def long_text(self, value):
         if value:
             self.text = value
-            self.value = json.dumps(value)
+            current_value = json.loads(self.value)
+            current_value['text'] = value
+            self.value = json.dumps(current_value)
         else:
             self.text = ''
             self.value = None
