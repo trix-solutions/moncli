@@ -80,36 +80,20 @@ class Item(_Item):
 
         values = []
         for data in column_values_data:
-
             id = data['id']
-            title = data['title']
             column_type = columns_map[id].column_type
             value = data['value']
-            if value is None:
-                column_value = cv.create_column_value(column_type, **data)
-            else:
+            if value:
                 value = json.loads(value)
-
-                def _strip_id():
+                if type(value) is dict:
                     try:
                         del value['id']
                     except:
                         pass
-                
-                # There may be more type switches to come
-                def _handle_before():
                     if column_type == ColumnType.status:
-                        value['settings'] = columns_map[id].settings
+                        data['settings'] = columns_map[id].settings
 
-                if type(value) is dict:
-                    _strip_id()
-                    _handle_before()
-                    column_value = create_column_value(id, column_type, title, **value)
-                # This case pertains to number and text fields
-                else:
-                    column_value = cv.create_column_value(column_type, **data) 
-
-            values.append(column_value)
+            values.append(cv.create_column_value(column_type, **data))
 
         return values
 

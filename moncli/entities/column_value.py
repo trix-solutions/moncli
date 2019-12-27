@@ -13,13 +13,47 @@ class ColumnValue(Model):
     value = StringType()
     additional_info = StringType()
 
-
     def __repr__(self):
         return str(self.to_primitive())
 
-
     def format(self):
         return self.to_primitive()
+
+
+class StatusValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        try:
+            self.__settings = kwargs.pop('settings')
+        except KeyError:
+            raise StatusValueSettingsError
+
+        super(StatusValue, self).__init__(kwargs)
+
+    @property
+    def index(self):
+        return json.loads(self.value)['index']
+
+    @index.setter
+    def index(self, index: int):
+        value = json.loads(self.value)
+        value['index'] = index
+        value['label'] = self.__settings.labels[str(index)]
+        self.value = json.dumps(value)
+
+    @property
+    def label(self):
+        try:
+            return json.loads(self.value)['label']
+        except KeyError:
+            return json.loads(self.additional_info)['label']
+
+    @label.setter
+    def label(self, label: str):    
+        value = json.loads(self.value)
+        value['index'] = self.__settings.get_index(label)
+        value['label'] = label
+        self.value = json.dumps(value)
 
 
 class TextValue(ColumnValue):
@@ -34,7 +68,7 @@ class TextValue(ColumnValue):
         return self.value
 
     @text_value.setter
-    def text_value(self, value):
+    def text_value(self, value: str):
         if value:
             self.text = value
             self.value = json.dumps(value)
@@ -45,5 +79,13 @@ class TextValue(ColumnValue):
 
 def create_column_value(column_type: ColumnType, **kwargs):
 
-    if column_type is ColumnType.text:
+    if column_type is ColumnType.status:
+        return StatusValue(**kwargs)
+    elif column_type is ColumnType.text:
         return TextValue(**kwargs)
+
+
+class StatusValueSettingsError(Exception):
+
+    def __init__(self):
+        self.message = 'Settings attribute is missing from input status column data.'
