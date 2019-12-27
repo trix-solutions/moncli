@@ -34,7 +34,7 @@ class Item(_Item):
 
     def __repr__(self):
         o = self.to_primitive()
-        
+
         if self.__board:
             o['board'] = self.__board.to_primitive()
         if self.__column_values:
@@ -107,7 +107,7 @@ class Item(_Item):
                     column_value = create_column_value(id, column_type, title, **value)
                 # This case pertains to number and text fields
                 else:
-                    column_value = create_column_value(id, column_type, title, value=value) 
+                    column_value = cv.create_column_value(column_type, **data) 
 
             values.append(column_value)
 
