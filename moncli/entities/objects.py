@@ -1,7 +1,7 @@
 import json
 
 from schematics.models import Model
-from schematics.types import StringType, BooleanType, IntType, DictType
+from schematics.types import StringType, BooleanType, IntType, DictType, ListType, ModelType
 
 from .. import config
 from ..enums import ColumnType
@@ -21,18 +21,15 @@ class Column(Model):
     settings_str = StringType()
     type = StringType()
     width = IntType()
-
     
     def __repr__(self):
         return str(self.to_primitive())
-
 
     @property
     def settings(self):
         settings_str = json.loads(self.settings_str)
         if self.type == 'color':
             return StatusSettings(settings_str)
-
     
     @property
     def column_type(self):
@@ -101,16 +98,28 @@ class StatusSettings(Model):
     labels = DictType(StringType())
     labels_positions_v2 = DictType(StringType())
 
+    def __repr__(self):
+        return str(self.to_primitive())
+
+    def get_index(self, label: str):
+        for key, value in self.labels.items():
+            if value == label:
+                return int(key)
+        return None
+
+
+class DropdownLabel(Model):
+
+    id = IntType(required=True)
+    name = StringType(required=True)
 
     def __repr__(self):
         return str(self.to_primitive())
 
 
-    def get_index(self, label: str):
+class DropdownSettings(Model):
+    
+    labels = ListType(ModelType(DropdownLabel))
 
-        for key, value in self.labels.items():
-
-            if value == label:
-                return int(key)
-
-        return None
+    def __repr__(self):
+        return str(self.to_primitive())
