@@ -200,56 +200,6 @@ class NameValue(cv.ColumnValue):
         return self.name
         
 
-class NumberValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(NumberValue, self).__init__(id, title)
-
-        self.number = None
-
-        try:
-            value = kwargs['number']
-
-            if self.__isint(value):
-                self.number = int(value)
-
-            elif self.__isfloat(value):
-                self.number = float(value)
-        except KeyError:
-            pass
-
-
-    def format(self):
-
-        if self.number is not None:
-            return str(self.number)
-
-        return ''
-
-
-    def __isfloat(self, value):
-
-        try:
-            float(value)
-
-        except ValueError:
-            return False
-
-        return True
-
-    
-    def __isint(self, value):
-
-        try:
-            a = float(value)
-            b = int(a)
-
-        except ValueError:
-            return False
-
-        return a == b
-
-
 class PeopleValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -531,14 +481,9 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
     elif column_type == ColumnType.name:
         return NameValue(id, title, name=kwargs['value'])
-
-
+        
     elif column_type == ColumnType.numbers:
-
-        if len(kwargs) == 0:
-            return NumberValue(id, title)
-
-        return NumberValue(id, title, number=kwargs['value'])
+        return cv.NumberValue(**kwargs)
 
 
     elif column_type == ColumnType.people:

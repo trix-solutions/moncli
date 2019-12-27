@@ -42,6 +42,56 @@ class LongTextValue(ColumnValue):
             self.text = ''
             self.value = None
 
+    def format(self):
+        if self.long_text:
+            return {'text': self.long_text}
+        return {}
+
+
+class NumberValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        super(NumberValue, self).__init__(kwargs)
+
+    @property
+    def number(self):
+        if not self.value:
+            return self.value
+        value = json.loads(self.value)
+        if self.__isint(value):
+            return int(value)
+        if self.__isfloat(value):
+            return float(value)
+
+    @number.setter
+    def number(self, value):
+        if not self.__isint(value) and not self.__isfloat(value):
+            raise NumberValueError()
+        self.text = str(value)
+        self.value = json.dumps(self.text)
+
+    def format(self):
+        if self.number:
+            return str(self.number)
+        return ''
+
+    def __isfloat(self, value):
+        try:
+            float(value)
+        except ValueError:
+            return False
+
+        return True
+  
+    def __isint(self, value):
+        try:
+            a = float(value)
+            b = int(a)
+        except ValueError:
+            return False
+
+        return a == b
+
 
 class StatusValue(ColumnValue):
 
@@ -49,7 +99,7 @@ class StatusValue(ColumnValue):
         try:
             self.__settings = kwargs.pop('settings')
         except KeyError:
-            raise StatusValueSettingsError
+            raise StatusValueSettingsError()
 
         super(StatusValue, self).__init__(kwargs)
 
@@ -104,6 +154,8 @@ def create_column_value(column_type: ColumnType, **kwargs):
 
     if column_type is ColumnType.long_text:
         return LongTextValue(**kwargs)
+    elif column_type.numbers:
+        return NumberValue(**kwargs)
     elif column_type is ColumnType.status:
         return StatusValue(**kwargs)
     elif column_type is ColumnType.text:
@@ -114,3 +166,9 @@ class StatusValueSettingsError(Exception):
 
     def __init__(self):
         self.message = 'Settings attribute is missing from input status column data.'
+
+
+class NumberValueError(Exception):
+
+    def __init__(self):
+        self.message = 'Set value must be a valid integer or float.'
