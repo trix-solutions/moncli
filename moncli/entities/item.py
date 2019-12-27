@@ -10,7 +10,8 @@ from .. import api_v2 as client
 from .. import config
 from ..enums import ColumnType
 from ..config import COLUMN_TYPE_MAPPINGS
-from ..columnvalue import create_column_value, ColumnValue
+from ..columnvalue import create_column_value
+from ..entities import column_value as cv
 
 
 class _Item(Model):
@@ -33,8 +34,11 @@ class Item(_Item):
 
     def __repr__(self):
         o = self.to_primitive()
+        
         if self.__board:
-            o['board'] = self.__board
+            o['board'] = self.__board.to_primitive()
+        if self.__column_values:
+            o['column_values'] = [value.to_primitive() for value in self.__column_values]
 
         return str(o)
 
@@ -51,9 +55,15 @@ class Item(_Item):
             *field_list,
             ids=[int(self.id)])[0]['board']
 
-        self.__board = e.Board(**board_data)
+        self.__board = e.Board(creds=self.__creds, **board_data)
 
         return self.__board
+
+
+    @property
+    def column_values(self):
+        self.__column_values = self.get_column_values()
+        return self.__column_values
 
         
     def get_column_values(self):
@@ -61,16 +71,14 @@ class Item(_Item):
         # Pulls the columns from the board containing the item and maps 
         # column ID to type.
         columns_map = { column.id: column for column in self.board.columns }
+        field_list = ['column_values.' + field for field in config.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
 
-        item_data = client.get_items(
+        column_values_data = client.get_items(
             self.__creds.api_key_v2,
-            'column_values.id', 'column_values.title', 'column_values.value',
-            ids=[int(self.id)])[0]
+            *field_list,
+            ids=[int(self.id)])[0]['column_values']
 
-        column_values_data = item_data['column_values']
-
-        self.__column_values = {}
-
+        values = []
         for data in column_values_data:
 
             id = data['id']
@@ -78,7 +86,7 @@ class Item(_Item):
             column_type = columns_map[id].column_type
             value = data['value']
             if value is None:
-                column_value = create_column_value(id, column_type, title)
+                column_value = cv.create_column_value(column_type, **data)
             else:
                 value = json.loads(value)
 
@@ -99,11 +107,11 @@ class Item(_Item):
                     column_value = create_column_value(id, column_type, title, **value)
                 # This case pertains to number and text fields
                 else:
-                    column_value = create_column_value(id, column_type, title, value=value)
+                    column_value = create_column_value(id, column_type, title, value=value) 
 
-            self.__column_values[id] = column_value   
+            values.append(column_value)
 
-        return list(self.__column_values.values())
+        return values
 
 
     def get_column_value(self, id = None, title = None):
@@ -119,8 +127,7 @@ class Item(_Item):
 
         if title is not None:
 
-            column_values_list = list(self.__column_values.values())
-            for column_value in column_values_list:
+            for column_value in self.__column_values:
                 if column_value.title == title:
                     return column_value
 
@@ -132,7 +139,7 @@ class Item(_Item):
 
             if column_value is None:
                 raise ex.ColumnValueRequired()
-            if not isinstance(column_value, ColumnValue):
+            if not isinstance(column_value, e.column_value.ColumnValue):
                 raise ex.InvalidColumnValue(type(column_value).__name__)
             else:
                 column_id = column_value.id
