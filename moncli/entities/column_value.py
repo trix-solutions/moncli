@@ -32,14 +32,47 @@ class DropdownValue(ColumnValue):
 
         super(DropdownValue, self).__init__(kwargs)
 
+    @property
+    def labels(self):
+        ids = json.loads(self.value)['ids']
+        return [label for label in self.__settings.labels if label.id in ids]
+
     def format(self):
-        """
-        if self.label is not None:
-            return { 'label': self.label }
-        if self.ids is not None:
-            return { 'ids': self.ids }
-        """
-        return {} 
+        if len(self.labels) == 0:
+            return {}
+        return { 'ids': [label.id for label in self.labels] }
+
+    def add_label(self, id: int):
+        try:
+            label = self.__settings[id]
+        except KeyError:
+            raise DropdownLabelError('Unable to find dropdown label with ID {}.'.format(str(id)))
+
+        value = json.loads(self.value)
+        if label.id in value['ids']:
+            raise DropdownLabelError('Label with ID {} has already been set.'.format(str(id)))
+        value['ids'].append(label.id)
+        self.value = json.dumps(value)
+
+        text = self.text.split(', ')
+        text.append(label.name)
+        self.text = ', '.join(text)
+
+    def remove_label(self, id: int):
+        try:
+            label = self.__settings[id]
+        except KeyError:
+            raise DropdownLabelError('Unable to find dropdown label with ID {}.'.format(str(id)))
+
+        value = json.loads(self.value)
+        if label.id not in value['ids']:
+            raise DropdownLabelError('Cannot remove unset label with ID {}.'.format(str(id)))
+        value['ids'].remove(label.id)
+        self.value = json.dumps(value)
+
+        text = self.text.split(', ')
+        text.remove(label.name)
+        self.text = ', '.join(text)
 
 
 class LongTextValue(ColumnValue):
@@ -182,6 +215,12 @@ class ColumnValueSettingsError(Exception):
 
     def __init__(self, column_type: str):
         self.message = 'Settings attribute is missing from input {} column data.'.format(column_type)
+
+
+class DropdownLabelError(Exception):
+
+    def __init__(self, message):
+        self.message = message
 
 
 class NumberValueError(Exception):
