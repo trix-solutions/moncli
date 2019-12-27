@@ -8,8 +8,6 @@ from .item import Item
 from .user import User, Team
 
 
-
-
 class MondayClient():
 
     def __init__(self, user_name: str, api_key_v1: str, api_key_v2: str):

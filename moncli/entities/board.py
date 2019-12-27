@@ -76,7 +76,7 @@ class Board(_Board):
             column_type, 
             'id', 'title', 'type')
 
-        return o.Column(creds=self.__creds, **column_data)
+        return o.Column(column_data)
 
     
     def get_columns(self):
