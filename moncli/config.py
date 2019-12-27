@@ -36,6 +36,14 @@ DEFAULT_ITEM_QUERY_FIELDS = [
     'state'
 ]
 
+DEFAULT_COLUMN_VALUE_QUERY_FIELDS = [
+    'id',
+    'title',
+    'text',
+    'value',
+    'additional_info'
+]
+
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {
     'boolean': ColumnType.checkbox,
