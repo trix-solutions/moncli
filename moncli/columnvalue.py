@@ -171,44 +171,6 @@ class NameValue(cv.ColumnValue):
     def format(self):
 
         return self.name
-        
-
-class PeopleValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(PeopleValue, self).__init__(id, title)
-
-        self.persons_and_teams: list = None
-
-        try:
-            self.persons_and_teams = kwargs['persons_and_teams']
-        except KeyError:
-            self.persons_and_teams = None
-
-    
-    def format(self):
-
-        if self.persons_and_teams is None:
-            return {}
-
-        return { 'personsAndTeams': self.persons_and_teams }
-
-    
-    def add_people(self, id: int, kind: PeopleKind):
-
-        if self.persons_and_teams is None:
-            self.persons_and_teams = []
-
-        self.persons_and_teams.append({ 'id': id, 'kind': kind.name })
-
-
-    def remove_people(self, id: int):
-
-        people_to_remove = [people for people in self.persons_and_teams if people['id'] == id][0]
-        self.persons_and_teams.remove(people_to_remove)
-
-        if len(self.persons_and_teams) == 0:
-            self.persons_and_teams = None
 
 
 class PhoneValue(cv.ColumnValue):
@@ -449,22 +411,8 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
     elif column_type == ColumnType.numbers:
         return cv.NumberValue(**kwargs)
-
-
     elif column_type == ColumnType.people:
-
-        if len(kwargs) == 0:
-            return PeopleValue(id, title)
-
-        try:
-            persons_and_teams = kwargs['personsAndTeams']
-        except KeyError:
-            try:
-                persons_and_teams = kwargs['persons_and_teams']
-            except KeyError:
-                persons_and_teams = None
-
-        return PeopleValue(id, title, persons_and_teams=persons_and_teams)
+        return cv.PeopleValue(**kwargs)
 
 
     elif column_type == ColumnType.phone:

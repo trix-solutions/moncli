@@ -92,7 +92,7 @@ class Item(_Item):
                     except:
                         pass
                     """
-                    if column_type is ColumnType.status or column_type :
+                    if column_type is ColumnType.status or column_type is ColumnType.dropdown:
                         data['settings'] = columns_map[id].settings
 
             values.append(cv.create_column_value(column_type, **data))

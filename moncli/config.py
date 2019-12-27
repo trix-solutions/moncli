@@ -72,6 +72,7 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.dropdown: 'DropdownValue',
     ColumnType.long_text: 'LongTextValue',
     ColumnType.numbers: 'NumberValue',
+    ColumnType.people: 'PeopleValue',
     ColumnType.status: 'StatusValue',
     ColumnType.text: 'TextValue'
 }

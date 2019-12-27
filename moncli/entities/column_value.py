@@ -2,10 +2,9 @@ import json
 from importlib import import_module
 
 from schematics.models import Model
-from schematics.types import StringType
+from schematics.types import StringType, IntType
 
-from .. import config
-from ..enums import ColumnType
+from .. import config, enums, entities as e
 
 class ColumnValue(Model):
 
@@ -148,6 +147,43 @@ class NumberValue(ColumnValue):
         return a == b
 
 
+class PeopleValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        super(PeopleValue, self).__init__(kwargs)
+    
+    @property
+    def persons_and_teams(self):
+        if self.value:
+            return json.loads(self.value)['personsAndTeams']
+        return self.value  
+
+    def format(self):
+        if self.persons_and_teams:
+            return { 'personsAndTeams': self.persons_and_teams }
+        return {}
+
+    def add_people(self, person_or_team):
+        if type(person_or_team) is type(e.User):
+            kind = enums.PeopleKind.person
+        elif type(person_or_team) is type(e.Team):
+            kind = enums.PeopleKind.team
+        persons_and_teams = self.persons_and_teams
+        persons_and_teams.append({'id': person_or_team.id, 'kind': kind.name})
+        value = json.loads(self.value)
+        value['personsAndTeams'] = persons_and_teams
+        self.value = json.dumps(value)
+
+    def remove_people(self, id: int):
+        persons_and_teams = []
+        for entity in self.persons_and_teams:
+            if entity.id != id:
+                persons_and_teams.append(entity)
+        value = json.loads(self.value)
+        value['personsAndTeams'] = persons_and_teams
+        self.value = json.dumps(value)
+
+
 class StatusValue(ColumnValue):
 
     def __init__(self, **kwargs):
@@ -205,7 +241,7 @@ class TextValue(ColumnValue):
             self.value = None
 
 
-def create_column_value(column_type: ColumnType, **kwargs):
+def create_column_value(column_type: enums.ColumnType, **kwargs):
     return getattr(
         import_module(__name__), 
         config.COLUMN_TYPE_VALUE_MAPPINGS[column_type])(**kwargs)
