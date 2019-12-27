@@ -187,25 +187,6 @@ class LinkValue(cv.ColumnValue):
         return { 'url': self.url, 'text': self.text }
 
 
-class LongTextValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(LongTextValue, self).__init__(id, title)
-
-        try:
-            self.text = kwargs['text']
-        except KeyError:
-            self.text = None
-
-
-    def format(self):
-
-        if self.text is None:
-            return {}
-
-        return { 'text': self.text}
-
-
 class NameValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -546,12 +527,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     
     
     elif column_type == ColumnType.long_text:
-
-        if len(kwargs) == 0:
-            return LongTextValue(id, title)
-
-        return LongTextValue(id, title, **kwargs)
-
+        return cv.LongTextValue(**kwargs)
 
     elif column_type == ColumnType.name:
         return NameValue(id, title, name=kwargs['value'])

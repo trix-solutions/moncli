@@ -20,6 +20,27 @@ class ColumnValue(Model):
         return self.to_primitive()
 
 
+class LongTextValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        super(LongTextValue, self).__init__(kwargs)
+
+    @property
+    def long_text(self):
+        if self.value:
+            return json.loads(self.value)
+        return self.value
+    
+    @long_text.setter
+    def long_text(self, value):
+        if value:
+            self.text = value
+            self.value = json.dumps(value)
+        else:
+            self.text = ''
+            self.value = None
+
+
 class StatusValue(ColumnValue):
 
     def __init__(self, **kwargs):
@@ -79,7 +100,9 @@ class TextValue(ColumnValue):
 
 def create_column_value(column_type: ColumnType, **kwargs):
 
-    if column_type is ColumnType.status:
+    if column_type is ColumnType.long_text:
+        return LongTextValue(**kwargs)
+    elif column_type is ColumnType.status:
         return StatusValue(**kwargs)
     elif column_type is ColumnType.text:
         return TextValue(**kwargs)
