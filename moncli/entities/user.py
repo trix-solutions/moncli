@@ -32,7 +32,7 @@ class _User(Model):
 
 class User(_User):
     def __init__(self, **kwargs):
-        self.__creds = kwargs['creds']
+        self.__creds = kwargs.pop('creds')
         self.__account = None
         self.__teams = None
         super(User, self).__init__(kwargs)
@@ -59,7 +59,6 @@ class User(_User):
         return Account(
             creds=self.__creds,
             **account_data)
-
     
     def get_teams(self):
         field_list = ['team.' + field for field in config.DEFAULT_TEAM_QUERY_FIELDS]
@@ -69,7 +68,6 @@ class User(_User):
             ids=[int(self.id)])
 
         return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
-
     
     def send_notification(self, text: str, target_id: str, target_type: NotificationTargetType, *argv, **kwargs):
         notification_data = client.create_notification(
@@ -84,35 +82,30 @@ class User(_User):
         return Notification(**notification_data)
 
 
-class Team():
+class _Team(Model):
+    id = types.StringType(required=True)
+    name = types.StringType()
+    picture_url = types.StringType()
+
+
+class Team(_Team):
 
     def __init__(self, **kwargs):
-        self.__creds = kwargs['creds']
-        
-        self.id = kwargs['id']
-        self.name = kwargs['name']
+        self.__creds = kwargs.pop('creds')
+        self.__users = None
 
-        for key, value in kwargs.items():
+    @property
+    def users(self):
+        if not self.__users:
+            self.__users = self.get_users()
+        return self.__users
 
-            if key == 'picture_url':
-                self.picture_url = value
-
-            if key == 'users':
-                self.__user_ids = [int(user['id']) for user in value]
-
-        
     def get_users(self):
-
-        users_data = client.get_users(
+        field_list = ['users.' + field for field in config.DEFAULT_USER_QUERY_FIELDS]
+        users_data = client.get_teams(
             self.__creds.api_key_v2, 
-            'id',
-            'name',
-            'url',
-            'email',
-            'enabled',
-            'account.id',
-            'teams.id',
-            ids=self.__user_ids)
+            *field_list,
+            ids=[int(self.id)])
 
         return [User(creds=self.__creds, **user_data) for user_data in users_data]
 
