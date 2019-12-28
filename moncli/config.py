@@ -44,6 +44,75 @@ DEFAULT_COLUMN_VALUE_QUERY_FIELDS = [
     'additional_info'
 ]
 
+DEFAULT_UPDATE_QUERY_FIELDS = [
+    'id',
+    'body',
+    'created_at',
+    'creator_id',
+    'item_id',
+    'text_body',
+    'updated_at'
+]
+
+DEFAULT_REPLY_QUERY_FIELDS = [
+    'id',
+    'body',
+    'created_at',
+    'creator_id',
+    'text_body',
+    'updated_at'
+]
+
+DEFAULT_TAG_QUERY_FIELDS = [
+    'id',
+    'name',
+    'color'
+]
+
+DEFAULT_USER_QUERY_FIELDS = [
+    'id',
+    'name',
+    'url',
+    'email',
+    'enabled',
+    'birthday',
+    'country_code',
+    'is_guest',
+    'is_pending',
+    'join_date',
+    'location',
+    'mobile_phone',
+    'phone',
+    'photo_original',
+    'photo_thumb',
+    'photo_tiny',
+    'time_zone_identifier',
+    'title',
+    'utc_hours_diff'
+]
+
+DEFAULT_TEAM_QUERY_FIELDS = [
+    'id',
+    'name',
+    'picture_url'
+]
+
+DEFAULT_ACCOUNT_QUERY_FIELDS = [
+    'id',
+    'name',
+    'first_day_of_the_week',
+    'logo',
+    'show_timeline_weekends',
+    'slug'
+]
+
+DEFAULT_PLAN_QUERY_FIELDS = [
+    'max_users',
+    'period',
+    'tier',
+    'version'
+]
+ 
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {
     'boolean': ColumnType.checkbox,
