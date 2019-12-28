@@ -1,9 +1,7 @@
 from schematics.models import Model
 from schematics import types
 
-from .. import api_v2 as client
-from .. import config
-from ..enums import NotificationTargetType
+from .. import api_v2 as client, config, enums
 from .objects import Notification, Plan
 
 
@@ -49,6 +47,16 @@ class User(_User):
             self.__teams = self.get_teams()
         return self.__teams
 
+    def __repr__(self):
+        o = self.to_primitive()
+        
+        if self.__account:
+            o['account'] = self.__account
+        if self.__teams:
+            o['teams'] = [team.to_primitive() for team in self.__teams]
+
+        return str(o)
+
     def get_account(self):
         field_list = ['account.' + field for field in config.DEFAULT_ACCOUNT_QUERY_FIELDS]
         account_data = client.get_users(
@@ -69,7 +77,7 @@ class User(_User):
 
         return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
     
-    def send_notification(self, text: str, target_id: str, target_type: NotificationTargetType, *argv, **kwargs):
+    def send_notification(self, text: str, target_id: str, target_type: enums.NotificationTargetType, *argv, **kwargs):
         notification_data = client.create_notification(
             self.__creds.api_key_v2, 
             text, 
@@ -93,12 +101,21 @@ class Team(_Team):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
         self.__users = None
+        super(Team, self).__init__(kwargs)
 
     @property
     def users(self):
         if not self.__users:
             self.__users = self.get_users()
         return self.__users
+
+    def __repr__(self):
+        o = self.to_primitive()
+
+        if self.__users:
+            o['users'] = self.__users
+
+        return str(o)
 
     def get_users(self):
         field_list = ['users.' + field for field in config.DEFAULT_USER_QUERY_FIELDS]
@@ -110,32 +127,45 @@ class Team(_Team):
         return [User(creds=self.__creds, **user_data) for user_data in users_data]
 
 
-class Account():
+class _Account(Model):
+    id = types.StringType(required=True)
+    name = types.StringType()
+    first_day_of_the_week = types.StringType()
+    logo = types.StringType()
+    show_timeline_weekends = types.BooleanType()
+    slug = types.StringType()
+
+
+class Account(_Account):
 
     def __init__(self, **kwargs):
-        self.__creds = kwargs['creds']
-        self.__user_id = kwargs['user_id']
+        self.__creds = kwargs.pop('creds')
+        self.__plan = None
+        super(Account, self).__init__(kwargs)
 
-        self.first_day_of_the_week = kwargs['first_day_of_the_week']
-        self.id = kwargs['id']
-        self.name = kwargs['name']
-        self.show_timeline_weekends = kwargs['show_timeline_weekends']
-        self.slug = kwargs['slug']
+    @property
+    def plan(self):
+        if not self.__plan:
+            self.__plan = self.get_plan()
+        return self.__plan
 
-        for key, value in kwargs.items():
+    @property
+    def first_day_of_the_week_enum(self):
+        if self.first_day_of_the_week:
+            return enums.FirstDayOfTheWeek[self.first_day_of_the_week]
 
-            if key == 'logo':
-                self.logo = value
+    def __repr__(self):
+        o = self.to_primitive()
 
+        if self.__plan:
+            o['plan'] = self.__plan
+        
+        return str(o)
 
     def get_plan(self):
-
-        plan_data = client.get_users(
+        field_list = ['plan.' + field for field in config.DEFAULT_PLAN_QUERY_FIELDS]
+        plan_data = client.get_account(
             self.__creds.api_key_v2, 
-            'account.plan.max_users',
-            'account.plan.period',
-            'account.plan.tier',
-            'account.plan.version',
-            ids=[int(self.__user_id)])
+            *field_list)['plan']
 
-        return Plan(**plan_data[0]['account']['plan'])
+        return Plan(plan_data)
