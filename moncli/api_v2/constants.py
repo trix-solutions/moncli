@@ -46,6 +46,9 @@ TEAMS = 'teams'
 # Me
 ME = 'me'
 
+# Account
+ACCOUNT = 'account'
+
 
 ##
 
