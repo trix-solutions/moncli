@@ -1,104 +1,77 @@
+from schematics.models import Model
+from schematics import types
+
 from .. import api_v2 as client
+from .. import config
 from ..enums import NotificationTargetType
 from .objects import Notification, Plan
 
-class User():
 
+class _User(Model):
+    id = types.StringType(required=True)
+    name = types.StringType()
+    created_at = types.StringType()
+    url = types.StringType()
+    email = types.StringType()
+    enabled = types.BooleanType()
+    birthday = types.StringType()
+    country_code = types.StringType()
+    is_guest = types.BooleanType()
+    is_pending = types.BooleanType()
+    join_date = types.StringType()
+    location = types.StringType()
+    mobile_phone = types.StringType()
+    phone = types.StringType()
+    photo_original = types.StringType()
+    photo_thumb = types.StringType()
+    photo_tiny = types.StringType()
+    time_zone_identifier = types.StringType()
+    title = types.StringType()
+    utc_hours_diff = types.IntType()
+
+
+class User(_User):
     def __init__(self, **kwargs):
         self.__creds = kwargs['creds']
-          
-        self.id = kwargs['id']
+        self.__account = None
+        self.__teams = None
+        super(User, self).__init__(kwargs)
 
-        for key, value in kwargs.items():
+    @property
+    def account(self):
+        if not self.__account:
+            self.__account = self.get_account()
+        return self.__account
 
-            if key == 'name':
-                self.name = value
+    @property
+    def teams(self):
+        if not self.__teams:
+            self.__teams = self.get_teams()
+        return self.__teams
 
-            elif key == 'url':
-                self.url = value
-
-            elif key == 'email':
-                self.email = value
-
-            elif key == 'enabled':
-                self.enabled = value
-
-            elif key == 'teams':
-                self.__team_ids = [int(team_data['id']) for team_data in value]
-
-            if key == 'birthday':
-                self.birthday = value
-
-            elif key == 'country_code':
-                self.country_code = value
-
-            elif key == 'created_at': 
-                self.create_at = value
-
-            elif key == 'is_guest':
-                self.is_guest = value
-
-            elif key == 'is_pending':
-                self.is_pending = value
-
-            elif key == 'join_date':
-                self.join_date = value
-
-            elif key == 'location':
-                self.locaiton = value
-
-            elif key == 'mobile_phone':
-                self.mobile_phone = value
-
-            elif key == 'phone':
-                self.phone = value
-
-            elif key == 'photo_original':
-                self.photo_original = value
-
-            elif key == 'photo_thumb':
-                self.photo_thumb = value
-
-            elif key == 'title':
-                self.title = value
-
-            elif key == 'utc_hours_diff':
-                self.utc_hours_diff = value
-
-        
     def get_account(self):
-
-        users_data = client.get_users(
+        field_list = ['account.' + field for field in config.DEFAULT_ACCOUNT_QUERY_FIELDS]
+        account_data = client.get_users(
             self.__creds.api_key_v2, 
-            'account.first_day_of_the_week',
-            'account.id',
-            'account.name',
-            'account.show_timeline_weekends',
-            'account.slug',
-            'account.logo',
-            ids=[int(self.id)])
+            *field_list,
+            ids=[int(self.id)])[0]['account']
 
         return Account(
-            creds=self.__creds, 
-            user_id=self.id,
-            **users_data[0]['account'])
+            creds=self.__creds,
+            **account_data)
 
     
     def get_teams(self):
-
-        teams_data = client.get_teams(
+        field_list = ['team.' + field for field in config.DEFAULT_TEAM_QUERY_FIELDS]
+        teams_data = client.get_users(
             self.__creds.api_key_v2,
-            'id',
-            'name',
-            'picture_url',
-            'users.id',
-            ids=self.__team_ids)
+            *field_list,
+            ids=[int(self.id)])
 
         return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
 
     
     def send_notification(self, text: str, target_id: str, target_type: NotificationTargetType, *argv, **kwargs):
-
         notification_data = client.create_notification(
             self.__creds.api_key_v2, 
             text, 
