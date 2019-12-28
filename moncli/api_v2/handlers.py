@@ -15,7 +15,17 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv, **
 
 def get_boards(api_key: str, *argv, **kwargs) -> List[Dict[str, Any]]:
     kwargs = get_method_arguments(constants.BOARDS_OPTIONAL_PARAMS, **kwargs)
-    return execute_query(api_key, constants.BOARDS, *argv, **kwargs)
+    
+    try:
+        group_ids = kwargs.pop('group_ids')
+    except KeyError:
+        group_ids = None
+
+    operation = graphql.create_query(constants.BOARDS, *argv, *kwargs)
+    if group_ids:
+        operation.get_field('groups').add_arguments(ids=group_ids)
+    
+    return requests.execute_query(api_key, operation=operation)[constants.BOARDS]   
 
 
 def archive_board(api_key: str, board_id: str, *argv, **kwargs):
