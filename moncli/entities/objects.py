@@ -1,7 +1,7 @@
 import json
 
 from schematics.models import Model
-from schematics.types import StringType, BooleanType, IntType, DictType, ListType, ModelType
+from schematics import types
 
 from .. import config
 from ..enums import ColumnType
@@ -15,12 +15,12 @@ class MondayClientCredentials():
 
 class Column(Model):
 
-    id = StringType(required=True)
-    title = StringType()
-    archived = BooleanType()
-    settings_str = StringType()
-    type = StringType()
-    width = IntType()
+    id = types.StringType(required=True)
+    title = types.StringType()
+    archived = types.BooleanType()
+    settings_str = types.StringType()
+    type = types.StringType()
+    width = types.IntType()
     
     def __repr__(self):
         return str(self.to_primitive())
@@ -76,29 +76,17 @@ class Tag():
                 self.color = value
 
 
-class Plan():
-
-    def __init__(self, **kwargs):
-
-        for key, value in kwargs.items():
-
-            if key == 'max_users':
-                self.max_users = value
-
-            elif key == 'period':
-                self.period = value
-
-            elif key == 'tier':
-                self.tier = value
-
-            elif key == 'version':
-                self.version = value
+class Plan(Model):
+    max_users = types.IntType()
+    period = types.StringType()
+    tier = types.StringType()
+    version = types.IntType()
 
 
 class StatusSettings(Model):
 
-    labels = DictType(StringType())
-    labels_positions_v2 = DictType(StringType())
+    labels = types.DictType(types.StringType())
+    labels_positions_v2 = types.DictType(types.StringType())
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -112,8 +100,8 @@ class StatusSettings(Model):
 
 class DropdownLabel(Model):
 
-    id = IntType(required=True)
-    name = StringType(required=True)
+    id = types.IntType(required=True)
+    name = types.StringType(required=True)
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -121,7 +109,7 @@ class DropdownLabel(Model):
 
 class DropdownSettings(Model):
     
-    labels = ListType(ModelType(DropdownLabel))
+    labels = types.ListType(types.ModelType(DropdownLabel))
 
     def __repr__(self):
         o = self.to_primitive()
