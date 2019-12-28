@@ -39,41 +39,25 @@ class Column(Model):
         return config.COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
 
 
-class Update():
-
-    def __init__(self, **kwargs):
-        self.id = kwargs['id']
-        
-        for key, value in kwargs.items():
-
-            if key == 'body':
-                self.body = value
-
-
-class Notification():
-
-    def __init__(self, **kwargs):
-        self.id = kwargs['id']
-
-        for key, value in kwargs.items():
-
-            if key == 'text':
-                self.text = value
+class Update(Model):
+    id = types.StringType(required=True)
+    body = types.StringType()
+    create_at = types.StringType()
+    creator_id = types.StringType()
+    item_id = types.StringType()
+    text_body = types.StringType()
+    updated_at = types.StringType()
 
 
-class Tag():
+class Notification(Model):
+    id = types.StringType(required=True)
+    text = types.StringType()
 
-    def __init__(self, **kwargs):
 
-        self.id = kwargs['id']
-
-        for key, value in kwargs.items():
-
-            if key == 'name':
-                self.name = value
-
-            elif key == 'color':
-                self.color = value
+class Tag(Model):
+    id = types.StringType(required=True)
+    name = types.StringType()
+    color = types.StringType()
 
 
 class Plan(Model):
