@@ -5,6 +5,7 @@ from schematics.types import StringType
 
 from .enums import ColumnType, PeopleKind
 from .entities import column_value as cv
+from .entities.column_value import StatusValue
 
 
 class CheckboxValue(cv.ColumnValue):
