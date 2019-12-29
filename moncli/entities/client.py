@@ -1,19 +1,14 @@
-import moncli.entities.exceptions as ex
-from .. import api_v2 as client, config, enums
-from .objects import MondayClientCredentials, Tag, Update, Notification
-from .board import Board
-from .item import Item
-from .user import User, Team
+from .. import api_v2 as client, config, enums, entities as en
 
 
 class MondayClient():
 
     def __init__(self, user_name: str, api_key_v1: str, api_key_v2: str):    
-        self.__creds: MondayClientCredentials = MondayClientCredentials(api_key_v1, api_key_v2)
+        self.__creds: en.MondayClientCredentials = en.MondayClientCredentials(api_key_v1, api_key_v2)
         self.__me = None
 
         if self.me.email.lower() != user_name.lower():
-            raise ex.AuthorizationError(user_name)
+            raise AuthorizationError(user_name)
 
     @property
     def me(self):
@@ -29,7 +24,7 @@ class MondayClient():
             board_kind, 
             *field_list)
 
-        return Board(creds=self.__creds, **board_data)
+        return en.Board(creds=self.__creds, **board_data)
     
     def get_boards(self, **kwargs):
         field_list = ['id', 'name']
@@ -38,13 +33,13 @@ class MondayClient():
             *field_list, 
             **kwargs)
 
-        return [Board(creds=self.__creds, **data) for data in boards_data]
+        return [en.Board(creds=self.__creds, **data) for data in boards_data]
 
     def get_board(self, id: str = None, name: str = None):
         if id != None and name != None:
-            raise ex.TooManyGetBoardParameters()
+            raise TooManyGetBoardParameters()
         if id == None and name == None:
-            raise ex.NotEnoughGetBoardParameters()
+            raise NotEnoughGetBoardParameters()
         if id != None:         
             return self.get_board_by_id(id)
         else:
@@ -59,9 +54,9 @@ class MondayClient():
                 ids=[int(id)],
                 limit=1)
         except IndexError:
-            raise ex.BoardNotFound('id', id)
+            raise BoardNotFound('id', id)
 
-        return Board(creds=self.__creds, **board_data)
+        return en.Board(creds=self.__creds, **board_data)
 
     def get_board_by_name(self, name: str):
         # Hard configure the pagination rate.
@@ -85,7 +80,7 @@ class MondayClient():
                     record_count = len(boards_data)
                     continue
 
-        raise ex.BoardNotFound('name', name)   
+        raise BoardNotFound('name', name)   
 
     def archive_board(self, board_id: str):
         field_list = config.DEFAULT_BOARD_QUERY_FIELDS
@@ -94,7 +89,7 @@ class MondayClient():
             board_id,
             *field_list)
 
-        return Board(creds=self.__creds, **board_data)
+        return en.Board(creds=self.__creds, **board_data)
     
     def get_items(self, **kwargs):
         field_list = config.DEFAULT_ITEM_QUERY_FIELDS
@@ -103,7 +98,7 @@ class MondayClient():
             *field_list,
             **kwargs)
 
-        return [Item(creds=self.__creds, **item_data) for item_data in items_data] 
+        return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
     
     def get_updates(self, **kwargs):
         field_list = config.DEFAULT_UPDATE_QUERY_FIELDS
@@ -112,7 +107,7 @@ class MondayClient():
             *field_list,
             **kwargs)
 
-        return [Update(update_data) for update_data in updates_data]
+        return [en.Update(update_data) for update_data in updates_data]
 
     def create_notification(self, text: str, user_id: str, target_id: str, target_type: enums.NotificationTargetType, **kwargs):
         field_list = config.DEFAULT_NOTIFICATION_QUERY_FIELDS
@@ -125,7 +120,7 @@ class MondayClient():
             *field_list,
             **kwargs)
 
-        return Notification(notification_data)
+        return en.Notification(notification_data)
 
     def create_or_get_tag(self, tag_name: str, **kwargs):
         field_list = config.DEFAULT_TAG_QUERY_FIELDS
@@ -134,7 +129,7 @@ class MondayClient():
             tag_name,
             *field_list)
 
-        return Tag(tag_data)
+        return en.Tag(tag_data)
     
     def get_tags(self, **kwargs):
         
@@ -143,7 +138,7 @@ class MondayClient():
             *config.DEFAULT_TAG_QUERY_FIELDS,
             **kwargs)
 
-        return [Tag(tag_data) for tag_data in tags_data]
+        return [en.Tag(tag_data) for tag_data in tags_data]
 
     def get_users(self, **kwargs):
         
@@ -152,7 +147,7 @@ class MondayClient():
             *config.DEFAULT_USER_QUERY_FIELDS,
             **kwargs)
 
-        return [User(creds=self.__creds, **user_data) for user_data in users_data]
+        return [en.User(creds=self.__creds, **user_data) for user_data in users_data]
 
     def get_teams(self, **kwargs):
         field_list = config.DEFAULT_TEAM_QUERY_FIELDS
@@ -161,7 +156,7 @@ class MondayClient():
             *field_list,
             **kwargs)
 
-        return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
+        return [en.Team(creds=self.__creds, **team_data) for team_data in teams_data]
     
     def get_me(self):
         field_list = config.DEFAULT_USER_QUERY_FIELDS
@@ -169,4 +164,30 @@ class MondayClient():
             self.__creds.api_key_v2, 
             *field_list)
 
-        return User(creds=self.__creds, **user_data)
+        return en.User(creds=self.__creds, **user_data)
+
+
+class AuthorizationError(Exception):
+    def __init__(self, user_name: str):
+        self.message = 'User {} was not recognized by the applied token'.format(user_name)
+
+
+class TooManyGetBoardParameters(Exception):
+    def __init__(self):
+        self.message = "Unable to use both 'id' and 'name' when querying for a board."
+        
+
+class NotEnoughGetBoardParameters(Exception):
+    def __init__(self):
+        self.message = "Either the 'id' or 'name' is required when querying a board."
+
+
+class BoardNotFound(Exception):
+    def __init__(self, search_type, value):        
+        if search_type == 'id':
+            self.message = 'Unable to find board with name: "{}".'.format(value)       
+        elif search_type == 'name':
+            self.message = 'Unable to find board with the ID: "{}".'.format(value)
+        else:
+            self.message = 'Unable to find the requested board.'
+
