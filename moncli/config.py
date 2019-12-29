@@ -112,6 +112,11 @@ DEFAULT_PLAN_QUERY_FIELDS = [
     'tier',
     'version'
 ]
+
+DEFAULT_NOTIFICATION_QUERY_FIELDS = [
+    'id',
+    'text'
+]
  
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {
