@@ -1,8 +1,7 @@
 from schematics.models import Model
 from schematics import types
 
-from .. import api_v2 as client, config, enums
-from .objects import Notification, Plan
+from .. import api_v2 as client, config, enums, entities as en
 
 
 class _User(Model):
@@ -87,7 +86,7 @@ class User(_User):
             *argv, 
             **kwargs)
 
-        return Notification(**notification_data)
+        return en.Notification(**notification_data)
 
 
 class _Team(Model):
@@ -168,4 +167,4 @@ class Account(_Account):
             self.__creds.api_key_v2, 
             *field_list)['plan']
 
-        return Plan(plan_data)
+        return en.Plan(plan_data)
