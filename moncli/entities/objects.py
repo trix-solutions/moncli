@@ -14,7 +14,6 @@ class MondayClientCredentials():
 
 
 class Column(Model):
-
     id = types.StringType(required=True)
     title = types.StringType()
     archived = types.BooleanType()
@@ -48,10 +47,16 @@ class Update(Model):
     text_body = types.StringType()
     updated_at = types.StringType()
 
+    def __repr__(self):
+        return str(self.to_primitive())
+
 
 class Notification(Model):
     id = types.StringType(required=True)
     text = types.StringType()
+
+    def __repr__(self):
+        return str(self.to_primitive())
 
 
 class Tag(Model):
@@ -59,12 +64,18 @@ class Tag(Model):
     name = types.StringType()
     color = types.StringType()
 
+    def __repr__(self):
+        return str(self.to_primitive())
+
 
 class Plan(Model):
     max_users = types.IntType()
     period = types.StringType()
     tier = types.StringType()
     version = types.IntType()
+
+    def __repr__(self):
+        return str(self.to_primitive())
 
 
 class StatusSettings(Model):
