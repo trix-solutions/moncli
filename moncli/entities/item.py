@@ -76,10 +76,8 @@ class Item(_Item):
 
             value = json.loads(value)
             if type(value) is dict:
-                try:
-                    data['settings'] = columns_map[id].settings
-                except KeyError:
-                    pass                 
+                if columns_map[id].settings:
+                    data['settings'] = columns_map[id].settings             
             values.append(en.create_column_value(column_type, **data))
 
         return values
