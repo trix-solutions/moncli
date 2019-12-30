@@ -52,7 +52,7 @@ class MondayClient():
                 self.__creds.api_key_v2, 
                 *field_list,
                 ids=[int(id)],
-                limit=1)
+                limit=1)[0]
         except IndexError:
             raise BoardNotFound('id', id)
 
