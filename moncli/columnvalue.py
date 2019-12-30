@@ -59,32 +59,6 @@ class DateValue(cv.ColumnValue):
         return result
 
 
-class EmailValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(EmailValue, self).__init__(id, title)
-
-        try:
-            self.email = kwargs['email']
-        except KeyError:
-            self.email = None
-            self.text = None
-            return
-
-        try: 
-            self.text = kwargs['text']
-        except KeyError:
-            self.text = kwargs['email']
-
-    
-    def format(self):
-
-        if self.email is None:
-            return {}
-
-        return { 'email': self.email, 'text': self.text }
-
-
 class HourValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -290,15 +264,9 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
 
     elif column_type == ColumnType.dropdown:
-            return cv.DropdownValue(**kwargs)
-
-
+        return cv.DropdownValue(**kwargs)
     elif column_type == ColumnType.email:
-
-        if len(kwargs) == 0:
-            return EmailValue(id, title)
-
-        return EmailValue(id, title, **kwargs)
+        return cv.EmailValue(**kwargs)
 
 
     elif column_type == ColumnType.hour:

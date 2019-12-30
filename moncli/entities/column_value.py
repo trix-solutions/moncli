@@ -8,7 +8,11 @@ from schematics.types import StringType, IntType
 
 from .. import config, enums, entities as e
 
-class ColumnValue(Model):
+
+SIMPLE_NULL_VALUE = ''
+COMPLEX_NULL_VALUE = '{}'
+
+class _ColumnValue(Model):
     id = StringType(required=True)
     title = StringType()
     text = StringType()
@@ -22,9 +26,29 @@ class ColumnValue(Model):
         return self.to_primitive()
 
 
+class ColumnValue(_ColumnValue):
+    null_value = COMPLEX_NULL_VALUE
+
+    def __init__(self, **kwargs):
+        super(ColumnValue, self).__init__(kwargs)
+        if not self.value:
+            self.value = self.null_value
+
+    def set_value(self, *argv, **kwargs):
+        value_obj = loads(self.value)
+        if len(argv) > 0:
+            self.value = dumps(argv[0])
+        elif len(kwargs) > 0:
+            for key, value in kwargs.items():
+                value_obj[key] = value
+            self.value = dumps(value_obj)
+        else:
+            self.value = self.null_value
+
+
 class CountryValue(ColumnValue):
     def __init__(self, **kwargs):
-        super(CountryValue, self).__init__(kwargs)
+        super(CountryValue, self).__init__(**kwargs)
 
     @property
     def country_code(self):
@@ -34,23 +58,10 @@ class CountryValue(ColumnValue):
 
     @country_code.setter
     def country_code(self, code):
-        if not code:
-            self.value = code
-            return
-        
         country = countries.get(alpha_2=code)
         if not country:
             raise UnknownCountryCodeError(code)
-        if self.value:
-            value = loads(self.value)
-            value['countryCode'] = country.alpha_2
-            value['countryName'] = country.name
-            self.value = dumps(value)
-        else:
-            self.value = dumps({
-                'countryCode': country.alpha_2,
-                'countryName': country.name
-            })
+        self.set_value(countryCode=country.alpha_2, countryName=country.name)
 
     @property
     def country_name(self):
@@ -60,32 +71,18 @@ class CountryValue(ColumnValue):
 
     @country_name.setter
     def country_name(self, name):
-        if not name:
-            self.value = name
-            return
-        
         country = countries.get(name=name)
         if not country:
             raise UnknownCountryNameError(name)
-        if self.value:
-            value = loads(self.value)
-            value['countryCode'] = country.alpha_2
-            value['countryName'] = country.name
-            self.value = dumps(value)
-        else:
-            self.value = dumps({
-                'countryCode': country.alpha_2,
-                'countryName': country.name
-            })
+        self.set_value(countryCode=country.alpha_2, countryName=country.name)
  
     def format(self):
-        if self.country_code is None or self.country_name is None:
-            return {}
-
-        return {
-            'countryCode': self.country_code,
-            'countryName': self.country_name
-        }
+        if self.country_code and self.country_name:
+            return {
+                'countryCode': self.country_code,
+                'countryName': self.country_name
+            }
+        return self.null_value
 
 
 class DropdownValue(ColumnValue):
@@ -138,6 +135,39 @@ class DropdownValue(ColumnValue):
         text = self.text.split(', ')
         text.remove(label.name)
         self.text = ', '.join(text)
+
+
+class EmailValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        super(EmailValue, self).__init__(**kwargs)
+
+    @property
+    def email(self):
+        try:
+            return loads(self.value)['email']
+        except KeyError:
+            return None
+
+    @email.setter
+    def email(self, value):
+        self.set_value(email=value)
+
+    @property
+    def email_text(self):
+        try:
+            return loads(self.value)['text']
+        except KeyError:
+            return None
+
+    @email_text.setter
+    def email_text(self, value):
+        self.set_value(text=value)
+    
+    def format(self):
+        if self.email:  
+            return { 'email': self.email, 'text': self.text }
+        return {}
 
 
 class LongTextValue(ColumnValue):
