@@ -238,25 +238,6 @@ class TagsValue(cv.ColumnValue):
         return { 'tag_ids': self.tag_ids }
 
 
-class TeamValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(TeamValue, self).__init__(id, title)
-
-        try:
-            self.team_id = kwargs['team_id']
-        except KeyError:
-            self.team_id = None
-
-
-    def format(self):
-
-        if self.team_id is not None:
-            return { 'team_id': self.team_id }
-
-        return {}
-
-
 class TimelineValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -457,13 +438,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     
     
     elif column_type == ColumnType.team:
-
-        if len(kwargs) == 0:
-            return TeamValue(id, title)
-
-        return TeamValue(id, title, **kwargs)
-
-
+        return cv.TeamValue(**kwargs)
     elif column_type == ColumnType.text:
         return cv.TextValue(**kwargs)
 

@@ -220,6 +220,30 @@ class StatusValue(ColumnValue):
         self.value = json.dumps(value)
 
 
+class TeamValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        super(TeamValue, self).__init__(kwargs)
+
+    @property 
+    def team_id(self):
+        if self.value:
+            return json.loads(self.value)['team_id']
+        return self.value
+
+    @team_id.setter
+    def team_id(self, value):
+        if not value:
+            self.value = value
+        else:
+            self.value = json.dumps({'team_id': value})
+
+    def format(self):
+        if self.team_id is not None:
+            return { 'team_id': self.team_id }
+        return {}
+
+
 class TextValue(ColumnValue):
 
     def __init__(self, **kwargs):

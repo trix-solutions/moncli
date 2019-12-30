@@ -148,5 +148,6 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.numbers: 'NumberValue',
     ColumnType.people: 'PeopleValue',
     ColumnType.status: 'StatusValue',
+    ColumnType.team: 'TeamValue',
     ColumnType.text: 'TextValue'
 }
