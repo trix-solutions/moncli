@@ -259,25 +259,6 @@ class TimelineValue(cv.ColumnValue):
         return { 'from': self.from_date, 'to': self.to_date }
 
 
-class TimezoneValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(TimezoneValue, self).__init__(id, title)
-
-        try:
-            self.timezone = kwargs['timezone']
-        except:
-            self.timezone = None
-
-
-    def format(self):
-
-        if self.timezone is not None:
-            return { 'timezone': self.timezone }
-
-        return {}
-
-
 class WeekValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -466,13 +447,8 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
         return TimelineValue(id, title, from_date=from_date, to_date=to_date)
     
-    
     elif column_type == ColumnType.world_clock:
-
-        if len(kwargs) == 0:
-            return TimezoneValue(id, title)
-
-        return TimezoneValue(id, title, **kwargs)
+        return cv.TimezoneValue(**kwargs)
 
 
     elif column_type == ColumnType.week:
