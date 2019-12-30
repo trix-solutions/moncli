@@ -1,6 +1,7 @@
 from json import dumps, loads
 from importlib import import_module
 
+from pycountry import countries
 from pytz import timezone, exceptions as tzex
 from schematics.models import Model
 from schematics.types import StringType, IntType
@@ -19,6 +20,72 @@ class ColumnValue(Model):
 
     def format(self):
         return self.to_primitive()
+
+
+class CountryValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(CountryValue, self).__init__(kwargs)
+
+    @property
+    def country_code(self):
+        if self.value:
+            return loads(self.value)['countryCode']
+        return self.value
+
+    @country_code.setter
+    def country_code(self, code):
+        if not code:
+            self.value = code
+            return
+        
+        country = countries.get(alpha_2=code)
+        if not country:
+            raise UnknownCountryCodeError(code)
+        if self.value:
+            value = loads(self.value)
+            value['countryCode'] = country.alpha_2
+            value['countryName'] = country.name
+            self.value = dumps(value)
+        else:
+            self.value = dumps({
+                'countryCode': country.alpha_2,
+                'countryName': country.name
+            })
+
+    @property
+    def country_name(self):
+        if self.value:
+            return loads(self.value)['countryName']
+        self.value
+
+    @country_name.setter
+    def country_name(self, name):
+        if not name:
+            self.value = name
+            return
+        
+        country = countries.get(name=name)
+        if not country:
+            raise UnknownCountryNameError(name)
+        if self.value:
+            value = loads(self.value)
+            value['countryCode'] = country.alpha_2
+            value['countryName'] = country.name
+            self.value = dumps(value)
+        else:
+            self.value = dumps({
+                'countryCode': country.alpha_2,
+                'countryName': country.name
+            })
+ 
+    def format(self):
+        if self.country_code is None or self.country_name is None:
+            return {}
+
+        return {
+            'countryCode': self.country_code,
+            'countryName': self.country_name
+        }
 
 
 class DropdownValue(ColumnValue):
@@ -274,7 +341,7 @@ class TimezoneValue(ColumnValue):
             timezone(tz)
         except tzex.UnknownTimeZoneError:
             raise UnknownTimeZoneError(tz)
-        
+
         if self.value:
             value = loads(self.value)
             value['timezone'] = tz
@@ -312,3 +379,13 @@ class NumberValueError(Exception):
 class UnknownTimeZoneError(Exception):
     def __init__(self, timezone):
         self.message = 'Unable to set unknown timezone value "{}".'.format(timezone)
+
+
+class UnknownCountryCodeError(Exception):
+    def __init__(self, country_code):
+        self.message = 'Unable to set unrecognized country code value "{}".'.format(country_code)
+
+
+class UnknownCountryNameError(Exception):
+    def __init__(self, country_name):
+        self.message = 'Unable to set unrecognized country name value "{}".'.format(country_name)

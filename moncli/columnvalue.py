@@ -28,30 +28,6 @@ class CheckboxValue(cv.ColumnValue):
             return { 'checked': 'true' }
 
         return {}
-
-
-class CountryValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(CountryValue, self).__init__(id, title)
-
-        try:
-            self.country_name = kwargs['country_name']
-            self.country_code = kwargs['country_code']
-        except:
-            self.country_name = None
-            self.country_code = None
-
-    
-    def format(self):
-
-        if self.country_code is None or self.country_name is None:
-            return {}
-
-        return {
-            'countryCode': self.country_code,
-            'countryName': self.country_name
-        }
         
 
 class DateValue(cv.ColumnValue):
@@ -216,9 +192,6 @@ class RatingValue(cv.ColumnValue):
         return { 'rating': self.rating }
 
 
-
-
-
 class TagsValue(cv.ColumnValue):
     
     def __init__(self, id: str, title: str, **kwargs):
@@ -305,30 +278,8 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
     if column_type == ColumnType.checkbox:
         return CheckboxValue(**kwargs)
-
     elif column_type == ColumnType.country:
-
-        if len(kwargs) == 0:
-            return CountryValue(id, title)
-
-        try:
-            country_name = kwargs['country_name']
-        except KeyError:
-            try:
-                country_name = kwargs['countryName']
-            except KeyError:
-                country_name = None
-
-        try:
-            country_code = kwargs['country_code']
-        except KeyError:
-            try:
-                country_code = kwargs['countryCode']
-            except KeyError:
-                country_code = None
-
-        return CountryValue(id, title, country_name=country_name, country_code=country_code)
-
+        return cv.CountryValue(**kwargs)
 
     elif column_type == ColumnType.date:
 
