@@ -12,7 +12,8 @@ config = {
     'version': '0.1.3',
     'install_requires': [
         'nose>=1.3.7',
-        'requests>=2.22.0'
+        'requests>=2.22.0',
+        'pytz>=2019.3'
     ],
     'packages': [
         'moncli',
