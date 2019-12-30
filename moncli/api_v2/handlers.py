@@ -21,7 +21,7 @@ def get_boards(api_key: str, *argv, **kwargs) -> List[Dict[str, Any]]:
     except KeyError:
         group_ids = None
 
-    operation = graphql.create_query(constants.BOARDS, *argv, *kwargs)
+    operation = graphql.create_query(constants.BOARDS, *argv, **kwargs)
     if group_ids:
         operation.get_field('groups').add_arguments(ids=group_ids)
     
