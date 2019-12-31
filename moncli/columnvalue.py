@@ -85,32 +85,6 @@ class HourValue(cv.ColumnValue):
         return { 'hour': self.hour, 'minute': self.minute }
 
 
-class LinkValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(LinkValue, self).__init__(id, title)
-
-        try:
-            self.url = kwargs['url']
-        except KeyError:
-            self.url = None
-            self.text = None
-            return
-
-        try: 
-            self.text = kwargs['text']
-        except KeyError:
-            self.text = kwargs['url']
-
-
-    def format(self):
-
-        if self.url is None:
-            return {}
-
-        return { 'url': self.url, 'text': self.text }
-
-
 class NameValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -260,13 +234,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     
     
     elif column_type == ColumnType.link:
-
-        if len(kwargs) == 0:
-            return LinkValue(id, title)
-
-        return LinkValue(id, title, **kwargs)
-    
-    
+        return cv.LinkValue(**kwargs)
     elif column_type == ColumnType.long_text:
         return cv.LongTextValue(**kwargs)
 

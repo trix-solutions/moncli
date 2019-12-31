@@ -146,6 +146,7 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.country: 'CountryValue',
     ColumnType.dropdown: 'DropdownValue',
     ColumnType.email: 'EmailValue',
+    ColumnType.link: 'LinkValue',
     ColumnType.long_text: 'LongTextValue',
     ColumnType.numbers: 'NumberValue',
     ColumnType.people: 'PeopleValue',

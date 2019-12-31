@@ -170,6 +170,38 @@ class EmailValue(ColumnValue):
         return {}
 
 
+class LinkValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(LinkValue, self).__init__(**kwargs)
+
+    @property
+    def url(self):
+        try:
+            return loads(self.value)['url']
+        except KeyError:
+            return None
+
+    @url.setter
+    def url(self, value):
+        self.set_value(url=value)
+
+    @property
+    def url_text(self):
+        try:
+            return loads(self.value)['text']
+        except KeyError:
+            return None
+
+    @url_text.setter
+    def url_text(self, value):
+        return self.set_value(text=value)
+
+    def format(self):
+        if self.url:
+            return { 'url': self.url, 'text': self.text }
+        return self.null_value
+
+
 class LongTextValue(ColumnValue):
     def __init__(self, **kwargs):
         super(LongTextValue, self).__init__(**kwargs)
@@ -278,7 +310,6 @@ class PeopleValue(ColumnValue):
 
 
 class PhoneValue(ColumnValue):
-
     def __init__(self, **kwargs):
         super(PhoneValue, self).__init__(**kwargs)
 
@@ -302,11 +333,9 @@ class PhoneValue(ColumnValue):
 
     @country_short_name.setter
     def country_short_name(self, value):
-        try:
-            countries.get(alpha_2=value)
-        except:
+        country = countries.get(alpha_2=value)
+        if not country:
             raise UnknownCountryCodeError(value)
-
         self.set_value(countryShortName=value)
     
     def format(self):
