@@ -1,7 +1,81 @@
+import warnings
+
+from deprecated import deprecated
+
 from .enums import ColumnType
 from .entities import column_value as cv
 
 
+#Deprecation message
+warnings.simplefilter('always', DeprecationWarning)
+warnings.warn(
+    'This module will be deprecated as of version 1.0.  Please use moncli.entities.column_value instead',
+    PendingDeprecationWarning)
+
+class CheckboxValue(cv.CheckboxValue):
+    pass
+
+class CountryValue(cv.CountryValue):
+    pass
+
+class DateValue(cv.DateValue):
+    pass
+
+class DropdownValue(cv.DropdownValue):
+    pass
+
+class EmailValue(cv.EmailValue):
+    pass
+
+class HourValue(cv.HourValue):
+    pass
+
+class LinkValue(cv.LinkValue):
+    pass
+
+class LongTextValue(cv.LongTextValue):
+    pass
+
+class NameValue(cv.NameValue):
+    pass
+
+class NumberValue(cv.NumberValue):
+    pass
+
+class PeopleValue(cv.PeopleValue):
+    pass
+
+class PhoneValue(cv.PhoneValue):
+    pass
+
+class RatingValue(cv.RatingValue):
+    pass
+
+class StatusValue(cv.StatusValue):
+    pass
+
+class TagsValue(cv.TagsValue):
+    pass
+
+class TeamValue(cv.TeamValue):
+    pass
+
+class TextValue(cv.TextValue):
+    pass
+
+class TimelineValue(cv.TimelineValue):
+    pass
+
+class TimezoneValue(cv.TimezoneValue):
+    pass
+
+class WeekValue(cv.WeekValue):
+    pass
+
+class ReadonlyValue(cv.ReadonlyValue):
+    pass
+
+@deprecated(version='0.1.3', reason="Please use moncli.entities.create_column_value instead.")
 def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
 
     if id:
@@ -10,7 +84,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         kwargs['title'] = title
 
     if column_type == ColumnType.checkbox:
-        return cv.CheckboxValue(**kwargs)
+        return CheckboxValue(**kwargs)
     elif column_type == ColumnType.country:
         return cv.CountryValue(**kwargs)
     elif column_type == ColumnType.date:
