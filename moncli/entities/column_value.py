@@ -92,7 +92,7 @@ class DropdownValue(ColumnValue):
         except KeyError:
             raise ColumnValueSettingsError('dropdown')
 
-        super(DropdownValue, self).__init__(kwargs)
+        super(DropdownValue, self).__init__(**kwargs)
 
     @property
     def labels(self):
@@ -172,7 +172,7 @@ class EmailValue(ColumnValue):
 
 class LongTextValue(ColumnValue):
     def __init__(self, **kwargs):
-        super(LongTextValue, self).__init__(kwargs)
+        super(LongTextValue, self).__init__(**kwargs)
 
     @property
     def long_text(self):
@@ -199,7 +199,7 @@ class LongTextValue(ColumnValue):
 
 class NumberValue(ColumnValue):
     def __init__(self, **kwargs):
-        super(NumberValue, self).__init__(kwargs)
+        super(NumberValue, self).__init__(**kwargs)
 
     @property
     def number(self):
@@ -243,7 +243,7 @@ class NumberValue(ColumnValue):
 
 class PeopleValue(ColumnValue):
     def __init__(self, **kwargs):
-        super(PeopleValue, self).__init__(kwargs)
+        super(PeopleValue, self).__init__(**kwargs)
     
     @property
     def persons_and_teams(self):
@@ -277,6 +277,44 @@ class PeopleValue(ColumnValue):
         self.value = dumps(value)
 
 
+class PhoneValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        super(PhoneValue, self).__init__(**kwargs)
+
+    @property
+    def phone(self):
+        try:
+            return loads(self.value)['phone']
+        except KeyError:
+            return None
+
+    @phone.setter
+    def phone(self, value):
+        self.set_value(phone=value)
+
+    @property
+    def country_short_name(self):
+        try:
+            return loads(self.value)['countryShortName']
+        except KeyError:
+            return None
+
+    @country_short_name.setter
+    def country_short_name(self, value):
+        try:
+            countries.get(alpha_2=value)
+        except:
+            raise UnknownCountryCodeError(value)
+
+        self.set_value(countryShortName=value)
+    
+    def format(self):
+        if self.phone and self.country_short_name:
+            return { 'phone': self.phone, 'countryShortName': self.country_short_name }
+        return self.null_value
+
+
 class StatusValue(ColumnValue):
     def __init__(self, **kwargs):
         try:
@@ -284,7 +322,7 @@ class StatusValue(ColumnValue):
         except KeyError:
             raise ColumnValueSettingsError('status')
 
-        super(StatusValue, self).__init__(kwargs)
+        super(StatusValue, self).__init__(**kwargs)
 
     @property
     def index(self):
@@ -314,7 +352,7 @@ class StatusValue(ColumnValue):
 
 class TeamValue(ColumnValue):
     def __init__(self, **kwargs):
-        super(TeamValue, self).__init__(kwargs)
+        super(TeamValue, self).__init__(**kwargs)
 
     @property 
     def team_id(self):
@@ -337,7 +375,7 @@ class TeamValue(ColumnValue):
 
 class TextValue(ColumnValue):
     def __init__(self, **kwargs):
-        super(TextValue, self).__init__(kwargs)
+        super(TextValue, self).__init__(**kwargs)
 
     @property
     def text_value(self):
@@ -357,7 +395,7 @@ class TextValue(ColumnValue):
 
 class TimezoneValue(ColumnValue):
     def __init__(self, **kwargs):
-        super(TimezoneValue, self).__init__(kwargs)
+        super(TimezoneValue, self).__init__(**kwargs)
 
     @property
     def timezone(self):

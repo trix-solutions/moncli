@@ -124,25 +124,7 @@ class NameValue(cv.ColumnValue):
         return self.name
 
 
-class PhoneValue(cv.ColumnValue):
 
-    def __init__(self, id: str, title: str, **kwargs):
-        super(PhoneValue, self).__init__(id, title)
-
-        try:
-            self.phone = kwargs['phone']
-            self.country_short_name = kwargs['country_short_name']
-        except:
-            self.phone = None
-            self.country_short_name = None
-
-    
-    def format(self):
-
-        if self.phone is None or self.country_short_name is None:
-            return {'phone': '', 'countryShortName': ''}
-
-        return { 'phone': self.phone, 'countryShortName': self.country_short_name }
 
 
 class RatingValue(cv.ColumnValue):
@@ -295,27 +277,8 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         return cv.NumberValue(**kwargs)
     elif column_type == ColumnType.people:
         return cv.PeopleValue(**kwargs)
-
-
     elif column_type == ColumnType.phone:
-
-        if len(kwargs) == 0:
-            return PhoneValue(id, title)
-
-        try:
-            phone = kwargs['phone']
-        except KeyError:
-            phone = None
-
-        try:
-            country_short_name = kwargs['countryShortName']
-        except KeyError:
-            try:
-                country_short_name = kwargs['country_short_name']
-            except KeyError:
-                country_short_name = None
-
-        return PhoneValue(id, title, phone=phone, country_short_name=country_short_name)
+        return cv.PhoneValue(**kwargs)
 
 
     elif column_type == ColumnType.rating:
