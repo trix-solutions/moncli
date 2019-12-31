@@ -7,19 +7,6 @@ from .enums import ColumnType, PeopleKind
 from .entities import column_value as cv
 
 
-class NameValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(NameValue, self).__init__(id, title)
-
-        self.name: str = kwargs['name']
-
-    
-    def format(self):
-
-        return self.name
-
-
 class RatingValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -39,9 +26,6 @@ class RatingValue(cv.ColumnValue):
             return {}
 
         return { 'rating': self.rating }
-
-
-
 
 
 def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
@@ -68,7 +52,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     elif column_type == ColumnType.long_text:
         return cv.LongTextValue(**kwargs)
     elif column_type == ColumnType.name:
-        return NameValue(id, title, name=kwargs['value'])
+        return cv.NameValue(**kwargs)
     elif column_type == ColumnType.numbers:
         return cv.NumberValue(**kwargs)
     elif column_type == ColumnType.people:

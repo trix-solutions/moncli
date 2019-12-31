@@ -328,6 +328,24 @@ class LongTextValue(ColumnValue):
         return self.null_value
 
 
+class NameValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(NameValue, self).__init__(**kwargs)
+
+    @property
+    def name(self):
+        return loads(self.value)
+
+    @name.setter
+    def name(self, value):
+        if value:
+            self.set_value(value)
+        self.value = self.null_value
+    
+    def format(self):
+        return self.name
+
+
 class NumberValue(ColumnValue):
     def __init__(self, **kwargs):
         super(NumberValue, self).__init__(**kwargs)
