@@ -41,20 +41,7 @@ class RatingValue(cv.ColumnValue):
         return { 'rating': self.rating }
 
 
-class ReadonlyValue(cv.ColumnValue):
-    
-    def __init__(self, id: str, title, **kwargs):
-        super(ReadonlyValue, self).__init__(id, title)
 
-        try:
-            self.value = kwargs['value']
-        except KeyError: 
-            self.value = None
-
-    
-    def format(self):
-
-        raise ColumnValueIsReadOnly(self.id, self.title)
 
 
 def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
@@ -107,10 +94,4 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     elif column_type == ColumnType.week:
         return cv.WeekValue(**kwargs)
     else:
-        return ReadonlyValue(id, title, value=kwargs)
-
-
-class ColumnValueIsReadOnly(Exception):
-
-    def __init__(self, id: str, title: str):
-        self.message = "Cannot format read-only column value '{}' ('{}') for updating.".format(title, id)
+        return cv.ReadonlyValue(**kwargs)

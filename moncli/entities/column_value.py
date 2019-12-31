@@ -69,7 +69,7 @@ class CheckboxValue(ColumnValue):
         if self.checked:
             return { 'checked': 'true' }
         return loads(self.null_value)
-        
+
 
 class CountryValue(ColumnValue):
     def __init__(self, **kwargs):
@@ -637,6 +637,14 @@ class WeekValue(ColumnValue):
         if self.start_date and self.end_date:
             return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
         return loads(self.null_value)
+
+
+class ReadonlyValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(ReadonlyValue, self).__init__(**kwargs)
+
+    def format(self):
+        raise ColumnValueIsReadOnly(self.id, self.title)
             
 
 def create_column_value(column_type: enums.ColumnType, **kwargs):
@@ -683,3 +691,8 @@ class UnknownCountryCodeError(Exception):
 class UnknownCountryNameError(Exception):
     def __init__(self, country_name):
         self.message = 'Unable to set unrecognized country name value "{}".'.format(country_name)
+
+
+class ColumnValueIsReadOnly(Exception):
+    def __init__(self, id: str, title: str):
+        self.message = "Cannot format read-only column value '{}' ('{}') for updating.".format(title, id)
