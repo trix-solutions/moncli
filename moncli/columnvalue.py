@@ -27,7 +27,7 @@ class CheckboxValue(cv.ColumnValue):
             return { 'checked': 'true' }
 
         return {}
-
+        
 
 class HourValue(cv.ColumnValue):
 
@@ -181,7 +181,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     elif column_type == ColumnType.country:
         return cv.CountryValue(**kwargs)
     elif column_type == ColumnType.date:
-        return cv.DateValue(**kwargs)
+        return cv.DateValue(**kwargs)    
     elif column_type == ColumnType.dropdown:
         return cv.DropdownValue(**kwargs)
     elif column_type == ColumnType.email:
@@ -197,7 +197,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     
     
     elif column_type == ColumnType.link:
-        return cv.LinkValue(**kwargs)
+        return cv.LinkValue(**kwargs)    
     elif column_type == ColumnType.long_text:
         return cv.LongTextValue(**kwargs)
 
@@ -235,31 +235,8 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         return cv.TeamValue(**kwargs)
     elif column_type == ColumnType.text:
         return cv.TextValue(**kwargs)
-
-
     elif column_type == ColumnType.timeline:
-
-        if len(kwargs) == 0:
-            return TimelineValue(id, title)
-
-        try:
-            from_date = kwargs['from']
-        except KeyError:
-            try:
-                from_date = kwargs['from_date']
-            except KeyError:
-                from_date = None
-
-        try:
-            to_date = kwargs['to']
-        except KeyError:
-            try:
-                to_date = kwargs['to_date']
-            except KeyError:
-                to_date = None
-
-        return TimelineValue(id, title, from_date=from_date, to_date=to_date)
-    
+        return TimelineValue(**kwargs)
     elif column_type == ColumnType.world_clock:
         return cv.TimezoneValue(**kwargs)
 

@@ -155,5 +155,6 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.status: 'StatusValue',
     ColumnType.team: 'TeamValue',
     ColumnType.text: 'TextValue',
+    ColumnType.timeline: 'TimelineValue',
     ColumnType.world_clock: 'TimezoneValue'
 }

@@ -129,6 +129,7 @@ class DateValue(ColumnValue):
                 result['time'] = self.time
             return result
         return self.null_value
+        
 
 class DropdownValue(ColumnValue):
     def __init__(self, **kwargs):
@@ -466,6 +467,45 @@ class TextValue(ColumnValue):
             self.text = ''
             self.value = None
 
+
+class TimelineValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        super(TimelineValue, self).__init__(**kwargs)
+
+    @property
+    def from_date(self):
+        try:
+            return loads(self.value)['from']
+        except KeyError:
+            return None
+
+    @from_date.setter
+    def from_date(self, value):
+        try:
+            datetime.strptime(value, '%Y-%m-%d')
+        except ValueError:
+            raise DateFormatError(value)
+
+    @property
+    def to_date(self):
+        try:
+            return loads(self.value)['to']
+        except KeyError:
+            return None
+
+    @to_date.setter
+    def to_date(self, value):
+        try:
+            datetime.strptime(value, '%Y-%m-%d')
+        except ValueError:
+            raise DateFormatError(value)
+
+    def format(self):
+        if self.from_date and self.to_date:
+            return { 'from': self.from_date, 'to': self.to_date }
+        return self.null_value
+        
 
 class TimezoneValue(ColumnValue):
     def __init__(self, **kwargs):
