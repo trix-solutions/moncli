@@ -7,7 +7,7 @@ from pytz import timezone, exceptions as tzex
 from schematics.models import Model
 from schematics.types import StringType, IntType
 
-from .. import config, enums, entities as e
+from .. import config, enums, entities as en
 
 
 SIMPLE_NULL_VALUE = ''
@@ -46,6 +46,30 @@ class ColumnValue(_ColumnValue):
         else:
             self.value = self.null_value
 
+
+class CheckboxValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(CheckboxValue, self).__init__(**kwargs)
+        
+    @property
+    def checked(self):
+        try:
+            return loads(self.value)['checked']
+        except KeyError:
+            return False
+
+    @checked.setter
+    def checked(self, value: bool):
+        if value:
+            self.set_value(checked=value)
+        else:
+            self.value = self.null_value
+    
+    def format(self):
+        if self.checked:
+            return { 'checked': 'true' }
+        return loads(self.null_value)
+        
 
 class CountryValue(ColumnValue):
     def __init__(self, **kwargs):
@@ -286,25 +310,22 @@ class LongTextValue(ColumnValue):
 
     @property
     def long_text(self):
-        if self.value:
+        try:
             return loads(self.value)['text']
-        return self.value
+        except KeyError:
+            return None
     
     @long_text.setter
     def long_text(self, value):
         if value:
-            self.text = value
-            current_value = loads(self.value)
-            current_value['text'] = value
-            self.value = dumps(current_value)
+            self.set_value(text=value)
         else:
-            self.text = ''
-            self.value = None
+            self.value = dumps(self.null_value)
 
     def format(self):
         if self.long_text:
             return {'text': self.long_text}
-        return {}
+        return self.null_value
 
 
 class NumberValue(ColumnValue):
@@ -325,7 +346,6 @@ class NumberValue(ColumnValue):
     def number(self, value):
         if not self.__isint(value) and not self.__isfloat(value):
             raise NumberValueError()
-        self.text = str(value)
         self.value = dumps(self.text)
 
     def format(self):
@@ -338,7 +358,6 @@ class NumberValue(ColumnValue):
             float(value)
         except ValueError:
             return False
-
         return True
   
     def __isint(self, value):
@@ -347,7 +366,6 @@ class NumberValue(ColumnValue):
             b = int(a)
         except ValueError:
             return False
-
         return a == b
 
 
@@ -367,24 +385,20 @@ class PeopleValue(ColumnValue):
         return {}
 
     def add_people(self, person_or_team):
-        if type(person_or_team) is type(e.User):
+        if type(person_or_team) is type(en.User):
             kind = enums.PeopleKind.person
-        elif type(person_or_team) is type(e.Team):
+        elif type(person_or_team) is type(en.Team):
             kind = enums.PeopleKind.team
         persons_and_teams = self.persons_and_teams
         persons_and_teams.append({'id': person_or_team.id, 'kind': kind.name})
-        value = loads(self.value)
-        value['personsAndTeams'] = persons_and_teams
-        self.value = dumps(value)
+        self.set_value(personsAndTeams=persons_and_teams)
 
     def remove_people(self, id: int):
         persons_and_teams = []
         for entity in self.persons_and_teams:
             if entity.id != id:
                 persons_and_teams.append(entity)
-        value = loads(self.value)
-        value['personsAndTeams'] = persons_and_teams
-        self.value = dumps(value)
+        self.set_value(personsAndTeams=persons_and_teams)
 
 
 class PhoneValue(ColumnValue):
@@ -574,24 +588,56 @@ class TimezoneValue(ColumnValue):
         return self.value
 
     @timezone.setter
-    def timezone(self, tz):
-        try:
-            timezone(tz)
-        except tzex.UnknownTimeZoneError:
-            raise UnknownTimeZoneError(tz)
+    def timezone(self, value):
+        if not value:
+            self.value = self.null_value
+            return
 
-        if self.value:
-            value = loads(self.value)
-            value['timezone'] = tz
-        else:
-            value = {'timezone': tz}
-        self.value = dumps(value)
+        try:
+            timezone(value)
+        except tzex.UnknownTimeZoneError:
+            raise UnknownTimeZoneError(value)
+
+        self.set_value(timezone=value)   
 
     def format(self):
         if self.timezone is not None:
             return { 'timezone': self.timezone }
-        return {}
+        return loads(self.null_value)
 
+
+class WeekValue(ColumnValue):
+    def __init__(self, **kwargs):
+        self.__account = kwargs.pop('account')
+        super(WeekValue, self).__init__(**kwargs)
+
+    @property
+    def start_date(self):
+        try:
+            return loads(self.value)['week']['startDate']
+        except KeyError:
+            return None
+
+    @start_date.setter
+    def start_date(self, value):
+        pass
+
+    @property
+    def end_date(self):
+        try:
+            return loads(self.value)['week']['endDate']
+        except KeyError:
+            return None
+
+    @end_date.setter
+    def end_date(self, value):
+        pass
+
+    def format(self):
+        if self.start_date and self.end_date:
+            return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
+        return loads(self.null_value)
+            
 
 def create_column_value(column_type: enums.ColumnType, **kwargs):
     return getattr(
