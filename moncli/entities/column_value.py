@@ -216,6 +216,38 @@ class EmailValue(ColumnValue):
         return {}
 
 
+class HourValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(HourValue, self).__init__(**kwargs)
+
+    @property
+    def hour(self):
+        try:
+            return loads(self.value)['hour']
+        except KeyError:
+            return None
+
+    @hour.setter
+    def hour(self, value: int):
+        self.set_value(hour=value)
+    
+    @property
+    def minute(self):
+        try:
+            return loads(self.value)['minute']
+        except KeyError:
+            return 0
+
+    @minute.setter
+    def minute(self, value: int):
+        self.set_value(minute=value)
+
+    def format(self):
+        if self.hour:
+            return { 'hour': self.hour, 'minute': self.minute }
+        return self.null_value
+
+
 class LinkValue(ColumnValue):
     def __init__(self, **kwargs):
         super(LinkValue, self).__init__(**kwargs)
@@ -423,6 +455,31 @@ class StatusValue(ColumnValue):
         value['index'] = self.__settings.get_index(label)
         value['label'] = label
         self.value = dumps(value)
+        
+
+class TagsValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(TagsValue, self).__init__(**kwargs)
+
+    @property
+    def tag_ids(self):
+        try:
+            return loads(self.value)['tag_ids']
+        except KeyError:
+            return []
+
+    def add(self, tag_id: int):
+        tag_ids = self.tag_ids
+        tag_ids.append(tag_id)
+        self.set_value(tag_ids=tag_ids)
+
+    def remove(self, tag_id: int):
+        tag_ids = self.tag_ids
+        tag_ids.remove(tag_id)
+        self.set_value(tag_ids=tag_ids)
+
+    def format(self):
+        return { 'tag_ids': self.tag_ids }
 
 
 class TeamValue(ColumnValue):
@@ -469,7 +526,6 @@ class TextValue(ColumnValue):
 
 
 class TimelineValue(ColumnValue):
-
     def __init__(self, **kwargs):
         super(TimelineValue, self).__init__(**kwargs)
 

@@ -29,32 +29,6 @@ class CheckboxValue(cv.ColumnValue):
         return {}
         
 
-class HourValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(HourValue, self).__init__(id, title)
-
-        try:
-            self.hour = kwargs['hour']
-
-            try:
-                self.minute = kwargs['minute']
-            except KeyError:
-                self.minute = 0
-
-        except KeyError:
-            self.hour = None
-            self.minute = None
-
-    
-    def format(self):
-
-        if self.hour is None:
-            return {}
-
-        return { 'hour': self.hour, 'minute': self.minute }
-
-
 class NameValue(cv.ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -66,9 +40,6 @@ class NameValue(cv.ColumnValue):
     def format(self):
 
         return self.name
-
-
-
 
 
 class RatingValue(cv.ColumnValue):
@@ -90,46 +61,6 @@ class RatingValue(cv.ColumnValue):
             return {}
 
         return { 'rating': self.rating }
-
-
-class TagsValue(cv.ColumnValue):
-    
-    def __init__(self, id: str, title: str, **kwargs):
-        super(TagsValue, self).__init__(id, title)
-
-        try:
-            self.tag_ids = kwargs['tag_ids']
-        except KeyError:
-            self.tag_ids = None
-
-
-    def format(self):
-
-        if self.tag_ids is None:
-            return { 'tag_ids': [] }
-
-        return { 'tag_ids': self.tag_ids }
-
-
-class TimelineValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(TimelineValue, self).__init__(id, title)
-
-        try:
-            self.from_date = kwargs['from_date']
-            self.to_date = kwargs['to_date']
-        except KeyError:
-            self.from_date = None
-            self.to_date = None
-
-
-    def format(self):
-
-        if self.from_date is None or self.to_date is None:
-            return {}
-
-        return { 'from': self.from_date, 'to': self.to_date }
 
 
 class WeekValue(cv.ColumnValue):
@@ -186,16 +117,8 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         return cv.DropdownValue(**kwargs)
     elif column_type == ColumnType.email:
         return cv.EmailValue(**kwargs)
-
-
     elif column_type == ColumnType.hour:
-
-        if len(kwargs) == 0:
-            return HourValue(id, title)
-
-        return HourValue(id, title, **kwargs)
-    
-    
+        return cv.HourValue(**kwargs)
     elif column_type == ColumnType.link:
         return cv.LinkValue(**kwargs)    
     elif column_type == ColumnType.long_text:
@@ -222,21 +145,14 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     
     elif column_type == ColumnType.status:
         return cv.StatusValue(**kwargs)
-
     elif column_type == ColumnType.tags:
-
-        if len(kwargs) == 0:
-            return TagsValue(id, title)
-
-        return TagsValue(id, title, **kwargs)
-    
-    
+        return cv.TagsValue(**kwargs)
     elif column_type == ColumnType.team:
         return cv.TeamValue(**kwargs)
     elif column_type == ColumnType.text:
         return cv.TextValue(**kwargs)
     elif column_type == ColumnType.timeline:
-        return TimelineValue(**kwargs)
+        return cv.TimelineValue(**kwargs)
     elif column_type == ColumnType.world_clock:
         return cv.TimezoneValue(**kwargs)
 
@@ -266,7 +182,6 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
     
     else:
-
         return ReadonlyValue(id, title, value=kwargs)
 
 

@@ -143,18 +143,23 @@ COLUMN_TYPE_MAPPINGS = {
 }
 
 COLUMN_TYPE_VALUE_MAPPINGS = {
+    ColumnType.checkbox: 'CheckboxValue',
     ColumnType.country: 'CountryValue',
     ColumnType.date: 'DateValue',
     ColumnType.dropdown: 'DropdownValue',
     ColumnType.email: 'EmailValue',
+    ColumnType.hour: 'HourValue',
     ColumnType.link: 'LinkValue',
     ColumnType.long_text: 'LongTextValue',
     ColumnType.numbers: 'NumberValue',
     ColumnType.people: 'PeopleValue',
     ColumnType.phone: 'PhoneValue',
+    ColumnType.rating: 'RatingValue',
     ColumnType.status: 'StatusValue',
+    ColumnType.tags: 'TagsValue',
     ColumnType.team: 'TeamValue',
     ColumnType.text: 'TextValue',
     ColumnType.timeline: 'TimelineValue',
-    ColumnType.world_clock: 'TimezoneValue'
+    ColumnType.world_clock: 'TimezoneValue',
+    ColumnType.week: 'WeekValue'
 }
