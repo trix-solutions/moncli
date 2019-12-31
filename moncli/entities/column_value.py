@@ -109,11 +109,9 @@ class DateValue(ColumnValue):
     @property
     def time(self):
         try:
-            value = loads(self.value)['time']
+            return loads(self.value)['time']
         except KeyError:
             return None
-        except ValueError:
-            raise TimeFormatError(value)
 
     @time.setter
     def time(self, value):
