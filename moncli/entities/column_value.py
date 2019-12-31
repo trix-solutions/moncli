@@ -1,5 +1,6 @@
-from json import dumps, loads
+from datetime import datetime
 from importlib import import_module
+from json import dumps, loads
 
 from pycountry import countries
 from pytz import timezone, exceptions as tzex
@@ -84,6 +85,52 @@ class CountryValue(ColumnValue):
             }
         return self.null_value
 
+
+class DateValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(DateValue, self).__init__(**kwargs)
+
+    @property
+    def date(self):
+        try:
+            return loads(self.value)['date']
+        except KeyError:
+            return None
+
+    @date.setter
+    def date(self, value):
+        try:
+            datetime.strptime(value, '%Y-%m-%d')
+        except ValueError:
+            raise DateFormatError(value)
+
+        self.set_value(date=value)
+
+    @property
+    def time(self):
+        try:
+            value = loads(self.value)['time']
+        except KeyError:
+            return None
+        except ValueError:
+            raise TimeFormatError(value)
+
+    @time.setter
+    def time(self, value):
+        try:
+            datetime.strptime(value, '%H:%M:%S')
+        except ValueError:
+            raise TimeFormatError(value)
+
+        self.set_value(time=value)
+
+    def format(self):
+        if self.date:
+            result = {'date': self.date}
+            if self.time:
+                result['time'] = self.time
+            return result
+        return self.null_value
 
 class DropdownValue(ColumnValue):
     def __init__(self, **kwargs):
@@ -461,6 +508,16 @@ def create_column_value(column_type: enums.ColumnType, **kwargs):
 class ColumnValueSettingsError(Exception):
     def __init__(self, column_type: str):
         self.message = 'Settings attribute is missing from input {} column data.'.format(column_type)
+
+
+class DateFormatError(Exception):
+    def __init__(self, value):
+        self.message = 'Unable to parse date value "{}".'.format(value)
+
+
+class TimeFormatError(Exception):
+    def __init__(self, value):
+        self.message = 'Unable to parse time value "{}".'.format(value)
 
 
 class DropdownLabelError(Exception):

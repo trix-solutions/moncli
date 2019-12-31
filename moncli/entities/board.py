@@ -1,8 +1,8 @@
 from schematics.models import Model
 from schematics import types
 
-import moncli.columnvalue as cv
 from .. import api_v2 as client, config, enums, entities as en
+from ..entities import column_value as cv
 
 class _Board(Model):
 
@@ -171,7 +171,7 @@ class Board(_Board):
         if id is not None and title is not None:
             raise TooManyGetColumnValueParameters()
 
-        columns = { column.id: column for column in self.get_columns() }
+        columns = { column.id: column for column in self.columns }
         if id is not None:
             column = columns[id]
             column_type = config.COLUMN_TYPE_MAPPINGS[column.type]           
@@ -182,7 +182,7 @@ class Board(_Board):
         if column_type == enums.ColumnType.status:
             kwargs['settings'] = column.settings
         
-        return cv.create_column_value(column.id, enums.ColumnType[column_type], column.title, **kwargs)
+        return cv.create_column_value(enums.ColumnType[column_type], **kwargs)
 
         
 class TooManyGetGroupParameters(Exception):

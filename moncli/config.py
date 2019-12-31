@@ -144,6 +144,7 @@ COLUMN_TYPE_MAPPINGS = {
 
 COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.country: 'CountryValue',
+    ColumnType.date: 'DateValue',
     ColumnType.dropdown: 'DropdownValue',
     ColumnType.email: 'EmailValue',
     ColumnType.link: 'LinkValue',

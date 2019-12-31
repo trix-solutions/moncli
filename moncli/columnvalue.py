@@ -5,7 +5,6 @@ from schematics.types import StringType
 
 from .enums import ColumnType, PeopleKind
 from .entities import column_value as cv
-from .entities.column_value import StatusValue
 
 
 class CheckboxValue(cv.ColumnValue):
@@ -28,35 +27,6 @@ class CheckboxValue(cv.ColumnValue):
             return { 'checked': 'true' }
 
         return {}
-        
-
-class DateValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(DateValue, self).__init__(id, title)
-
-        try:
-            self.date = kwargs['date']
-        except KeyError:
-            self.date = None
-
-        try: 
-            self.time = kwargs['time']
-        except KeyError:
-            self.time = None
-
-
-    def format(self):
-
-        if self.date is None:
-            return {}
-
-        result = { 'date': self.date }
-
-        if self.time is not None:
-            result['time'] = self.time
-
-        return result
 
 
 class HourValue(cv.ColumnValue):
@@ -210,15 +180,8 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         return CheckboxValue(**kwargs)
     elif column_type == ColumnType.country:
         return cv.CountryValue(**kwargs)
-
     elif column_type == ColumnType.date:
-
-        if len(kwargs) == 0:
-            return DateValue(id, title)
-
-        return DateValue(id, title, **kwargs)
-
-
+        return cv.DateValue(**kwargs)
     elif column_type == ColumnType.dropdown:
         return cv.DropdownValue(**kwargs)
     elif column_type == ColumnType.email:
