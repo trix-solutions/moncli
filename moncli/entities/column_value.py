@@ -454,6 +454,30 @@ class PhoneValue(ColumnValue):
         return self.null_value
 
 
+class RatingValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(RatingValue, self).__init__(**kwargs)
+
+    @property
+    def rating(self):
+        try:
+            return loads(self.value)['rating']
+        except KeyError:
+            return None
+
+    @rating.setter
+    def rating(self, value: int):
+        if value:
+            self.set_value(rating=value)
+        else:
+            self.set_value()
+
+    def format(self):
+        if self.rating:
+            return { 'rating': self.rating }
+        return loads(self.null_value)
+
+
 class StatusValue(ColumnValue):
     def __init__(self, **kwargs):
         try:

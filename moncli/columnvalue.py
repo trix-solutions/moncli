@@ -1,31 +1,5 @@
-from typing import List
-
-from schematics.models import Model
-from schematics.types import StringType
-
-from .enums import ColumnType, PeopleKind
+from .enums import ColumnType
 from .entities import column_value as cv
-
-
-class RatingValue(cv.ColumnValue):
-
-    def __init__(self, id: str, title: str, **kwargs):
-        super(RatingValue, self).__init__(id, title)
-
-        self.rating: int = None
-
-        try:
-            self.rating = kwargs['rating']
-        except KeyError:
-            pass
-
-
-    def format(self):
-
-        if self.rating is None:
-            return {}
-
-        return { 'rating': self.rating }
 
 
 def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
@@ -60,9 +34,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
     elif column_type == ColumnType.phone:
         return cv.PhoneValue(**kwargs)
     elif column_type == ColumnType.rating:
-        if len(kwargs) == 0:
-            return RatingValue(id, title)
-        return RatingValue(id, title, **kwargs) 
+        return cv.RatingValue(**kwargs) 
     elif column_type == ColumnType.status:
         return cv.StatusValue(**kwargs)
     elif column_type == ColumnType.tags:
