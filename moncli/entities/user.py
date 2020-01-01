@@ -86,7 +86,7 @@ class User(_User):
             *argv, 
             **kwargs)
 
-        return en.Notification(**notification_data)
+        return en.Notification(notification_data)
 
 
 class _Team(Model):
