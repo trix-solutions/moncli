@@ -35,8 +35,8 @@ def test_user_should_get_teams(get_teams, get_users, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_users.return_value = [{'id': '1', 'email': 'test.user@foobar.org', 'teams': [{'id': '1'}]}]
-    get_teams.return_value = [{'id': '1', 'name': 'Team 1', 'users': [{'id': '1'}]}]
+    get_users.return_value = [{'id': '1', 'email': 'test.user@foobar.org'}]
+    get_teams.return_value = [{'id': '1', 'name': 'Team 1'}]
     client = e.client.MondayClient(USERNAME, '', '')
     user = client.get_users()[0]
 
@@ -56,7 +56,7 @@ def test_user_should_send_a_notification(create_notification, get_users, get_me)
 
     # Arrange 
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_users.return_value = [{'id': '1', 'email': 'test.user@foobar.org', 'teams': [{'id': '1'}]}]
+    get_users.return_value = [{'id': '1', 'email': 'test.user@foobar.org'}]
     create_notification.return_value = {'id': '1', 'text': 'Text 1'}
     client = e.client.MondayClient(USERNAME, '', '')
     user = client.get_users()[0]
