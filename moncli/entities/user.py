@@ -68,11 +68,11 @@ class User(_User):
             **account_data)
     
     def get_teams(self):
-        field_list = ['team.' + field for field in config.DEFAULT_TEAM_QUERY_FIELDS]
+        field_list = ['teams.' + field for field in config.DEFAULT_TEAM_QUERY_FIELDS]
         teams_data = client.get_users(
             self.__creds.api_key_v2,
             *field_list,
-            ids=[int(self.id)])
+            ids=[int(self.id)])[0]['teams']
 
         return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
     
