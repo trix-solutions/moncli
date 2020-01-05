@@ -35,11 +35,11 @@ class ColumnValue(_ColumnValue):
         if not self.value:
             self.value = self.null_value
 
-    def set_value(self, *argv, **kwargs):
-        value_obj = loads(self.value)
+    def set_value(self, *argv, **kwargs): 
         if len(argv) > 0:
             self.value = dumps(argv[0])
         elif len(kwargs) > 0:
+            value_obj = loads(self.value)
             for key, value in kwargs.items():
                 value_obj[key] = value
             self.value = dumps(value_obj)
@@ -77,9 +77,10 @@ class CountryValue(ColumnValue):
 
     @property
     def country_code(self):
-        if self.value:
+        try:
             return loads(self.value)['countryCode']
-        return self.value
+        except KeyError:
+            return None
 
     @country_code.setter
     def country_code(self, code):
@@ -90,9 +91,10 @@ class CountryValue(ColumnValue):
 
     @property
     def country_name(self):
-        if self.value:
+        try:
             return loads(self.value)['countryName']
-        self.value
+        except KeyError:
+            return None
 
     @country_name.setter
     def country_name(self, name):
@@ -107,7 +109,7 @@ class CountryValue(ColumnValue):
                 'countryCode': self.country_code,
                 'countryName': self.country_name
             }
-        return self.null_value
+        return loads(self.null_value)
 
 
 class DateValue(ColumnValue):
@@ -350,13 +352,15 @@ class NameValue(ColumnValue):
 
 
 class NumberValue(ColumnValue):
+    null_value = ''
+
     def __init__(self, **kwargs):
         super(NumberValue, self).__init__(**kwargs)
 
     @property
     def number(self):
-        if not self.value:
-            return self.value
+        if self.value is self.null_value:
+            return None
         value = loads(self.value)
         if self.__isint(value):
             return int(value)
@@ -367,7 +371,7 @@ class NumberValue(ColumnValue):
     def number(self, value):
         if not self.__isint(value) and not self.__isfloat(value):
             raise NumberValueError()
-        self.value = dumps(self.text)
+        self.value = dumps(value)
 
     def format(self):
         if self.number:
@@ -731,7 +735,7 @@ class ReadonlyValue(ColumnValue):
 def create_column_value(column_type: enums.ColumnType, **kwargs):
     return getattr(
         import_module(__name__), 
-        config.COLUMN_TYPE_VALUE_MAPPINGS[column_type])(**kwargs)
+        config.COLUMN_TYPE_VALUE_MAPPINGS.get(column_type, 'ReadonlyValue'))(**kwargs)
 
 
 class ColumnValueSettingsError(Exception):

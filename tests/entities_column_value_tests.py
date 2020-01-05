@@ -138,7 +138,7 @@ def test_should_return_date_column_value_with_time():
     column_type = ColumnType.date
     title = 'Date'
     date = '1990-08-30'
-    time = '04:15'
+    time = '04:15:00'
 
     # Act
     column_value = cv.create_column_value(column_type, id=id, title=title)
@@ -518,7 +518,7 @@ def test_should_return_a_number_column_value_with_float():
     eq_(column_value.number, number)
     eq_(format, str(number))
 
-
+@raises(cv.NumberValueError)
 def test_should_return_an_empty_number_column_value_when_input_is_text():
 
     # Arrange
@@ -530,12 +530,6 @@ def test_should_return_an_empty_number_column_value_when_input_is_text():
     # Act
     column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.number = number
-    format = column_value.format()
-
-    # Assert
-    ok_(column_value != None)
-    eq_(column_value.number, None)
-    eq_(format, '')
 
 
 def test_should_return_an_empty_people_column_value():
@@ -561,7 +555,7 @@ def test_should_return_a_people_column_value_with_persons_and_teams():
     id = 'people_1'
     column_type = ColumnType.people
     title = 'People 1'
-    persons_and_teams = [{'id': 1, 'kind': PeopleKind.person}]
+    persons_and_teams = [{'id': 1, 'kind': PeopleKind.person.name}]
 
     # Act
     column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(persons_and_teams))
@@ -579,11 +573,11 @@ def test_should_return_an_empty_people_column_value_after_remove():
     id = 'people_2'
     column_type = ColumnType.people
     title = 'People 2'
-    persons_and_teams = [{'id': 1, 'kind': PeopleKind.person}]
+    persons_and_teams = [{'id': '1', 'kind': PeopleKind.person.name}]
     column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(persons_and_teams))
 
     # Act
-    column_value.remove_people(1)
+    column_value.remove_people(en.User(creds=None, id='1'))
     format = column_value.format()
 
     # Assert
@@ -602,7 +596,7 @@ def test_should_return_a_people_column_value_with_added_persons_and_teams():
 
     # Act
     column_value = cv.create_column_value(column_type, id=id, title=title)
-    column_value.add_people(1, PeopleKind.person)
+    column_value.add_people(en.User(creds=None, id='1'))
     format = column_value.format()
 
     # Assert
