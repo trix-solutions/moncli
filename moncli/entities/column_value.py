@@ -152,7 +152,7 @@ class DateValue(ColumnValue):
             if self.time:
                 result['time'] = self.time
             return result
-        return self.null_value
+        return loads(self.null_value)
         
 
 class DropdownValue(ColumnValue):
@@ -625,9 +625,10 @@ class TimezoneValue(ColumnValue):
 
     @property
     def timezone(self):
-        if self.value:
+        try:
             return loads(self.value)['timezone']
-        return self.value
+        except KeyError:
+            return None
 
     @timezone.setter
     def timezone(self, value):
@@ -643,14 +644,13 @@ class TimezoneValue(ColumnValue):
         self.set_value(timezone=value)   
 
     def format(self):
-        if self.timezone is not None:
+        if self.timezone:
             return { 'timezone': self.timezone }
         return loads(self.null_value)
 
 
 class WeekValue(ColumnValue):
     def __init__(self, **kwargs):
-        self.__account = kwargs.pop('account')
         super(WeekValue, self).__init__(**kwargs)
 
     @property
@@ -662,7 +662,12 @@ class WeekValue(ColumnValue):
 
     @start_date.setter
     def start_date(self, value):
-        pass
+        try:
+            datetime.strptime(value, '%Y-%m-%d')
+        except ValueError:
+            raise DateFormatError(value)
+
+        self.set_value(startDate=value)
 
     @property
     def end_date(self):
@@ -673,12 +678,25 @@ class WeekValue(ColumnValue):
 
     @end_date.setter
     def end_date(self, value):
-        pass
+        try:
+            datetime.strptime(value, '%Y-%m-%d')
+        except ValueError:
+            raise DateFormatError(value)
+
+        self.set_value(endDate=value)
 
     def format(self):
         if self.start_date and self.end_date:
             return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
         return loads(self.null_value)
+
+    def set_value(self, *argv, **kwargs):
+        value_obj = loads(self.value)
+        for key, value in kwargs.items():
+            if self.value is self.null_value:
+                value_obj['week'] = {}
+            value_obj['week'][key] = value
+        self.value = dumps(value_obj)
 
 
 class ReadonlyValue(ColumnValue):

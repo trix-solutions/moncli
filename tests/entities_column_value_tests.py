@@ -1,11 +1,10 @@
 from nose.tools import ok_, eq_, raises
 
-import moncli.entities.objects as o
-from moncli import columnvalue
-from moncli.columnvalue import create_column_value
+from moncli import entities as en
+from moncli.entities import column_value as cv
 from moncli.enums import ColumnType, PeopleKind
 
-@raises(columnvalue.ColumnValueIsReadOnly)
+@raises(cv.ColumnValueIsReadOnly)
 def test_should_fail_for_non_writeable_column_type():
 
     # Arrange
@@ -14,7 +13,7 @@ def test_should_fail_for_non_writeable_column_type():
     title = 'should fail'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.format()
 
 
@@ -26,7 +25,7 @@ def test_should_return_an_empty_checkbox_column_value():
     title = 'Checkbox'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -43,7 +42,8 @@ def test_should_return_checked_checkbox_column_value():
     title = 'Checkbox'
 
     # Act
-    column_value = create_column_value(id, column_type, title, checked='true')
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+    column_value.checked = True
     format = column_value.format()
 
     # Assert
@@ -60,7 +60,7 @@ def test_should_return_an_empty_country_column_value():
     title = 'Country'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -80,7 +80,8 @@ def test_should_return_country_column_value():
     country_name = 'United States'
 
     # Act
-    column_value = create_column_value(id, column_type, title, country_name=country_name, country_code=country_code)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+    column_value.country_code = country_code
     format = column_value.format()
 
     # Assert
@@ -98,7 +99,7 @@ def test_should_return_an_empty_date_column_value():
     title = 'Date'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -890,7 +891,7 @@ def test_should_return_empty_timezone_column_value():
     title = 'Time zone 1'
     
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -908,7 +909,8 @@ def test_should_return_timezone_column_value_with_text():
     timezone = 'America/Phoenix'
     
     # Act
-    column_value = create_column_value(id, column_type, title, timezone=timezone)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+    column_value.timezone = timezone
     format = column_value.format()
 
     # Assert
@@ -925,7 +927,7 @@ def test_should_return_empty_week_column_value():
     title = 'Week 1'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -945,7 +947,9 @@ def test_should_return_week_column_value_with_data():
     end_date = '2019-10-27'
 
     # Act
-    column_value = create_column_value(id, column_type, title, start_date=start_date, end_date=end_date)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+    column_value.start_date = start_date
+    column_value.end_date = end_date
     format = column_value.format()
 
     # Assert

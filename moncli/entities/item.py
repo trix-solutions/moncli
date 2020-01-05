@@ -22,6 +22,7 @@ class Item(_Item):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
         self.__board = None
+        self.__creator = None
         self.__column_values = None
         super(Item, self).__init__(kwargs)
 
@@ -42,6 +43,12 @@ class Item(_Item):
         return self.__board
 
     @property
+    def creator(self):
+        if not self.__creator:
+            self.__creator = self.get_creator()
+        return self.__creator
+
+    @property
     def column_values(self):
         self.__column_values = self.get_column_values()
         return self.__column_values
@@ -54,6 +61,15 @@ class Item(_Item):
             ids=[int(self.id)])[0]['board']
 
         return en.Board(creds=self.__creds, **board_data)
+
+    def get_creator(self):
+        field_list = ['creator.' + field for field in config.DEFAULT_USER_QUERY_FIELDS]
+        user_data = client.get_items(
+            self.__creds.api_key_v2,
+            *field_list,
+            ids=[int(self.id)])[0]['creator']
+
+        return en.User(creds=self.__creds, **user_data)
    
     def get_column_values(self):
         # Pulls the columns from the board containing the item and maps 
@@ -77,7 +93,7 @@ class Item(_Item):
             value = json.loads(value)
             if type(value) is dict:
                 if columns_map[id].settings:
-                    data['settings'] = columns_map[id].settings             
+                    data['settings'] = columns_map[id].settings
             values.append(en.create_column_value(column_type, **data))
 
         return values
