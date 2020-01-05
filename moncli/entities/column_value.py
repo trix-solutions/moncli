@@ -547,16 +547,17 @@ class TeamValue(ColumnValue):
 
     @property 
     def team_id(self):
-        if self.value:
+        try:
             return loads(self.value)['team_id']
-        return self.value
+        except KeyError:
+            return None
 
     @team_id.setter
     def team_id(self, value):
-        if not value:
-            self.value = value
+        if value:
+            self.set_value(team_id=value)
         else:
-            self.value = dumps({'team_id': value})
+            self.value = self.null_value
 
     def format(self):
         if self.team_id is not None:

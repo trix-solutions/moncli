@@ -714,8 +714,7 @@ def test_should_return_status_column_value_by_index():
     index = 2
 
     # Act 
-    column_value = cv.create_column_value(column_type, id=id, title=title)
-    column_value = create_column_value(id, column_type, title, index=index, settings=o.StatusSettings(**{'labels': {'2': 'Status Two'}}))
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'index': 2}), settings=en.objects.StatusSettings(**{'labels': {'2': "Status 2"}}))
     format = column_value.format()
 
     # Assert
@@ -734,8 +733,7 @@ def test_should_return_status_column_value_by_label():
     label = 'Status 3'
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
-    column_value = create_column_value(id, column_type, title, label=label, settings=o.StatusSettings(**{'labels': {'3': 'Status 3'}}))
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'index': 3}), settings=en.objects.StatusSettings(**{'labels': {'3': "Status 3"}}))
     format = column_value.format()
 
     # Assert
@@ -754,8 +752,7 @@ def test_should_return_status_column_value_by_label_with_preference():
     label = 'Status 4'
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title, value=dumps({'index': 3}), )
-    column_value = create_column_value(id, column_type, title, label=label, index=3, settings=en.objects.StatusSettings(**{'labels': {'4': "Status 4"}}))
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'index': 4}), settings=en.objects.StatusSettings(**{'labels': {'4': "Status 4"}}))
     format = column_value.format()
 
     # Assert
@@ -792,13 +789,35 @@ def test_should_return_tags_column_value_with_tag_ids():
     
     # Act
     column_value = cv.create_column_value(column_type, id=id, title=title)
-    column_value.tag_ids = tag_ids
+    for id in tag_ids:
+        column_value.add(id)
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
     eq_(column_value.tag_ids, tag_ids)
     eq_(format, {'tag_ids': tag_ids})
+
+
+def test_should_remove_tag_ids_and_return_tags_column_value_with_remaining_tag_ids():
+
+    # Arrange
+    id = 'tags_2'
+    column_type = ColumnType.tags
+    title = 'Tags 2'
+    tag_ids = [1,2,3]
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+    for id in tag_ids:
+        column_value.add(id)
+    
+    # Act
+    column_value.remove(2)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.tag_ids, [1,3])
+    eq_(format, {'tag_ids': [1,3]})
 
 
 def test_should_return_empty_team_column_value():
@@ -828,6 +847,7 @@ def test_should_return_team_column_value_with_team_id():
     
     # Act
     column_value = cv.create_column_value(column_type, id=id, title=title)
+    column_value.team_id = team_id
     format = column_value.format()
 
     # Assert
