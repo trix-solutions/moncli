@@ -2,7 +2,8 @@ import json
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
-from moncli import MondayClient, columnvalue as cv, entities as en
+from moncli import MondayClient, entities as en
+from moncli.entities import column_value as cv
 from moncli.enums import ColumnType, BoardKind
 
 USERNAME = 'test.user@foobar.org' 
@@ -62,18 +63,14 @@ def test_item_should_get_column_values_for_status_column(get_columns, get_board,
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@patch('moncli.api_v2.get_boards')
 @raises(en.board.NotEnoughGetColumnValueParameters)
-def test_item_should_fail_to_retrieve_column_value_from_too_few_parameters(get_boards, get_items, get_me):
+def test_item_should_fail_to_retrieve_column_value_from_too_few_parameters(get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
-    get_boards.return_value = [{'id': '1', 'columns': [{'id': 'text_column_01', 'type': 'text'}]}]
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
-
-    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'text_column_01', 'title': 'Text Column 01', 'value': json.dumps('Hello, Grandma')}]}]
 
     # Act
     item.get_column_value()
@@ -81,18 +78,14 @@ def test_item_should_fail_to_retrieve_column_value_from_too_few_parameters(get_b
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@patch('moncli.api_v2.get_boards')
 @raises(en.board.TooManyGetColumnValueParameters)
-def test_item_should_fail_to_retrieve_column_value_from_too_many_parameters(get_boards, get_items, get_me):
+def test_item_should_fail_to_retrieve_column_value_from_too_many_parameters(get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
-    get_boards.return_value = [{'id': '1', 'columns': [{'id': 'text_column_01', 'type': 'text'}]}]
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
-
-    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'text_column_01', 'title': 'Text Column 01', 'value': json.dumps('Hello, Grandma')}]}]
 
     # Act
     item.get_column_value(id='text_column_01', title='Text Column 01')
@@ -100,17 +93,15 @@ def test_item_should_fail_to_retrieve_column_value_from_too_many_parameters(get_
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@patch('moncli.api_v2.get_boards')
-def test_item_should_get_column_value_by_id(get_boards, get_items, get_me):
+@patch.object(en.Item, 'get_column_values')
+def test_item_should_get_column_value_by_id(get_column_values, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
-    get_boards.return_value = [{'id': '1', 'columns': [{'id': 'text_column_01', 'type': 'text'}]}]
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_column_values.return_value = [cv.TextValue(**{'id': 'text_column_01', 'title': 'Text Column 01', 'text': 'Hello, Grandma', 'value': json.dumps('Hello, Grandma')})]
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
-
-    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'text_column_01', 'title': 'Text Column 01', 'value': json.dumps('Hello, Grandma')}]}]
 
     # Act
     column_value = item.get_column_value(id='text_column_01')
@@ -124,17 +115,15 @@ def test_item_should_get_column_value_by_id(get_boards, get_items, get_me):
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@patch('moncli.api_v2.get_boards')
-def test_item_should_get_column_value_by_title(get_boards, get_items, get_me):
+@patch.object(en.Item, 'get_column_values')
+def test_item_should_get_column_value_by_title(get_column_values, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    get_boards.return_value = [{'id': '1', 'columns': [{'id': 'text_column_01', 'type': 'text'}]}]
+    get_column_values.return_value = [cv.TextValue(**{'id': 'text_column_01', 'title': 'Text Column 01', 'text': 'Hello, Grandma', 'value': json.dumps('Hello, Grandma')})]
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
-
-    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'text_column_01', 'title': 'Text Column 01', 'value': json.dumps('Hello, Grandma')}]}]
 
     # Act
     column_value = item.get_column_value(title='Text Column 01')
@@ -148,17 +137,21 @@ def test_item_should_get_column_value_by_title(get_boards, get_items, get_me):
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@patch('moncli.api_v2.get_boards')
-def test_item_should_get_column_value_with_extra_id(get_boards, get_items, get_me):
+@patch.object(en.Item, 'get_column_values')
+def test_item_should_get_column_value_with_extra_id(get_column_values, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    get_boards.return_value = [{'id': '1', 'columns': [{'id': 'text_column_01', 'type': 'long-text'}]}]
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
-    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'text_column_01', 'title': 'Text Column 01', 'value': json.dumps({'id': '1', 'text': 'Hello, Grandma'})}]}]
+    get_column_values.return_value = [cv.LongTextValue(**{
+        'id': 'text_column_01', 
+        'title': 'Text Column 01', 
+        'text': 'Hello, Grandma', 
+        'value': json.dumps({'id': '1', 'text': 'Hello, Grandma'})})
+    ]
 
     # Act
     column_value = item.get_column_value(title='Text Column 01')
@@ -166,7 +159,7 @@ def test_item_should_get_column_value_with_extra_id(get_boards, get_items, get_m
     # Assert 
     ok_(column_value != None)
     eq_(column_value.title, 'Text Column 01')
-    eq_(column_value.text, 'Hello, Grandma')
+    eq_(column_value.long_text, 'Hello, Grandma')
     eq_(type(column_value), cv.LongTextValue)
 
 
