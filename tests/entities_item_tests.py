@@ -1,4 +1,5 @@
 import json
+
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
@@ -68,7 +69,7 @@ def test_item_should_fail_to_retrieve_column_value_from_too_few_parameters(get_i
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
@@ -83,7 +84,7 @@ def test_item_should_fail_to_retrieve_column_value_from_too_many_parameters(get_
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
@@ -195,12 +196,14 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
 @patch('moncli.api_v2.change_column_value')
-def test_item_should_change_column_value_with_string(change_column_value, get_items, get_me):
+def test_item_should_change_column_value_with_string(change_column_value, get_board, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     change_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
@@ -215,12 +218,14 @@ def test_item_should_change_column_value_with_string(change_column_value, get_it
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
 @patch('moncli.api_v2.change_multiple_column_value')
-def test_item_should_change_multiple_column_values_with_dictionary(change_multiple_column_value, get_items, get_me):
+def test_item_should_change_multiple_column_values_with_dictionary(change_multiple_column_value, get_board, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     change_multiple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
@@ -235,18 +240,20 @@ def test_item_should_change_multiple_column_values_with_dictionary(change_multip
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
 @patch('moncli.api_v2.change_multiple_column_value')
-def test_item_should_change_multiple_column_values_with_column_value_list(change_multiple_column_value, get_items, get_me):
+def test_item_should_change_multiple_column_values_with_column_value_list(change_multiple_column_value, get_board, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    get_board.return_value = en.Board(id='1', name='Test Board 01')
     change_multiple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
-    column_value = cv.create_column_value(id='text_column_01', column_type=ColumnType.text, value='Hello, world!')
+    column_value = cv.create_column_value(ColumnType.text, id='text_column_01', title='Text Column 01', text='Hello, world!', value=json.dumps('Hello, world!'))
     item = item.change_multiple_column_values([column_value])
 
     # Assert 
@@ -281,8 +288,8 @@ def test_item_should_archive_item(archive_item, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
-    archive_item.return_value = {'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    archive_item.return_value = {'id': '1', 'name': 'Test Item 01'}
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
@@ -321,7 +328,7 @@ def test_item_should_add_update(create_update, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     create_update.return_value = {'id': '1', 'body': 'This is a text body'}
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
