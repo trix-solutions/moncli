@@ -88,7 +88,7 @@ def test_should_create_an_item(create_item, create_group, create_board, get_me):
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
     create_group.return_value = {'id': 'group_01', 'title': 'Group 1'}
-    create_item.return_value = {'id': '1', 'name': 'Item 1', 'board': {'id': '1'}}
+    create_item.return_value = {'id': '1', 'name': 'Item 1'}
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
     group = board.add_group('Group 1')
@@ -115,8 +115,7 @@ def test_should_retrieve_a_list_of_items(get_items, get_boards, create_group, cr
     get_boards.return_value = [
         {'id': '1', 'groups': [
             {'id': 'group_01', 'items':[
-                {'id': '1', 'name': 'Item 1', 'board': {'id': '1'}}]}]}]
-    get_items.return_value = [{'id': '1', 'name': 'Item 1', 'board': {'id': '1'}}]
+                {'id': '1', 'name': 'Item 1'}]}]}]
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
     group = board.add_group('Group 1')

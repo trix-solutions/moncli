@@ -162,7 +162,7 @@ def test_should_get_items(get_me, get_items):
 
     # Arrange 
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
     client = MondayClient(USERNAME, '', '')
 
     # Act 
