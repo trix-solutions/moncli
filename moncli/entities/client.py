@@ -166,6 +166,14 @@ class MondayClient():
 
         return en.User(creds=self.__creds, **user_data)
 
+    def get_account(self):
+        field_list = config.DEFAULT_ACCOUNT_QUERY_FIELDS
+        account_data = client.get_account(
+            self.__creds.api_key_v2,
+            *field_list)
+
+        return en.Account(creds=self.__creds, **account_data)
+
 
 class AuthorizationError(Exception):
     def __init__(self, user_name: str):

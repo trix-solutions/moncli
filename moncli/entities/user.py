@@ -121,7 +121,7 @@ class Team(_Team):
         users_data = client.get_teams(
             self.__creds.api_key_v2, 
             *field_list,
-            ids=[int(self.id)])
+            ids=[int(self.id)])[0]['users']
 
         return [User(creds=self.__creds, **user_data) for user_data in users_data]
 

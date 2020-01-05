@@ -81,7 +81,7 @@ def test_team_should_retrieve_list_of_users(get_users, get_teams, get_me):
     client = MondayClient(USERNAME, '', '')
     team = client.get_teams()[0]
 
-    get_users.return_value = [{'id': '1', 'users':[{'id': '1', 'email': 'test.user@foobar.org'}]}]
+    get_teams.return_value = [{'id': '1', 'users':[{'id': '1', 'email': 'test.user@foobar.org'}]}]
 
     # Act 
     users = team.get_users()
@@ -93,24 +93,21 @@ def test_team_should_retrieve_list_of_users(get_users, get_teams, get_me):
 
 
 @patch.object(MondayClient, 'get_me')
-@patch('moncli.api_v2.get_users')
-def test_account_should_get_plan_info(get_users, get_me):
+@patch('moncli.api_v2.get_account')
+def test_account_should_get_plan_info(get_account, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_users.return_value = [{'id': '1', 'email': 'test.user@foobar.org', 'teams': [{'id': '1'}]}]
     client = MondayClient(USERNAME, '', '')
-    user = client.get_users()[0]
 
-    get_users.return_value = [{'id': '1', 'account': {'id': '1', 'name': 'Account 1', 'first_day_of_the_week': None, 'show_timeline_weekends': None, 'slug': None}}]
-    account = user.get_account()
+    get_account.return_value = {'id': '1', 'name': 'Account 1', 'first_day_of_the_week': None, 'show_timeline_weekends': None, 'slug': None}
+    account = client.get_account()
 
-    get_users.return_value = [{'id': '1', 'account': {'plan': {'max_users': 1}}}]
+    get_account.return_value = {'id': '1', 'plan': {'max_users': 1}}
 
     # Act
     plan = account.get_plan()
     
-
     # Assert
     ok_(plan != None)
     eq_(plan.max_users, 1)

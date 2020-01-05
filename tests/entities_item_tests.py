@@ -10,16 +10,18 @@ GET_ME_RETURN_VALUE = en.User(**{'creds': None, 'id': '1', 'email': USERNAME})
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@patch('moncli.api_v2.get_boards')
-def test_item_should_get_column_values(get_boards, get_items, get_me):
+@patch.object(en.Item, 'get_board')
+@patch.object(en.Board, 'get_columns')
+def test_item_should_get_column_values(get_columns, get_board, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    get_boards.return_value = [{'id': '1', 'columns': [{'id': 'text_column_01', 'type': 'text'}]}]
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
+    get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
+    get_columns.return_value = [en.Column({'id': 'text_column_01', 'type': 'text'})]
     get_items.return_value = [{'id': '1', 'column_values': [{'id': 'text_column_01', 'title': 'Text Column 01', 'value': json.dumps('Hello, Grandma')}]}]
 
     # Act
@@ -29,21 +31,23 @@ def test_item_should_get_column_values(get_boards, get_items, get_me):
     ok_(column_values != None)
     eq_(len(column_values), 1)
     eq_(column_values[0].title, 'Text Column 01')
-    eq_(column_values[0].text, 'Hello, Grandma')
+    eq_(column_values[0].text_value, 'Hello, Grandma')
 
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@patch('moncli.api_v2.get_boards')
-def test_item_should_get_column_values_for_status_column(get_boards, get_items, get_me):
+@patch.object(en.Item, 'get_board')
+@patch.object(en.Board, 'get_columns')
+def test_item_should_get_column_values_for_status_column(get_columns, get_board, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    get_boards.return_value = [{'id': '1', 'columns': [{'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})}]}]
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
+    get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
+    get_columns.return_value = [en.Column({'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})})]
     get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'value': json.dumps({'index': 1})}]}]
 
     # Act
