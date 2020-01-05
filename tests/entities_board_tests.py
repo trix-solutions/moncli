@@ -1,7 +1,10 @@
+import json
+
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
-from moncli import MondayClient, entities as en, columnvalue as cv
+from moncli import MondayClient, entities as en
+from moncli.entities import column_value as cv
 from moncli.enums import ColumnType, BoardKind
 
 USERNAME = 'test.user@foobar.org' 
@@ -17,7 +20,7 @@ def test_should_add_new_column(create_column, create_board, get_me):
     column_type = ColumnType.text
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
-    create_column.return_value = {'id': '1', 'title': title, 'type': column_type}
+    create_column.return_value = {'id': '1', 'title': title, 'type': column_type.name}
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 
@@ -27,20 +30,20 @@ def test_should_add_new_column(create_column, create_board, get_me):
     # Assert
     ok_(column != None)
     eq_(column.title, title)
-    eq_(column.type, column_type)
+    eq_(column.column_type, column_type)
 
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.create_board')
 @patch('moncli.api_v2.get_boards')
-def test_should_retrieve_list_of_columns(get_columns, create_board, get_me):
+def test_should_retrieve_list_of_columns(get_boards, create_board, get_me):
 
     # Arrange
     title = 'Text Column 1'
     column_type = ColumnType.text
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
-    get_columns.return_value = [{'id': '1', 'columns': [{'id': '1', 'title': title, 'type': column_type}]}]
+    get_boards.return_value = [{'id': '1', 'columns': [{'id': '1', 'title': title, 'type': column_type.name}]}]
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 
@@ -51,7 +54,7 @@ def test_should_retrieve_list_of_columns(get_columns, create_board, get_me):
     ok_(columns != None)
     eq_(len(columns), 1)
     eq_(columns[0].title, title)
-    eq_(columns[0].type, column_type)
+    eq_(columns[0].column_type, column_type)
 
 
 @patch.object(MondayClient, 'get_me')
@@ -183,7 +186,7 @@ def test_should_create_an_item(create_item, create_board, get_me):
     name = 'Item 1'
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
-    create_item.return_value = {'id': '1', 'name': name, 'board': {'id': board_id}}
+    create_item.return_value = {'id': '1', 'name': name}
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 
@@ -206,7 +209,7 @@ def test_board_should_create_an_item_within_group(create_item, create_board, get
     group_id = 'group2'
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
-    create_item.return_value = {'id': '2', 'name': name, 'board': {'id': board_id}}
+    create_item.return_value = {'id': '2', 'name': name}
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 
@@ -229,7 +232,7 @@ def test_board_should_create_an_item_with_dict_column_values(create_item, create
     group_id = 'group2'
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
-    create_item.return_value = {'id': '3', 'name': name, 'board': {'id': board_id}}
+    create_item.return_value = {'id': '3', 'name': name}
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 
@@ -252,10 +255,10 @@ def test_board_should_create_an_item_with_list_column_values(create_item, create
     group_id = 'group2'
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
-    create_item.return_value = {'id': '4', 'name': name, 'board': {'id': board_id}}
+    create_item.return_value = {'id': '4', 'name': name}
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
-    status_column = cv.create_column_value('status', ColumnType.status, 'Status', index=0, settings=en.objects.StatusSettings(labels={'0':'Test'}))
+    status_column = cv.create_column_value(ColumnType.status, id='status', title='Status', value=json.dumps({'index': 0}), settings=en.objects.StatusSettings({'labels': {'0':'Test'}}))
 
     # Act 
     item = board.add_item(name, group_id=group_id, column_values=[status_column])
@@ -275,7 +278,7 @@ def test_should_retrieve_a_list_of_items(get_boards, create_board, get_me):
     name = 'Item 1'
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
-    get_boards.return_value = [{'id': '1', 'items': [{'id': '1', 'name': name, 'board': {'id': board_id}}]}]
+    get_boards.return_value = [{'id': '1', 'items': [{'id': '1', 'name': name}]}]
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 
@@ -298,12 +301,12 @@ def test_should_retrieve_a_list_of_items_by_column_value(get_items_by_column_val
     name = 'Item 1'
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
-    get_items_by_column_values.return_value = [{'id': '1', 'name': name, 'board': {'id': board_id}}]
+    get_items_by_column_values.return_value = [{'id': '1', 'name': name}]
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 
     # Act 
-    column_value = cv.create_column_value('text_column_01', ColumnType.text, value='Some Value')
+    column_value = cv.create_column_value(ColumnType.text, id='text_column_01', title='Text Column 01', text='Some Value', value=json.dumps('Some Value'))
     items = board.get_items_by_column_values(column_value)
 
     # Assert
@@ -372,7 +375,7 @@ def test_should_get_column_value_by_title(get_columns, create_board, get_me):
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
-    get_columns.return_value = [en.Column(**{'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})]
+    get_columns.return_value = [en.Column({'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})]
     client = MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
 

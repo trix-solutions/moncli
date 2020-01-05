@@ -182,7 +182,7 @@ class Board(_Board):
         if column_type == enums.ColumnType.status:
             kwargs['settings'] = column.settings
         
-        return cv.create_column_value(enums.ColumnType[column_type], **kwargs)
+        return cv.create_column_value(column_type, id=column.id, title=column.title)
 
         
 class TooManyGetGroupParameters(Exception):
