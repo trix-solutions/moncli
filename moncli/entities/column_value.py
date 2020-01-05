@@ -228,7 +228,7 @@ class EmailValue(ColumnValue):
         try:
             return loads(self.value)['text']
         except KeyError:
-            return None
+            return self.email
 
     @email_text.setter
     def email_text(self, value):
@@ -236,7 +236,7 @@ class EmailValue(ColumnValue):
     
     def format(self):
         if self.email:  
-            return { 'email': self.email, 'text': self.text }
+            return { 'email': self.email, 'text': self.email_text }
         return {}
 
 
@@ -269,7 +269,7 @@ class HourValue(ColumnValue):
     def format(self):
         if self.hour:
             return { 'hour': self.hour, 'minute': self.minute }
-        return self.null_value
+        return loads(self.null_value)
 
 
 class LinkValue(ColumnValue):
@@ -292,7 +292,7 @@ class LinkValue(ColumnValue):
         try:
             return loads(self.value)['text']
         except KeyError:
-            return None
+            return self.url
 
     @url_text.setter
     def url_text(self, value):
@@ -300,8 +300,8 @@ class LinkValue(ColumnValue):
 
     def format(self):
         if self.url:
-            return { 'url': self.url, 'text': self.text }
-        return self.null_value
+            return { 'url': self.url, 'text': self.url_text }
+        return loads(self.null_value)
 
 
 class LongTextValue(ColumnValue):
@@ -325,10 +325,12 @@ class LongTextValue(ColumnValue):
     def format(self):
         if self.long_text:
             return {'text': self.long_text}
-        return self.null_value
+        return loads(self.null_value)
 
 
 class NameValue(ColumnValue):
+    null_value = ''
+
     def __init__(self, **kwargs):
         super(NameValue, self).__init__(**kwargs)
 
@@ -340,7 +342,8 @@ class NameValue(ColumnValue):
     def name(self, value):
         if value:
             self.set_value(value)
-        self.value = self.null_value
+        else:
+            self.set_value(self.null_value)
     
     def format(self):
         return self.name
@@ -451,7 +454,7 @@ class PhoneValue(ColumnValue):
     def format(self):
         if self.phone and self.country_short_name:
             return { 'phone': self.phone, 'countryShortName': self.country_short_name }
-        return self.null_value
+        return { 'phone': '', 'countryShortName': '' }
 
 
 class RatingValue(ColumnValue):
@@ -562,6 +565,7 @@ class TeamValue(ColumnValue):
 
 
 class TextValue(ColumnValue):
+    null_value = ''
     def __init__(self, **kwargs):
         super(TextValue, self).__init__(**kwargs)
 
@@ -572,13 +576,25 @@ class TextValue(ColumnValue):
         return self.value
 
     @text_value.setter
+    def text_value(self, value):
+        if value:
+            self.value = dumps(value)
+        else:
+            self.value = dumps(self.null_value)
+
+    @text_value.setter
     def text_value(self, value: str):
         if value:
             self.text = value
             self.value = dumps(value)
         else:
             self.text = ''
-            self.value = None
+            self.value = self.null_value
+
+    def format(self):
+        if self.value is self.null_value:
+            return self.value
+        return loads(self.value)
 
 
 class TimelineValue(ColumnValue):
@@ -599,6 +615,8 @@ class TimelineValue(ColumnValue):
         except ValueError:
             raise DateFormatError(value)
 
+        self.set_value(**{'from': value})
+
     @property
     def to_date(self):
         try:
@@ -613,10 +631,12 @@ class TimelineValue(ColumnValue):
         except ValueError:
             raise DateFormatError(value)
 
+        self.set_value(to=value)
+
     def format(self):
         if self.from_date and self.to_date:
             return { 'from': self.from_date, 'to': self.to_date }
-        return self.null_value
+        return loads(self.null_value)
         
 
 class TimezoneValue(ColumnValue):
