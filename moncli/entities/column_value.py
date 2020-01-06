@@ -168,8 +168,11 @@ class DropdownValue(ColumnValue):
 
     @property
     def labels(self):
-        ids = loads(self.value)['ids']
-        return [label for label in self.__settings.labels if label.id in ids]
+        try:
+            ids = loads(self.value)['ids']
+            return [label for label in self.__settings.labels if label.id in ids]
+        except KeyError:
+            return []
 
     def format(self):
         if len(self.labels) == 0:

@@ -161,13 +161,12 @@ def test_should_return_empty_dropdown_column_value():
     title = 'Dropdown One'
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings)
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
-    eq_(column_value.label, None)
-    eq_(column_value.ids, None)
+    eq_(column_value.labels, [])
     eq_(format, {})
 
 
@@ -177,56 +176,20 @@ def test_should_return_dropdown_column_value_by_ids():
     id = 'dropdown_2'
     column_type = ColumnType.dropdown
     title = 'Dropdown Two'
-    ids = [1,2,3]
+    ids = {'ids': [1]}
 
     # Act 
-    column_value = column_value = cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(ids), settings=en.objects.DropdownSettings({
+        'labels': [
+            {'id': 1, 'name': 'Label 1'}
+        ]
+    }))
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
-    eq_(column_value.ids, [1,2,3])
-    eq_(column_value.label, None)
-    eq_(format, {'ids': [1,2,3]})
-
-
-def test_should_return_dropdown_column_value_by_label():
-
-    # Arrange
-    id = 'dropdown_3'
-    column_type = ColumnType.dropdown
-    title = 'Dropdown Three'
-    label = 'Status 1'
-
-    # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
-    format = column_value.format()
-
-    # Assert
-    ok_(column_value != None)
-    eq_(column_value.ids, None)
-    eq_(column_value.label, label)
-    eq_(format, {'label': label})
-
-
-def test_should_return_dropdown_column_value_by_label_with_preference():
-
-    # Arrange
-    id = 'dropdown_4'
-    column_type = ColumnType.dropdown
-    title = 'Dropdown Four'
-    label = 'Status 2'
-    ids = [1,2,3]
-
-    # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
-    format = column_value.format()
-
-    # Assert
-    ok_(column_value != None)
-    eq_(column_value.ids, None)
-    eq_(column_value.label, label)
-    eq_(format, {'label': label})
+    eq_(column_value.labels, [en.objects.DropdownLabel({'id': 1, 'name': 'Label 1'})])
+    eq_(format, ids)
     
 
 def test_should_return_empty_email_column_value():
