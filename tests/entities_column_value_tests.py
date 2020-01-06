@@ -689,71 +689,40 @@ def test_should_return_empty_status_column_value():
     title = 'Status One'
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title, additional_info=json.dumps({}), settings=None)
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
     eq_(column_value.index, None)
     eq_(column_value.label, None)
-    eq_(format, {'label': ''})
+    eq_(format, {})
 
 
-def test_should_return_status_column_value_by_index():
+def test_should_return_status_column_value():
 
     # Arrange
     id = 'status_2'
     column_type = ColumnType.status
     title = 'Status Two'
+    label = 'Status 2'
     index = 2
 
     # Act 
-    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'index': 2}), settings=en.objects.StatusSettings(**{'labels': {'2': "Status 2"}}))
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        value=json.dumps({'index': index}), 
+        additional_info=json.dumps({'label': label}), 
+        settings=en.objects.StatusSettings({'labels': {'2': label}}))
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
     eq_(column_value.index, index)
-    eq_(column_value.label, None)
+    eq_(column_value.label, label)
     eq_(format, {'index': index})
-
-
-def test_should_return_status_column_value_by_label():
-
-    # Arrange
-    id = 'status_3'
-    column_type = ColumnType.status
-    title = 'Status Three'
-    label = 'Status 3'
-
-    # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'index': 3}), settings=en.objects.StatusSettings(**{'labels': {'3': "Status 3"}}))
-    format = column_value.format()
-
-    # Assert
-    ok_(column_value != None)
-    eq_(column_value.index, 3)
-    eq_(column_value.label, label)
-    eq_(format, {'label': label})
-
-
-def test_should_return_status_column_value_by_label_with_preference():
-
-    # Arrange
-    id = 'status_4'
-    column_type = ColumnType.status
-    title = 'Status Four'
-    label = 'Status 4'
-
-    # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'index': 4}), settings=en.objects.StatusSettings(**{'labels': {'4': "Status 4"}}))
-    format = column_value.format()
-
-    # Assert
-    ok_(column_value != None)
-    eq_(column_value.index, 4)
-    eq_(column_value.label, label)
-    eq_(format, {'label': label})
 
 
 def test_should_return_empty_tags_column_value():

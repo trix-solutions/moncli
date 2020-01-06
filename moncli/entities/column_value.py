@@ -496,28 +496,33 @@ class StatusValue(ColumnValue):
 
     @property
     def index(self):
-        return loads(self.value)['index']
+        try:
+            return loads(self.value)['index']
+        except KeyError: 
+            return None
 
     @index.setter
     def index(self, index: int):
-        value = loads(self.value)
-        value['index'] = index
-        value['label'] = self.__settings.labels[str(index)]
-        self.value = dumps(value)
+        self.set_value(index=index, label=self.__settings.labels[str(index)])
 
     @property
     def label(self):
         try:
             return loads(self.value)['label']
         except KeyError:
-            return loads(self.additional_info)['label']
+            try:
+                return loads(self.additional_info)['label']
+            except KeyError:
+                return None
 
     @label.setter
     def label(self, label: str):    
-        value = loads(self.value)
-        value['index'] = self.__settings.get_index(label)
-        value['label'] = label
-        self.value = dumps(value)
+        self.set_value(index=self.__settings.get_index(label), label=label)
+
+    def format(self):
+        if self.index:
+            return {'index': self.index}
+        return loads(self.null_value)
         
 
 class TagsValue(ColumnValue):
