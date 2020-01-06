@@ -545,7 +545,7 @@ def test_should_return_an_empty_people_column_value():
 
     # Assert
     ok_(column_value != None)
-    eq_(column_value.persons_and_teams, None)
+    eq_(column_value.persons_and_teams, [])
     eq_(format, {})
 
 
@@ -555,7 +555,7 @@ def test_should_return_a_people_column_value_with_persons_and_teams():
     id = 'people_1'
     column_type = ColumnType.people
     title = 'People 1'
-    persons_and_teams = [{'id': 1, 'kind': PeopleKind.person.name}]
+    persons_and_teams = {'personsAndTeams': [{'id': 1, 'kind': PeopleKind.person.name}]}
 
     # Act
     column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(persons_and_teams))
@@ -563,27 +563,8 @@ def test_should_return_a_people_column_value_with_persons_and_teams():
 
     # Assert
     ok_(column_value != None)
-    eq_(column_value.persons_and_teams, persons_and_teams)
-    eq_(format, {'personsAndTeams': persons_and_teams})
-
-
-def test_should_return_an_empty_people_column_value_after_remove():
-
-    # Arrange
-    id = 'people_2'
-    column_type = ColumnType.people
-    title = 'People 2'
-    persons_and_teams = [{'id': '1', 'kind': PeopleKind.person.name}]
-    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(persons_and_teams))
-
-    # Act
-    column_value.remove_people(en.User(creds=None, id='1'))
-    format = column_value.format()
-
-    # Assert
-    ok_(column_value != None)
-    eq_(column_value.persons_and_teams, None)
-    eq_(format, {})
+    eq_(column_value.persons_and_teams, persons_and_teams['personsAndTeams'])
+    eq_(format, persons_and_teams)
 
 
 def test_should_return_a_people_column_value_with_added_persons_and_teams():
@@ -603,6 +584,25 @@ def test_should_return_a_people_column_value_with_added_persons_and_teams():
     ok_(column_value != None)
     eq_(column_value.persons_and_teams, persons_and_teams)
     eq_(format, {'personsAndTeams': persons_and_teams})
+
+
+def test_should_return_an_empty_people_column_value_after_remove():
+
+    # Arrange
+    id = 'people_2'
+    column_type = ColumnType.people
+    title = 'People 2'
+    persons_and_teams = {'personsAndTeams': [{'id': '1', 'kind': PeopleKind.person.name}]}
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(persons_and_teams))
+
+    # Act
+    column_value.remove_people(1)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.persons_and_teams, [])
+    eq_(format, {})
 
 
 def test_should_return_an_empty_phone_column_value():

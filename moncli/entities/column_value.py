@@ -400,9 +400,10 @@ class PeopleValue(ColumnValue):
     
     @property
     def persons_and_teams(self):
-        if self.value:
+        try:
             return loads(self.value)['personsAndTeams']
-        return self.value  
+        except KeyError:
+            return [] 
 
     def format(self):
         if self.persons_and_teams:
@@ -410,18 +411,17 @@ class PeopleValue(ColumnValue):
         return {}
 
     def add_people(self, person_or_team):
-        if type(person_or_team) is type(en.User):
-            kind = enums.PeopleKind.person
-        elif type(person_or_team) is type(en.Team):
+        kind = enums.PeopleKind.person
+        if type(person_or_team) is type(en.Team):
             kind = enums.PeopleKind.team
         persons_and_teams = self.persons_and_teams
-        persons_and_teams.append({'id': person_or_team.id, 'kind': kind.name})
+        persons_and_teams.append({'id': int(person_or_team.id), 'kind': kind.name})
         self.set_value(personsAndTeams=persons_and_teams)
 
     def remove_people(self, id: int):
         persons_and_teams = []
         for entity in self.persons_and_teams:
-            if entity.id != id:
+            if int(entity['id']) != id:
                 persons_and_teams.append(entity)
         self.set_value(personsAndTeams=persons_and_teams)
 
