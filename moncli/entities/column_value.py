@@ -62,8 +62,9 @@ class CheckboxValue(ColumnValue):
     def checked(self, value: bool):
         if value:
             self.set_value(checked=value)
-        else:
-            self.value = self.null_value
+            return
+        self.set_value()
+
     
     def format(self):
         if self.checked:
@@ -131,11 +132,11 @@ class DateValue(ColumnValue):
 
     @date.setter
     def date(self, value):
-        try:
-            datetime.strptime(value, '%Y-%m-%d')
-        except ValueError:
-            raise DateFormatError(value)
-
+        if value:
+            try:
+                datetime.strptime(value, '%Y-%m-%d')
+            except ValueError:
+                raise DateFormatError(value)
         self.set_value(date=value)
 
     @property
@@ -147,11 +148,11 @@ class DateValue(ColumnValue):
 
     @time.setter
     def time(self, value):
-        try:
-            datetime.strptime(value, '%H:%M:%S')
-        except ValueError:
-            raise TimeFormatError(value)
-
+        if value:
+            try:
+                datetime.strptime(value, '%H:%M:%S')
+            except ValueError:
+                raise TimeFormatError(value)
         self.set_value(time=value)
 
     def format(self):
@@ -198,7 +199,7 @@ class DropdownValue(ColumnValue):
         if label.id in value['ids']:
             raise DropdownLabelSetError(id)
         value['ids'].append(label.id)
-        self.value = dumps(value)
+        self.set_value(ids=value['ids'])
 
     def remove_label(self, id: int):
         try:
@@ -210,7 +211,7 @@ class DropdownValue(ColumnValue):
         if label.id not in value['ids']:
             raise DropdownLabelNotSetError(id)
         value['ids'].remove(label.id)
-        self.value = dumps(value)
+        self.set_value(ids=value['ids'])
 
 
 class EmailValue(ColumnValue):
@@ -270,7 +271,10 @@ class HourValue(ColumnValue):
 
     @minute.setter
     def minute(self, value: int):
-        self.set_value(minute=value)
+        if value:
+            self.set_value(minute=value)
+            return
+        self.set_value(minute=0)
 
     def format(self):
         if self.hour:
@@ -325,8 +329,8 @@ class LongTextValue(ColumnValue):
     def long_text(self, value):
         if value:
             self.set_value(text=value)
-        else:
-            self.value = dumps(self.null_value)
+            return
+        self.set_value()
 
     def format(self):
         if self.long_text:

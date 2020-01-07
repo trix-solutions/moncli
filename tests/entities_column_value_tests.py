@@ -52,6 +52,24 @@ def test_should_return_checked_checkbox_column_value():
     ok_(column_value != None)
     eq_(column_value.checked, True)
     eq_(format, {'checked': 'true'})
+
+
+def test_should_return_empty_checkbox_column_value_after_setting_value_to_none():
+
+    # Arrange
+    id = 'checkbox_3'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'checked': True}))
+
+    # Act
+    column_value.checked = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.checked, False)
+    eq_(format, {})
     
 
 def test_should_return_an_empty_country_column_value():
@@ -259,6 +277,28 @@ def test_should_return_empty_date_column_value_if_only_time_is_set():
     ok_(column_value != None)
     eq_(column_value.date, None)
     eq_(column_value.time, time)
+    eq_(format, {})
+
+
+def test_should_return_empty_date_column_value_if_date_and_time_are_set_to_null():
+
+    # Arrange
+    id = 'date_5'
+    column_type = ColumnType.date
+    title = 'Date'
+    date = '1990-08-30'
+    time = '04:15:00'
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'date': date, 'time': time}))
+
+    # Act
+    column_value.date = None
+    column_value.time = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.date, None)
+    eq_(column_value.time, None)
     eq_(format, {})
 
 
@@ -485,6 +525,28 @@ def test_should_return_empty_email_column_value_when_only_text_is_set():
     eq_(format, {})
 
 
+def test_should_return_empty_email_column_value_when_email_and_text_are_set_to_null():
+
+    # Arrange
+    id = 'email_4'
+    column_type = ColumnType.email
+    title = 'Email Four'
+    email = 'email@test.com'
+    text = 'Test Email'
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'email': email, 'text': text}))
+
+    # Act
+    column_value.email = None
+    column_value.email_text = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.email, None)
+    eq_(column_value.email_text, None)
+    eq_(format, {})
+
+
 def test_should_return_empty_hour_column_value():
 
     # Arrange
@@ -564,12 +626,32 @@ def test_should_return_empty_hour_column_value_with_set_minute():
     eq_(format, {})
 
 
+def test_should_return_empty_hour_column_value_when_hour_and_minute_set_to_null():
+
+    # Arrange
+    id = 'hour_4'
+    column_type = ColumnType.hour
+    title = 'Hour Four'
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'hour': 1, 'minute': 1}))
+
+    # Act
+    column_value.hour = None
+    column_value.minute = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.hour, None)
+    eq_(column_value.minute, 0)
+    eq_(format, {})
+
+
 def test_should_return_empty_link_column_value():
 
     # Arrange
     id = 'link_1'
     column_type = ColumnType.link
-    title = 'Link One'
+    title = 'Link'
     column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
@@ -587,7 +669,7 @@ def test_should_return_link_column_value_with_url():
     # Arrange
     id = 'link_2'
     column_type = ColumnType.link
-    title = 'Link Two'
+    title = 'Link'
     url = 'https://link.two'
     column_value = cv.create_column_value(column_type, id=id, title=title)
 
@@ -607,9 +689,9 @@ def test_should_return_link_column_value_with_url_and_text():
     # Arrange
     id = 'link_3'
     column_type = ColumnType.link
-    title = 'Link Three'
+    title = 'Link'
     url = 'https://link.three'
-    text = 'Link Three'
+    text = 'Link'
     column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
@@ -629,8 +711,8 @@ def test_should_return_empty_link_column_value_with_set_text():
     # Arrange
     id = 'link_4'
     column_type = ColumnType.link
-    title = 'Link Four'
-    text = 'Link Four'
+    title = 'Link'
+    text = 'Link'
     column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
@@ -641,6 +723,28 @@ def test_should_return_empty_link_column_value_with_set_text():
     ok_(column_value != None)
     eq_(column_value.url, None)
     eq_(column_value.url_text, text)
+    eq_(format, {})
+
+
+def test_should_return_empty_link_column_value_when_url_and_text_set_to_null():
+
+    # Arrange
+    id = 'link_4'
+    column_type = ColumnType.link
+    title = 'Link'
+    url = 'https://link.two'
+    text = 'Link'
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'url': url, 'text': text}))
+
+    # Act
+    column_value.url = None
+    column_value.url_text = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.url, None)
+    eq_(column_value.url_text, None)
     eq_(format, {})
 
 
