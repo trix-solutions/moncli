@@ -449,9 +449,9 @@ def test_should_return_empty_hour_column_value():
     id = 'hour_1'
     column_type = ColumnType.hour
     title = 'Hour One'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -468,9 +468,9 @@ def test_should_return_hour_column_value_with_hour_and_default_minute():
     column_type = ColumnType.hour
     title = 'Hour Two'
     hour = '6'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.hour = hour
     format = column_value.format()
 
@@ -489,9 +489,9 @@ def test_should_return_hour_column_value_with_hour_and_minute():
     title = 'Hour Tree'
     hour = '7'
     minute = '6'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.hour = hour
     column_value.minute = minute
     format = column_value.format()
@@ -501,6 +501,25 @@ def test_should_return_hour_column_value_with_hour_and_minute():
     eq_(column_value.hour, hour)
     eq_(column_value.minute, minute)
     eq_(format, {'hour': hour, 'minute': minute})
+
+
+def test_should_return_empty_hour_column_value_with_set_minute():
+
+    # Arrange
+    id = 'hour_1'
+    column_type = ColumnType.hour
+    title = 'Hour One'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.minute = 25
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.hour, None)
+    eq_(column_value.minute, 25)
+    eq_(format, {})
 
 
 def test_should_return_empty_link_column_value():
