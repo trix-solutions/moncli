@@ -754,9 +754,9 @@ def test_should_return_an_empty_long_text_column_value():
     id = 'long_text_0'
     column_type = ColumnType.long_text
     title = 'Long Test 0'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -772,9 +772,9 @@ def test_should_return_long_text_column_value_with_text():
     column_type = ColumnType.long_text
     title = 'Long Test 1'
     text = 'LOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.long_text = text
     format = column_value.format()
 
@@ -782,6 +782,25 @@ def test_should_return_long_text_column_value_with_text():
     ok_(column_value != None)
     eq_(column_value.long_text, text)
     eq_(format, {'text': text})
+
+
+def test_should_return_empty_long_text_column_value_when_text_set_to_null():
+
+    # Arrange
+    id = 'long_text_1'
+    column_type = ColumnType.long_text
+    title = 'Long Test 1'
+    text = 'LOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG'
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'text': text}))
+
+    # Act
+    column_value.long_text = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.long_text, None)
+    eq_(format, {})
     
 
 def test_should_return_name_column_value_with_name():
