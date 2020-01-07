@@ -300,9 +300,9 @@ def test_should_return_empty_email_column_value():
     id = 'email_1'
     column_type = ColumnType.email
     title = 'Email One'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -319,9 +319,9 @@ def test_should_return_email_column_value_with_email():
     column_type = ColumnType.email
     title = 'Email Two'
     email = 'email@test.com'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.email = email
     format = column_value.format()
 
@@ -335,14 +335,14 @@ def test_should_return_email_column_value_with_email():
 def test_should_return_email_column_value_with_email_and_text():
 
     # Arrange
-    id = 'email_2'
+    id = 'email_3'
     column_type = ColumnType.email
-    title = 'Email Two'
+    title = 'Email Three'
     email = 'email@test.com'
     text = 'Test Email'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.email = email
     column_value.email_text = text
     format = column_value.format()
@@ -352,6 +352,26 @@ def test_should_return_email_column_value_with_email_and_text():
     eq_(column_value.email, email)
     eq_(column_value.email_text, text)
     eq_(format, {'email': email, 'text': text})
+
+
+def test_should_return_empty_email_column_value_when_only_text_is_set():
+
+    # Arrange
+    id = 'email_4'
+    column_type = ColumnType.email
+    title = 'Email Four'
+    text = 'Test Email'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.email_text = text
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.email, None)
+    eq_(column_value.email_text, text)
+    eq_(format, {})
 
 
 def test_should_return_empty_hour_column_value():
