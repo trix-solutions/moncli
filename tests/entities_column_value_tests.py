@@ -1330,10 +1330,10 @@ def test_should_return_empty_week_column_value():
     # Arrange
     id = 'week_1'
     column_type = ColumnType.week
-    title = 'Week 1'
+    title = 'Week'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -1343,12 +1343,38 @@ def test_should_return_empty_week_column_value():
     eq_(format, {})
 
 
+@raises(cv.DateFormatError)
+def test_should_raise_date_format_error_on_setting_start_date():
+
+    # Arrange
+    id = 'week_2'
+    column_type = ColumnType.week
+    title = 'Week'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.start_date = 'poop'
+
+
+@raises(cv.DateFormatError)
+def test_should_raise_date_format_error_on_setting_end_date():
+
+    # Arrange
+    id = 'week_3'
+    column_type = ColumnType.week
+    title = 'Week'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.end_date = 'poop'
+
+
 def test_should_return_week_column_value_with_data():
 
     # Arrange
-    id = 'week_1'
+    id = 'week_4'
     column_type = ColumnType.week
-    title = 'Week 1'
+    title = 'Week'
     start_date = '2019-10-21'
     end_date = '2019-10-27'
     column_value = cv.create_column_value(column_type, id=id, title=title)
@@ -1363,3 +1389,43 @@ def test_should_return_week_column_value_with_data():
     eq_(column_value.start_date, start_date)
     eq_(column_value.end_date, end_date)
     eq_(format, {'week': {'startDate': start_date, 'endDate': end_date}})
+
+
+def test_should_return_empty_week_column_value_when_only_start_date_set():
+
+    # Arrange
+    id = 'week_5'
+    column_type = ColumnType.week
+    title = 'Week'
+    start_date = '2019-10-21'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.start_date = start_date
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.start_date, start_date)
+    eq_(column_value.end_date, None)
+    eq_(format, {})
+
+
+def test_should_return_empty_week_column_value_when_only_end_date_set():
+
+    # Arrange
+    id = 'week_6'
+    column_type = ColumnType.week
+    title = 'Week'
+    end_date = '2019-10-27'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.end_date = end_date
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.start_date, None)
+    eq_(column_value.end_date, end_date)
+    eq_(format, {})
