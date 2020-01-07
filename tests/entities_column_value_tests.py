@@ -1452,10 +1452,10 @@ def test_should_return_empty_team_column_value():
     # Arrange
     id = 'team_1'
     column_type = ColumnType.team
-    title = 'Team 1'
+    title = 'Team'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -1469,11 +1469,11 @@ def test_should_return_team_column_value_with_team_id():
     # Arrange
     id = 'team_2'
     column_type = ColumnType.team
-    title = 'Team 2'
+    title = 'Team'
     team_id = 12345
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.team_id = team_id
     format = column_value.format()
 
@@ -1481,6 +1481,25 @@ def test_should_return_team_column_value_with_team_id():
     ok_(column_value != None)
     eq_(column_value.team_id, team_id)
     eq_(format, {'team_id': team_id})
+
+
+def test_should_return_empty_team_column_value_when_team_id_set_to_none():
+
+    # Arrange
+    id = 'team_2'
+    column_type = ColumnType.team
+    title = 'Team'
+    team_id = 12345
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'team_id': team_id}))
+    
+    # Act
+    column_value.team_id = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.team_id, None)
+    eq_(format, {})
 
 
 def test_should_return_empty_text_column_value():

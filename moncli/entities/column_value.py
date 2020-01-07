@@ -584,12 +584,12 @@ class TeamValue(ColumnValue):
         if value:
             self.set_value(team_id=value)
         else:
-            self.value = self.null_value
+            self.set_value()
 
     def format(self):
         if self.team_id is not None:
             return { 'team_id': self.team_id }
-        return {}
+        return self.null_value
 
 
 class TextValue(ColumnValue):
