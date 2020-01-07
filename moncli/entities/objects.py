@@ -118,3 +118,4 @@ class DropdownSettings(Model):
         for label in self.labels:
             if label.id is id:
                 return label
+        raise KeyError

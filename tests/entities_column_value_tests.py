@@ -249,12 +249,47 @@ def test_should_return_empty_dropdown_column_value():
     eq_(format, {})
 
 
-def test_should_add_label_to_dropdown_column_value():
+@raises(cv.DropdownLabelError)
+def test_should_raise_dropdown_label_error_when_adding_label():
 
     # Arrange
     id = 'dropdown_3'
     column_type = ColumnType.dropdown
     title = 'Dropdown Three'
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({
+        'labels': [
+            {'id': 1, 'name': 'Label 1'}
+        ]
+    }))
+
+    # Act 
+    column_value.add_label(2)
+
+
+@raises(cv.DropdownLabelSetError)
+def test_should_raise_dropdown_label_set_error():
+
+    # Arrange
+    id = 'dropdown_3'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown Four'
+    ids = {'ids': [1]}
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(ids), settings=en.objects.DropdownSettings({
+        'labels': [
+            {'id': 1, 'name': 'Label 1'}
+        ]
+    }))
+
+    # Act 
+    column_value.add_label(1)
+
+
+def test_should_add_label_to_dropdown_column_value():
+
+    # Arrange
+    id = 'dropdown_5'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown Five'
     column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({
         'labels': [
             {'id': 1, 'name': 'Label 1'}
@@ -271,12 +306,46 @@ def test_should_add_label_to_dropdown_column_value():
     eq_(format, {'ids': [1]})
 
 
+@raises(cv.DropdownLabelError)
+def test_should_raise_dropdown_label_error_when_removing_label():
+
+    # Arrange
+    id = 'dropdown_6'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown Six'
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({
+        'labels': [
+            {'id': 1, 'name': 'Label 1'}
+        ]
+    }))
+
+    # Act 
+    column_value.remove_label(2)
+
+
+@raises(cv.DropdownLabelNotSetError)
+def test_should_raise_dropdown_label_not_set_error():
+
+    # Arrange
+    id = 'dropdown_7'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown Seven'
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({
+        'labels': [
+            {'id': 1, 'name': 'Label 1'}
+        ]
+    }))
+
+    # Act 
+    column_value.remove_label(1)
+
+
 def test_should_remove_label_to_dropdown_column_value():
 
     # Arrange
-    id = 'dropdown_3'
+    id = 'dropdown_8'
     column_type = ColumnType.dropdown
-    title = 'Dropdown Three'
+    title = 'Dropdown Eight'
     ids = {'ids': [1]}
     column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(ids), settings=en.objects.DropdownSettings({
         'labels': [
