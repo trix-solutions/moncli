@@ -415,7 +415,7 @@ class PeopleValue(ColumnValue):
     def format(self):
         if self.persons_and_teams:
             return { 'personsAndTeams': self.persons_and_teams }
-        return {}
+        return self.null_value
 
     def add_people(self, person_or_team):
         kind = enums.PeopleKind.person
@@ -500,7 +500,6 @@ class StatusValue(ColumnValue):
             self.__settings = kwargs.pop('settings')
         except KeyError:
             raise ColumnValueSettingsError('status')
-
         super(StatusValue, self).__init__(**kwargs)
 
     @property
@@ -512,7 +511,11 @@ class StatusValue(ColumnValue):
 
     @index.setter
     def index(self, index: int):
-        self.set_value(index=index, label=self.__settings.labels[str(index)])
+        try:
+            label = self.__settings[index]
+            self.set_value(index=index, label=label)
+        except KeyError:
+            raise StatusIndexError(index)
 
     @property
     def label(self):
@@ -525,8 +528,12 @@ class StatusValue(ColumnValue):
                 return None
 
     @label.setter
-    def label(self, label: str):    
-        self.set_value(index=self.__settings.get_index(label), label=label)
+    def label(self, label: str): 
+        index=self.__settings.get_index(label)
+        if index:
+            self.set_value(index=index, label=label)
+        else:
+            raise StatusLabelError(label)
 
     def format(self):
         if self.index:
@@ -820,3 +827,13 @@ class UnknownCountryNameError(Exception):
 class ColumnValueIsReadOnly(Exception):
     def __init__(self, id: str, title: str):
         self.message = "Cannot format read-only column value '{}' ('{}') for updating.".format(title, id)
+
+
+class StatusIndexError(Exception):
+    def __init__(self, index: int):
+        self.message = 'Unable to find status value with index {}.'.format(str(index))
+
+
+class StatusLabelError(Exception):
+    def __init__(self, label: str):
+        self.message = 'Unable to find status value with label {}.'.format(label)

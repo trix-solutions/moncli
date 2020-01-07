@@ -92,6 +92,9 @@ class StatusSettings(Model):
                 return int(key)
         return None
 
+    def __getitem__(self, index: int):
+        return self.labels[str(index)]
+
 
 class DropdownLabel(Model):
 

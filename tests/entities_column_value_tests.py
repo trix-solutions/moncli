@@ -1165,9 +1165,9 @@ def test_should_return_empty_status_column_value():
     id = 'status_1'
     column_type = ColumnType.status
     title = 'Status One'
+    column_value = cv.create_column_value(column_type, id=id, title=title, additional_info=json.dumps({}), settings=None)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title, additional_info=json.dumps({}), settings=None)
     format = column_value.format()
 
     # Assert
@@ -1177,23 +1177,87 @@ def test_should_return_empty_status_column_value():
     eq_(format, {})
 
 
-def test_should_return_status_column_value():
+@raises(cv.StatusIndexError)
+def test_should_raise_status_index_error_when_setting_index():
 
     # Arrange
     id = 'status_2'
     column_type = ColumnType.status
-    title = 'Status Two'
+    title = 'Status'
     label = 'Status 2'
-    index = 2
-
-    # Act 
     column_value = cv.create_column_value(
         column_type, 
         id=id, 
         title=title, 
-        value=json.dumps({'index': index}), 
         additional_info=json.dumps({'label': label}), 
         settings=en.objects.StatusSettings({'labels': {'2': label}}))
+
+    # Act 
+    column_value.index = 1
+
+
+def test_should_return_status_column_value_when_setting_index():
+
+    # Arrange
+    id = 'status_2'
+    column_type = ColumnType.status
+    title = 'Status'
+    label = 'Status 2'
+    index = 2
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        additional_info=json.dumps({'label': label}), 
+        settings=en.objects.StatusSettings({'labels': {'2': label}}))
+
+    # Act 
+    column_value.index = index
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.index, index)
+    eq_(column_value.label, label)
+    eq_(format, {'index': index})
+
+
+@raises(cv.StatusLabelError)
+def test_should_raise_status_label_error_when_setting_label():
+
+    # Arrange
+    id = 'status_2'
+    column_type = ColumnType.status
+    title = 'Status'
+    label = 'Status 2'
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        additional_info=json.dumps({'label': label}), 
+        settings=en.objects.StatusSettings({'labels': {'2': label}}))
+
+    # Act 
+    column_value.label = 'Status Foobar'
+
+
+def test_should_return_status_column_value_when_setting_label():
+
+    # Arrange
+    id = 'status_2'
+    column_type = ColumnType.status
+    title = 'Status'
+    label = 'Status 2'
+    index = 2
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        additional_info=json.dumps({'label': label}), 
+        settings=en.objects.StatusSettings({'labels': {'2': label}}))
+
+    # Act 
+    column_value.label = label
     format = column_value.format()
 
     # Assert
