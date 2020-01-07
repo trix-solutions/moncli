@@ -1088,10 +1088,10 @@ def test_should_return_an_empty_phone_column_value():
     # Arrange
     id = 'phone_0'
     column_type = ColumnType.phone
-    title = 'Phone Zero'
+    title = 'Phone'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -1104,14 +1104,14 @@ def test_should_return_an_empty_phone_column_value():
 def test_should_return_a_phone_column_value_with_data():
 
     # Arrange
-    id = 'phone_1'
+    id = 'phone_2'
     column_type = ColumnType.phone
-    title = 'Phone One'
+    title = 'Phone'
     country_short_name = 'US'
     phone = '1234567890'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.phone = phone
     column_value.country_short_name = country_short_name
     format = column_value.format()
@@ -1121,6 +1121,46 @@ def test_should_return_a_phone_column_value_with_data():
     eq_(column_value.phone, phone)
     eq_(column_value.country_short_name, country_short_name)
     eq_(format, {'phone': phone, 'countryShortName': country_short_name})
+
+
+def test_should_return_empty_phone_column_value_when_only_phone_set():
+
+    # Arrange
+    id = 'phone_3'
+    column_type = ColumnType.phone
+    title = 'Phone'
+    phone = '1234567890'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.phone = phone
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.phone, phone)
+    eq_(column_value.country_short_name, None)
+    eq_(format, {'phone': '', 'countryShortName': ''})
+
+
+def test_should_return_empty_phone_column_value_when_only_country_short_name_set():
+
+    # Arrange
+    id = 'phone_3'
+    column_type = ColumnType.phone
+    title = 'Phone'
+    country_short_name = 'US'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.country_short_name = country_short_name
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.phone, None)
+    eq_(column_value.country_short_name, country_short_name)
+    eq_(format, {'phone': '', 'countryShortName': ''})
 
 
 def test_should_return_empty_rating_column_value():
