@@ -11,7 +11,7 @@ from .. import config, enums, entities as en
 
 
 SIMPLE_NULL_VALUE = ''
-COMPLEX_NULL_VALUE = '{}'
+COMPLEX_NULL_VALUE = {}
 
 class _ColumnValue(Model):
     id = StringType(required=True)
@@ -43,8 +43,6 @@ class ColumnValue(_ColumnValue):
             for key, value in kwargs.items():
                 value_obj[key] = value
             self.value = dumps(value_obj)
-        elif self.null_value is COMPLEX_NULL_VALUE:
-            self.value = self.null_value
         else:
             self.value = dumps(self.null_value)
 
@@ -71,7 +69,7 @@ class CheckboxValue(ColumnValue):
     def format(self):
         if self.checked:
             return { 'checked': 'true' }
-        return loads(self.null_value)
+        return self.null_value
 
 
 class CountryValue(ColumnValue):
@@ -118,7 +116,7 @@ class CountryValue(ColumnValue):
                 'countryCode': self.country_code,
                 'countryName': self.country_name
             }
-        return loads(self.null_value)
+        return self.null_value
 
 
 class DateValue(ColumnValue):
@@ -163,7 +161,7 @@ class DateValue(ColumnValue):
             if self.time:
                 result['time'] = self.time
             return result
-        return loads(self.null_value)
+        return self.null_value
         
 
 class DropdownValue(ColumnValue):
@@ -246,7 +244,7 @@ class EmailValue(ColumnValue):
     def format(self):
         if self.email:  
             return { 'email': self.email, 'text': self.email_text }
-        return {}
+        return self.null_value
 
 
 class HourValue(ColumnValue):
@@ -281,7 +279,7 @@ class HourValue(ColumnValue):
     def format(self):
         if self.hour:
             return { 'hour': self.hour, 'minute': self.minute }
-        return loads(self.null_value)
+        return self.null_value
 
 
 class LinkValue(ColumnValue):
@@ -313,7 +311,7 @@ class LinkValue(ColumnValue):
     def format(self):
         if self.url:
             return { 'url': self.url, 'text': self.url_text }
-        return loads(self.null_value)
+        return self.null_value
 
 
 class LongTextValue(ColumnValue):
@@ -337,20 +335,21 @@ class LongTextValue(ColumnValue):
     def format(self):
         if self.long_text:
             return {'text': self.long_text}
-        return loads(self.null_value)
+        return self.null_value
 
 
 class NameValue(ColumnValue):
-    null_value = ''
+    null_value = SIMPLE_NULL_VALUE
 
     def __init__(self, **kwargs):
         super(NameValue, self).__init__(**kwargs)
 
     @property
     def name(self):
-        if self.value is not SIMPLE_NULL_VALUE:
+        try:
             return loads(self.value)
-        return self.null_value
+        except Exception:
+            return self.null_value
 
     @name.setter
     def name(self, value):
@@ -364,7 +363,7 @@ class NameValue(ColumnValue):
 
 
 class NumberValue(ColumnValue):
-    null_value = ''
+    null_value = SIMPLE_NULL_VALUE
 
     def __init__(self, **kwargs):
         super(NumberValue, self).__init__(**kwargs)
@@ -388,7 +387,7 @@ class NumberValue(ColumnValue):
     def format(self):
         if self.number:
             return str(self.number)
-        return ''
+        return SIMPLE_NULL_VALUE
 
     def __isfloat(self, value):
         try:
@@ -494,7 +493,7 @@ class RatingValue(ColumnValue):
     def format(self):
         if self.rating:
             return { 'rating': self.rating }
-        return loads(self.null_value)
+        return self.null_value
 
 
 class StatusValue(ColumnValue):
@@ -534,7 +533,7 @@ class StatusValue(ColumnValue):
     def format(self):
         if self.index:
             return {'index': self.index}
-        return loads(self.null_value)
+        return self.null_value
         
 
 class TagsValue(ColumnValue):
@@ -658,7 +657,7 @@ class TimelineValue(ColumnValue):
     def format(self):
         if self.from_date and self.to_date:
             return { 'from': self.from_date, 'to': self.to_date }
-        return loads(self.null_value)
+        return self.null_value
         
 
 class TimezoneValue(ColumnValue):
@@ -688,7 +687,7 @@ class TimezoneValue(ColumnValue):
     def format(self):
         if self.timezone:
             return { 'timezone': self.timezone }
-        return loads(self.null_value)
+        return self.null_value
 
 
 class WeekValue(ColumnValue):
@@ -730,7 +729,7 @@ class WeekValue(ColumnValue):
     def format(self):
         if self.start_date and self.end_date:
             return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
-        return loads(self.null_value)
+        return self.null_value
 
     def set_value(self, *argv, **kwargs):
         value_obj = loads(self.value)
