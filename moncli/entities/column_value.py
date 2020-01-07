@@ -84,6 +84,9 @@ class CountryValue(ColumnValue):
 
     @country_code.setter
     def country_code(self, code):
+        if not code:
+            self.set_value()
+            return
         country = countries.get(alpha_2=code)
         if not country:
             raise UnknownCountryCodeError(code)
@@ -98,6 +101,9 @@ class CountryValue(ColumnValue):
 
     @country_name.setter
     def country_name(self, name):
+        if not name:
+            self.set_value()
+            return
         country = countries.get(name=name)
         if not country:
             raise UnknownCountryNameError(name)
