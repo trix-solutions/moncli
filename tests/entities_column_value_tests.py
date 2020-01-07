@@ -1199,6 +1199,25 @@ def test_should_return_a_rating_column_value_with_rating():
     eq_(format, {'rating': rating})
 
 
+def test_should_return_empty_rating_column_value_when_set_to_none():
+
+    # Arrange
+    id = 'rating_2'
+    column_type = ColumnType.rating
+    title = 'Rating Two'
+    rating = 5
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'rating': rating}))
+
+    # Act
+    column_value.rating = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.rating, None)
+    eq_(format, {})
+
+
 def test_should_return_empty_status_column_value():
 
     # Arrange
