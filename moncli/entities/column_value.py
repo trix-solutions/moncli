@@ -363,9 +363,9 @@ class NumberValue(ColumnValue):
 
     @property
     def number(self):
-        if self.value is self.null_value:
-            return None
         value = loads(self.value)
+        if value == self.null_value:
+            return None
         if self.__isint(value):
             return int(value)
         if self.__isfloat(value):
@@ -373,9 +373,12 @@ class NumberValue(ColumnValue):
 
     @number.setter
     def number(self, value):
-        if not self.__isint(value) and not self.__isfloat(value):
-            raise NumberValueError()
-        self.value = dumps(value)
+        if value:
+            if not self.__isint(value) and not self.__isfloat(value):
+                raise NumberValueError()
+            self.set_value(value)
+        else:
+            self.set_value()
 
     def format(self):
         if self.number:

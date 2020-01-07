@@ -218,10 +218,23 @@ def test_should_return_an_empty_date_column_value():
     eq_(format, {})
 
 
-def test_should_return_date_column_value_with_default_time():
+@raises(cv.DateFormatError)
+def test_should_raise_date_format_error_when_setting_date():
 
     # Arrange
     id = 'date_2'
+    column_type = ColumnType.date
+    title = 'Date'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.date = 'foobar'
+
+
+def test_should_return_date_column_value_with_default_time():
+
+    # Arrange
+    id = 'date_3'
     column_type = ColumnType.date
     title = 'Date'
     date = '1990-08-30'
@@ -238,10 +251,23 @@ def test_should_return_date_column_value_with_default_time():
     eq_(format, {'date': date})
 
 
+@raises(cv.TimeFormatError)
+def test_should_raise_time_format_error_when_setting_time():
+
+    # Arrange
+    id = 'date_4'
+    column_type = ColumnType.date
+    title = 'Date'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.time = 'foobar'
+
+
 def test_should_return_date_column_value_with_time():
 
     # Arrange
-    id = 'date_3'
+    id = 'date_5'
     column_type = ColumnType.date
     title = 'Date'
     date = '1990-08-30'
@@ -263,7 +289,7 @@ def test_should_return_date_column_value_with_time():
 def test_should_return_empty_date_column_value_if_only_time_is_set():
 
     # Arrange
-    id = 'date_4'
+    id = 'date_6'
     column_type = ColumnType.date
     title = 'Date'
     time = '04:15:00'
@@ -283,7 +309,7 @@ def test_should_return_empty_date_column_value_if_only_time_is_set():
 def test_should_return_empty_date_column_value_if_date_and_time_are_set_to_null():
 
     # Arrange
-    id = 'date_5'
+    id = 'date_7'
     column_type = ColumnType.date
     title = 'Date'
     date = '1990-08-30'
@@ -863,10 +889,10 @@ def test_should_return_an_empty_number_column_value():
     # Arrange
     id = 'number_0'
     column_type = ColumnType.numbers
-    title = 'Number 0'
+    title = 'Number'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -882,9 +908,9 @@ def test_should_return_a_number_column_value_with_int():
     column_type = ColumnType.numbers
     title = 'Number 1'
     number = 8675309
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.number = number
     format = column_value.format()
 
@@ -899,7 +925,7 @@ def test_should_return_a_number_column_value_with_float():
     # Arrange
     id = 'number_2'
     column_type = ColumnType.numbers
-    title = 'Number 2'
+    title = 'Number'
     number = 23.333333333
 
     # Act
@@ -912,13 +938,33 @@ def test_should_return_a_number_column_value_with_float():
     eq_(column_value.number, number)
     eq_(format, str(number))
 
+
+def test_should_return_empty_number_column_value_when_number_set_to_null():
+
+    # Arrange
+    id = 'number_3'
+    column_type = ColumnType.numbers
+    title = 'Number'
+    number = 23.333333333
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(number))
+
+    # Act
+    column_value.number = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.number, None)
+    eq_(format, '')
+
+
 @raises(cv.NumberValueError)
-def test_should_return_an_empty_number_column_value_when_input_is_text():
+def test_raise_number_value_error_when_input_is_text():
 
     # Arrange
     id = 'number_x'
     column_type = ColumnType.numbers
-    title = 'Number X'
+    title = 'Number'
     number = 'x'
 
     # Act
