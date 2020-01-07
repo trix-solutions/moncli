@@ -165,6 +165,9 @@ class DropdownValue(ColumnValue):
             raise ColumnValueSettingsError('dropdown')
 
         super(DropdownValue, self).__init__(**kwargs)
+        if self.value is self.null_value:
+            self.value = dumps({'ids': []})
+
 
     @property
     def labels(self):
@@ -183,33 +186,25 @@ class DropdownValue(ColumnValue):
         try:
             label = self.__settings[id]
         except KeyError:
-            raise DropdownLabelError('Unable to find dropdown label with ID {}.'.format(str(id)))
+            raise DropdownLabelError(id)
 
         value = loads(self.value)
         if label.id in value['ids']:
-            raise DropdownLabelError('Label with ID {} has already been set.'.format(str(id)))
+            raise DropdownLabelSetError(id)
         value['ids'].append(label.id)
         self.value = dumps(value)
-
-        text = self.text.split(', ')
-        text.append(label.name)
-        self.text = ', '.join(text)
 
     def remove_label(self, id: int):
         try:
             label = self.__settings[id]
         except KeyError:
-            raise DropdownLabelError('Unable to find dropdown label with ID {}.'.format(str(id)))
+            raise DropdownLabelError(id)
 
         value = loads(self.value)
         if label.id not in value['ids']:
-            raise DropdownLabelError('Cannot remove unset label with ID {}.'.format(str(id)))
+            raise DropdownLabelNotSetError(id)
         value['ids'].remove(label.id)
         self.value = dumps(value)
-
-        text = self.text.split(', ')
-        text.remove(label.name)
-        self.text = ', '.join(text)
 
 
 class EmailValue(ColumnValue):
@@ -762,8 +757,18 @@ class TimeFormatError(Exception):
 
 
 class DropdownLabelError(Exception):
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, id: int):
+        self.message = 'Unable to find dropdown label with ID {}.'.format(str(id))
+
+
+class DropdownLabelSetError(Exception):
+    def __init__(self, id: int):
+        self.message = 'Label with ID {} has already been set.'.format(str(id))
+
+
+class DropdownLabelNotSetError(Exception):
+    def __init__(self, id: int):
+        self.message = 'Cannot remove unset label with ID {}.'.format(str(id))
 
 
 class NumberValueError(Exception):

@@ -146,9 +146,9 @@ def test_should_return_an_empty_date_column_value():
     id = 'date_1'
     column_type = ColumnType.date
     title = 'Date'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -165,9 +165,9 @@ def test_should_return_date_column_value_with_default_time():
     column_type = ColumnType.date
     title = 'Date'
     date = '1990-08-30'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.date = date
     format = column_value.format()
 
@@ -181,14 +181,14 @@ def test_should_return_date_column_value_with_default_time():
 def test_should_return_date_column_value_with_time():
 
     # Arrange
-    id = 'date_2'
+    id = 'date_3'
     column_type = ColumnType.date
     title = 'Date'
     date = '1990-08-30'
     time = '04:15:00'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.date = date
     column_value.time = time
     format = column_value.format()
@@ -200,15 +200,47 @@ def test_should_return_date_column_value_with_time():
     eq_(format, {'date': date, 'time': time})
 
 
-def test_should_return_empty_dropdown_column_value():
+def test_should_return_empty_date_column_value_if_only_time_is_set():
+
+    # Arrange
+    id = 'date_4'
+    column_type = ColumnType.date
+    title = 'Date'
+    time = '04:15:00'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.time = time
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.date, None)
+    eq_(column_value.time, time)
+    eq_(format, {})
+
+
+@raises(cv.ColumnValueSettingsError)
+def test_should_raise_column_value_settings_error():
 
     # Arrange
     id = 'dropdown_1'
     column_type = ColumnType.dropdown
     title = 'Dropdown One'
+    
+    # Act
+    cv.create_column_value(column_type, id=id, title=title)
+
+
+def test_should_return_empty_dropdown_column_value():
+
+    # Arrange
+    id = 'dropdown_2'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown Two'
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({'labels': []}))
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings)
     format = column_value.format()
 
     # Assert
@@ -217,26 +249,49 @@ def test_should_return_empty_dropdown_column_value():
     eq_(format, {})
 
 
-def test_should_return_dropdown_column_value_by_ids():
+def test_should_add_label_to_dropdown_column_value():
 
     # Arrange
-    id = 'dropdown_2'
+    id = 'dropdown_3'
     column_type = ColumnType.dropdown
-    title = 'Dropdown Two'
-    ids = {'ids': [1]}
-
-    # Act 
-    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(ids), settings=en.objects.DropdownSettings({
+    title = 'Dropdown Three'
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({
         'labels': [
             {'id': 1, 'name': 'Label 1'}
         ]
     }))
+
+    # Act 
+    column_value.add_label(1)
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
     eq_(column_value.labels, [en.objects.DropdownLabel({'id': 1, 'name': 'Label 1'})])
-    eq_(format, ids)
+    eq_(format, {'ids': [1]})
+
+
+def test_should_remove_label_to_dropdown_column_value():
+
+    # Arrange
+    id = 'dropdown_3'
+    column_type = ColumnType.dropdown
+    title = 'Dropdown Three'
+    ids = {'ids': [1]}
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(ids), settings=en.objects.DropdownSettings({
+        'labels': [
+            {'id': 1, 'name': 'Label 1'}
+        ]
+    }))
+
+    # Act 
+    column_value.remove_label(1)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.labels, [])
+    eq_(format, {})
     
 
 def test_should_return_empty_email_column_value():
