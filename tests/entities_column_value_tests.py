@@ -1332,9 +1332,9 @@ def test_should_return_empty_tags_column_value():
     id = 'tags_1'
     column_type = ColumnType.tags
     title = 'Tags 1'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -1382,6 +1382,69 @@ def test_should_remove_tag_ids_and_return_tags_column_value_with_remaining_tag_i
     ok_(column_value != None)
     eq_(column_value.tag_ids, [1,3])
     eq_(format, {'tag_ids': [1,3]})
+
+
+def test_should_ignore_adding_existent_tag_id():
+
+    # Arrange
+    id = 'tags_2'
+    column_type = ColumnType.tags
+    title = 'Tags 2'
+    tag_ids = [1,2]
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+    for id in tag_ids:
+        column_value.add(id)
+    
+    # Act
+    column_value.add(2)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.tag_ids, [1,2])
+    eq_(format, {'tag_ids': [1,2]})
+
+
+def test_should_ignore_removing_nonexistent_tag_id():
+
+    # Arrange
+    id = 'tags_2'
+    column_type = ColumnType.tags
+    title = 'Tags 2'
+    tag_ids = [1,2]
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+    for id in tag_ids:
+        column_value.add(id)
+    
+    # Act
+    column_value.remove(3)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.tag_ids, [1,2])
+    eq_(format, {'tag_ids': [1,2]})
+
+
+def test_should_return_empty_tag_column_value_when_all_ids_are_removed():
+
+    # Arrange
+    id = 'tags_2'
+    column_type = ColumnType.tags
+    title = 'Tags 2'
+    tag_ids = [1]
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+    for id in tag_ids:
+        column_value.add(id)
+    
+    # Act
+    column_value.remove(1)
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.tag_ids, [])
+    eq_(format, {'tag_ids': []})
 
 
 def test_should_return_empty_team_column_value():

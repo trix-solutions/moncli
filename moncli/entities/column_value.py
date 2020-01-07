@@ -554,13 +554,15 @@ class TagsValue(ColumnValue):
 
     def add(self, tag_id: int):
         tag_ids = self.tag_ids
-        tag_ids.append(tag_id)
-        self.set_value(tag_ids=tag_ids)
+        if tag_id not in tag_ids:
+            tag_ids.append(tag_id)
+            self.set_value(tag_ids=tag_ids)
 
     def remove(self, tag_id: int):
         tag_ids = self.tag_ids
-        tag_ids.remove(tag_id)
-        self.set_value(tag_ids=tag_ids)
+        if tag_id in tag_ids:
+            tag_ids.remove(tag_id)
+            self.set_value(tag_ids=tag_ids)
 
     def format(self):
         return { 'tag_ids': self.tag_ids }
