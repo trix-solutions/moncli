@@ -421,9 +421,11 @@ class PeopleValue(ColumnValue):
         kind = enums.PeopleKind.person
         if type(person_or_team) is type(en.Team):
             kind = enums.PeopleKind.team
-        persons_and_teams = self.persons_and_teams
-        persons_and_teams.append({'id': int(person_or_team.id), 'kind': kind.name})
-        self.set_value(personsAndTeams=persons_and_teams)
+        value = {'id': int(person_or_team.id), 'kind': kind.name}
+        if value not in self.persons_and_teams:
+            persons_and_teams = self.persons_and_teams
+            persons_and_teams.append(value)
+            self.set_value(personsAndTeams=persons_and_teams)
 
     def remove_people(self, id: int):
         persons_and_teams = []
