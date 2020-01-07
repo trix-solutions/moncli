@@ -13,9 +13,9 @@ def test_should_fail_for_non_writeable_column_type():
     id = 'test_id'
     column_type = ColumnType.auto_number
     title = 'should fail'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.format()
 
 
@@ -25,9 +25,9 @@ def test_should_return_an_empty_checkbox_column_value():
     id = 'checkbox_1'
     column_type = ColumnType.checkbox
     title = 'Checkbox'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -42,9 +42,9 @@ def test_should_return_checked_checkbox_column_value():
     id = 'checkbox_2'
     column_type = ColumnType.checkbox
     title = 'Checkbox'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.checked = True
     format = column_value.format()
 
@@ -60,9 +60,9 @@ def test_should_return_an_empty_country_column_value():
     id = 'country_1'
     column_type = ColumnType.country
     title = 'Country'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -72,7 +72,33 @@ def test_should_return_an_empty_country_column_value():
     eq_(format, {})
 
 
-def test_should_return_country_column_value():
+@raises(cv.UnknownCountryCodeError)
+def test_should_raise_an_unknown_country_code_error():
+
+    # Arrange
+    id = 'country_1'
+    column_type = ColumnType.country
+    title = 'Country'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.country_code = 'foobar'
+
+
+@raises(cv.UnknownCountryNameError)
+def test_should_raise_an_unknown_country_name_error():
+
+    # Arrange
+    id = 'country_1'
+    column_type = ColumnType.country
+    title = 'Country'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.country_name = 'foobar'
+
+
+def test_should_return_country_column_value_by_country_code():
 
     # Arrange
     id = 'country_2'
@@ -84,6 +110,27 @@ def test_should_return_country_column_value():
     # Act
     column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.country_code = country_code
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.country_code, country_code)
+    eq_(column_value.country_name, country_name)
+    eq_(format, {'countryCode': country_code, 'countryName': country_name})
+
+
+def test_should_return_country_column_value_by_country_name():
+
+    # Arrange
+    id = 'country_2'
+    column_type = ColumnType.country
+    title = 'Checkbox'
+    country_code = 'VC'
+    country_name = 'Saint Vincent and the Grenadines'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.country_name = country_name
     format = column_value.format()
 
     # Assert
