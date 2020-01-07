@@ -43,8 +43,10 @@ class ColumnValue(_ColumnValue):
             for key, value in kwargs.items():
                 value_obj[key] = value
             self.value = dumps(value_obj)
-        else:
+        elif self.null_value is COMPLEX_NULL_VALUE:
             self.value = self.null_value
+        else:
+            self.value = dumps(self.null_value)
 
 
 class CheckboxValue(ColumnValue):
@@ -346,14 +348,16 @@ class NameValue(ColumnValue):
 
     @property
     def name(self):
-        return loads(self.value)
+        if self.value is not SIMPLE_NULL_VALUE:
+            return loads(self.value)
+        return self.null_value
 
     @name.setter
     def name(self, value):
         if value:
             self.set_value(value)
         else:
-            self.set_value(self.null_value)
+            self.set_value()
     
     def format(self):
         return self.name

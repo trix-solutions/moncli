@@ -753,7 +753,7 @@ def test_should_return_an_empty_long_text_column_value():
     # Arrange
     id = 'long_text_0'
     column_type = ColumnType.long_text
-    title = 'Long Test 0'
+    title = 'Long Text'
     column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
@@ -770,7 +770,7 @@ def test_should_return_long_text_column_value_with_text():
     # Arrange
     id = 'long_text_1'
     column_type = ColumnType.long_text
-    title = 'Long Test 1'
+    title = 'Long Text'
     text = 'LOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG'
     column_value = cv.create_column_value(column_type, id=id, title=title)
 
@@ -789,7 +789,7 @@ def test_should_return_empty_long_text_column_value_when_text_set_to_null():
     # Arrange
     id = 'long_text_1'
     column_type = ColumnType.long_text
-    title = 'Long Test 1'
+    title = 'Long Text'
     text = 'LOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG'
     column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'text': text}))
 
@@ -801,14 +801,31 @@ def test_should_return_empty_long_text_column_value_when_text_set_to_null():
     ok_(column_value != None)
     eq_(column_value.long_text, None)
     eq_(format, {})
-    
 
-def test_should_return_name_column_value_with_name():
+
+def test_should_return_empty_name_column_value():
 
     # Arrange
     id = 'name_1'
     column_type = ColumnType.name
-    title = 'Name 1'
+    title = 'Name'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.name, '')
+    eq_(format, '')
+
+
+def test_should_return_name_column_value_with_name():
+
+    # Arrange
+    id = 'name_2'
+    column_type = ColumnType.name
+    title = 'Name'
     name = 'Name'
 
     # Act
@@ -820,6 +837,25 @@ def test_should_return_name_column_value_with_name():
     ok_(column_value != None)
     eq_(column_value.name, name)
     eq_(format, name)
+
+
+def test_should_return_empty_name_column_value_when_setting_name_to_null():
+
+    # Arrange
+    id = 'name_3'
+    column_type = ColumnType.name
+    title = 'Name'
+    name = 'Name'
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(name))
+
+    # Act
+    column_value.name = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.name, '')
+    eq_(format, '')
 
 
 def test_should_return_an_empty_number_column_value():
