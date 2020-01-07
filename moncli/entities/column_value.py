@@ -599,30 +599,22 @@ class TextValue(ColumnValue):
 
     @property
     def text_value(self):
-        if self.value:
-            return loads(self.value)
-        return self.value
+        value = loads(self.value)
+        if value == self.null_value:
+            return None
+        return value
 
     @text_value.setter
     def text_value(self, value):
         if value:
-            self.value = dumps(value)
+            self.set_value(value)
         else:
-            self.value = dumps(self.null_value)
-
-    @text_value.setter
-    def text_value(self, value: str):
-        if value:
-            self.text = value
-            self.value = dumps(value)
-        else:
-            self.text = ''
-            self.value = self.null_value
+            self.set_value()
 
     def format(self):
-        if self.value is self.null_value:
-            return self.value
-        return loads(self.value)
+        if self.text_value:
+            return self.text_value
+        return self.null_value
 
 
 class TimelineValue(ColumnValue):
@@ -638,12 +630,11 @@ class TimelineValue(ColumnValue):
 
     @from_date.setter
     def from_date(self, value):
-        try:
-            datetime.strptime(value, '%Y-%m-%d')
-        except ValueError:
-            raise DateFormatError(value)
-
-        self.set_value(**{'from': value})
+        if value:
+            validate_date(value)
+            self.set_value(**{'from': value})
+        else: 
+            self.set_value()
 
     @property
     def to_date(self):
@@ -654,12 +645,11 @@ class TimelineValue(ColumnValue):
 
     @to_date.setter
     def to_date(self, value):
-        try:
-            datetime.strptime(value, '%Y-%m-%d')
-        except ValueError:
-            raise DateFormatError(value)
-
-        self.set_value(to=value)
+        if value:
+            validate_date(value)
+            self.set_value(to=value)
+        else:
+            self.set_value()
 
     def format(self):
         if self.from_date and self.to_date:

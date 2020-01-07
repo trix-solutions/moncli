@@ -1508,9 +1508,9 @@ def test_should_return_empty_text_column_value():
     id = 'text_1'
     column_type = ColumnType.text
     title = 'Text 1'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -1526,9 +1526,9 @@ def test_should_return_text_column_value_with_text():
     column_type = ColumnType.text
     title = 'Text 2'
     text = 'Hello, Grandma!'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.text_value = text
     format = column_value.format()
 
@@ -1538,15 +1538,34 @@ def test_should_return_text_column_value_with_text():
     eq_(format, text)
 
 
+def test_should_return_empty_text_column_value_when_text_set_to_null():
+
+    # Arrange
+    id = 'text_2'
+    column_type = ColumnType.text
+    title = 'Text 2'
+    text = 'Hello, Grandma!'
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(text))
+    
+    # Act
+    column_value.text_value = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.text_value, None)
+    eq_(format, '')
+
+
 def test_should_return_an_empty_timeline_column_value():
 
     # Arrange
     id = 'timeline_1'
     column_type = ColumnType.timeline
-    title = 'Timeline 1'
+    title = 'Timeline'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -1554,6 +1573,32 @@ def test_should_return_an_empty_timeline_column_value():
     eq_(column_value.from_date, None)
     eq_(column_value.to_date, None)
     eq_(format, {})
+
+
+@raises(cv.DateFormatError)
+def test_should_raise_date_format_error_when_setting_from_date():
+
+    # Arrange
+    id = 'timeline_1'
+    column_type = ColumnType.timeline
+    title = 'Timeline'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.from_date = 'Foobar'
+
+
+@raises(cv.DateFormatError)
+def test_should_raise_date_format_error_when_setting_to_date():
+
+    # Arrange
+    id = 'timeline_1'
+    column_type = ColumnType.timeline
+    title = 'Timeline'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.to_date = 'Foobar'
 
 
 def test_should_return_a_timeline_column_value_with_data():
@@ -1564,9 +1609,9 @@ def test_should_return_a_timeline_column_value_with_data():
     title = 'Timeline Two'
     from_date = '1990-08-30'
     to_date = '2013-08-23'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.from_date = from_date
     column_value.to_date = to_date
     format = column_value.format()
@@ -1576,6 +1621,46 @@ def test_should_return_a_timeline_column_value_with_data():
     eq_(column_value.from_date, from_date)
     eq_(column_value.to_date, to_date)
     eq_(format, {'from': from_date, 'to': to_date})
+
+
+def test_should_return_empty_timeline_column_value_with_to_date_set_to_none():
+
+    # Arrange
+    id = 'timeline_2'
+    column_type = ColumnType.timeline
+    title = 'Timeline Two'
+    from_date = '1990-08-30'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.from_date = from_date
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.from_date, from_date)
+    eq_(column_value.to_date, None)
+    eq_(format, {})
+
+
+def test_should_return_empty_timeline_column_value_with_from_date_set_to_none():
+
+    # Arrange
+    id = 'timeline_2'
+    column_type = ColumnType.timeline
+    title = 'Timeline Two'
+    to_date = '2013-08-23'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.to_date = to_date
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.from_date, None)
+    eq_(column_value.to_date, to_date)
+    eq_(format, {})
 
 
 def test_should_return_empty_timezone_column_value():
