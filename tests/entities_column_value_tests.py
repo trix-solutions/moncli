@@ -1351,9 +1351,9 @@ def test_should_return_week_column_value_with_data():
     title = 'Week 1'
     start_date = '2019-10-21'
     end_date = '2019-10-27'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.start_date = start_date
     column_value.end_date = end_date
     format = column_value.format()

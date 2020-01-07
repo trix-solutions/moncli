@@ -32,8 +32,9 @@ class ColumnValue(_ColumnValue):
 
     def __init__(self, **kwargs):
         super(ColumnValue, self).__init__(kwargs)
+        # Set seriaized configured null value if no value.
         if not self.value:
-            self.value = self.null_value
+            self.value = dumps(self.null_value)
 
     def set_value(self, *argv, **kwargs): 
         if len(argv) > 0:
@@ -133,10 +134,7 @@ class DateValue(ColumnValue):
     @date.setter
     def date(self, value):
         if value:
-            try:
-                datetime.strptime(value, '%Y-%m-%d')
-            except ValueError:
-                raise DateFormatError(value)
+            validate_date(value)
         self.set_value(date=value)
 
     @property
@@ -149,10 +147,7 @@ class DateValue(ColumnValue):
     @time.setter
     def time(self, value):
         if value:
-            try:
-                datetime.strptime(value, '%H:%M:%S')
-            except ValueError:
-                raise TimeFormatError(value)
+            validate_time(value)
         self.set_value(time=value)
 
     def format(self):
@@ -703,12 +698,11 @@ class WeekValue(ColumnValue):
 
     @start_date.setter
     def start_date(self, value):
-        try:
-            datetime.strptime(value, '%Y-%m-%d')
-        except ValueError:
-            raise DateFormatError(value)
-
-        self.set_value(startDate=value)
+        if value:   
+            validate_date(value)
+            self.set_value(startDate=value)
+        else:
+            self.set_value()
 
     @property
     def end_date(self):
@@ -719,12 +713,11 @@ class WeekValue(ColumnValue):
 
     @end_date.setter
     def end_date(self, value):
-        try:
-            datetime.strptime(value, '%Y-%m-%d')
-        except ValueError:
-            raise DateFormatError(value)
-
-        self.set_value(endDate=value)
+        if value:  
+            validate_date(value)
+            self.set_value(endDate=value)
+        else:
+            self.set_value()
 
     def format(self):
         if self.start_date and self.end_date:
@@ -732,12 +725,15 @@ class WeekValue(ColumnValue):
         return self.null_value
 
     def set_value(self, *argv, **kwargs):
-        value_obj = loads(self.value)
-        for key, value in kwargs.items():
-            if self.value is self.null_value:
-                value_obj['week'] = {}
-            value_obj['week'][key] = value
-        self.value = dumps(value_obj)
+        value = loads(self.value)
+        if len(kwargs) == 0:
+            value = self.null_value
+        for k, v in kwargs.items():
+            if value == self.null_value:
+                value['week'] = {}
+            value['week'][k] = v
+        self.value = dumps(value)
+        
 
 
 class ReadonlyValue(ColumnValue):
@@ -752,6 +748,20 @@ def create_column_value(column_type: enums.ColumnType, **kwargs):
     return getattr(
         import_module(__name__), 
         config.COLUMN_TYPE_VALUE_MAPPINGS.get(column_type, 'ReadonlyValue'))(**kwargs)
+
+
+def validate_date(date_string: str):
+    try:
+        datetime.strptime(date_string, '%Y-%m-%d')
+    except ValueError:
+        raise DateFormatError(date_string)
+
+
+def validate_time(time_string: str):
+    try:
+        datetime.strptime(time_string, '%H:%M:%S')
+    except ValueError:
+        raise TimeFormatError(time_string)
 
 
 class ColumnValueSettingsError(Exception):
