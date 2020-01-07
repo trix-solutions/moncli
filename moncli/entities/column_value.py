@@ -165,11 +165,7 @@ class DropdownValue(ColumnValue):
             self.__settings = kwargs.pop('settings')
         except KeyError:
             raise ColumnValueSettingsError('dropdown')
-
         super(DropdownValue, self).__init__(**kwargs)
-        if self.value is self.null_value:
-            self.value = dumps({'ids': []})
-
 
     @property
     def labels(self):
@@ -191,6 +187,8 @@ class DropdownValue(ColumnValue):
             raise DropdownLabelError(id)
 
         value = loads(self.value)
+        if value == self.null_value:
+            value['ids'] = []
         if label.id in value['ids']:
             raise DropdownLabelSetError(id)
         value['ids'].append(label.id)
@@ -203,7 +201,7 @@ class DropdownValue(ColumnValue):
             raise DropdownLabelError(id)
 
         value = loads(self.value)
-        if label.id not in value['ids']:
+        if value == self.null_value or label.id not in value['ids']:
             raise DropdownLabelNotSetError(id)
         value['ids'].remove(label.id)
         self.set_value(ids=value['ids'])
