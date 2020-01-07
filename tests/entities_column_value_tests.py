@@ -506,9 +506,9 @@ def test_should_return_hour_column_value_with_hour_and_minute():
 def test_should_return_empty_hour_column_value_with_set_minute():
 
     # Arrange
-    id = 'hour_1'
+    id = 'hour_4'
     column_type = ColumnType.hour
-    title = 'Hour One'
+    title = 'Hour Four'
     column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
@@ -528,9 +528,9 @@ def test_should_return_empty_link_column_value():
     id = 'link_1'
     column_type = ColumnType.link
     title = 'Link One'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -547,9 +547,9 @@ def test_should_return_link_column_value_with_url():
     column_type = ColumnType.link
     title = 'Link Two'
     url = 'https://link.two'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.url = url
     format = column_value.format()
 
@@ -568,9 +568,9 @@ def test_should_return_link_column_value_with_url_and_text():
     title = 'Link Three'
     url = 'https://link.three'
     text = 'Link Three'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.url = url
     column_value.url_text = text
     format = column_value.format()
@@ -580,6 +580,26 @@ def test_should_return_link_column_value_with_url_and_text():
     eq_(column_value.url, url)
     eq_(column_value.url_text, text)
     eq_(format, {'url': url, 'text': text})
+
+
+def test_should_return_empty_link_column_value_with_set_text():
+
+    # Arrange
+    id = 'link_4'
+    column_type = ColumnType.link
+    title = 'Link Four'
+    text = 'Link Four'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.url_text = text
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.url, None)
+    eq_(column_value.url_text, text)
+    eq_(format, {})
 
 
 def test_should_return_an_empty_long_text_column_value():
