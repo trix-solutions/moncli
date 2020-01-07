@@ -1669,15 +1669,28 @@ def test_should_return_empty_timezone_column_value():
     id = 'timezone_1'
     column_type = ColumnType.world_clock
     title = 'Time zone 1'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
     eq_(column_value.timezone, None)
     eq_(format, {})
+
+
+@raises(cv.UnknownTimeZoneError)
+def test_should_raise_unknown_timezone_error_when_timezone_set():
+
+    # Arrange
+    id = 'timezone_2'
+    column_type = ColumnType.world_clock
+    title = 'Timezone 2'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.timezone = 'Foo/Bar'
 
 
 def test_should_return_timezone_column_value_with_text():
@@ -1687,9 +1700,9 @@ def test_should_return_timezone_column_value_with_text():
     column_type = ColumnType.world_clock
     title = 'Timezone 2'
     timezone = 'America/Phoenix'
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     
     # Act
-    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.timezone = timezone
     format = column_value.format()
 
@@ -1697,6 +1710,25 @@ def test_should_return_timezone_column_value_with_text():
     ok_(column_value != None)
     eq_(column_value.timezone, timezone)
     eq_(format, {'timezone': timezone})
+
+
+def test_should_return_empty_timezone_column_value_when_set_to_none():
+
+    # Arrange
+    id = 'timezone_2'
+    column_type = ColumnType.world_clock
+    title = 'Timezone 2'
+    timezone = 'America/Phoenix'
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps({'timezone': timezone}))
+    
+    # Act
+    column_value.timezone = None
+    format = column_value.format()
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.timezone, None)
+    eq_(format, {})
 
 
 def test_should_return_empty_week_column_value():

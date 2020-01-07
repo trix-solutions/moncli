@@ -670,16 +670,14 @@ class TimezoneValue(ColumnValue):
 
     @timezone.setter
     def timezone(self, value):
-        if not value:
-            self.value = self.null_value
-            return
-
-        try:
-            timezone(value)
-        except tzex.UnknownTimeZoneError:
-            raise UnknownTimeZoneError(value)
-
-        self.set_value(timezone=value)   
+        if value:
+            try:
+                timezone(value)
+            except tzex.UnknownTimeZoneError:
+                raise UnknownTimeZoneError(value)
+            self.set_value(timezone=value) 
+        else:
+            self.set_value()  
 
     def format(self):
         if self.timezone:
