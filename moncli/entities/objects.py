@@ -26,6 +26,8 @@ class Column(Model):
 
     @property
     def settings(self):
+        if not self.settings_str:
+            return None
         settings_obj = json.loads(self.settings_str)
         if self.column_type is ColumnType.status:
             return StatusSettings(settings_obj)

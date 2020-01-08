@@ -85,15 +85,8 @@ class Item(_Item):
         for data in column_values_data:
             id = data['id']
             column_type = columns_map[id].column_type
-            value = data['value']
-            if not value:
-                values.append(en.create_column_value(column_type, **data))
-                continue
-
-            value = json.loads(value)
-            if type(value) is dict:
-                if columns_map[id].settings:
-                    data['settings'] = columns_map[id].settings
+            if columns_map[id].settings:
+                data['settings'] = columns_map[id].settings
             values.append(en.create_column_value(column_type, **data))
 
         return values
