@@ -419,7 +419,7 @@ class PeopleValue(ColumnValue):
 
     def add_people(self, person_or_team):
         kind = enums.PeopleKind.person
-        if type(person_or_team) is type(en.Team):
+        if type(person_or_team) == en.Team:
             kind = enums.PeopleKind.team
         value = {'id': int(person_or_team.id), 'kind': kind.name}
         if value not in self.persons_and_teams:
@@ -734,7 +734,6 @@ class WeekValue(ColumnValue):
             value['week'][k] = v
         self.value = dumps(value)
         
-
 
 class ReadonlyValue(ColumnValue):
     def __init__(self, **kwargs):
