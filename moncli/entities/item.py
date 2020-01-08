@@ -68,7 +68,6 @@ class Item(_Item):
             self.__creds.api_key_v2,
             *field_list,
             ids=[int(self.id)])[0]['creator']
-
         return en.User(creds=self.__creds, **user_data)
    
     def get_column_values(self):
@@ -182,8 +181,20 @@ class Item(_Item):
             body, 
             self.id,
             *field_list)
+        return en.Update(creds=self.__creds, **update_data)
 
-        return en.Update(update_data)
+    def get_updates(self, **kwargs):
+        field_list = ['updates.' + field for field in config.DEFAULT_UPDATE_QUERY_FIELDS]
+        [field_list.append('updates.replies.' + field) for field in config.DEFAULT_REPLY_QUERY_FIELDS]
+        limit = kwargs.pop('limit', 25)
+        page = kwargs.pop('page', 1)
+
+        updates_data = client.get_items(
+            self.__creds.api_key_v2,
+            *field_list,
+            updates_limit=limit,
+            updates_page=page)
+        return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
 
 class ColumnValueRequired(Exception):
