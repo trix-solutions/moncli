@@ -1,13 +1,11 @@
-import warnings
-
-from deprecated import deprecated
+import deprecated, warnings
 
 from .enums import ColumnType
 from .entities import column_value as cv
 
 
-#Deprecation message
-warnings.simplefilter('always', DeprecationWarning)
+# Deprecation message
+# warnings.simplefilter('always', DeprecationWarning)
 warnings.warn(
     'This module will be deprecated as of version 1.0.  Please use moncli.entities.column_value instead',
     PendingDeprecationWarning)
@@ -75,7 +73,7 @@ class WeekValue(cv.WeekValue):
 class ReadonlyValue(cv.ReadonlyValue):
     pass
 
-@deprecated(version='0.1.3', reason="Please use moncli.entities.create_column_value instead.")
+@deprecated.deprecated(version='0.1.3', reason="Please use moncli.entities.create_column_value instead.")
 def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
 
     if id:

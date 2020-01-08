@@ -40,19 +40,6 @@ class Column(Model):
         return config.COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
 
 
-class Update(Model):
-    id = types.StringType(required=True)
-    body = types.StringType()
-    create_at = types.StringType()
-    creator_id = types.StringType()
-    item_id = types.StringType()
-    text_body = types.StringType()
-    updated_at = types.StringType()
-
-    def __repr__(self):
-        return str(self.to_primitive())
-
-
 class Notification(Model):
     id = types.StringType(required=True)
     text = types.StringType()

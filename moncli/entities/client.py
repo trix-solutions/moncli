@@ -102,12 +102,13 @@ class MondayClient():
     
     def get_updates(self, **kwargs):
         field_list = config.DEFAULT_UPDATE_QUERY_FIELDS
+        [field_list.append('replies.' + field) for field in config.DEFAULT_REPLY_QUERY_FIELDS]
         updates_data = client.get_updates(
             self.__creds.api_key_v2, 
             *field_list,
             **kwargs)
 
-        return [en.Update(update_data) for update_data in updates_data]
+        return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
     def create_notification(self, text: str, user_id: str, target_id: str, target_type: enums.NotificationTargetType, **kwargs):
         field_list = config.DEFAULT_NOTIFICATION_QUERY_FIELDS

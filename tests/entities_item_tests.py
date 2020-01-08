@@ -339,3 +339,24 @@ def test_item_should_add_update(create_update, get_items, get_me):
     # Assert 
     ok_(update != None)
     eq_(update.body, 'This is a text body')
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+def test_item_should_get_list_of_item_updates(get_items, get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    client = MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+    get_items.return_value = [{'id': '1', 'updates':[{'id': '2', 'item_id': '1', 'creator_id': '1', 'replies': [{'id': '3', 'creator_id': '1'}]}]}]
+
+    # Act
+    updates = item.get_updates()
+
+    # Assert 
+    ok_(updates != None)
+    eq_(len(updates), 1)
+    eq_(updates[0].to_primitive(), item.updates[0].to_primitive())
+    eq_(len(updates[0].replies), 1)
