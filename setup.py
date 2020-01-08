@@ -12,7 +12,10 @@ config = {
     'version': '0.1.3',
     'install_requires': [
         'nose>=1.3.7',
-        'requests>=2.22.0'
+        'requests>=2.22.0',
+        'pytz>=2019.3',
+        'pycountry>=19.8.18',
+        'deprecated>=1.2.7'
     ],
     'packages': [
         'moncli',

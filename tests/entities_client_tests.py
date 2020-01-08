@@ -1,39 +1,39 @@
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
+from moncli import MondayClient, entities as en
 from moncli.api_v2 import constants
-from moncli.entities import client as c, user as u, board as b, exceptions as ex
 from moncli.enums import BoardKind, NotificationTargetType
 
 USERNAME = 'test.user@foobar.org' 
-GET_ME_RETURN_VALUE = u.User(**{'creds': None, 'id': '1', 'email': USERNAME})
+GET_ME_RETURN_VALUE = en.User(**{'creds': None, 'id': '1', 'email': USERNAME})
 
-@patch.object(c.MondayClient, 'get_me')
-@raises(ex.AuthorizationError)
+@patch.object(MondayClient, 'get_me')
+@raises(en.client.AuthorizationError)
 def test_should_fail_monday_client_authorization(get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
 
     # Act
-    c.MondayClient('not.my.username@whatever.gov', '', '')
+    MondayClient('not.my.username@whatever.gov', '', '')
 
 
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_create_monday_client(get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
 
     # Act
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Assert
     ok_(client != None)
 
 
 @patch('moncli.api_v2.create_board')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_create_a_new_board(get_me, create_board):
 
     # Arrange
@@ -41,7 +41,7 @@ def test_should_create_a_new_board(get_me, create_board):
     board_kind = BoardKind.private
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': '1', 'name': board_name, 'board_kind': board_kind.name}
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act
     board = client.create_board(board_name, board_kind=board_kind)
@@ -53,14 +53,14 @@ def test_should_create_a_new_board(get_me, create_board):
 
 
 @patch('moncli.api_v2.get_boards')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_retrieve_a_list_of_boards(get_me, get_boards):
 
     # Arrange
     test_boards = [{'id': '1', 'name': 'Board 1'}]
     get_me.return_value = GET_ME_RETURN_VALUE
     get_boards.return_value = test_boards
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act
     boards = client.get_boards()
@@ -72,32 +72,32 @@ def test_should_retrieve_a_list_of_boards(get_me, get_boards):
     eq_(boards[0].name, test_boards[0]['name'])
 
 
-@patch.object(c.MondayClient, 'get_me')
-@raises(ex.NotEnoughGetBoardParameters)
+@patch.object(MondayClient, 'get_me')
+@raises(en.client.NotEnoughGetBoardParameters)
 def test_should_fail_to_retrieve_single_board_due_to_too_few_parameters(get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act
     client.get_board()
 
 
-@patch.object(c.MondayClient, 'get_me')
-@raises(ex.TooManyGetBoardParameters)
+@patch.object(MondayClient, 'get_me')
+@raises(en.client.TooManyGetBoardParameters)
 def test_should_fail_to_retrieve_single_board_due_to_too_many_parameters(get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act
     client.get_board(id='1', name='Test Board 1')
 
 
 @patch('moncli.api_v2.get_boards')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_retrieve_a_board_by_id(get_me, get_boards):
 
     # Arrange 
@@ -105,7 +105,7 @@ def test_should_retrieve_a_board_by_id(get_me, get_boards):
     name = 'Test Board 1'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_boards.return_value = [{'id': id, 'name': name}]
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
     
     # Act
     board = client.get_board(id=id)
@@ -117,8 +117,8 @@ def test_should_retrieve_a_board_by_id(get_me, get_boards):
 
 
 @patch('moncli.api_v2.get_boards')
-@patch.object(c.MondayClient, 'get_board_by_id')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_board_by_id')
+@patch.object(MondayClient, 'get_me')
 def test_should_retrieve_a_board_by_name(get_me, get_board_by_id, get_boards):
 
     # Arrange 
@@ -126,8 +126,8 @@ def test_should_retrieve_a_board_by_name(get_me, get_board_by_id, get_boards):
     name = 'Test Board 2'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_boards.return_value = [{'id': '1', 'name': 'Test Board 1'}, {'id': id, 'name': name}]
-    get_board_by_id.return_value = b.Board(creds={}, id=id, name=name)
-    client = c.MondayClient(USERNAME, '', '')
+    get_board_by_id.return_value = en.Board(creds={}, id=id, name=name)
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     board = client.get_board(name=name)
@@ -139,14 +139,14 @@ def test_should_retrieve_a_board_by_name(get_me, get_board_by_id, get_boards):
 
 
 @patch('moncli.api_v2.archive_board')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_archive_a_board(get_me, archive_board):
 
     # Arrange 
     id = '1'
     get_me.return_value = GET_ME_RETURN_VALUE
     archive_board.return_value = {'id': id}
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     board = client.archive_board(id)
@@ -157,13 +157,13 @@ def test_should_archive_a_board(get_me, archive_board):
 
 
 @patch('moncli.api_v2.get_items')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_get_items(get_me, get_items):
 
     # Arrange 
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
-    client = c.MondayClient(USERNAME, '', '')
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     items = client.get_items()
@@ -174,7 +174,7 @@ def test_should_get_items(get_me, get_items):
 
 
 @patch('moncli.api_v2.get_updates')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_get_updates(get_me, get_updates):
 
     # Arrange 
@@ -182,7 +182,7 @@ def test_should_get_updates(get_me, get_updates):
     body = 'Hello, world!'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_updates.return_value = [{'id': id, 'body': body}]
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     items = client.get_updates()
@@ -195,14 +195,14 @@ def test_should_get_updates(get_me, get_updates):
 
 
 @patch('moncli.api_v2.create_notification')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_create_a_notification(get_me, create_notification):
 
     # Arrange 
     text = 'Text 1'
     get_me.return_value = GET_ME_RETURN_VALUE
     create_notification.return_value = {'id': '1', 'text': text}
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     notification = client.create_notification(text, '1', '2', NotificationTargetType.Post)
@@ -213,14 +213,14 @@ def test_should_create_a_notification(get_me, create_notification):
 
 
 @patch('moncli.api_v2.create_or_get_tag')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_create_or_get_a_tag(get_me, create_or_get_tag):
 
     # Arrange 
     name = 'Tag 1'
     get_me.return_value = GET_ME_RETURN_VALUE
     create_or_get_tag.return_value = {'id': '1', 'name': name, 'color': 'Black'}
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     tag = client.create_or_get_tag(name)
@@ -231,14 +231,14 @@ def test_should_create_or_get_a_tag(get_me, create_or_get_tag):
 
 
 @patch('moncli.api_v2.get_tags')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_retrieve_list_of_tags(get_me, get_tags):
 
     # Arrange 
     name = 'Tag 1'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_tags.return_value = [{'id': '1', 'name': name, 'color': 'Black'}]
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     tags = client.get_tags()
@@ -250,7 +250,7 @@ def test_should_retrieve_list_of_tags(get_me, get_tags):
 
 
 @patch('moncli.api_v2.get_users')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_retrieve_list_of_users(get_me, get_users):
 
     # Arrange 
@@ -258,7 +258,7 @@ def test_should_retrieve_list_of_users(get_me, get_users):
     email = 'user.one@test.com'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_users.return_value = [{'id': '1', 'name': name, 'email': email}]
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     users = client.get_users()
@@ -271,14 +271,14 @@ def test_should_retrieve_list_of_users(get_me, get_users):
 
 
 @patch('moncli.api_v2.get_teams')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_retrieve_list_of_teams(get_me, get_teams):
 
     # Arrange 
     name = 'User 1'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_teams.return_value = [{'id': '1', 'name': name}]
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     teams = client.get_teams()
@@ -290,14 +290,14 @@ def test_should_retrieve_list_of_teams(get_me, get_teams):
 
 
 @patch('moncli.api_v2.get_me')
-@patch.object(c.MondayClient, 'get_me')
+@patch.object(MondayClient, 'get_me')
 def test_should_retrieve_me(get_me, get_me_client):
 
     # Arrange 
     name = 'User 2'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_me_client.return_value = {'id': '1', 'name': name, 'email': USERNAME}
-    client = c.MondayClient(USERNAME, '', '')
+    client = MondayClient(USERNAME, '', '')
 
     # Act 
     user = client.get_me()

@@ -230,21 +230,15 @@ class ArgumentValueKind(Enum):
 
 
 def create_value(value, value_type: ArgumentValueKind):
-
     if value_type == ArgumentValueKind.String:
-        return StringValue(value)
-    
+        return StringValue(value)   
     elif value_type == ArgumentValueKind.Int:
         return IntValue(value)
-
     elif value_type == ArgumentValueKind.Bool:
         return BoolValue(value)
-
     elif value_type == ArgumentValueKind.Enum:
         return EnumValue(value)
-
     elif value_type == ArgumentValueKind.List:
         return ListValue(value)
-
     elif value_type == ArgumentValueKind.Json:
         return JsonValue(value)

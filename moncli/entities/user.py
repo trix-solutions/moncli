@@ -1,104 +1,82 @@
-from .. import api_v2 as client
-from ..enums import NotificationTargetType
-from .objects import Notification, Plan
+from schematics.models import Model
+from schematics import types
 
-class User():
+from .. import api_v2 as client, config, enums, entities as en
 
+
+class _User(Model):
+    id = types.StringType(required=True)
+    name = types.StringType()
+    created_at = types.StringType()
+    url = types.StringType()
+    email = types.StringType()
+    enabled = types.BooleanType()
+    birthday = types.StringType()
+    country_code = types.StringType()
+    is_guest = types.BooleanType()
+    is_pending = types.BooleanType()
+    join_date = types.StringType()
+    location = types.StringType()
+    mobile_phone = types.StringType()
+    phone = types.StringType()
+    photo_original = types.StringType()
+    photo_thumb = types.StringType()
+    photo_tiny = types.StringType()
+    time_zone_identifier = types.StringType()
+    title = types.StringType()
+    utc_hours_diff = types.IntType()
+
+
+class User(_User):
     def __init__(self, **kwargs):
-        self.__creds = kwargs['creds']
-          
-        self.id = kwargs['id']
+        self.__creds = kwargs.pop('creds')
+        self.__account = None
+        self.__teams = None
+        super(User, self).__init__(kwargs)
 
-        for key, value in kwargs.items():
+    @property
+    def account(self):
+        if not self.__account:
+            self.__account = self.get_account()
+        return self.__account
 
-            if key == 'name':
-                self.name = value
+    @property
+    def teams(self):
+        if not self.__teams:
+            self.__teams = self.get_teams()
+        return self.__teams
 
-            elif key == 'url':
-                self.url = value
-
-            elif key == 'email':
-                self.email = value
-
-            elif key == 'enabled':
-                self.enabled = value
-
-            elif key == 'teams':
-                self.__team_ids = [int(team_data['id']) for team_data in value]
-
-            if key == 'birthday':
-                self.birthday = value
-
-            elif key == 'country_code':
-                self.country_code = value
-
-            elif key == 'created_at': 
-                self.create_at = value
-
-            elif key == 'is_guest':
-                self.is_guest = value
-
-            elif key == 'is_pending':
-                self.is_pending = value
-
-            elif key == 'join_date':
-                self.join_date = value
-
-            elif key == 'location':
-                self.locaiton = value
-
-            elif key == 'mobile_phone':
-                self.mobile_phone = value
-
-            elif key == 'phone':
-                self.phone = value
-
-            elif key == 'photo_original':
-                self.photo_original = value
-
-            elif key == 'photo_thumb':
-                self.photo_thumb = value
-
-            elif key == 'title':
-                self.title = value
-
-            elif key == 'utc_hours_diff':
-                self.utc_hours_diff = value
-
+    def __repr__(self):
+        o = self.to_primitive()
         
-    def get_account(self):
+        if self.__account:
+            o['account'] = self.__account
+        if self.__teams:
+            o['teams'] = [team.to_primitive() for team in self.__teams]
 
-        users_data = client.get_users(
+        return str(o)
+
+    def get_account(self):
+        field_list = ['account.' + field for field in config.DEFAULT_ACCOUNT_QUERY_FIELDS]
+        account_data = client.get_users(
             self.__creds.api_key_v2, 
-            'account.first_day_of_the_week',
-            'account.id',
-            'account.name',
-            'account.show_timeline_weekends',
-            'account.slug',
-            'account.logo',
-            ids=[int(self.id)])
+            *field_list,
+            ids=[int(self.id)])[0]['account']
 
         return Account(
-            creds=self.__creds, 
-            user_id=self.id,
-            **users_data[0]['account'])
-
+            creds=self.__creds,
+            **account_data)
     
     def get_teams(self):
-
-        teams_data = client.get_teams(
+        field_list = ['teams.' + field for field in config.DEFAULT_TEAM_QUERY_FIELDS]
+        teams_data = client.get_users(
             self.__creds.api_key_v2,
-            'id',
-            'name',
-            'picture_url',
-            'users.id',
-            ids=self.__team_ids)
+            *field_list,
+            ids=[int(self.id)])[0]['teams']
 
         return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
-
     
-    def send_notification(self, text: str, target_id: str, target_type: NotificationTargetType, *argv, **kwargs):
-
+    def send_notification(self, text: str, target_id: str, target_type: enums.NotificationTargetType, *argv, **kwargs):
         notification_data = client.create_notification(
             self.__creds.api_key_v2, 
             text, 
@@ -108,68 +86,85 @@ class User():
             *argv, 
             **kwargs)
 
-        return Notification(**notification_data)
+        return en.Notification(notification_data)
 
 
-class Team():
+class _Team(Model):
+    id = types.StringType(required=True)
+    name = types.StringType()
+    picture_url = types.StringType()
+
+
+class Team(_Team):
 
     def __init__(self, **kwargs):
-        self.__creds = kwargs['creds']
-        
-        self.id = kwargs['id']
-        self.name = kwargs['name']
+        self.__creds = kwargs.pop('creds')
+        self.__users = None
+        super(Team, self).__init__(kwargs)
 
-        for key, value in kwargs.items():
+    @property
+    def users(self):
+        if not self.__users:
+            self.__users = self.get_users()
+        return self.__users
 
-            if key == 'picture_url':
-                self.picture_url = value
+    def __repr__(self):
+        o = self.to_primitive()
 
-            if key == 'users':
-                self.__user_ids = [int(user['id']) for user in value]
+        if self.__users:
+            o['users'] = self.__users
 
-        
+        return str(o)
+
     def get_users(self):
-
-        users_data = client.get_users(
+        field_list = ['users.' + field for field in config.DEFAULT_USER_QUERY_FIELDS]
+        users_data = client.get_teams(
             self.__creds.api_key_v2, 
-            'id',
-            'name',
-            'url',
-            'email',
-            'enabled',
-            'account.id',
-            'teams.id',
-            ids=self.__user_ids)
+            *field_list,
+            ids=[int(self.id)])[0]['users']
 
         return [User(creds=self.__creds, **user_data) for user_data in users_data]
 
 
-class Account():
+class _Account(Model):
+    id = types.StringType(required=True)
+    name = types.StringType()
+    first_day_of_the_week = types.StringType()
+    logo = types.StringType()
+    show_timeline_weekends = types.BooleanType()
+    slug = types.StringType()
+
+
+class Account(_Account):
 
     def __init__(self, **kwargs):
-        self.__creds = kwargs['creds']
-        self.__user_id = kwargs['user_id']
+        self.__creds = kwargs.pop('creds')
+        self.__plan = None
+        super(Account, self).__init__(kwargs)
 
-        self.first_day_of_the_week = kwargs['first_day_of_the_week']
-        self.id = kwargs['id']
-        self.name = kwargs['name']
-        self.show_timeline_weekends = kwargs['show_timeline_weekends']
-        self.slug = kwargs['slug']
+    @property
+    def plan(self):
+        if not self.__plan:
+            self.__plan = self.get_plan()
+        return self.__plan
 
-        for key, value in kwargs.items():
+    @property
+    def first_day_of_the_week_enum(self):
+        if self.first_day_of_the_week:
+            return enums.FirstDayOfTheWeek[self.first_day_of_the_week]
 
-            if key == 'logo':
-                self.logo = value
+    def __repr__(self):
+        o = self.to_primitive()
 
+        if self.__plan:
+            o['plan'] = self.__plan
+        
+        return str(o)
 
     def get_plan(self):
-
-        plan_data = client.get_users(
+        field_list = ['plan.' + field for field in config.DEFAULT_PLAN_QUERY_FIELDS]
+        plan_data = client.get_account(
             self.__creds.api_key_v2, 
-            'account.plan.max_users',
-            'account.plan.period',
-            'account.plan.tier',
-            'account.plan.version',
-            ids=[int(self.__user_id)])
+            *field_list)['plan']
 
-        return Plan(**plan_data[0]['account']['plan'])
+        return en.Plan(plan_data)

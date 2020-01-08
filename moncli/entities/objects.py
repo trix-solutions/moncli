@@ -1,5 +1,11 @@
 import json
 
+from schematics.models import Model
+from schematics import types
+
+from .. import config
+from ..enums import ColumnType
+
 class MondayClientCredentials():
 
     def __init__(self, api_key_v1: str, api_key_v2: str):
@@ -7,121 +13,114 @@ class MondayClientCredentials():
         self.api_key_v2 = api_key_v2
 
 
-class Column():
+class Column(Model):
+    id = types.StringType(required=True)
+    title = types.StringType()
+    archived = types.BooleanType()
+    settings_str = types.StringType()
+    type = types.StringType()
+    width = types.IntType()
+    
+    def __repr__(self):
+        return str(self.to_primitive())
 
-    def __init__(self, **kwargs):
-        self.id = kwargs['id']
-
-        for key, value in kwargs.items():
-
-            if key == 'archived':
-                self.archived = value
-
-            elif key == 'settings_str':
-                self.settings_str = value
-
-            elif key == 'title':
-                self.title = value
-            
-            elif key == 'type':
-                self.type = value
-
-            elif key == 'width':
-                self.width = value
-
-            elif key == 'board_id':
-                self.board_id = value
-
-        # Load settings string
-        try:
-            settings_str = json.loads(self.settings_str)
-            if self.type == 'color':
-                self.settings = StatusSettings(**settings_str)
-        except:
-            pass
+    @property
+    def settings(self):
+        if not self.settings_str:
+            return None
+        settings_obj = json.loads(self.settings_str)
+        if self.column_type is ColumnType.status:
+            return StatusSettings(settings_obj)
+        elif self.column_type is ColumnType.dropdown:
+            return DropdownSettings(settings_obj)
+    
+    @property
+    def column_type(self):
+        # TODO - Find something else other than auto-number to default to.
+        return config.COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
 
 
-class Update():
+class Update(Model):
+    id = types.StringType(required=True)
+    body = types.StringType()
+    create_at = types.StringType()
+    creator_id = types.StringType()
+    item_id = types.StringType()
+    text_body = types.StringType()
+    updated_at = types.StringType()
 
-    def __init__(self, **kwargs):
-        self.id = kwargs['id']
-        
-        for key, value in kwargs.items():
-
-            if key == 'body':
-                self.body = value
-
-
-class Notification():
-
-    def __init__(self, **kwargs):
-        self.id = kwargs['id']
-
-        for key, value in kwargs.items():
-
-            if key == 'text':
-                self.text = value
+    def __repr__(self):
+        return str(self.to_primitive())
 
 
-class Tag():
+class Notification(Model):
+    id = types.StringType(required=True)
+    text = types.StringType()
 
-    def __init__(self, **kwargs):
-
-        self.id = kwargs['id']
-
-        for key, value in kwargs.items():
-
-            if key == 'name':
-                self.name = value
-
-            elif key == 'color':
-                self.color = value
+    def __repr__(self):
+        return str(self.to_primitive())
 
 
-class Plan():
+class Tag(Model):
+    id = types.StringType(required=True)
+    name = types.StringType()
+    color = types.StringType()
 
-    def __init__(self, **kwargs):
-
-        for key, value in kwargs.items():
-
-            if key == 'max_users':
-                self.max_users = value
-
-            elif key == 'period':
-                self.period = value
-
-            elif key == 'tier':
-                self.tier = value
-
-            elif key == 'version':
-                self.version = value
+    def __repr__(self):
+        return str(self.to_primitive())
 
 
-class StatusSettings():
+class Plan(Model):
+    max_users = types.IntType()
+    period = types.StringType()
+    tier = types.StringType()
+    version = types.IntType()
 
-    def __init__(self, **kwargs):
-        self.labels = kwargs['labels']
+    def __repr__(self):
+        return str(self.to_primitive())
 
-        for key, value in kwargs.items():
 
-            if key == 'done_colors':
-                self.done_colors = value
+class StatusSettings(Model):
 
-            elif key == 'sumType':
-                self.sum_type = value
+    labels = types.DictType(types.StringType())
+    labels_positions_v2 = types.DictType(types.StringType())
 
-            elif key == 'color_mapping':
-                self.color_mapping = value
-
-            elif key == 'labels_positions_v2':
-                self.labels_positions_v2 = value
-
+    def __repr__(self):
+        return str(self.to_primitive())
 
     def get_index(self, label: str):
-
         for key, value in self.labels.items():
-
             if value == label:
                 return int(key)
-
         return None
+
+    def __getitem__(self, index: int):
+        return self.labels[str(index)]
+
+
+class DropdownLabel(Model):
+
+    id = types.IntType(required=True)
+    name = types.StringType(required=True)
+
+    def __repr__(self):
+        return str(self.to_primitive())
+
+
+class DropdownSettings(Model):
+    
+    labels = types.ListType(types.ModelType(DropdownLabel))
+
+    def __repr__(self):
+        o = self.to_primitive()
+
+        if self.labels:
+            o['labels'] = [label.to_primitive() for label in self.labels]
+
+        return str(o)
+
+    def __getitem__(self, id):
+        for label in self.labels:
+            if label.id is id:
+                return label
+        raise KeyError
