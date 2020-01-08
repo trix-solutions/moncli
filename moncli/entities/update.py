@@ -9,7 +9,7 @@ class _Update(Model):
     creator_id = types.StringType(required=True)
     item_id = types.StringType(required=True)
     body = types.StringType()
-    create_at = types.StringType()
+    created_at = types.StringType()
     text_body = types.StringType()
     updated_at = types.StringType()
 
@@ -26,7 +26,7 @@ class Update(_Update):
         o = self.to_primitive()
         if len(self.__replies) > 0:
             o['replies'] = self.__replies
-        return o
+        return str(o)
 
     @property
     def creator(self):
@@ -51,7 +51,7 @@ class _Reply(Model):
     id = types.StringType(required=True)
     creator_id = types.StringType(required=True)
     body = types.StringType()
-    create_at = types.StringType()
+    created_at = types.StringType()
     text_body = types.StringType()
     updated_at = types.StringType()
 

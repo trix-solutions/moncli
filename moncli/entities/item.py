@@ -199,6 +199,7 @@ class Item(_Item):
         updates_data = client.get_items(
             self.__creds.api_key_v2,
             *field_list,
+            ids=[int(self.id)],
             limit=1,
             updates_limit=limit,
             updates_page=page)[0]['updates']
