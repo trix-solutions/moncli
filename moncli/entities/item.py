@@ -24,16 +24,17 @@ class Item(_Item):
         self.__board = None
         self.__creator = None
         self.__column_values = None
+        self.__updates = None
         super(Item, self).__init__(kwargs)
 
     def __repr__(self):
         o = self.to_primitive()
-
         if self.__board:
             o['board'] = self.__board.to_primitive()
         if self.__column_values:
             o['column_values'] = [value.to_primitive() for value in self.__column_values]
-
+        if self.__updates:
+            o['column_values'] = [value.to_primitive() for value in self.__updates]
         return str(o)
 
     @property
@@ -52,6 +53,12 @@ class Item(_Item):
     def column_values(self):
         self.__column_values = self.get_column_values()
         return self.__column_values
+
+    @property
+    def updates(self):
+        if not self.__updates: 
+            self.__updates = self.get_updates()
+        return self.__updates
 
     def get_board(self):
         field_list = ['board.' + field for field in config.DEFAULT_BOARD_QUERY_FIELDS]
@@ -192,8 +199,9 @@ class Item(_Item):
         updates_data = client.get_items(
             self.__creds.api_key_v2,
             *field_list,
+            limit=1,
             updates_limit=limit,
-            updates_page=page)
+            updates_page=page)[0]['updates']
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
 
