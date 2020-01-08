@@ -511,11 +511,14 @@ class StatusValue(ColumnValue):
 
     @index.setter
     def index(self, index: int):
-        try:
-            label = self.__settings[index]
-            self.set_value(index=index, label=label)
-        except KeyError:
-            raise StatusIndexError(index)
+        if index or index == 0:
+            try:
+                label = self.__settings[index]
+                self.set_value(index=index, label=label)
+            except KeyError:
+                raise StatusIndexError(index)
+        else:
+            self.set_value()
 
     @property
     def label(self):
@@ -529,14 +532,17 @@ class StatusValue(ColumnValue):
 
     @label.setter
     def label(self, label: str): 
-        index=self.__settings.get_index(label)
-        if index:
-            self.set_value(index=index, label=label)
+        if label:
+            index=self.__settings.get_index(label)
+            if index or index == 0:
+                self.set_value(index=index, label=label)
+            else:
+                raise StatusLabelError(label)
         else:
-            raise StatusLabelError(label)
+            self.set_value()
 
     def format(self):
-        if self.index:
+        if self.index or self.index == 0:
             return {'index': self.index}
         return self.null_value
         
@@ -686,6 +692,7 @@ class TimezoneValue(ColumnValue):
 
 
 class WeekValue(ColumnValue):
+    null_value = {'week': ''}
     def __init__(self, **kwargs):
         super(WeekValue, self).__init__(**kwargs)
 
@@ -694,6 +701,8 @@ class WeekValue(ColumnValue):
         try:
             return loads(self.value)['week']['startDate']
         except KeyError:
+            return None
+        except TypeError:
             return None
 
     @start_date.setter
@@ -709,6 +718,8 @@ class WeekValue(ColumnValue):
         try:
             return loads(self.value)['week']['endDate']
         except KeyError:
+            return None
+        except TypeError:
             return None
 
     @end_date.setter

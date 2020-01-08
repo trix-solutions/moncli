@@ -1746,7 +1746,7 @@ def test_should_return_empty_week_column_value():
     ok_(column_value != None)
     eq_(column_value.start_date, None)
     eq_(column_value.end_date, None)
-    eq_(format, {})
+    eq_(format, {'week': ''})
 
 
 @raises(cv.DateFormatError)
@@ -1814,7 +1814,7 @@ def test_should_return_empty_week_column_value_when_only_start_date_set():
     ok_(column_value != None)
     eq_(column_value.start_date, start_date)
     eq_(column_value.end_date, None)
-    eq_(format, {})
+    eq_(format, cv.WeekValue.null_value)
 
 
 def test_should_return_empty_week_column_value_when_only_end_date_set():
@@ -1834,4 +1834,4 @@ def test_should_return_empty_week_column_value_when_only_end_date_set():
     ok_(column_value != None)
     eq_(column_value.start_date, None)
     eq_(column_value.end_date, end_date)
-    eq_(format, {})
+    eq_(format, cv.WeekValue.null_value)
