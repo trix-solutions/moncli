@@ -14,8 +14,8 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv, **
 
 
 def get_boards(api_key: str, *argv, **kwargs) -> List[Dict[str, Any]]:
-    group_ids = kwargs.pop('group_ids', None)
     kwargs = get_method_arguments(constants.BOARDS_OPTIONAL_PARAMS, **kwargs)
+    group_ids = kwargs.pop('groups_ids', None)
     operation = graphql.create_query(constants.BOARDS, *argv, **kwargs)
     if group_ids:
         operation.get_field('groups').add_arguments(ids=group_ids)
@@ -99,10 +99,10 @@ def create_item(api_key: str, item_name: str, board_id: str, *argv, **kwargs):
 
 
 def get_items(api_key: str, *argv, **kwargs):
+    kwargs = get_method_arguments(constants.ITEMS_OPTIONAL_PARAMS, **kwargs) 
     updates_limit = kwargs.pop('updates_limit', None)
     updates_page = kwargs.pop('updates_page', None)
-    kwargs = get_method_arguments(constants.ITEMS_OPTIONAL_PARAMS, **kwargs) 
-    operation = graphql.create_query(constants.BOARDS, *argv, **kwargs)
+    operation = graphql.create_query(constants.ITEMS, *argv, **kwargs)
     if updates_limit:
         operation.get_field('updates').add_arguments(limit=updates_limit)
     if updates_page:
