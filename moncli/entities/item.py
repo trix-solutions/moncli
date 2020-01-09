@@ -159,6 +159,7 @@ class Item(_Item):
             *args)
         return Item(creds=self.__creds, **item_data)
 
+    @optional_arguments(constants.MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS)
     @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def move_to_group(self, group_id: str, *args):
         item_data = client.move_item_to_group(
@@ -186,6 +187,7 @@ class Item(_Item):
             *args)
         return Item(creds=self.__creds, **item_data)
 
+    @optional_arguments(constants.CREATE_UPDATE_OPTIONAL_PARAMS)
     @default_field_list(config.DEFAULT_UPDATE_QUERY_FIELDS)
     def add_update(self, body: str, *args):
         update_data = client.create_update(
