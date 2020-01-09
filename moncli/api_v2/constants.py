@@ -61,7 +61,23 @@ BOARDS_OPTIONAL_PARAMS = {
     'board_kind': ArgumentValueKind.Enum,
     'state': ArgumentValueKind.Enum,
     'newest_first': ArgumentValueKind.Bool,
-    'groups_ids': ArgumentValueKind.List
+    'groups': {
+        'ids': ArgumentValueKind.List,
+        'items': {
+            'ids': ArgumentValueKind.List,
+            'limit': ArgumentValueKind.Int,
+            'page': ArgumentValueKind.Int
+        }
+    },
+    'items': {
+        'ids': ArgumentValueKind.List,
+        'limit': ArgumentValueKind.Int,
+        'page': ArgumentValueKind.Int
+    },
+    'updates': {
+        'limit': ArgumentValueKind.Int,
+        'page': ArgumentValueKind.Int
+    }
 }
 
 CREATE_BOARD_OPTIONAL_PARAMS = {
