@@ -36,7 +36,7 @@ class GraphQLNode():
 
     def format_arguments(self, body: str):
 
-        formatted_args = ', '.join(['{}:{}'.format(key, value) for key, value in self.arguments.items()])
+        formatted_args = ', '.join(["{}:{}".format(key, value) for key, value in self.arguments.items()])
         return '{} ({})'.format(body, formatted_args)
 
 
@@ -78,12 +78,13 @@ class GraphQLField(GraphQLNode):
     def add_arguments(self, **kwargs):
 
         for key, value in kwargs.items():
-
-            arg_value : ArgumentValue = value
-            formatted_value = arg_value.format()
-
-            if formatted_value is not None:
-                self.arguments.__setitem__(key, formatted_value)
+            if isinstance(value, ArgumentValue):
+                arg_value : ArgumentValue = value
+                formatted_value = arg_value.format()
+                if formatted_value:
+                    self.arguments.__setitem__(key, formatted_value)
+            else:
+                self.get_field(key).add_arguments(**value)
 
 
     def get_field(self, path: str):
@@ -146,6 +147,7 @@ class GraphQLOperation(GraphQLField):
         body = self.format_children(body)
 
         body = '{} {{ {} }}'.format(self.action_type, body)
+        body = body.replace('\'','"')
 
         return body
 
