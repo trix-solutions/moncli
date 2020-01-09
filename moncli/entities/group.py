@@ -92,7 +92,7 @@ class Group(_Group):
             self.__creds.api_key_v2, 
             *field_list,
             ids=[int(self.__board_id)],
-            group_ids=[self.id], 
-            limit=1)[0]['groups'][0]['items']
+            limit=1,
+            groups={'ids': [self.id]})[0]['groups'][0]['items']
 
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data]
