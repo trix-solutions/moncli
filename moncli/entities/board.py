@@ -73,7 +73,6 @@ class Board(_Board):
             title, 
             column_type, 
             *args)
-
         return en.Column(column_data)
    
     @default_field_list(config.DEFAULT_COLUMN_QUERY_FIELDS)
@@ -84,7 +83,6 @@ class Board(_Board):
             *args,
             ids=[int(self.id)],
             limit=1)[0]['columns']
-
         return [en.Column(data) for data in column_data]
 
     @optional_arguments(constants.CREATE_GROUP_OPTIONAL_PARAMS)
@@ -95,7 +93,6 @@ class Board(_Board):
             self.id,
             group_name,
             *args)
-
         return en.Group(
             creds=self.__creds,
             board_id=self.id,
@@ -108,7 +105,6 @@ class Board(_Board):
             self.__creds.api_key_v2,
             *args,
             ids=[int(self.id)])[0]['groups']
-
         return [en.Group(creds=self.__creds, board_id=self.id, **data) for data in groups_data]
   
     def get_group(self, id: str = None, title: str = None):     
@@ -148,7 +144,6 @@ class Board(_Board):
             self.__creds.api_key_v2,
             *args, 
             ids=[int(self.id)])[0]['items']
-
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
     @optional_arguments(constants.ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS)
@@ -188,8 +183,7 @@ class Board(_Board):
             column_type = config.COLUMN_TYPE_MAPPINGS[column.type]
 
         if column_type == enums.ColumnType.status:
-            kwargs['settings'] = column.settings
-        
+            kwargs['settings'] = column.settings     
         return cv.create_column_value(column_type, id=column.id, title=column.title)
 
         
