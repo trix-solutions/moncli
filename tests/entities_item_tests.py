@@ -166,12 +166,14 @@ def test_item_should_get_column_value_with_extra_id(get_column_values, get_items
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
 @raises(en.InvalidColumnValue)
-def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_items, get_me):
+def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_board, get_items, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
@@ -192,28 +194,6 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_
 
     # Act
     item.change_column_value(column_id='text_column_01', column_value=[1,2,3,4,5])
-
-
-@patch.object(MondayClient, 'get_me')
-@patch('moncli.api_v2.get_items')
-@patch.object(en.Item, 'get_board')
-@patch('moncli.api_v2.change_column_value')
-def test_item_should_change_column_value_with_string(change_column_value, get_board, get_items, get_me):
-
-    # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
-    get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
-    change_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
-    client = MondayClient(USERNAME, '', '')
-    item = client.get_items()[0]
-
-    # Act
-    item = item.change_column_value(column_id='text_column_01', column_value='Let\'s eat grandma!')
-
-    # Assert 
-    ok_(item != None)
-    eq_(item.name, 'Test Item 01')
 
 
 @patch.object(MondayClient, 'get_me')
