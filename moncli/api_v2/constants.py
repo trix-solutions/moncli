@@ -122,15 +122,27 @@ ITEMS_OPTIONAL_PARAMS = {
     'page': ArgumentValueKind.Int,
     'ids': ArgumentValueKind.List,
     'newest_first': ArgumentValueKind.Bool,
-    'updates_limit': ArgumentValueKind.Int,
-    'updates_page': ArgumentValueKind.Int
+    'column_values': {
+        'ids': ArgumentValueKind.List
+    },
+    'updates': {
+        'limit': ArgumentValueKind.Int,
+        'page': ArgumentValueKind.Int
+    }
 }
 
 ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS = {
     'limit': ArgumentValueKind.Int,
     'page': ArgumentValueKind.Int,
     'column_type': ArgumentValueKind.String,
-    'state': ArgumentValueKind.Enum
+    'state': ArgumentValueKind.Enum,
+    'column_values': {
+        'ids': ArgumentValueKind.List
+    },
+    'updates': {
+        'limit': ArgumentValueKind.Int,
+        'page': ArgumentValueKind.Int
+    }
 }
 
 CREATE_ITEM_OPTIONAL_PARAMS ={
