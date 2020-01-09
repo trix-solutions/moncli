@@ -2,6 +2,8 @@ from schematics.models import Model
 from schematics import types
 
 from .. import api_v2 as client, config, enums, entities as en
+from ..api_v2 import constants
+from ..decorators import default_field_list, optional_arguments
 
 
 class _User(Model):
@@ -31,7 +33,13 @@ class User(_User):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
         self.__account = None
+        account = kwargs.pop('account', None)
+        if account:
+            self.__account = en.Account(creds=self.__creds, **account)
         self.__teams = None
+        teams = kwargs.pop('teams', None)
+        if account:
+            self.__teams = [en.Account(creds=self.__creds, **team) for team in teams]
         super(User, self).__init__(kwargs)
 
     @property
@@ -56,34 +64,38 @@ class User(_User):
 
         return str(o)
 
-    def get_account(self):
-        field_list = ['account.' + field for field in config.DEFAULT_ACCOUNT_QUERY_FIELDS]
+    @default_field_list(config.DEFAULT_ACCOUNT_QUERY_FIELDS)
+    def get_account(self, *args):
+        args = ['account.' + arg for arg in args]
         account_data = client.get_users(
             self.__creds.api_key_v2, 
-            *field_list,
+            *args,
             ids=[int(self.id)])[0]['account']
 
         return Account(
             creds=self.__creds,
             **account_data)
     
-    def get_teams(self):
-        field_list = ['teams.' + field for field in config.DEFAULT_TEAM_QUERY_FIELDS]
+    @default_field_list(config.DEFAULT_TEAM_QUERY_FIELDS)
+    def get_teams(self, *args):
+        args = ['teams.' + arg for arg in args]
         teams_data = client.get_users(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             ids=[int(self.id)])[0]['teams']
 
         return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
     
-    def send_notification(self, text: str, target_id: str, target_type: enums.NotificationTargetType, *argv, **kwargs):
+    @optional_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_NOTIFICATION_QUERY_FIELDS)
+    def send_notification(self, text: str, target_id: str, target_type: enums.NotificationTargetType, *args, **kwargs):
         notification_data = client.create_notification(
             self.__creds.api_key_v2, 
             text, 
             self.id, 
             target_id, 
             target_type, 
-            *argv, 
+            *args, 
             **kwargs)
 
         return en.Notification(notification_data)
@@ -100,6 +112,9 @@ class Team(_Team):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
         self.__users = None
+        users = kwargs.pop('users', None)
+        if users:
+            self.__users = [en.User(creds=self.__creds, **user) for user in users]
         super(Team, self).__init__(kwargs)
 
     @property
@@ -110,19 +125,17 @@ class Team(_Team):
 
     def __repr__(self):
         o = self.to_primitive()
-
         if self.__users:
             o['users'] = self.__users
-
         return str(o)
 
-    def get_users(self):
-        field_list = ['users.' + field for field in config.DEFAULT_USER_QUERY_FIELDS]
+    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
+    def get_users(self, *args):
+        args = ['users.' + arg for arg in args]
         users_data = client.get_teams(
             self.__creds.api_key_v2, 
-            *field_list,
+            *args,
             ids=[int(self.id)])[0]['users']
-
         return [User(creds=self.__creds, **user_data) for user_data in users_data]
 
 
@@ -140,6 +153,9 @@ class Account(_Account):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
         self.__plan = None
+        plan = kwargs.pop('plan', None)
+        if plan:
+            self.__plan = en.Plan(plan)
         super(Account, self).__init__(kwargs)
 
     @property
@@ -155,16 +171,14 @@ class Account(_Account):
 
     def __repr__(self):
         o = self.to_primitive()
-
         if self.__plan:
             o['plan'] = self.__plan
-        
         return str(o)
 
-    def get_plan(self):
-        field_list = ['plan.' + field for field in config.DEFAULT_PLAN_QUERY_FIELDS]
+    @default_field_list(config.DEFAULT_PLAN_QUERY_FIELDS)
+    def get_plan(self, *args):
+        args = ['plan.' + arg for arg in args]
         plan_data = client.get_account(
             self.__creds.api_key_v2, 
-            *field_list)['plan']
-
+            *args)['plan']
         return en.Plan(plan_data)

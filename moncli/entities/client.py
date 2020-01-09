@@ -1,8 +1,9 @@
 from .. import api_v2 as client, config, enums, entities as en
+from ..api_v2 import constants
+from ..decorators import default_field_list, optional_arguments
 
 
 class MondayClient():
-
     def __init__(self, user_name: str, api_key_v1: str, api_key_v2: str):    
         self.__creds: en.MondayClientCredentials = en.MondayClientCredentials(api_key_v1, api_key_v2)
         self.__me = None
@@ -15,24 +16,24 @@ class MondayClient():
         if not self.__me:
             self.__me = self.get_me()
         return self.__me
-        
-    def create_board(self, board_name: str, board_kind: enums.BoardKind):
-        field_list = config.DEFAULT_BOARD_QUERY_FIELDS
+
+    @optional_arguments(constants.CREATE_BOARD_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
+    def create_board(self, board_name: str, board_kind: enums.BoardKind, *args):
         board_data = client.create_board(
             self.__creds.api_key_v2, 
             board_name, 
             board_kind, 
-            *field_list)
-
+            *args)
         return en.Board(creds=self.__creds, **board_data)
-    
-    def get_boards(self, **kwargs):
-        field_list = ['id', 'name']
+
+    @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
+    def get_boards(self, *args, **kwargs):
         boards_data = client.get_boards(
             self.__creds.api_key_v2, 
-            *field_list, 
+            *args, 
             **kwargs)
-
         return [en.Board(creds=self.__creds, **data) for data in boards_data]
 
     def get_board(self, id: str = None, name: str = None):
@@ -45,20 +46,20 @@ class MondayClient():
         else:
             return self.get_board_by_name(name)
 
-    def get_board_by_id(self, id: str):
-        field_list = config.DEFAULT_BOARD_QUERY_FIELDS
+    @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
+    def get_board_by_id(self, id: str, *args):
         try:
             board_data = client.get_boards(
                 self.__creds.api_key_v2, 
-                *field_list,
+                *args,
                 ids=[int(id)],
                 limit=1)[0]
         except IndexError:
             raise BoardNotFound('id', id)
-
         return en.Board(creds=self.__creds, **board_data)
 
-    def get_board_by_name(self, name: str):
+    def get_board_by_name(self, name: str, *args):
         # Hard configure the pagination rate.
         page = 1
         page_limit = 500
@@ -73,106 +74,104 @@ class MondayClient():
             
             try:
                 target_board = [board for board in boards_data if board['name'].lower() == name.lower()][0]
-                return self.get_board_by_id(target_board['id'])
+                return self.get_board_by_id(target_board['id'], *args)
             except KeyError:
                 if len(target_board) == 0:
                     page += 1
                     record_count = len(boards_data)
                     continue
-
         raise BoardNotFound('name', name)   
 
-    def archive_board(self, board_id: str):
-        field_list = config.DEFAULT_BOARD_QUERY_FIELDS
+    @optional_arguments(constants.ARCHIVE_BOARD_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
+    def archive_board(self, board_id: str, *args):
         board_data = client.archive_board(
             self.__creds.api_key_v2, 
             board_id,
-            *field_list)
-
+            *args)
         return en.Board(creds=self.__creds, **board_data)
     
-    def get_items(self, **kwargs):
-        field_list = config.DEFAULT_ITEM_QUERY_FIELDS
+    @optional_arguments(constants.ITEMS_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def get_items(self, *args,  **kwargs):
         items_data = client.get_items(
             self.__creds.api_key_v2, 
-            *field_list,
+            *args,
             **kwargs)
-
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
-    
-    def get_updates(self, **kwargs):
-        field_list = config.DEFAULT_UPDATE_QUERY_FIELDS
-        [field_list.append('replies.' + field) for field in config.DEFAULT_REPLY_QUERY_FIELDS]
+        
+    @optional_arguments(constants.UPDATES_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_UPDATE_QUERY_FIELDS)
+    def get_updates(self, *args, **kwargs):
         updates_data = client.get_updates(
             self.__creds.api_key_v2, 
-            *field_list,
+            *args,
             **kwargs)
-
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
-
-    def create_notification(self, text: str, user_id: str, target_id: str, target_type: enums.NotificationTargetType, **kwargs):
-        field_list = config.DEFAULT_NOTIFICATION_QUERY_FIELDS
+    
+    @optional_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_NOTIFICATION_QUERY_FIELDS)
+    def create_notification(self, text: str, user_id: str, target_id: str, target_type: enums.NotificationTargetType, *args, **kwargs):
         notification_data = client.create_notification(
             self.__creds.api_key_v2, 
             text, 
             user_id, 
             target_id,
             target_type,
-            *field_list,
+            *args,
             **kwargs)
-
         return en.Notification(notification_data)
-
-    def create_or_get_tag(self, tag_name: str, **kwargs):
-        field_list = config.DEFAULT_TAG_QUERY_FIELDS
+    
+    @optional_arguments(constants.CREATE_OR_GET_TAG_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_TAG_QUERY_FIELDS)
+    def create_or_get_tag(self, tag_name: str, *args, **kwargs):
         tag_data = client.create_or_get_tag(
             self.__creds.api_key_v2, 
             tag_name,
-            *field_list)
-
+            *args)
         return en.Tag(tag_data)
-    
-    def get_tags(self, **kwargs):
+        
+    @optional_arguments(constants.TAGS_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_TAG_QUERY_FIELDS)
+    def get_tags(self, *args, **kwargs):
         
         tags_data = client.get_tags(
             self.__creds.api_key_v2,
-            *config.DEFAULT_TAG_QUERY_FIELDS,
+            *args,
             **kwargs)
-
         return [en.Tag(tag_data) for tag_data in tags_data]
-
-    def get_users(self, **kwargs):
+    
+    @optional_arguments(constants.USERS_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
+    def get_users(self, *args, **kwargs):
         
         users_data = client.get_users(
             self.__creds.api_key_v2, 
-            *config.DEFAULT_USER_QUERY_FIELDS,
+            *args,
             **kwargs)
-
         return [en.User(creds=self.__creds, **user_data) for user_data in users_data]
-
-    def get_teams(self, **kwargs):
-        field_list = config.DEFAULT_TEAM_QUERY_FIELDS
+    
+    @optional_arguments(constants.TEAMS_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_TEAM_QUERY_FIELDS)
+    def get_teams(self, *args, **kwargs):
         teams_data = client.get_teams(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             **kwargs)
-
         return [en.Team(creds=self.__creds, **team_data) for team_data in teams_data]
     
-    def get_me(self):
-        field_list = config.DEFAULT_USER_QUERY_FIELDS
+    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
+    def get_me(self, *args):
         user_data = client.get_me(
             self.__creds.api_key_v2, 
-            *field_list)
-
+            *args)
         return en.User(creds=self.__creds, **user_data)
 
-    def get_account(self):
-        field_list = config.DEFAULT_ACCOUNT_QUERY_FIELDS
+    @default_field_list(config.DEFAULT_ACCOUNT_QUERY_FIELDS)
+    def get_account(self, *args):
         account_data = client.get_account(
             self.__creds.api_key_v2,
-            *field_list)
-
+            *args)
         return en.Account(creds=self.__creds, **account_data)
 
 

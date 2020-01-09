@@ -44,7 +44,7 @@ def test_should_create_a_new_board(get_me, create_board):
     client = MondayClient(USERNAME, '', '')
 
     # Act
-    board = client.create_board(board_name, board_kind=board_kind)
+    board = client.create_board(board_name, board_kind)
 
     # Assert 
     ok_(board != None)

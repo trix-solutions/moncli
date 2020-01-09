@@ -5,7 +5,8 @@ from schematics.models import Model
 from schematics import types
 
 from .. import api_v2 as client, config, entities as en, enums
-from ..columnvalue import create_column_value
+from ..api_v2 import constants
+from ..decorators import default_field_list, optional_arguments
 
 
 class _Item(Model):
@@ -25,6 +26,16 @@ class Item(_Item):
         self.__creator = None
         self.__column_values = None
         self.__updates = None
+        board = kwargs.pop('board', None)
+        if board:
+            self.__board = en.Board(creds=self.__creds, **board)
+        creator = kwargs.pop('creator', None)
+        if creator:
+            self.__creator = en.User(creds=self.__creds, **creator)
+        kwargs.pop('column_values', None)
+        updates = kwargs.pop('updates', None)
+        if updates:
+            self.__updates = [en.Update(creds=self.__creds)]
         super(Item, self).__init__(kwargs)
 
     def __repr__(self):
@@ -60,31 +71,34 @@ class Item(_Item):
             self.__updates = self.get_updates()
         return self.__updates
 
-    def get_board(self):
-        field_list = ['board.' + field for field in config.DEFAULT_BOARD_QUERY_FIELDS]
+    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
+    def get_board(self, *args):
+        args = ['board.' + arg for arg in args]
         board_data = client.get_items(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             ids=[int(self.id)])[0]['board']
 
         return en.Board(creds=self.__creds, **board_data)
 
-    def get_creator(self):
-        field_list = ['creator.' + field for field in config.DEFAULT_USER_QUERY_FIELDS]
+    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
+    def get_creator(self, *args):
+        args = ['creator.' + arg for arg in args]
         user_data = client.get_items(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             ids=[int(self.id)])[0]['creator']
         return en.User(creds=self.__creds, **user_data)
    
-    def get_column_values(self):
+    @default_field_list(config.DEFAULT_COLUMN_VALUE_QUERY_FIELDS)
+    def get_column_values(self, *args):
         # Pulls the columns from the board containing the item and maps 
         # column ID to type.
         columns_map = { column.id: column for column in self.board.columns }
-        field_list = ['column_values.' + field for field in config.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+        args = ['column_values.' + arg for arg in args]
         column_values_data = client.get_items(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             ids=[int(self.id)])[0]['column_values']
 
         values = []
@@ -94,7 +108,6 @@ class Item(_Item):
             if columns_map[id].settings:
                 data['settings'] = columns_map[id].settings
             values.append(en.create_column_value(column_type, **data))
-
         return values
 
     def get_column_value(self, id = None, title = None):
@@ -109,100 +122,92 @@ class Item(_Item):
             elif id and column_value.id == id:
                 return column_value
     
-    def change_column_value(self, column_id: str = None, column_value = None):
-        if column_id is None:
-            if column_value is None:
-                raise ColumnValueRequired()
-            if not isinstance(column_value, en.ColumnValue):
-                raise en.board.InvalidColumnValue(type(column_value).__name__)
-            else:
-                column_id = column_value.id
-                value = column_value.format()
-        else:    
-            if type(column_value) == str or type(column_value) == dict:
-                value = column_value
-            else:
-                raise en.InvalidColumnValue(type(column_value).__name__)
+    @optional_arguments(constants.CHANGE_COLUMN_VALUE_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def change_column_value(self, column_value = None, *args):
+        if column_value is None:
+            raise ColumnValueRequired()
+        if not isinstance(column_value, en.ColumnValue):
+            raise en.board.InvalidColumnValue(type(column_value).__name__)
+        else:
+            column_id = column_value.id
+            value = column_value.format()
 
-        field_list = config.DEFAULT_ITEM_QUERY_FIELDS
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
             self.id,
             column_id,
             self.board.id,
             value,
-            *field_list)
-
+            *args)
         return Item(creds=self.__creds, **item_data)
     
-    def change_multiple_column_values(self, column_values):
+    @optional_arguments(constants.CHANGE_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def change_multiple_column_values(self, column_values, *args):
         if type(column_values) == dict:
             values = column_values
         elif type(column_values) == list:
             values = { value.id: value.format() for value in column_values }
         else:
             raise en.InvalidColumnValue(type(column_values).__name__)
-
-        field_list = config.DEFAULT_ITEM_QUERY_FIELDS
         item_data = client.change_multiple_column_value(
             self.__creds.api_key_v2,
             self.id,
             self.board.id,
             values,
-            *field_list)
-
+            *args)
         return Item(creds=self.__creds, **item_data)
 
-    def move_to_group(self, group_id: str):
-        field_list = config.DEFAULT_ITEM_QUERY_FIELDS
+    @optional_arguments(constants.MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def move_to_group(self, group_id: str, *args):
         item_data = client.move_item_to_group(
             self.__creds.api_key_v2,
             self.id,
             group_id,
-            *field_list)
+            *args)
 
         return Item(creds=self.__creds, **item_data)
 
-    def archive(self):
-        field_list = config.DEFAULT_ITEM_QUERY_FIELDS
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def archive(self, *args):
         item_data = client.archive_item(
             self.__creds.api_key_v2,
             self.id,
-            *field_list)
+            *args)
 
         return Item(creds=self.__creds, **item_data)
 
-    def delete(self):
-        field_list = config.DEFAULT_ITEM_QUERY_FIELDS
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def delete(self, *args):
         item_data = client.delete_item(
             self.__creds.api_key_v2,
             self.id,
-            *field_list)
-
+            *args)
         return Item(creds=self.__creds, **item_data)
 
-    def add_update(self, body: str):
-        field_list = config.DEFAULT_UPDATE_QUERY_FIELDS
+    @optional_arguments(constants.CREATE_UPDATE_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_UPDATE_QUERY_FIELDS)
+    def add_update(self, body: str, *args):
         update_data = client.create_update(
             self.__creds.api_key_v2, 
             body, 
             self.id,
-            *field_list)
+            *args)
         return en.Update(creds=self.__creds, **update_data)
 
-    def get_updates(self, **kwargs):
-        field_list = ['updates.' + field for field in config.DEFAULT_UPDATE_QUERY_FIELDS]
-        [field_list.append('updates.replies.' + field) for field in config.DEFAULT_REPLY_QUERY_FIELDS]
+    @default_field_list(config.DEFAULT_UPDATE_QUERY_FIELDS)
+    def get_updates(self, *args, **kwargs):
+        args = ['updates.' + arg for arg in args]
         limit = kwargs.pop('limit', 25)
         page = kwargs.pop('page', 1)
-
         updates_data = client.get_items(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             ids=[int(self.id)],
             limit=1,
-            updates_limit=limit,
-            updates_page=page)[0]['updates']
+            updates={'limit': limit, 'page': page})[0]['updates']
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
 

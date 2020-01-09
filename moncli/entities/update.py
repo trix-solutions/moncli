@@ -2,6 +2,8 @@ from schematics import types
 from schematics.models import Model
 
 from .. import api_v2 as client, config, entities as en
+from ..api_v2 import constants
+from ..decorators import default_field_list, optional_arguments
 
 
 class _Update(Model):
@@ -38,11 +40,11 @@ class Update(_Update):
     def replies(self):
         return self.__replies
 
-    def get_creator(self):
-        field_list = config.DEFAULT_USER_QUERY_FIELDS
+    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
+    def get_creator(self, *args):
         user_data = client.get_users(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             ids=[int(self.creator_id)])[0]
         return en.User(creds=self.__creds, **user_data)
 
@@ -71,11 +73,11 @@ class Reply(_Reply):
         if not self.__creator:
             self.__creator = self.get_creator()
         return self.__creator
-
-    def get_creator(self):
-        field_list = config.DEFAULT_USER_QUERY_FIELDS
+    
+    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
+    def get_creator(self, *args):
         user_data = client.get_users(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             ids=[int(self.creator_id)])[0]
         return en.User(creds=self.__creds, **user_data)

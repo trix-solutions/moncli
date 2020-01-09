@@ -2,6 +2,8 @@ from schematics.models import Model
 from schematics import types
 
 from .. import api_v2 as client, config, enums, entities as en
+from ..api_v2 import constants
+from ..decorators import default_field_list, optional_arguments
 from ..entities import column_value as cv
 
 class _Board(Model):
@@ -21,21 +23,27 @@ class Board(_Board):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
         self.__columns = None
+        columns = kwargs.pop('columns', None)
+        if columns:
+            self.__columns = [en.Column() for column in columns]
         self.__groups = None
+        groups = kwargs.pop('groups', None)
+        if groups:
+            self.__groups = [en.Group(creds=self.__creds, **groups) for group in groups]
         self.__items = None
-
+        items = kwargs.pop('items', None)
+        if items:
+            self.__items = [en.Item(creds=self.__creds, **item) for item in items]
         super(Board, self).__init__(kwargs)
 
     def __repr__(self):
         o = self.to_primitive()
-
         if self.__columns:
             o['columns'] = [column.to_primitive() for column in self.__columns]
         if self.__groups:
             o['groups'] = [group.to_primitive() for group in self.__groups]
         if self.__items:
-            o['items'] = [item.to_primitive() for item in self.__items]
-        
+            o['items'] = [item.to_primitive() for item in self.__items]       
         return str(o)
  
     @property
@@ -56,47 +64,47 @@ class Board(_Board):
             self.__items = self.get_items()
         return self.__items
 
-    def add_column(self, title:str, column_type: enums.ColumnType):
-        field_list = config.DEFAULT_COLUMN_QUERY_FIELDS      
+    @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_COLUMN_QUERY_FIELDS)
+    def add_column(self, title:str, column_type: enums.ColumnType, *args): 
         column_data = client.create_column(
             self.__creds.api_key_v2, 
             self.id, 
             title, 
             column_type, 
-            *field_list)
-
+            *args)
         return en.Column(column_data)
    
-    def get_columns(self):
-        field_list = ['columns.' + field for field in config.DEFAULT_COLUMN_QUERY_FIELDS]
+    @default_field_list(config.DEFAULT_COLUMN_QUERY_FIELDS)
+    def get_columns(self, *args):
+        args = ['columns.' + arg for arg in args]
         column_data = client.get_boards(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             ids=[int(self.id)],
             limit=1)[0]['columns']
-
         return [en.Column(data) for data in column_data]
 
-    def add_group(self, group_name: str):
-        field_list = config.DEFAULT_GROUP_QUERY_FIELDS
+    @optional_arguments(constants.CREATE_GROUP_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_GROUP_QUERY_FIELDS)
+    def add_group(self, group_name: str, *args):
         group_data = client.create_group(
             self.__creds.api_key_v2,
             self.id,
             group_name,
-            *field_list)
-
+            *args)
         return en.Group(
             creds=self.__creds,
             board_id=self.id,
             **group_data)
 
-    def get_groups(self):
-        field_list = ['groups.' + field for field in config.DEFAULT_GROUP_QUERY_FIELDS]
+    @default_field_list(config.DEFAULT_GROUP_QUERY_FIELDS)
+    def get_groups(self, *args):
+        args = ['groups.' + arg for arg in args]
         groups_data = client.get_boards(
             self.__creds.api_key_v2,
-            *field_list,
+            *args,
             ids=[int(self.id)])[0]['groups']
-
         return [en.Group(creds=self.__creds, board_id=self.id, **data) for data in groups_data]
   
     def get_group(self, id: str = None, title: str = None):     
@@ -109,13 +117,11 @@ class Board(_Board):
         else:
             return [group for group in self.groups if group.title == title][0]
 
-    def add_item(self, item_name: str, group_id: str = None, column_values = None):
-        kwargs = {}
-        field_list = config.DEFAULT_ITEM_QUERY_FIELDS
-
-        if group_id is not None:
-            kwargs['group_id'] = group_id
-        if column_values is not None:
+    @optional_arguments(constants.CREATE_ITEM_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def add_item(self, item_name: str, *args, **kwargs):
+        column_values = kwargs.pop('column_values', None)
+        if column_values:
             if type(column_values) == dict:
                 kwargs['column_values'] = column_values
             elif type(column_values) == list:
@@ -127,24 +133,22 @@ class Board(_Board):
             self.__creds.api_key_v2, 
             item_name, 
             self.id, 
-            *field_list, 
+            *args, 
             **kwargs)
-
         return en.Item(creds=self.__creds, **item_data)
 
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def get_items(self, *args):
-        field_list = ['items.' + field for field in config.DEFAULT_ITEM_QUERY_FIELDS]
+        args = ['items.' + arg for arg in args]
         items_data = client.get_boards(
             self.__creds.api_key_v2,
-            *field_list, 
+            *args, 
             ids=[int(self.id)])[0]['items']
-
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
-
-    def get_items_by_column_values(self, column_value: en.ColumnValue, **kwargs):        
-        field_list = config.DEFAULT_ITEM_QUERY_FIELDS
-
+    @optional_arguments(constants.ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def get_items_by_column_values(self, column_value: en.ColumnValue, *args, **kwargs):      
         if type(column_value) == cv.DateValue:
             value = column_value.date
         elif type(column_value) == cv.StatusValue:
@@ -157,9 +161,8 @@ class Board(_Board):
             self.id, 
             column_value.id, 
             value, 
-            *field_list,
+            *args,
             **kwargs)
-
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data]
 
     def get_column_values(self):
@@ -180,8 +183,7 @@ class Board(_Board):
             column_type = config.COLUMN_TYPE_MAPPINGS[column.type]
 
         if column_type == enums.ColumnType.status:
-            kwargs['settings'] = column.settings
-        
+            kwargs['settings'] = column.settings     
         return cv.create_column_value(column_type, id=column.id, title=column.title)
 
         
