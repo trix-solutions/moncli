@@ -1,7 +1,7 @@
-import moncli.entities.exceptions as ex
 from .. import api_v2 as client
 from ..enums import BoardKind, NotificationTargetType
 from .objects import MondayClientCredentials, Tag, Update, Notification
+from . import exceptions as ex
 from .board import Board
 from .item import Item
 from .user import User, Team
