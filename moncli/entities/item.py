@@ -1,11 +1,12 @@
 import json
 from typing import List
 
-import moncli.entities.exceptions as ex, moncli.entities as e
+from .. import entities as e
 from .. import api_v2 as client
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
 from ..columnvalue import create_column_value, ColumnValue
+from . import exceptions as ex
 
 
 class Item():
