@@ -236,7 +236,7 @@ class NumberValue(ColumnValue):
             value = kwargs['number']
 
             if self.__isint(value):
-                self.number = int(value)
+                self.number = int(float(value))
 
             elif self.__isfloat(value):
                 self.number = float(value)
