@@ -99,6 +99,11 @@ class DropdownValue(ColumnValue):
             self.ids = None
 
         try: 
+            self.text = kwargs['text']
+        except KeyError:
+            self.text = None
+
+        try: 
             self.label = kwargs['label']
         except KeyError:
             self.label = None
@@ -578,10 +583,10 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
             return DropdownValue(id, title)
 
         if kwargs.__contains__('label'):
-            return DropdownValue(id, title, label=kwargs['label'])
+            return DropdownValue(id, title, label=kwargs['label'], text=kwargs['text'])
 
         if kwargs.__contains__('ids'):
-            return DropdownValue(id, title, ids=kwargs['ids'])
+            return DropdownValue(id, title, ids=kwargs['ids'], text=kwargs['text'])
 
 
     elif column_type == ColumnType.email:
