@@ -15,7 +15,7 @@ config = {
     ],
     'tests_require': [
         'nose>=1.3.7'
-    ]
+    ],
     'packages': [
         'moncli',
         'moncli.api_v1',
