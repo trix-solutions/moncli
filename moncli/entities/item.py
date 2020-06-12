@@ -55,9 +55,9 @@ class Item():
 
         item_data = client.get_items(
             self.__creds.api_key_v2,
-            'column_values.id', 'column_values.title', 'column_values.value',
+            'column_values.id', 'column_values.title', 'column_values.value', 'column_values.text',
             ids=[int(self.id)])[0]
-
+        
         column_values_data = item_data['column_values']
 
         self.__column_values = {}
@@ -68,11 +68,11 @@ class Item():
             title = data['title']
             column_type = column_types_map[id]
             value = data['value']
+            text = data['text']
             if value is None:
                 column_value = create_column_value(id, column_type, title)
             else:
                 value = json.loads(value)
-
                 def _strip_id():
                     try:
                         del value['id']
@@ -83,6 +83,9 @@ class Item():
                 def _handle_before():
                     if column_type == ColumnType.status:
                         value['settings'] = columns_map[id].settings
+                        
+                    if column_type == ColumnType.dropdown:
+                        value['text'] = text
 
                 if type(value) is dict:
                     _strip_id()
