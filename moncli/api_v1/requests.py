@@ -1,4 +1,5 @@
 from moncli.routes import MondayQueryParameters, format_url, raise_mondayapi_error
+from .. import constants
 import requests, json
 
 
@@ -11,7 +12,8 @@ def execute_get(api_key, resource_url, params = None):
 
     resp = requests.get(
         format_url(resource_url), 
-        params=monday_params.to_dict())
+        params=monday_params.to_dict(),
+        timeout=constants.TIMEOUT)
 
     if resp.status_code == 200:
         return resp.json()
@@ -26,7 +28,8 @@ def execute_post(api_key, resource_url, body):
     resp = requests.post(
         format_url(resource_url),
         body,
-        params=monday_params.to_dict())
+        params=monday_params.to_dict(),
+        timeout=constants.TIMEOUT)
 
     if resp.status_code == 200 or resp.status_code == 201:
         return resp.json()
@@ -43,7 +46,8 @@ def execute_put(api_key, resource_url, body):
     resp = requests.post(
         format_url(resource_url),
         data,
-        params=monday_params.to_dict())
+        params=monday_params.to_dict(),
+        timeout=constants.TIMEOUT)
 
     if resp.status_code == 200:
         return resp.json()
@@ -60,7 +64,8 @@ def execute_delete(api_key, resource_url, params = None):
 
     resp = requests.delete(
         format_url(resource_url), 
-        params=monday_params.to_dict())
+        params=monday_params.to_dict(),
+        timeout=constants.TIMEOUT)
 
     if resp.status_code == 200:
         return resp.json()
