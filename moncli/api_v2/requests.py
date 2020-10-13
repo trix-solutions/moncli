@@ -50,7 +50,8 @@ def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
     resp = requests.post(
         constants.API_V2_ENDPOINT,
         headers=headers,
-        data=data)
+        data=data,
+        timeout=constants.TIMEOUT)
 
     return _process_repsonse(api_key, timeout, resp, data, **kwargs)
 
