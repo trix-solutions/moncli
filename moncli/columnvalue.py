@@ -103,16 +103,11 @@ class DropdownValue(ColumnValue):
         except KeyError:
             self.text = None
 
-        try: 
-            self.label = kwargs['label']
-        except KeyError:
-            self.label = None
-
 
     def format(self):
 
-        if self.label is not None:
-            return { 'label': self.label }
+        if self.text is not None:
+            return { 'label': self.text }
 
         if self.ids is not None:
             return { 'ids': self.ids }
@@ -369,7 +364,7 @@ class StatusValue(ColumnValue):
             self.__settings = kwargs['settings']
 
         try:
-            self.change_status_by_index(kwargs['index'])
+            self.index = kwargs['index']
         except KeyError:
             self.index = None
 
@@ -378,16 +373,11 @@ class StatusValue(ColumnValue):
         except KeyError:
         	self.text = None
 
-        try:
-            self.change_status_by_label(kwargs['label'])
-        except KeyError:
-            self.label = None
-
 
     def format(self):
 
-        if self.label is not None:
-            return { 'label': self.label }
+        if self.text is not None:
+            return { 'label': self.text }
 
         if self.index is not None:
             return { 'index': self.index }
@@ -398,12 +388,12 @@ class StatusValue(ColumnValue):
     def change_status_by_index(self, index: int):
         
         self.index = index
-        self.label = self.__settings.labels[str(index)]
+        self.text = self.__settings.labels[str(index)]
 
-    def change_status_by_label(self, label: str):
+    def change_status_by_text(self, text: str):
         
-        self.label = label
-        self.index = self.__settings.get_index(label)
+        self.text = text
+        self.index = self.__settings.get_index(text)
 
 
 class TagsValue(ColumnValue):
@@ -587,11 +577,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return DropdownValue(id, title)
 
-        if kwargs.__contains__('label'):
-            return DropdownValue(id, title, label=kwargs['label'], text=kwargs['text'])
-
-        if kwargs.__contains__('ids'):
-            return DropdownValue(id, title, ids=kwargs['ids'], text=kwargs['text'])
+        return DropdownValue(id, title, ids=kwargs['ids'], text=kwargs['text'])
 
 
     elif column_type == ColumnType.email:
@@ -688,11 +674,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return StatusValue(id, title)
 
-        if kwargs.__contains__('label'):
-            return StatusValue(id, title, label=kwargs['label'], settings=kwargs['settings'], text=kwargs['text'])
-
-        if kwargs.__contains__('index'):
-            return StatusValue(id, title, index=kwargs['index'], settings=kwargs['settings'], text=kwargs['text'])
+        return StatusValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.tags:

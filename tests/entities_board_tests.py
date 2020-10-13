@@ -256,7 +256,7 @@ def test_board_should_create_an_item_with_list_column_values(create_item, create
     create_item.return_value = {'id': '4', 'name': name, 'board': {'id': board_id}}
     client = e.client.MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
-    status_column = cv.create_column_value('status', ColumnType.status, 'Status', index=0, settings=e.objects.StatusSettings(labels={'0':'Test'}))
+    status_column = cv.create_column_value('status', ColumnType.status, 'Status', index=0, text='Test', settings=e.objects.StatusSettings(labels={'0':'Test'}))
 
     # Act 
     item = board.add_item(name, group_id=group_id, column_values=[status_column])
