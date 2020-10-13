@@ -21,6 +21,7 @@ COLUMN_TYPE_MAPPINGS = {
     'date': 'date',
     'dropdown': 'dropdown',
     'email': 'email',
+    'file': 'file',
     'hour': 'hour',
     'link': 'link',
     'long-text': 'long_text',
