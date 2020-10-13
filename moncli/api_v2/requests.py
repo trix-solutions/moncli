@@ -21,7 +21,8 @@ def execute_query(api_key: str, **kwargs):
     resp = requests.post(
         constants.API_V2_ENDPOINT,
         headers=headers,
-        data=data)
+        data=data,
+        timeout=constants.TIMEOUT)
 
     text: dict = resp.json()
 
