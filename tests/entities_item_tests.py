@@ -60,6 +60,7 @@ def test_item_should_get_column_values_for_status_column(get_columns, get_board,
     eq_(len(column_values), 1)
     eq_(column_values[0].title, 'Status Column 01')
     eq_(column_values[0].index, 1)
+    eq_(column_values[0].text, 'Test')
 
 
 @patch.object(MondayClient, 'get_me')
