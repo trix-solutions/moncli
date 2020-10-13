@@ -160,47 +160,9 @@ def test_should_return_empty_dropdown_column_value():
 
     # Assert
     ok_(column_value != None)
-    eq_(column_value.label, None)
+    eq_(column_value.text, None)
     eq_(column_value.ids, None)
     eq_(format, {})
-
-
-def test_should_return_dropdown_column_value_by_ids():
-
-    # Arrange
-    id = 'dropdown_2'
-    column_type = ColumnType.dropdown
-    title = 'Dropdown Two'
-    ids = [1,2,3]
-
-    # Act 
-    column_value = create_column_value(id, column_type, title, ids=ids)
-    format = column_value.format()
-
-    # Assert
-    ok_(column_value != None)
-    eq_(column_value.ids, [1,2,3])
-    eq_(column_value.label, None)
-    eq_(format, {'ids': [1,2,3]})
-
-
-def test_should_return_dropdown_column_value_by_label():
-
-    # Arrange
-    id = 'dropdown_3'
-    column_type = ColumnType.dropdown
-    title = 'Dropdown Three'
-    label = 'Status 1'
-
-    # Act
-    column_value = create_column_value(id, column_type, title, label=label)
-    format = column_value.format()
-
-    # Assert
-    ok_(column_value != None)
-    eq_(column_value.ids, None)
-    eq_(column_value.label, label)
-    eq_(format, {'label': label})
 
 
 def test_should_return_dropdown_column_value_by_label_with_preference():
@@ -209,18 +171,18 @@ def test_should_return_dropdown_column_value_by_label_with_preference():
     id = 'dropdown_4'
     column_type = ColumnType.dropdown
     title = 'Dropdown Four'
-    label = 'Status 2'
+    text = 'one, two, three'
     ids = [1,2,3]
 
     # Act
-    column_value = create_column_value(id, column_type, title, label=label, ids=ids)
+    column_value = create_column_value(id, column_type, title, text=text, ids=ids)
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
-    eq_(column_value.ids, None)
-    eq_(column_value.label, label)
-    eq_(format, {'label': label})
+    eq_(column_value.ids, ids)
+    eq_(column_value.text, text)
+    eq_(format, {'label': text})
     
 
 def test_should_return_empty_email_column_value():
@@ -678,7 +640,7 @@ def test_should_return_empty_status_column_value():
     # Assert
     ok_(column_value != None)
     eq_(column_value.index, None)
-    eq_(column_value.label, None)
+    eq_(column_value.text, None)
     eq_(format, {'label': ''})
 
 
@@ -697,7 +659,7 @@ def test_should_return_status_column_value_by_index():
     # Assert
     ok_(column_value != None)
     eq_(column_value.index, index)
-    eq_(column_value.label, None)
+    eq_(column_value.text, None)
     eq_(format, {'index': index})
 
 
@@ -707,17 +669,17 @@ def test_should_return_status_column_value_by_label():
     id = 'status_3'
     column_type = ColumnType.status
     title = 'Status Three'
-    label = 'Status 3'
+    text = 'Status 3'
 
     # Act
-    column_value = create_column_value(id, column_type, title, label=label, settings=o.StatusSettings(**{'labels': {'3': 'Status 3'}}))
+    column_value = create_column_value(id, column_type, title, text=text, index=3, settings=o.StatusSettings(**{'labels': {'3': 'Status 3'}}))
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
     eq_(column_value.index, 3)
-    eq_(column_value.label, label)
-    eq_(format, {'label': label})
+    eq_(column_value.text, text)
+    eq_(format, {'label': text})
 
 
 def test_should_return_status_column_value_by_label_with_preference():
@@ -726,17 +688,17 @@ def test_should_return_status_column_value_by_label_with_preference():
     id = 'status_4'
     column_type = ColumnType.status
     title = 'Status Four'
-    label = 'Status 4'
+    text = 'Status 4'
 
     # Act
-    column_value = create_column_value(id, column_type, title, label=label, index=3, settings=o.StatusSettings(**{'labels': {'4': "Status 4"}}))
+    column_value = create_column_value(id, column_type, title, index=4, text=text, settings=o.StatusSettings(**{'labels': {'4': "Status 4"}}))
     format = column_value.format()
 
     # Assert
     ok_(column_value != None)
     eq_(column_value.index, 4)
-    eq_(column_value.label, label)
-    eq_(format, {'label': label})
+    eq_(column_value.text, text)
+    eq_(format, {'label': text})
 
 
 def test_should_return_empty_tags_column_value():
