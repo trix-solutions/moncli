@@ -378,16 +378,11 @@ class StatusValue(ColumnValue):
         except KeyError:
         	self.text = None
 
-        try:
-            self.change_status_by_label(kwargs['label'])
-        except KeyError:
-            self.label = None
-
 
     def format(self):
 
-        if self.label is not None:
-            return { 'label': self.label }
+        if self.text is not None:
+            return { 'label': self.text }
 
         if self.index is not None:
             return { 'index': self.index }
@@ -398,12 +393,12 @@ class StatusValue(ColumnValue):
     def change_status_by_index(self, index: int):
         
         self.index = index
-        self.label = self.__settings.labels[str(index)]
+        self.text = self.__settings.labels[str(index)]
 
-    def change_status_by_label(self, label: str):
+    def change_status_by_text(self, text: str):
         
-        self.label = label
-        self.index = self.__settings.get_index(label)
+        self.text = text
+        self.index = self.__settings.get_index(text)
 
 
 class TagsValue(ColumnValue):
