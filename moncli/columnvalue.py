@@ -369,7 +369,7 @@ class StatusValue(ColumnValue):
             self.__settings = kwargs['settings']
 
         try:
-            self.change_status_by_index(kwargs['index'])
+            self.index = kwargs['index']
         except KeyError:
             self.index = None
 
@@ -683,11 +683,7 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         if len(kwargs) == 0:
             return StatusValue(id, title)
 
-        if kwargs.__contains__('label'):
-            return StatusValue(id, title, label=kwargs['label'], settings=kwargs['settings'], text=kwargs['text'])
-
-        if kwargs.__contains__('index'):
-            return StatusValue(id, title, index=kwargs['index'], settings=kwargs['settings'], text=kwargs['text'])
+        return StatusValue(id, title, **kwargs)
 
 
     elif column_type == ColumnType.tags:
