@@ -374,6 +374,11 @@ class StatusValue(ColumnValue):
             self.index = None
 
         try:
+        	self.text = kwargs['text']
+        except KeyError:
+        	self.text = None
+
+        try:
             self.change_status_by_label(kwargs['label'])
         except KeyError:
             self.label = None
@@ -684,10 +689,10 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
             return StatusValue(id, title)
 
         if kwargs.__contains__('label'):
-            return StatusValue(id, title, label=kwargs['label'], settings=kwargs['settings'])
+            return StatusValue(id, title, label=kwargs['label'], settings=kwargs['settings'], text=kwargs['text'])
 
         if kwargs.__contains__('index'):
-            return StatusValue(id, title, index=kwargs['index'], settings=kwargs['settings'])
+            return StatusValue(id, title, index=kwargs['index'], settings=kwargs['settings'], text=kwargs['text'])
 
 
     elif column_type == ColumnType.tags:
