@@ -5,6 +5,7 @@ from moncli.api_v2 import handlers, constants
 from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType
 
 EXECUTE_QUERY_PATCH = 'moncli.api_v2.requests.execute_query'
+UPLOAD_FILE_PATCH = 'moncli.api_v2.requests.upload_file'
 
 def setup():
     print('SETUP')
@@ -360,7 +361,6 @@ def test_get_teams(execute_query):
     ok_(len(teams) == 1)
     
 
-
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_me(execute_query):
 
@@ -375,3 +375,39 @@ def test_get_me(execute_query):
     ok_(me != None)
     ok_(type(me) is dict)
     ok_(me['name'] == name)
+
+
+@patch(UPLOAD_FILE_PATCH)
+def test_add_file_to_update(upload_file):
+
+    # Arrange
+    name = '33.jpg'
+    url = 'https://test.monday.com/12345/{}'.format(name)
+    upload_file.return_value = {constants.ADD_FILE_TO_UPDATE: {'id': '12345', 'name': name, 'url': url}}
+
+    # Act
+    asset = handlers.add_file_to_update('', '12345', '/Users/test/{}'.format(name))
+    
+    # Assert
+    ok_(asset != None)
+    ok_(type(asset) is dict)
+    ok_(asset['name'] == name)
+    ok_(asset['url'] == url)
+
+
+@patch(UPLOAD_FILE_PATCH)
+def test_add_file_to_column(upload_file):
+
+    # Arrange
+    name = '33.jpg'
+    url = 'https://test.monday.com/12345/{}'.format(name)
+    upload_file.return_value = {constants.ADD_FILE_TO_COLUMN: {'id': '12345', 'name': name, 'url': url}}
+
+    # Act
+    asset = handlers.add_file_to_column('', '12345', 'files', '/Users/test/{}'.format(name))
+    
+    # Assert
+    ok_(asset != None)
+    ok_(type(asset) is dict)
+    ok_(asset['name'] == name)
+    ok_(asset['url'] == url)

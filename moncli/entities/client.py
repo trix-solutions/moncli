@@ -1,9 +1,10 @@
 from .. import api_v2 as client
 from ..enums import BoardKind, NotificationTargetType
-from .objects import MondayClientCredentials, Tag, Update, Notification
+from .objects import MondayClientCredentials, Tag, Notification
 from . import exceptions as ex
 from .board import Board
 from .item import Item
+from .update import Update
 from .user import User, Team
 
 
@@ -162,7 +163,7 @@ class MondayClient():
             'body',
             **kwargs)
 
-        return [Update(**update_data) for update_data in updates_data]
+        return [Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
 
     def create_notification(self, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, **kwargs):

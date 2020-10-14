@@ -4,6 +4,7 @@ DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 TIMEOUT = 10  # seconds
 
 API_V2_ENDPOINT = 'https://api.monday.com/v2'
+API_V2_FILE_ENDPOINT = 'https://api.monday.com/v2/file'
 
 # Column Types
 COLUMN_NAME = 'name'
@@ -21,6 +22,7 @@ COLUMN_TYPE_MAPPINGS = {
     'date': 'date',
     'dropdown': 'dropdown',
     'email': 'email',
+    'file': 'file',
     'hour': 'hour',
     'link': 'link',
     'long-text': 'long_text',
