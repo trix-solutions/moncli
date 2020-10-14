@@ -48,6 +48,7 @@ ME = 'me'
 
 # Webhooks
 CREATE_WEBHOOK = 'create_webhook'
+DELETE_WEBHOOK = 'delete_webhook'
 
 # Files
 ADD_FILE_TO_UPDATE = 'add_file_to_update'
