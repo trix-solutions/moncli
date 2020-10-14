@@ -97,6 +97,40 @@ class Plan():
                 self.version = value
 
 
+class Asset():
+
+    def __init__(self, **kwargs):
+
+        for key, value in kwargs.items():
+
+            if key == 'created_at':
+                self.created_at = value
+
+            elif key == 'file_extension':
+                self.file_extension = value
+
+            elif key == 'file_size':
+                self.file_size = value
+
+            elif key == 'id':
+                self.id = value
+
+            elif key == 'name':
+                self.name = value
+
+            elif key == 'public_url':
+                self.public_url = value
+
+            elif key == 'uploaded_by':
+                self.uploaded_by = value
+
+            elif key == 'url':
+                self.url = value
+
+            elif key == 'url_thumbnail':
+                self.url_thumbnail = value
+
+
 class StatusSettings():
 
     def __init__(self, **kwargs):
