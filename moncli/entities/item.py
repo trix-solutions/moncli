@@ -213,6 +213,19 @@ class Item():
 
         return e.objects.Update(**update_data)
 
+    
+    def add_file(self, file_column: FileValue, file_path: str):
+        
+        asset_data = client.add_file_to_column(
+            self.__creds.api_key_v2,
+            self.id,
+            file_column.id,
+            file_path,
+            'id', 'name', 'url')
+        
+        return e.objects.Asset(**asset_data)
+
+
     def remove_files(self, file_column: FileValue):
 
         item_data = client.change_column_value(
