@@ -208,6 +208,9 @@ To retrieve all columns, groups, and items associated with a __Board__ object, s
 >>> items = board.get_items()
 ```
 
+Optional parameters when querying __Items__ include:
+* ids (list\[int\]) - the IDs of the items to return
+
 ### Getting items by column value ###
 The __Board__ object can also retrieve contained items by column value using the _get_items_by_column_values_ method as shown below.
 ```
@@ -284,6 +287,9 @@ Much like __Board__ objects, __Group__ objects can return a list of contained it
 >>> items = group.get_items()
 ```
 Please note that only items associated to the group will be returned.  The method returns a list of __Item__ objects containing the same return fields as mentioned in the __Board__ _get_items_ method.
+
+Optional parameters when querying __Items__ include:
+* ids (list\[int\]) - the IDs of the items to return
 
 
 ## Working with Items ##
