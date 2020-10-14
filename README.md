@@ -228,6 +228,14 @@ The __Board__ object can also return a new __ColumnValue__ object with an empty 
 >>> not_empty_column = board.get_column_value(title='Text Column 01', value='Za Waarudo!')
 ```
 
+### Create a webhook ###
+Webhooks can be created using the _create_webhook_ method on the __Board__ object.  The below example shows the creation of a webhook using the __create_item__ event.
+```
+>>> from moncli.enums import WebhookEventType
+>>> # Create 'create_item' webhook
+>>> webhook = board.create_webhook('http://test.webhook.com/webhook/test', WebhookEventType.create_item)
+```
+
 ## Working with Groups ##
 Groups serve as collections of items for a board.  Once created by the __Board__ object using the _get_groups_ method, the __Group__ object gives users various methods for modification and item management as discussed in the following section.
 
@@ -378,7 +386,6 @@ All files can be removed from an item's file column using the _remove_files_ met
 >>> file_column = item.get_column_value(id='files')
 >>> asset = item.remove_files(file_column=file_column)
 ```
-
 
 ## Working with Updates ##
 ### Adding a file ###
