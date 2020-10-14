@@ -141,6 +141,14 @@ class EmailValue(ColumnValue):
         return { 'email': self.email, 'text': self.text }
 
 
+class FileValue(ColumnValue):
+
+    def __init__(self, id: str, title: str, **kwargs):
+        super(FileValue, self).__init__(id, title)
+
+        self.files: list = kwargs['files']
+
+
 class HourValue(ColumnValue):
 
     def __init__(self, id: str, title: str, **kwargs):
@@ -587,6 +595,12 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
 
         return EmailValue(id, title, **kwargs)
 
+    elif column_type == ColumnType.file:
+
+        if len(kwargs) == 0:
+            return FileValue(id, title)
+
+        return FileValue(id, title, **kwargs)
 
     elif column_type == ColumnType.hour:
 

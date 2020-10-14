@@ -1,8 +1,9 @@
 from typing import List, Dict, Any
 
+from ..constants import API_V2_FILE_ENDPOINT
 from ..enums import BoardKind, ColumnType, NotificationTargetType
 from . import graphql, requests, constants
-from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue, create_value
+from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue, FileValue, create_value
 
 
 def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv, **kwargs):
@@ -200,6 +201,33 @@ def get_teams(api_key: str, *argv, **kwargs):
 def get_me(api_key: str, *argv, **kwargs):
 
     return execute_query(api_key, constants.ME, *argv, **kwargs)
+
+
+def add_file_to_update(api_key: str, update_id: str, file_path: str, *argv, **kwargs):
+
+    name = constants.ADD_FILE_TO_UPDATE
+
+    kwargs['file'] = FileValue('$file')
+    kwargs['update_id'] = IntValue(update_id)
+
+    operation = graphql.create_mutation(name, *argv, **kwargs)
+    operation.add_query_variable('file', 'File!')
+    result = requests.upload_file(api_key, file_path, operation=operation, endpoint=API_V2_FILE_ENDPOINT)
+    return result[name]
+
+
+def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: str, *argv, **kwargs):
+
+    name = constants.ADD_FILE_TO_COLUMN
+
+    kwargs['file'] = FileValue('$file')
+    kwargs['item_id'] = IntValue(item_id)
+    kwargs['column_id'] = StringValue(column_id)
+
+    operation = graphql.create_mutation(name, *argv, **kwargs)
+    operation.add_query_variable('file', 'File!')
+    result = requests.upload_file(api_key, file_path, operation=operation, endpoint=API_V2_FILE_ENDPOINT)
+    return result[name]
 
 
 def execute_query(api_key:str, name: str, *argv, **kwargs):

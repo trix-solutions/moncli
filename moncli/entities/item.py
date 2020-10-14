@@ -5,7 +5,7 @@ from .. import entities as e
 from .. import api_v2 as client
 from ..enums import ColumnType
 from ..constants import COLUMN_TYPE_MAPPINGS
-from ..columnvalue import create_column_value, ColumnValue
+from ..columnvalue import create_column_value, ColumnValue, FileValue
 from . import exceptions as ex
 
 
@@ -211,4 +211,29 @@ class Item():
             self.id,
             'id', 'body')
 
-        return e.objects.Update(**update_data)
+        return e.update.Update(creds=self.__creds, **update_data)
+
+    
+    def add_file(self, file_column: FileValue, file_path: str):
+        
+        asset_data = client.add_file_to_column(
+            self.__creds.api_key_v2,
+            self.id,
+            file_column.id,
+            file_path,
+            'id', 'name', 'url')
+        
+        return e.objects.Asset(**asset_data)
+
+
+    def remove_files(self, file_column: FileValue):
+
+        item_data = client.change_column_value(
+            self.__creds.api_key_v2,
+            self.id,
+            file_column.id,
+            self.__board_id,
+            { 'clear_all': True },
+            'id', 'name', 'board.id')
+
+        return Item(creds=self.__creds, **item_data)
