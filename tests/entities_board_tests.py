@@ -3,7 +3,7 @@ from nose.tools import ok_, eq_, raises
 
 import moncli.columnvalue as cv
 import moncli.entities as e
-from moncli.enums import ColumnType, BoardKind
+from moncli.enums import ColumnType, BoardKind, WebhookEventType
 
 USERNAME = 'test.user@foobar.org' 
 GET_ME_RETURN_VALUE = e.user.User(**{'creds': None, 'id': '1', 'email': USERNAME})
@@ -277,7 +277,7 @@ def test_should_retrieve_a_list_of_items(get_items, get_boards, create_board, ge
     name = 'Item 1'
     get_me.return_value = GET_ME_RETURN_VALUE
     create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
-    get_boards = [{'id': '1', 'items': [{'id': '1'}]}]
+    get_boards.return_value = [{'id': '1', 'items': [{'id': '1'}]}]
     get_items.return_value = [{'id': '1', 'name': name, 'board': {'id': board_id}}]
     client = e.client.MondayClient(USERNAME, '', '')
     board = client.create_board('Test Board 1', BoardKind.public)
@@ -387,3 +387,27 @@ def test_should_get_column_value_by_title(get_columns, create_board, get_me):
     eq_(column_value.id, 'text_column_01')
     eq_(column_value.title, 'Text Column 01')
     eq_(type(column_value), cv.TextValue)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_webhook')
+def test_should_create_webhook(create_webhook, create_board, get_me):
+
+    # Arrange
+    board_id = '1'
+    webhook_id = '12345'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    create_webhook.return_value = {'board_id': board_id, 'id': webhook_id}
+
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act
+    webhook = board.create_webhook('http://test.webhook.com/webhook/test', WebhookEventType.create_item)
+
+    # Assert 
+    ok_(webhook != None)
+    eq_(webhook.board_id, board_id)
+    eq_(webhook.id, webhook_id)
