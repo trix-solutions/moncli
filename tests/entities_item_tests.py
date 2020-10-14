@@ -337,3 +337,26 @@ def test_item_should_add_update(create_update, get_items, get_me):
     # Assert 
     ok_(update != None)
     eq_(update.body, 'This is a text body')
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.add_file_to_column')
+def test_item_should_add_file(add_file_to_column, get_items, get_me):
+    
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
+    add_file_to_column.return_value = {'id': '12345', 'name': '33.jpg', 'url': 'https://test.monday.com/12345/33.jpg'}
+    client = e.client.MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+    file_column = cv.create_column_value('files', ColumnType.file, 'Files', files=[])
+
+    # Act
+    asset = item.add_file(file_column, '/Users/test/33.jpg')
+
+    # Assert 
+    ok_(asset != None)
+    eq_(asset.id, '12345')
+    eq_(asset.name, '33.jpg')
+    eq_(asset.url, 'https://test.monday.com/12345/33.jpg')
