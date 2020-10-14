@@ -85,7 +85,7 @@ class Group():
         return Item(creds=self.__creds, **item_data)
 
 
-    def get_items(self):
+    def get_items(self, **kwargs):
 
         if not hasattr(self, '__item_ids'):
 
@@ -97,6 +97,9 @@ class Group():
             group = [group for group in board['groups'] if group['id'] == self.id][0]
             self.__item_ids = [int(item['id']) for item in group['items']]
 
+        ids = self.__item_ids
+        if kwargs.__contains__('ids'):
+            ids = [int(id) for id in kwargs['ids']]
 
         items_data = client.get_items(
             self.__creds.api_key_v2, 
@@ -108,7 +111,7 @@ class Group():
             'group.id',
             'state',
             'subscribers.id',
-            ids=self.__item_ids, 
+            ids=ids, 
             limit=1000)
 
         return [Item(creds=self.__creds, **item_data) for item_data in items_data]
