@@ -411,3 +411,4 @@ def test_should_create_webhook(create_webhook, create_board, get_me):
     ok_(webhook != None)
     eq_(webhook.board_id, board_id)
     eq_(webhook.id, webhook_id)
+    ok_(webhook.is_active)

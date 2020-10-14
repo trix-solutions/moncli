@@ -248,4 +248,4 @@ class Board():
             'id', 'board_id',
             **kwargs)
 
-        return o.Webhook(**webhook_data)
+        return o.Webhook(**webhook_data, is_active=True)

@@ -93,6 +93,11 @@ class Webhook():
         self.id = kwargs['id']
         self.board_id = kwargs['board_id']
 
+        for key, value in kwargs.items():
+
+            if key == 'is_active':
+                self.is_active = value
+
 
 class Asset():
 
