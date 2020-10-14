@@ -213,6 +213,13 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
     return execute_mutation(api_key, constants.CREATE_WEBHOOK, *argv, **kwargs)
 
 
+def delete_webhook(api_key: str, webhook_id: str, *argv, **kwargs):
+
+    kwargs['id'] = IntValue(webhook_id)
+
+    return execute_mutation(api_key, constants.DELETE_WEBHOOK, *argv, **kwargs)
+
+
 def add_file_to_update(api_key: str, update_id: str, file_path: str, *argv, **kwargs):
 
     name = constants.ADD_FILE_TO_UPDATE

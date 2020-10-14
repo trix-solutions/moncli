@@ -406,7 +406,7 @@ def test_delete_webhook(execute_query):
     execute_query.return_value = {constants.DELETE_WEBHOOK: {'id': webhook_id, 'board_id': int(board_id)}}
 
     # Act
-    webhook = handlers.delete_webhook(id)
+    webhook = handlers.delete_webhook('', webhook_id)
 
     # Assert
     ok_(webhook != None)
