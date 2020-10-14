@@ -209,7 +209,7 @@ class Item():
             self.__creds.api_key_v2, 
             body, 
             self.id,
-            'id', 'body')
+            'id', 'item_id', 'body')
 
         return e.update.Update(creds=self.__creds, **update_data)
 
