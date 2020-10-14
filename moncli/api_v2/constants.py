@@ -46,6 +46,9 @@ TEAMS = 'teams'
 # Me
 ME = 'me'
 
+# Files
+ADD_FILE_TO_COLUMN = 'add_file_to_column'
+
 
 ##
 
