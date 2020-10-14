@@ -211,7 +211,7 @@ class Item():
             self.id,
             'id', 'body')
 
-        return e.objects.Update(**update_data)
+        return e.update.Update(**update_data)
 
     
     def add_file(self, file_column: FileValue, file_path: str):
