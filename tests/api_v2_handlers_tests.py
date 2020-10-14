@@ -393,3 +393,21 @@ def test_add_file_to_update(upload_file):
     ok_(type(asset) is dict)
     ok_(asset['name'] == name)
     ok_(asset['url'] == url)
+
+
+@patch(UPLOAD_FILE_PATCH)
+def test_add_file_to_column(upload_file):
+
+    # Arrange
+    name = '33.jpg'
+    url = 'https://test.monday.com/12345/{}'.format(name)
+    upload_file.return_value = {constants.ADD_FILE_TO_COLUMN: {'id': '12345', 'name': name, 'url': url}}
+
+    # Act
+    asset = handlers.add_file_to_column('', '12345', 'files', '/Users/test/{}'.format(name))
+    
+    # Assert
+    ok_(asset != None)
+    ok_(type(asset) is dict)
+    ok_(asset['name'] == name)
+    ok_(asset['url'] == url)
