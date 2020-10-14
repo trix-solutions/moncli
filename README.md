@@ -365,6 +365,29 @@ Updates can be added to items using the _add_update_ method on the __Item__ obje
 This method creates an update for the item on behalf of the user that owns the API V2 token and returns an __Update__ object containing the _id_ and _body_ fields of the added update.
 
 
+### Adding a file ###
+Files can be added to an item's file column using the _add_file_ method on the __Item__ object. An item's file column must be retrieved before the file is added as shown below.
+```
+>>> file_column = item.get_column_value(id='files')
+>>> asset = item.add_file(file_column=file_column, file_path='/Users/test/test.jpg')
+```
+
+### Removing files ###
+All files can be removed from an item's file column using the _remove_files_ method on the __Item__ object. An item's file column must be retrieved before files are removed as shown below.
+```
+>>> file_column = item.get_column_value(id='files')
+>>> asset = item.remove_files(file_column=file_column)
+```
+
+
+## Working with Updates ##
+### Adding a file ###
+Files can be added to an update using the _add_file_ method on the __Update__ object as shown below.  
+```
+>>> update = item.add_update(body='This is the body for an update')
+>>> asset = update.add_file(file_path='/Users/test/test.jpg')
+```
+
 ## Working with Users, Teams, and Accounts ##
 ### Get user account ###
 The __Account__ object contains information pertaining to the Monday.com service subscription and can be retrieved from the __User__ object with the following command.
@@ -454,6 +477,7 @@ A __ColumnValue__ can also be created without the need for __Board__ or __Item__
 * week
 * checkbox
 * rating
+* file
 
 An example for creating a new __ColumnValue__ object is shown below.  In addition to the _id_ and _column_type_ parameters, column values can be added to the __ColumnValue__ objects when using the type-specific __ColumnValue__ properties as a named argument. Please note that the board column IDs must be pre-defined and know prior to using this function effectively.
 ```
@@ -652,6 +676,13 @@ ColumnType: rating
 
 Properties:
 * _rating_ (int) - rating value (0-5)
+
+
+#### FileValue ####
+ColumnType: file
+
+Properties:
+* _files_ (list) - a list of file info dictionary objects attached to the file column
 
 
 ## Customized Queries and Mutations ##
