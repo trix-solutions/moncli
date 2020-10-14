@@ -143,7 +143,7 @@ class EmailValue(ColumnValue):
 
 class FileValue(ColumnValue):
 
-    def __init__(self, id: str, title: str):
+    def __init__(self, id: str, title: str, **kwargs):
         super(FileValue, self).__init__(id, title)
 
 
