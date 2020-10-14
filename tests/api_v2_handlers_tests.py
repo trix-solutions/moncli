@@ -2,7 +2,7 @@ from unittest.mock import patch
 from nose.tools import ok_, eq_
 
 from moncli.api_v2 import handlers, constants
-from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType
+from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType, WebhookEventType
 
 EXECUTE_QUERY_PATCH = 'moncli.api_v2.requests.execute_query'
 UPLOAD_FILE_PATCH = 'moncli.api_v2.requests.upload_file'
@@ -375,6 +375,26 @@ def test_get_me(execute_query):
     ok_(me != None)
     ok_(type(me) is dict)
     ok_(me['name'] == name)
+
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_create_webhook(execute_query):
+
+    # Arrange
+    board_id = '12345'
+    url = 'http://test.webhook.com/webhook/test'
+    event = WebhookEventType.create_item
+    webhook_id = '12345678'
+    execute_query.return_value = {constants.CREATE_WEBHOOK: {'id': webhook_id, 'board_id': int(board_id)}}
+
+    # Act
+    webhook = handlers.create_webhook('', board_id, url, event)
+
+    # Assert
+    ok_(webhook != None)
+    ok_(type(webhook) is dict)
+    ok_(webhook['id'] == webhook_id)
+    ok_(webhook['board_id'] == int(board_id))
 
 
 @patch(UPLOAD_FILE_PATCH)

@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 
 from ..constants import API_V2_FILE_ENDPOINT
-from ..enums import BoardKind, ColumnType, NotificationTargetType
+from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType
 from . import graphql, requests, constants
 from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue, FileValue, create_value
 
@@ -201,6 +201,16 @@ def get_teams(api_key: str, *argv, **kwargs):
 def get_me(api_key: str, *argv, **kwargs):
 
     return execute_query(api_key, constants.ME, *argv, **kwargs)
+
+
+def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventType, *argv, **kwargs):
+    
+    kwargs = get_method_arguments(constants.CREATE_WEBHOOK_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['url'] = StringValue(url)
+    kwargs['event'] = EnumValue(event)
+    
+    return execute_mutation(api_key, constants.CREATE_WEBHOOK, *argv, **kwargs)
 
 
 def add_file_to_update(api_key: str, update_id: str, file_path: str, *argv, **kwargs):

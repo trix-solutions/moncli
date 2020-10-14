@@ -1,6 +1,6 @@
 from .. import api_v2 as client, columnvalue as cv
 from ..entities import objects as o
-from ..enums import ColumnType
+from ..enums import ColumnType, WebhookEventType
 from ..constants import COLUMN_TYPE_MAPPINGS
 from . import exceptions as ex
 from .group import Group
@@ -237,4 +237,15 @@ class Board():
         
         return cv.create_column_value(column.id, ColumnType[column_type], column.title, **kwargs)
 
-        
+
+    def create_webhook(self, url: str, event: WebhookEventType, **kwargs):
+
+        webhook_data = client.create_webhook(
+            self.__creds.api_key_v2, 
+            self.id, 
+            url, 
+            event,
+            'id', 'board_id',
+            **kwargs)
+
+        return o.Webhook(**webhook_data)
