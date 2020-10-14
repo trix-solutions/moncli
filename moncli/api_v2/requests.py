@@ -34,7 +34,7 @@ def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
         Variables added to the query.
     """
 
-    query = None
+    query: str = None
     variables = None
     for key, value in kwargs.items():
         if query == None and key == 'operation':
@@ -43,6 +43,8 @@ def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
             query = value
         elif variables == None and key == 'variables':
             variables = value
+        elif key == 'include_complexity':
+            query = query.replace('query {', 'query { complexity { before, after }')
 
     headers = { 'Authorization': api_key }
     data = { 'query': query, 'variables': variables }
