@@ -85,9 +85,13 @@ class Board():
             **group_data)
 
 
-    def get_groups(self):
+    def get_groups(self, include_archived = False, include_deleted = False):
 
-        field_list = ['groups.id', 'groups.title', 'groups.archived', 'groups.color', 'groups.deleted', 'groups.items.id', 'groups.position']
+        field_list = ['groups.id', 'groups.title', 'groups.items.id']
+        if include_archived:
+            field_list.append('groups.archived')
+        if include_deleted:
+            field_list.append('groups.deleted')
 
         if self.__groups == None:
             
@@ -145,7 +149,7 @@ class Board():
         return Item(creds=self.__creds, **item_data)
 
 
-    def get_items(self):
+    def get_items(self, **kwargs):
         
         field_list = [
             'id',
@@ -167,10 +171,14 @@ class Board():
 
             self.__item_ids = [int(item['id']) for item in items]
 
+        ids = self.__item_ids
+        if kwargs.__contains__('ids'):
+            ids = [int(id) for id in kwargs['ids']]
+
         items_data = client.get_items(
             self.__creds.api_key_v2, 
             *field_list,
-            ids=self.__item_ids, 
+            ids=ids, 
             limit=1000)
 
         return [Item(creds=self.__creds, **item_data) for item_data in items_data] 

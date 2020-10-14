@@ -2,6 +2,7 @@ from typing import List, Dict, Any
 
 from ..constants import API_V2_FILE_ENDPOINT
 from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType
+from .exceptions import MondayApiError
 from . import graphql, requests, constants
 from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue, FileValue, create_value
 
@@ -247,14 +248,17 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
     return result[name]
 
 
-def execute_query(api_key:str, name: str, *argv, **kwargs):
+def execute_query(api_key:str, name: str, *argv,  **kwargs):
 
     operation = graphql.create_query(name, *argv, **kwargs)
-    result = requests.execute_query(api_key, operation=operation)
+    result = requests.execute_query(api_key, operation=operation, include_complexity=False)
     return result[name]
 
 
 def execute_mutation(api_key: str, name: str, *argv, **kwargs):
+
+    if kwargs.__contains__('include_complexity'):
+        raise MondayApiError(name, 400, 'Query complexity cannot be retrieved for mutation requests.')
 
     if 'id' not in argv:
         argv += ('id',)
