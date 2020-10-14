@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 
 from ..constants import API_V2_FILE_ENDPOINT
-from ..enums import BoardKind, ColumnType, NotificationTargetType
+from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType
 from . import graphql, requests, constants
 from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue, FileValue, create_value
 
@@ -228,6 +228,12 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
     operation.add_query_variable('file', 'File!')
     result = requests.upload_file(api_key, file_path, operation=operation, endpoint=API_V2_FILE_ENDPOINT)
     return result[name]
+
+
+def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventType, *argv, **kwargs):
+    pass
+    
+
 
 
 def execute_query(api_key:str, name: str, *argv, **kwargs):
