@@ -46,6 +46,9 @@ TEAMS = 'teams'
 # Me
 ME = 'me'
 
+# Webhooks
+CREATE_WEBHOOK = 'create_webhook'
+
 # Files
 ADD_FILE_TO_UPDATE = 'add_file_to_update'
 ADD_FILE_TO_COLUMN = 'add_file_to_column'
@@ -162,4 +165,8 @@ USERS_OPTIONAL_PARAMS = {
 
 TEAMS_OPTIONAL_PARAMS = {
     'ids': ArgumentValueKind.List
+}
+
+CREATE_WEBHOOK_OPTIONAL_PARAMS = {
+    'config': ArgumentValueKind.Json
 }
