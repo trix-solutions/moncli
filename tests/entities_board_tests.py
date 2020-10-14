@@ -411,3 +411,29 @@ def test_should_create_webhook(create_webhook, create_board, get_me):
     ok_(webhook != None)
     eq_(webhook.board_id, board_id)
     eq_(webhook.id, webhook_id)
+    ok_(webhook.is_active)
+
+
+@patch.object(e.client.MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.delete_webhook')
+def test_should_delete_webhook(delete_webhook, create_board, get_me):
+
+    # Arrange
+    board_id = '1'
+    webhook_id = '12345'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    delete_webhook.return_value = {'board_id': board_id, 'id': webhook_id}
+
+    client = e.client.MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act
+    webhook = board.delete_webhook(webhook_id)
+
+    # Assert 
+    ok_(webhook != None)
+    eq_(webhook.board_id, board_id)
+    eq_(webhook.id, webhook_id)
+    ok_(not webhook.is_active)

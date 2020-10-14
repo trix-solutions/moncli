@@ -397,6 +397,24 @@ def test_create_webhook(execute_query):
     ok_(webhook['board_id'] == int(board_id))
 
 
+@patch(EXECUTE_QUERY_PATCH)
+def test_delete_webhook(execute_query):
+
+    # Arrange
+    board_id = '12345'
+    webhook_id = '12345678'
+    execute_query.return_value = {constants.DELETE_WEBHOOK: {'id': webhook_id, 'board_id': int(board_id)}}
+
+    # Act
+    webhook = handlers.delete_webhook('', webhook_id)
+
+    # Assert
+    ok_(webhook != None)
+    ok_(type(webhook) is dict)
+    ok_(webhook['id'] == webhook_id)
+    ok_(webhook['board_id'] == int(board_id))
+
+
 @patch(UPLOAD_FILE_PATCH)
 def test_add_file_to_update(upload_file):
 

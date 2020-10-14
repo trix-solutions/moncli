@@ -248,4 +248,15 @@ class Board():
             'id', 'board_id',
             **kwargs)
 
-        return o.Webhook(**webhook_data)
+        return o.Webhook(**webhook_data, is_active=True)
+
+    
+    def delete_webhook(self, webhook_id: str, **kwargs):
+
+        webhook_data = client.delete_webhook(
+            self.__creds.api_key_v2, 
+            webhook_id,
+            'id', 'board_id',
+            **kwargs)
+
+        return o.Webhook(**webhook_data, is_active=False)

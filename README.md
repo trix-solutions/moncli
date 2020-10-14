@@ -236,6 +236,13 @@ Webhooks can be created using the _create_webhook_ method on the __Board__ objec
 >>> webhook = board.create_webhook('http://test.webhook.com/webhook/test', WebhookEventType.create_item)
 ```
 
+### Delete a webhook ###
+Webhooks can also be deleted using the _create_webhook_ method on the __Board__ object as shown in the example below.
+```
+>>> # Delete a webhook
+>>> webhook = board.delete_webhook('12345')
+```
+
 ## Working with Groups ##
 Groups serve as collections of items for a board.  Once created by the __Board__ object using the _get_groups_ method, the __Group__ object gives users various methods for modification and item management as discussed in the following section.
 
