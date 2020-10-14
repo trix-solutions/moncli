@@ -86,6 +86,14 @@ class Plan():
                 self.version = value
 
 
+class Webhook():
+
+    def __init__(self, **kwargs):
+
+        self.id = kwargs['id']
+        self.board_id = kwargs['board_id']
+
+
 class Asset():
 
     def __init__(self, **kwargs):
