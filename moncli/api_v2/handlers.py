@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
 
+from ..constants import API_V2_FILE_ENDPOINT
 from ..enums import BoardKind, ColumnType, NotificationTargetType
 from . import graphql, requests, constants
 from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue, create_value
@@ -200,6 +201,13 @@ def get_teams(api_key: str, *argv, **kwargs):
 def get_me(api_key: str, *argv, **kwargs):
 
     return execute_query(api_key, constants.ME, *argv, **kwargs)
+
+
+def add_file_to_column(api_key: str, *argv, **kwargs):
+
+    operation = graphql.create_mutation(name, *argv, **kwargs)
+    result = requests.execute_query(api_key, operation=operation, endpoint=API_V2_FILE_ENDPOINT)
+    return result[constants.ADD_FILE_TO_COLUMN]
 
 
 def execute_query(api_key:str, name: str, *argv, **kwargs):
