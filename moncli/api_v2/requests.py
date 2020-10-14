@@ -3,7 +3,7 @@ import requests, json
 from .. import constants
 from . import MondayApiError
 
-def execute_query(api_key: str, **kwargs):
+def execute_query(api_key: str, **kwargs, endpoint = constants.API_V2_ENDPOINT, timeout = constants.TIMEOUT):
 
     query = None
     variables = None
@@ -19,10 +19,10 @@ def execute_query(api_key: str, **kwargs):
     data = { 'query': query, 'variables': variables }
 
     resp = requests.post(
-        constants.API_V2_ENDPOINT,
+        endpoint,
         headers=headers,
         data=data,
-        timeout=constants.TIMEOUT)
+        timeout=timeout)
 
     text: dict = resp.json()
 
