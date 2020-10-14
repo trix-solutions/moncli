@@ -203,6 +203,16 @@ def get_me(api_key: str, *argv, **kwargs):
     return execute_query(api_key, constants.ME, *argv, **kwargs)
 
 
+def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventType, *argv, **kwargs):
+    
+    kwargs = get_method_arguments(constants.CREATE_WEBHOOK_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = IntValue(board_id)
+    kwargs['url'] = StringValue(url)
+    kwargs['event'] = EnumValue(event)
+    
+    return execute_mutation(api_key, constants.CREATE_WEBHOOK, *argv, **kwargs)
+
+
 def add_file_to_update(api_key: str, update_id: str, file_path: str, *argv, **kwargs):
 
     name = constants.ADD_FILE_TO_UPDATE
@@ -228,12 +238,6 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
     operation.add_query_variable('file', 'File!')
     result = requests.upload_file(api_key, file_path, operation=operation, endpoint=API_V2_FILE_ENDPOINT)
     return result[name]
-
-
-def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventType, *argv, **kwargs):
-    pass
-    
-
 
 
 def execute_query(api_key:str, name: str, *argv, **kwargs):
