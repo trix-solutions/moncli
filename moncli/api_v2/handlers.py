@@ -203,6 +203,19 @@ def get_me(api_key: str, *argv, **kwargs):
     return execute_query(api_key, constants.ME, *argv, **kwargs)
 
 
+def add_file_to_update(api_key: str, update_id: str, file_path: str, *argv, **kwargs):
+
+    name = constants.ADD_FILE_TO_UPDATE
+
+    kwargs['file'] = FileValue('$file')
+    kwargs['update_id'] = IntValue(update_id)
+
+    operation = graphql.create_mutation(name, *argv, **kwargs)
+    operation.add_query_variable('file', 'File!')
+    result = requests.upload_file(api_key, file_path, operation=operation, endpoint=API_V2_FILE_ENDPOINT)
+    return result[name]
+
+
 def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: str, *argv, **kwargs):
 
     name = constants.ADD_FILE_TO_COLUMN
