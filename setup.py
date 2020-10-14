@@ -9,9 +9,9 @@ config = {
     'url': r'https://github.com/trix-solutions/moncli',
     'download_url': r'https://github.com/trix-solutions/moncli',
     'author_email': 'andrew.shatz@trix.solutions',
-    'version': '0.1.8',
+    'version': '0.2.0',
     'install_requires': [
-        'requests>=2.22.0'
+        'requests>=2.24.0'
     ],
     'tests_require': [
         'nose>=1.3.7'
