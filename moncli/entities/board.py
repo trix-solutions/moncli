@@ -85,9 +85,13 @@ class Board():
             **group_data)
 
 
-    def get_groups(self):
+    def get_groups(self, include_archived = False, include_deleted = False):
 
-        field_list = ['groups.id', 'groups.title', 'groups.archived', 'groups.color', 'groups.deleted', 'groups.items.id', 'groups.position']
+        field_list = ['groups.id', 'groups.title', 'groups.items.id']
+        if include_archived:
+            field_list.append('groups.archived')
+        if include_deleted:
+            field_list.append('groups.deleted')
 
         if self.__groups == None:
             
