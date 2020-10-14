@@ -251,7 +251,7 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
 def execute_query(api_key:str, name: str, *argv,  **kwargs):
 
     operation = graphql.create_query(name, *argv, **kwargs)
-    result = requests.execute_query(api_key, operation=operation, include_complexity=True)
+    result = requests.execute_query(api_key, operation=operation, include_complexity=False)
     return result[name]
 
 

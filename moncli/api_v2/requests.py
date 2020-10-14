@@ -41,7 +41,7 @@ def execute_query(api_key: str, timeout = constants.TIMEOUT, **kwargs):
         time.sleep(5)
         return execute_query(api_key, timeout, **kwargs)
 
-    print('Complexity: {}'.format(text['data']['complexity']))
+    # print('Complexity: {}'.format(text['data']['complexity']))
     return text['data']
 
 
