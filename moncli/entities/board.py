@@ -195,7 +195,8 @@ class Board(_Board):
             event,
             *args,
             **kwargs)
-        return en.objects.Webhook(**webhook_data, is_active=True)
+        webhook_data['is_active'] = True
+        return en.objects.Webhook(webhook_data)
 
     @default_field_list(config.DEFAULT_WEBHOOK_QUERY_FIELDS)
     def delete_webhook(self, webhook_id: str, *args, **kwargs):
@@ -204,7 +205,8 @@ class Board(_Board):
             webhook_id,
             *args,
             **kwargs)
-        return en.objects.Webhook(**webhook_data, is_active=False)
+        webhook_data['is_active'] = False
+        return en.objects.Webhook(webhook_data)
 
         
 class TooManyGetGroupParameters(Exception):
