@@ -7,7 +7,7 @@ from .entities import column_value as cv
 # Deprecation message
 # warnings.simplefilter('always', DeprecationWarning)
 warnings.warn(
-    'This module will be deprecated as of version 1.0.  Please use moncli.entities.column_value instead',
+    'This module will be deprecated soon.  Please use moncli.entities.column_value instead',
     PendingDeprecationWarning)
 
 class CheckboxValue(cv.CheckboxValue):
@@ -23,6 +23,9 @@ class DropdownValue(cv.DropdownValue):
     pass
 
 class EmailValue(cv.EmailValue):
+    pass
+
+class FileValue(cv.FileValue):
     pass
 
 class HourValue(cv.HourValue):
@@ -73,7 +76,7 @@ class WeekValue(cv.WeekValue):
 class ReadonlyValue(cv.ReadonlyValue):
     pass
 
-@deprecated.deprecated(version='0.1.3', reason="Please use moncli.entities.create_column_value instead.")
+@deprecated.deprecated(version='1.0.0', reason="Please use moncli.entities.create_column_value instead.")
 def create_column_value(id: str, column_type: ColumnType, title: str = None, **kwargs):
 
     if id:
@@ -91,6 +94,8 @@ def create_column_value(id: str, column_type: ColumnType, title: str = None, **k
         return cv.DropdownValue(**kwargs)
     elif column_type == ColumnType.email:
         return cv.EmailValue(**kwargs)
+    elif column_type == ColumnType.file:
+        return cv.FileValue(**kwargs)
     elif column_type == ColumnType.hour:
         return cv.HourValue(**kwargs)
     elif column_type == ColumnType.link:

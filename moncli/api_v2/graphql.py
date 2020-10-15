@@ -146,8 +146,12 @@ class GraphQLOperation(GraphQLField):
 
         body = self.format_children(body)
 
-        body = '{} {{ {} }}'.format(self.action_type, body)
-        body = body.replace('\'','"')
+        if len(self.query_variables) > 0:
+            var_list = ['${}: {}'.format(key, value) for key, value in self.query_variables.items()]
+            var_format = '({})'.format(', '.join(var_list))
+            body = '{} {} {{ {} }}'.format(self.action_type, var_format, body)
+        else:
+            body = '{} {{ {} }}'.format(self.action_type, body)
 
         return body
 
@@ -222,6 +226,16 @@ class JsonValue(ArgumentValue):
         return json.dumps(json.dumps(self.value))
 
 
+class FileValue(ArgumentValue):
+
+    def __init__(self, value):
+        super(FileValue, self).__init__(value)
+
+    
+    def format(self):
+        return str(self.value)
+
+
 class ArgumentValueKind(Enum):
     String = 1
     Int = 2
@@ -229,6 +243,7 @@ class ArgumentValueKind(Enum):
     Enum = 4
     List = 5
     Json = 6
+    File = 7
 
 
 def create_value(value, value_type: ArgumentValueKind):

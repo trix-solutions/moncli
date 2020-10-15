@@ -1,14 +1,14 @@
 from typing import List, Dict, Any
 
-from ..enums import BoardKind, ColumnType, NotificationTargetType
+from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType
 from . import graphql as util, requests, constants
+from .exceptions import MondayApiError
 
 
 def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv, **kwargs):
     kwargs = get_method_arguments(constants.CREATE_BOARD_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_name'] = util.StringValue(board_name)
     kwargs['board_kind'] = util.EnumValue(board_kind)
-
     return execute_mutation(api_key, constants.CREATE_BOARD, *argv,  **kwargs)
 
 
@@ -168,6 +168,40 @@ def get_account(api_key: str, *argv, **kwargs):
     return execute_query(api_key, constants.ACCOUNT, *argv, **kwargs)
 
 
+def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventType, *argv, **kwargs):
+    kwargs = get_method_arguments(constants.CREATE_WEBHOOK_OPTIONAL_PARAMS, **kwargs)
+    kwargs['board_id'] = util.IntValue(board_id)
+    kwargs['url'] = util.StringValue(url)
+    kwargs['event'] = util.EnumValue(event)
+    return execute_mutation(api_key, constants.CREATE_WEBHOOK, *argv, **kwargs)
+
+
+def delete_webhook(api_key: str, webhook_id: str, *argv, **kwargs):
+    kwargs['id'] = util.IntValue(webhook_id)
+    return execute_mutation(api_key, constants.DELETE_WEBHOOK, *argv, **kwargs)
+
+
+def add_file_to_update(api_key: str, update_id: str, file_path: str, *argv, **kwargs):
+    name = constants.ADD_FILE_TO_UPDATE
+    kwargs['file'] = util.FileValue('$file')
+    kwargs['update_id'] = util.IntValue(update_id)
+    operation = util.create_mutation(name, *argv, **kwargs)
+    operation.add_query_variable('file', 'File!')
+    result = requests.upload_file(api_key, file_path, operation=operation)
+    return result[name]
+
+
+def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: str, *argv, **kwargs):
+    name = constants.ADD_FILE_TO_COLUMN
+    kwargs['file'] = util.FileValue('$file')
+    kwargs['item_id'] = util.IntValue(item_id)
+    kwargs['column_id'] = util.StringValue(column_id)
+    operation = util.create_mutation(name, *argv, **kwargs)
+    operation.add_query_variable('file', 'File!')
+    result = requests.upload_file(api_key, file_path, operation=operation)
+    return result[name]
+
+
 def execute_query(api_key:str, name: str, *argv, **kwargs):
     operation = util.create_query(name, *argv, **kwargs)
     result = requests.execute_query(api_key, operation=operation)
@@ -175,6 +209,10 @@ def execute_query(api_key:str, name: str, *argv, **kwargs):
 
 
 def execute_mutation(api_key: str, name: str, *argv, **kwargs):
+
+    if kwargs.__contains__('include_complexity'):
+        raise MondayApiError(name, 400, 'Query complexity cannot be retrieved for mutation requests.')
+
     if 'id' not in argv:
         argv += ('id',)
 
@@ -189,6 +227,9 @@ def get_method_arguments(mappings: dict, **kwargs):
         try:
             if isinstance(value, util.ArgumentValueKind):
                 result[key] = util.create_value(kwargs[key], value)
+            elif type(value) is tuple:
+                data = [util.create_value(item, value[1]).format() for item in kwargs[key]]
+                result[key] = util.create_value(data, value[0])
             elif type(value) is dict:
                 result[key] = get_method_arguments(value, **kwargs[key])
         except KeyError:

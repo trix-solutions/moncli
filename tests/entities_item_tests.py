@@ -340,3 +340,49 @@ def test_item_should_get_list_of_item_updates(get_items, get_me):
     eq_(len(updates), 1)
     eq_(updates[0].to_primitive(), item.updates[0].to_primitive())
     eq_(len(updates[0].replies), 1)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.add_file_to_column')
+def test_item_should_add_file(add_file_to_column, get_items, get_me):
+    
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
+    add_file_to_column.return_value = {'id': '12345', 'name': '33.jpg', 'url': 'https://test.monday.com/12345/33.jpg'}
+    client = MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+    file_column = cv.create_column_value(ColumnType.file, id='files', title='Files')
+
+    # Act
+    asset = item.add_file(file_column, '/Users/test/33.jpg')
+
+    # Assert 
+    ok_(asset != None)
+    eq_(asset.id, '12345')
+    eq_(asset.name, '33.jpg')
+    eq_(asset.url, 'https://test.monday.com/12345/33.jpg')
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.change_column_value')
+def test_item_should_remove_files(change_column_value, get_items, get_me):
+    
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
+    change_column_value.return_value = get_items.return_value[0]
+    client = MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+    file_column = cv.create_column_value(ColumnType.file, id='files', title='Files')
+
+    # Act
+    item = item.remove_files(file_column)
+
+    # Assert 
+    ok_(item != None)
+    eq_(item.id, '1')
+    eq_(item.name, 'Test Item 01')
+    eq_(item.board.id, '1')

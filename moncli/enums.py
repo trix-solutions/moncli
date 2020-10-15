@@ -35,6 +35,7 @@ class ColumnType(Enum):
     vote = 26
     week = 27
     world_clock = 28
+    file = 29
     name = 99999 # This column is a text type but comes standard with every board.
 
 
@@ -66,3 +67,11 @@ class FirstDayOfTheWeek(Enum):
 class PeopleKind(Enum):
     person = 1
     team = 2
+
+
+class WebhookEventType(Enum):
+    create_item = 0,
+    change_column_value = 1,
+    change_specific_column_value = 2,
+    create_update = 3,
+    incoming_notification = 4

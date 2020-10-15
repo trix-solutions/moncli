@@ -7,6 +7,7 @@ from schematics import types
 from .. import api_v2 as client, config, entities as en, enums
 from ..api_v2 import constants
 from ..decorators import default_field_list, optional_arguments
+from .column_value import FileValue
 
 
 class _Item(Model):
@@ -209,6 +210,27 @@ class Item(_Item):
             limit=1,
             updates={'limit': limit, 'page': page})[0]['updates']
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
+
+    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
+    def add_file(self, file_column: FileValue, file_path: str, *argv):
+        asset_data = client.add_file_to_column(
+            self.__creds.api_key_v2,
+            self.id,
+            file_column.id,
+            file_path,
+            *argv)
+        return en.objects.Asset(asset_data)
+
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def remove_files(self, file_column: FileValue, *argv):
+        item_data = client.change_column_value(
+            self.__creds.api_key_v2,
+            self.id,
+            file_column.id,
+            self.__board.id,
+            file_column.format(),
+            *argv)
+        return Item(creds=self.__creds, **item_data)
 
 
 class ColumnValueRequired(Exception):

@@ -573,6 +573,23 @@ def test_should_return_empty_email_column_value_when_email_and_text_are_set_to_n
     eq_(format, {})
 
 
+def test_should_return_file_column_value():
+
+    # Arrange
+    id = 'files'
+    title = 'Files'
+    text = 'https://test.monday.com/files/33.jpg'
+    value = {'files': [{'id': '127540488', 'created_at': None, 'file_extension': None, 'file_size': None, 'name': '33.jpg', 'public_url': None, 'url': 'https://test.monday.com/files/33.jpg', 'url_thumbnail': None}]}
+
+    # Act
+    column_value = cv.create_column_value(ColumnType.file, id=id, title=title, text=text, value=json.dumps(value))
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.files, value['files'])
+    eq_(column_value.format(), {'clear_all': True})
+
+
 def test_should_return_empty_hour_column_value():
 
     # Arrange

@@ -4,12 +4,14 @@ def default_field_list(field_list: list):
     def wrap(func):
         def inner(instance, *args, **kwargs):
             for arg in args:
-                # Input arg list contains a default field
-                if arg in field_list:
-                    return func(instance, *args, **kwargs)
+                # Input arg is not in field list
+                if arg not in field_list:
+                    continue
                 # Input arg list contains a nested field
                 if type(arg) is str and len(arg.split('.')) > 1:
                     return func(instance, *args, **kwargs)
+                # Input arg list contains a default field
+                return func(instance, *args, **kwargs)
             # Add field list if no args are present
             args = (*args, *field_list)
             return func(instance, *args, **kwargs)

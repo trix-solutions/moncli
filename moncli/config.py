@@ -117,6 +117,12 @@ DEFAULT_NOTIFICATION_QUERY_FIELDS = [
     'id',
     'text'
 ]
+
+DEFAULT_FILE_QUERY_FIELDS = [
+    'id',
+    'name',
+    'url'
+]
  
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {
@@ -139,7 +145,8 @@ COLUMN_TYPE_MAPPINGS = {
     'text': ColumnType.text,
     'timerange': ColumnType.timeline,
     'week': ColumnType.week,
-    'timezone': ColumnType.world_clock
+    'timezone': ColumnType.world_clock,
+    'file': ColumnType.file
 }
 
 COLUMN_TYPE_VALUE_MAPPINGS = {
@@ -162,5 +169,6 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.text: 'TextValue',
     ColumnType.timeline: 'TimelineValue',
     ColumnType.world_clock: 'TimezoneValue',
-    ColumnType.week: 'WeekValue'
+    ColumnType.week: 'WeekValue',
+    ColumnType.file: 'FileValue'
 }

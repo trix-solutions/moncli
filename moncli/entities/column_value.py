@@ -240,6 +240,22 @@ class EmailValue(ColumnValue):
         return self.null_value
 
 
+class FileValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        super(FileValue, self).__init__(**kwargs)
+
+    @property
+    def files(self):
+        try:
+            return loads(self.value)['files']
+        except KeyError:
+            return None
+
+    def format(self):
+        return { 'clear_all': True }
+
+
 class HourValue(ColumnValue):
     def __init__(self, **kwargs):
         super(HourValue, self).__init__(**kwargs)

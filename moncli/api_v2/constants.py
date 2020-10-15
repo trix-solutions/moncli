@@ -49,6 +49,14 @@ ME = 'me'
 # Account
 ACCOUNT = 'account'
 
+# Webhooks
+CREATE_WEBHOOK = 'create_webhook'
+DELETE_WEBHOOK = 'delete_webhook'
+
+# Files
+ADD_FILE_TO_UPDATE = 'add_file_to_update'
+ADD_FILE_TO_COLUMN = 'add_file_to_column'
+
 
 ##
 
@@ -57,20 +65,20 @@ ACCOUNT = 'account'
 BOARDS_OPTIONAL_PARAMS = {
     'limit': ArgumentValueKind.Int,
     'page': ArgumentValueKind.Int,
-    'ids': ArgumentValueKind.List,
+    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
     'board_kind': ArgumentValueKind.Enum,
     'state': ArgumentValueKind.Enum,
     'newest_first': ArgumentValueKind.Bool,
     'groups': {
-        'ids': ArgumentValueKind.List,
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
         'items': {
-            'ids': ArgumentValueKind.List,
+            'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
             'limit': ArgumentValueKind.Int,
             'page': ArgumentValueKind.Int
         }
     },
     'items': {
-        'ids': ArgumentValueKind.List,
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
         'limit': ArgumentValueKind.Int,
         'page': ArgumentValueKind.Int
     },
@@ -120,10 +128,10 @@ DELETE_GROUP_OPTIONAL_PARAMS = {
 ITEMS_OPTIONAL_PARAMS = {
     'limit': ArgumentValueKind.Int,
     'page': ArgumentValueKind.Int,
-    'ids': ArgumentValueKind.List,
+    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
     'newest_first': ArgumentValueKind.Bool,
     'column_values': {
-        'ids': ArgumentValueKind.List
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
     },
     'updates': {
         'limit': ArgumentValueKind.Int,
@@ -137,7 +145,7 @@ ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS = {
     'column_type': ArgumentValueKind.String,
     'state': ArgumentValueKind.Enum,
     'column_values': {
-        'ids': ArgumentValueKind.List
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
     },
     'updates': {
         'limit': ArgumentValueKind.Int,
@@ -176,7 +184,7 @@ CREATE_NOTIFICATION_OPTIONAL_PARAMS ={
 }
 
 TAGS_OPTIONAL_PARAMS = {
-    'ids': ArgumentValueKind.List
+    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
 }
 
 CREATE_OR_GET_TAG_OPTIONAL_PARAMS = {
@@ -184,12 +192,16 @@ CREATE_OR_GET_TAG_OPTIONAL_PARAMS = {
 }
 
 USERS_OPTIONAL_PARAMS = {
-    'ids': ArgumentValueKind.List,
+    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
     'kind': ArgumentValueKind.Enum,
     'newest_first': ArgumentValueKind.String,
     'limit': ArgumentValueKind.Int
 }
 
 TEAMS_OPTIONAL_PARAMS = {
-    'ids': ArgumentValueKind.List
+    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
+}
+
+CREATE_WEBHOOK_OPTIONAL_PARAMS = {
+    'config': ArgumentValueKind.Json
 }
