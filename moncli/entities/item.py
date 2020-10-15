@@ -228,7 +228,7 @@ class Item(_Item):
             self.id,
             file_column.id,
             self.__board.id,
-            { 'clear_all': True },
+            file_column.format(),
             *argv)
         return Item(creds=self.__creds, **item_data)
 

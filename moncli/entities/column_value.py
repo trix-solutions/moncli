@@ -252,6 +252,9 @@ class FileValue(ColumnValue):
         except KeyError:
             return None
 
+    def format(self):
+        return { 'clear_all': True }
+
 
 class HourValue(ColumnValue):
     def __init__(self, **kwargs):
