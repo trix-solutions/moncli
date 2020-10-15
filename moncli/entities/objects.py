@@ -68,10 +68,10 @@ class Plan(Model):
 
 
 class Asset(Model):
+    id = types.StringType(required=True)
     created_at = types.DateType()
     file_extension = types.StringType()
     file_size = types.IntType()
-    id = types.StringType()
     name = types.StringType()
     public_url = types.StringType()
     # uploaded_by =

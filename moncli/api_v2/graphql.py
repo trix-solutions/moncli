@@ -146,8 +146,12 @@ class GraphQLOperation(GraphQLField):
 
         body = self.format_children(body)
 
-        body = '{} {{ {} }}'.format(self.action_type, body)
-        body = body.replace('\'','"')
+        if len(self.query_variables) > 0:
+            var_list = ['${}: {}'.format(key, value) for key, value in self.query_variables.items()]
+            var_format = '({})'.format(', '.join(var_list))
+            body = '{} {} {{ {} }}'.format(self.action_type, var_format, body)
+        else:
+            body = '{} {{ {} }}'.format(self.action_type, body)
 
         return body
 
