@@ -162,7 +162,7 @@ class Board():
             'subscribers.id'
         ]
 
-        if not hasattr(self, '__item_ids'):
+        if not hasattr(self, '_Board__item_ids'):
 
             items = client.get_boards(
                 self.__creds.api_key_v2,
