@@ -85,7 +85,7 @@ class Asset(Model):
 class StatusSettings(Model):
 
     labels = types.DictType(types.StringType())
-    labels_positions_v2 = types.DictType(types.StringType())
+    labels_colors = types.DictType(types.DictType(types.StringType()))
 
     def __repr__(self):
         return str(self.to_primitive())
