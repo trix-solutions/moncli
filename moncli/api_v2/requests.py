@@ -43,7 +43,7 @@ def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
             query = value
         elif variables == None and key == 'variables':
             variables = value
-        elif key == 'include_complexity':
+        elif key == 'include_complexity' and value:
             query = query.replace('query {', 'query { complexity { before, after }')
 
     headers = { 'Authorization': api_key }
