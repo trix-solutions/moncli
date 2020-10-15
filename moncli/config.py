@@ -118,6 +118,11 @@ DEFAULT_NOTIFICATION_QUERY_FIELDS = [
     'text'
 ]
 
+DEFAULT_WEBHOOK_QUERY_FIELDS = [
+    'id',
+    'board_id'
+]
+
 DEFAULT_FILE_QUERY_FIELDS = [
     'id',
     'name',
