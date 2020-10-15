@@ -245,6 +245,13 @@ class FileValue(ColumnValue):
     def __init__(self, **kwargs):
         super(FileValue, self).__init__(**kwargs)
 
+    @property
+    def files(self):
+        try:
+            return loads(self.value)['files']
+        except KeyError:
+            return None
+
 
 class HourValue(ColumnValue):
     def __init__(self, **kwargs):
