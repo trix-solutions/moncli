@@ -227,6 +227,9 @@ def get_method_arguments(mappings: dict, **kwargs):
         try:
             if isinstance(value, util.ArgumentValueKind):
                 result[key] = util.create_value(kwargs[key], value)
+            elif type(value) is tuple:
+                data = [util.create_value(item, value[1]).format() for item in kwargs[key]]
+                result[key] = util.create_value(data, value[0])
             elif type(value) is dict:
                 result[key] = get_method_arguments(value, **kwargs[key])
         except KeyError:
