@@ -48,6 +48,15 @@ class Update(_Update):
             ids=[int(self.creator_id)])[0]
         return en.User(creds=self.__creds, **user_data)
 
+    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
+    def add_file(self, file_path: str, *args):
+        asset_data = client.add_file_to_update(
+            self.__creds.api_key_v2,
+            self.id,
+            file_path,
+            *args)
+        return en.objects.Asset(asset_data)
+
 
 class _Reply(Model):
     id = types.StringType(required=True)
