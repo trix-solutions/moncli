@@ -146,7 +146,10 @@ class FileValue(ColumnValue):
     def __init__(self, id: str, title: str, **kwargs):
         super(FileValue, self).__init__(id, title)
 
-        self.files: list = kwargs['files']
+        try:
+            self.files: list = kwargs['files']
+        except:
+            self.files = []
 
 
 class HourValue(ColumnValue):
