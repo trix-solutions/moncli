@@ -35,6 +35,7 @@ class ColumnType(Enum):
     vote = 26
     week = 27
     world_clock = 28
+    file = 29
     name = 99999 # This column is a text type but comes standard with every board.
 
 
