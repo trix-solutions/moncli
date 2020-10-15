@@ -136,6 +136,9 @@ class MondayClient():
     
     def get_items(self, **kwargs):
 
+        if kwargs.__contains__('ids'):
+            kwargs['ids'] = [int(id) for id in kwargs['ids']]
+
         items_data = client.get_items(
             self.__creds.api_key_v2, 
             'id',
