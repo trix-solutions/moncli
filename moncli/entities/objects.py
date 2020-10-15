@@ -67,6 +67,21 @@ class Plan(Model):
         return str(self.to_primitive())
 
 
+class Asset(Model):
+    created_at = types.DateType()
+    file_extension = types.StringType()
+    file_size = types.IntType()
+    id = types.StringType()
+    name = types.StringType()
+    public_url = types.StringType()
+    # uploaded_by =
+    url = types.StringType()
+    url_thumbnail = types.StringType()
+
+    def __repr__(self):
+        return str(self.to_primitive())
+
+
 class StatusSettings(Model):
 
     labels = types.DictType(types.StringType())
@@ -76,13 +91,13 @@ class StatusSettings(Model):
         return str(self.to_primitive())
 
     def get_index(self, label: str):
-        for key, value in self.labels.items():
+        for key, value in dict(self.labels).items():
             if value == label:
                 return int(key)
         return None
 
     def __getitem__(self, index: int):
-        return self.labels[str(index)]
+        return dict(self.labels)[str(index)]
 
 
 class DropdownLabel(Model):
@@ -102,12 +117,12 @@ class DropdownSettings(Model):
         o = self.to_primitive()
 
         if self.labels:
-            o['labels'] = [label.to_primitive() for label in self.labels]
+            o['labels'] = [label.to_primitive() for label in dict(self.labels)]
 
         return str(o)
 
     def __getitem__(self, id):
-        for label in self.labels:
+        for label in dict(self.labels):
             if label.id is id:
                 return label
         raise KeyError
