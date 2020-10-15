@@ -87,7 +87,7 @@ class Group():
 
     def get_items(self, **kwargs):
 
-        if not hasattr(self, '__item_ids'):
+        if not hasattr(self, '_Group__item_ids'):
 
             board = client.get_boards(
                 self.__creds.api_key_v2,
