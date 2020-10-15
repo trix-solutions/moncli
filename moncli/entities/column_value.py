@@ -240,6 +240,12 @@ class EmailValue(ColumnValue):
         return self.null_value
 
 
+class FileValue(ColumnValue):
+
+    def __init__(self, **kwargs):
+        super(FileValue, self).__init__(**kwargs)
+
+
 class HourValue(ColumnValue):
     def __init__(self, **kwargs):
         super(HourValue, self).__init__(**kwargs)
