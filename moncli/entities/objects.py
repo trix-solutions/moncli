@@ -122,7 +122,7 @@ class DropdownSettings(Model):
         return str(o)
 
     def __getitem__(self, id):
-        for label in dict(self.labels):
+        for label in list(self.labels):
             if label.id is id:
                 return label
         raise KeyError
