@@ -67,6 +67,15 @@ class Plan(Model):
         return str(self.to_primitive())
 
 
+class Webhook(Model):
+    id = types.StringType(required=True)
+    board_id = types.StringType()
+    is_active = types.BooleanType(default=False)
+
+    def __repr__(self):
+        return str(self.to_primitive())
+
+
 class Asset(Model):
     id = types.StringType(required=True)
     created_at = types.DateType()
