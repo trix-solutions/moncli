@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 
 from ..constants import API_V2_FILE_ENDPOINT
-from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType
+from ..enums import BoardKind, ColumnType, NotificationTargetType, State, WebhookEventType
 from .exceptions import MondayApiError
 from . import graphql, requests, constants
 from .graphql import StringValue, IntValue, ListValue, EnumValue, JsonValue, FileValue, create_value
@@ -19,6 +19,10 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind, *argv, **
 def get_boards(api_key: str, *argv, **kwargs) -> List[Dict[str, Any]]:
 
     kwargs = get_method_arguments(constants.BOARDS_OPTIONAL_PARAMS, **kwargs)
+    
+    if not kwargs.__contains__('state'):
+        kwargs['state'] = EnumValue(State.all)
+        
     return execute_query(api_key, constants.BOARDS, *argv, **kwargs)
 
 
