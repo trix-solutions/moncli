@@ -222,6 +222,16 @@ class JsonValue(ArgumentValue):
         return json.dumps(json.dumps(self.value))
 
 
+class FileValue(ArgumentValue):
+
+    def __init__(self, value):
+        super(FileValue, self).__init__(value)
+
+    
+    def format(self):
+        return str(self.value)
+
+
 class ArgumentValueKind(Enum):
     String = 1
     Int = 2
@@ -229,6 +239,7 @@ class ArgumentValueKind(Enum):
     Enum = 4
     List = 5
     Json = 6
+    File = 7
 
 
 def create_value(value, value_type: ArgumentValueKind):
