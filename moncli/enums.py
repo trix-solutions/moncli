@@ -70,8 +70,8 @@ class PeopleKind(Enum):
 
 
 class WebhookEventType(Enum):
-    create_item = 0,
-    change_column_value = 1,
-    change_specific_column_value = 2,
-    create_update = 3,
+    create_item = 0
+    change_column_value = 1
+    change_specific_column_value = 2
+    create_update = 3
     incoming_notification = 4

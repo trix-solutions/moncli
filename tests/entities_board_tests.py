@@ -5,7 +5,7 @@ from nose.tools import ok_, eq_, raises
 
 from moncli import MondayClient, entities as en
 from moncli.entities import column_value as cv
-from moncli.enums import ColumnType, BoardKind
+from moncli.enums import ColumnType, BoardKind, WebhookEventType
 
 USERNAME = 'test.user@foobar.org' 
 GET_ME_RETURN_VALUE = en.User(**{'creds': None, 'id': '1', 'email': USERNAME})
@@ -387,3 +387,53 @@ def test_should_get_column_value_by_title(get_columns, create_board, get_me):
     eq_(column_value.id, 'text_column_01')
     eq_(column_value.title, 'Text Column 01')
     eq_(type(column_value), cv.TextValue)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.create_webhook')
+def test_should_create_webhook(create_webhook, create_board, get_me):
+
+    # Arrange
+    board_id = '1'
+    webhook_id = '12345'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    create_webhook.return_value = {'board_id': board_id, 'id': webhook_id}
+
+    client = MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act
+    webhook = board.create_webhook('http://test.webhook.com/webhook/test', WebhookEventType.create_item)
+
+    # Assert 
+    ok_(webhook != None)
+    eq_(webhook.board_id, board_id)
+    eq_(webhook.id, webhook_id)
+    ok_(webhook.is_active)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
+@patch('moncli.api_v2.delete_webhook')
+def test_should_delete_webhook(delete_webhook, create_board, get_me):
+
+    # Arrange
+    board_id = '1'
+    webhook_id = '12345'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+    delete_webhook.return_value = {'board_id': board_id, 'id': webhook_id}
+
+    client = MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act
+    webhook = board.delete_webhook(webhook_id)
+
+    # Assert 
+    ok_(webhook != None)
+    eq_(webhook.board_id, board_id)
+    eq_(webhook.id, webhook_id)
+    ok_(not webhook.is_active)

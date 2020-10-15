@@ -186,6 +186,28 @@ class Board(_Board):
             kwargs['settings'] = column.settings     
         return cv.create_column_value(column_type, id=column.id, title=column.title)
 
+    @default_field_list(config.DEFAULT_WEBHOOK_QUERY_FIELDS)
+    def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):
+        webhook_data = client.create_webhook(
+            self.__creds.api_key_v2, 
+            self.id, 
+            url, 
+            event,
+            *args,
+            **kwargs)
+        webhook_data['is_active'] = True
+        return en.objects.Webhook(webhook_data)
+
+    @default_field_list(config.DEFAULT_WEBHOOK_QUERY_FIELDS)
+    def delete_webhook(self, webhook_id: str, *args, **kwargs):
+        webhook_data = client.delete_webhook(
+            self.__creds.api_key_v2, 
+            webhook_id,
+            *args,
+            **kwargs)
+        webhook_data['is_active'] = False
+        return en.objects.Webhook(webhook_data)
+
         
 class TooManyGetGroupParameters(Exception):
     def __init__(self):
