@@ -211,25 +211,25 @@ class Item(_Item):
             updates={'limit': limit, 'page': page})[0]['updates']
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
-    
-    def add_file(self, file_column: FileValue, file_path: str):
+    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
+    def add_file(self, file_column: FileValue, file_path: str, *argv):
         asset_data = client.add_file_to_column(
             self.__creds.api_key_v2,
             self.id,
             file_column.id,
             file_path,
-            'id', 'name', 'url')
+            *argv)
         return en.objects.Asset(**asset_data)
 
-
-    def remove_files(self, file_column: FileValue):
+    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
+    def remove_files(self, file_column: FileValue, *argv):
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
             self.id,
             file_column.id,
             self.__board.id,
             { 'clear_all': True },
-            'id', 'name', 'board.id')
+            *argv)
         return Item(creds=self.__creds, **item_data)
 
 

@@ -117,6 +117,12 @@ DEFAULT_NOTIFICATION_QUERY_FIELDS = [
     'id',
     'text'
 ]
+
+DEFAULT_FILE_QUERY_FIELDS = [
+    'id',
+    'name',
+    'url'
+]
  
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {
