@@ -219,7 +219,7 @@ class Item(_Item):
             file_column.id,
             file_path,
             *argv)
-        return en.objects.Asset(asset_data)
+        return en.asset.Asset(**asset_data)
 
     @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def remove_files(self, file_column: FileValue, *argv):
