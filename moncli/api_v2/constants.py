@@ -224,5 +224,5 @@ CREATE_WEBHOOK_OPTIONAL_PARAMS = {
 }
 
 ASSETS_OPTIONAL_PARAMS = {
-    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
+    
 }

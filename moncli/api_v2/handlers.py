@@ -51,9 +51,11 @@ def change_multiple_column_value(api_key: str, item_id: str, board_id: str, colu
     return execute_mutation(api_key, constants.CHANGE_MULTIPLE_COLUMN_VALUES, *args, **kwargs)
 
 
-def get_assets(api_key: str, *args, **kwargs):
+def get_assets(api_key: str, ids: list, *args, **kwargs):
     kwargs = get_method_arguments(constants.ASSETS_OPTIONAL_PARAMS, **kwargs)
-    return execute_query(api_key, constants.ASSETS)
+    ids = [util.IntValue(id).value for id in ids]
+    kwargs['ids'] = util.ListValue(ids)
+    return execute_query(api_key, constants.ASSETS, *args, **kwargs)
 
 
 def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):

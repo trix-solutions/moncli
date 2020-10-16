@@ -8,6 +8,7 @@ from ..entities import column_value as cv
 
 
 class _Board(Model):
+    """The base data model for a board"""
 
     id = types.StringType(required=True)
     name = types.StringType()
@@ -20,6 +21,7 @@ class _Board(Model):
 
 
 class Board(_Board):
+    """The entity model for a board"""
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
@@ -49,18 +51,21 @@ class Board(_Board):
  
     @property
     def columns(self):
+        """Retrieve board columns"""
         if not self.__columns:
             self.__columns = self.get_columns()
         return self.__columns
 
     @property
     def groups(self):
+        """Retrieve board groups"""
         if not self.__groups:
             self.__groups = self.get_groups()
         return self.__groups
 
     @property
     def items(self):
+        """Retrieve board items"""
         if not self.__items:
             self.__items = self.get_items()
         return self.__items
