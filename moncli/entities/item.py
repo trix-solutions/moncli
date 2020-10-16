@@ -218,7 +218,7 @@ class Item(_Item):
             file_column.id,
             file_path,
             *argv)
-        return en.asset.Asset(**asset_data)
+        return en.Asset(**asset_data)
 
     def remove_files(self, file_column: FileValue, *argv):
         item_data = client.change_column_value(
