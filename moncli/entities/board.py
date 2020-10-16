@@ -1,10 +1,11 @@
 from schematics.models import Model
 from schematics import types
 
-from .. import api_v2 as client, config, enums, entities as en
+from .. import api_v2 as client, config, enums, entities as en, error
 from ..api_v2 import constants
 from ..decorators import default_field_list, optional_arguments
 from ..entities import column_value as cv
+
 
 class _Board(Model):
 
@@ -190,6 +191,8 @@ class Board(_Board):
     def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):
         # Modify kwargs to config if supplied.
         if kwargs:
+            if event != enums.WebhookEventType.change_specific_column_value:
+                raise error.MoncliError(400, 'Configurations not available for this webhook type.')
             kwargs = {'config': kwargs}
         webhook_data = client.create_webhook(
             self.__creds.api_key_v2, 
