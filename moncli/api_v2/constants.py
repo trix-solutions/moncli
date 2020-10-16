@@ -143,6 +143,9 @@ DELETE_GROUP_OPTIONAL_PARAMS = {
 }
 
 ITEMS_OPTIONAL_PARAMS = {
+    'assets': {
+        'column_ids': (ArgumentValueKind.List, ArgumentValueKind.String)
+    },
     'limit': ArgumentValueKind.Int,
     'page': ArgumentValueKind.Int,
     'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
