@@ -119,7 +119,6 @@ class Board(_Board):
             return [group for group in self.groups if group.title == title][0]
 
     @optional_arguments(constants.CREATE_ITEM_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def add_item(self, item_name: str, *args, **kwargs):
         column_values = kwargs.pop('column_values', None)
         if column_values:
@@ -138,8 +137,9 @@ class Board(_Board):
             **kwargs)
         return en.Item(creds=self.__creds, **item_data)
 
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def get_items(self, *args):
+        if not args:
+            args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS)
         args = ['items.' + arg for arg in args]
         items_data = client.get_boards(
             self.__creds.api_key_v2,
@@ -148,7 +148,6 @@ class Board(_Board):
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
     @optional_arguments(constants.ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def get_items_by_column_values(self, column_value: en.ColumnValue, *args, **kwargs):      
         if type(column_value) == cv.DateValue:
             value = column_value.date
