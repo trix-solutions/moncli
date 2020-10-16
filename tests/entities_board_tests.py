@@ -391,6 +391,23 @@ def test_should_get_column_value_by_title(get_columns, create_board, get_me):
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.create_board')
+@raises(en.board.WebhookConfigurationError)
+def test_should_fail_to_create_webhook_from_invalid_event(create_board, get_me):
+
+    # Arrange
+    board_id = '1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
+
+    client = MondayClient(USERNAME, '', '')
+    board = client.create_board('Test Board 1', BoardKind.public)
+
+    # Act
+    board.create_webhook('http://test.webhook.com/webhook/test', WebhookEventType.create_item, columnId='test_1')
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.create_board')
 @patch('moncli.api_v2.create_webhook')
 def test_should_create_webhook(create_webhook, create_board, get_me):
 

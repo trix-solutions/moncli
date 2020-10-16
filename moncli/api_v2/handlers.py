@@ -99,7 +99,6 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
 
 def move_item_to_group(api_key: str, item_id: str, group_id: str, *argv, **kwargs):
-
     kwargs = get_method_arguments(constants.MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
     kwargs['group_id'] = util.StringValue(group_id)
@@ -150,6 +149,27 @@ def get_tags(api_key: str, *argv, **kwargs):
     return execute_query(api_key, constants.TAGS, *argv, **kwargs)
 
 
+def add_file_to_update(api_key: str, update_id: str, file_path: str, *argv, **kwargs):
+    name = constants.ADD_FILE_TO_UPDATE
+    kwargs['file'] = util.FileValue('$file')
+    kwargs['update_id'] = util.IntValue(update_id)
+    operation = util.create_mutation(name, *argv, **kwargs)
+    operation.add_query_variable('file', 'File!')
+    result = requests.upload_file(api_key, file_path, operation=operation)
+    return result[name]
+
+
+def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: str, *argv, **kwargs):
+    name = constants.ADD_FILE_TO_COLUMN
+    kwargs['file'] = util.FileValue('$file')
+    kwargs['item_id'] = util.IntValue(item_id)
+    kwargs['column_id'] = util.StringValue(column_id)
+    operation = util.create_mutation(name, *argv, **kwargs)
+    operation.add_query_variable('file', 'File!')
+    result = requests.upload_file(api_key, file_path, operation=operation)
+    return result[name]
+
+
 def get_users(api_key: str, *argv, **kwargs):
     kwargs = get_method_arguments(constants.USERS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, constants.USERS, *argv, **kwargs)
@@ -179,27 +199,6 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
 def delete_webhook(api_key: str, webhook_id: str, *argv, **kwargs):
     kwargs['id'] = util.IntValue(webhook_id)
     return execute_mutation(api_key, constants.DELETE_WEBHOOK, *argv, **kwargs)
-
-
-def add_file_to_update(api_key: str, update_id: str, file_path: str, *argv, **kwargs):
-    name = constants.ADD_FILE_TO_UPDATE
-    kwargs['file'] = util.FileValue('$file')
-    kwargs['update_id'] = util.IntValue(update_id)
-    operation = util.create_mutation(name, *argv, **kwargs)
-    operation.add_query_variable('file', 'File!')
-    result = requests.upload_file(api_key, file_path, operation=operation)
-    return result[name]
-
-
-def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: str, *argv, **kwargs):
-    name = constants.ADD_FILE_TO_COLUMN
-    kwargs['file'] = util.FileValue('$file')
-    kwargs['item_id'] = util.IntValue(item_id)
-    kwargs['column_id'] = util.StringValue(column_id)
-    operation = util.create_mutation(name, *argv, **kwargs)
-    operation.add_query_variable('file', 'File!')
-    result = requests.upload_file(api_key, file_path, operation=operation)
-    return result[name]
 
 
 def execute_query(api_key:str, name: str, *argv, **kwargs):

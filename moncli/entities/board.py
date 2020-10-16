@@ -6,6 +6,7 @@ from ..api_v2 import constants
 from ..decorators import default_field_list, optional_arguments
 from ..entities import column_value as cv
 
+
 class _Board(Model):
 
     id = types.StringType(required=True)
@@ -188,6 +189,11 @@ class Board(_Board):
 
     @default_field_list(config.DEFAULT_WEBHOOK_QUERY_FIELDS)
     def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):
+        # Modify kwargs to config if supplied.
+        if kwargs:
+            if event != enums.WebhookEventType.change_specific_column_value:
+                raise WebhookConfigurationError(event)
+            kwargs = {'config': kwargs}
         webhook_data = client.create_webhook(
             self.__creds.api_key_v2, 
             self.id, 
@@ -232,3 +238,7 @@ class TooManyGetColumnValueParameters(Exception):
 class NotEnoughGetColumnValueParameters(Exception):
     def __init__(self):
         self.message = "Either the 'id' or 'title' is required when querying a column value."
+
+class WebhookConfigurationError(Exception):
+    def __init__(self, event: enums.WebhookEventType):
+        self.message = "Webhook event type '{}' does not support configuraitons".format(event.name)
