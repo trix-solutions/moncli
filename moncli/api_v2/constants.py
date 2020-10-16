@@ -73,6 +73,12 @@ DEFAULT_ITEM_QUERY_FIELDS = [
     'state'
 ]
 
+DEFAULT_ASSET_QUERY_FIELDS = [
+    'id',
+    'name',
+    'url'
+]
+
 
 ##
 

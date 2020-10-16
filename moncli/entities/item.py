@@ -80,7 +80,16 @@ class Item(_Item):
             self.__updates = self.get_updates()
         return self.__updates
 
-    def get_assets(self, column_ids: list = None, *args):
+    def add_file(self, file_column: FileValue, file_path: str, *argv):
+        asset_data = client.add_file_to_column(
+            self.__creds.api_key_v2,
+            self.id,
+            file_column.id,
+            file_path,
+            *argv)
+        return en.Asset(**asset_data)
+
+    def get_files(self, column_ids: list = None, *args):
         """Retrieves the file assets for the login user's account.
         __________
         Parameters
@@ -124,7 +133,7 @@ class Item(_Item):
         column_ids : `list[str]`
             A list of column IDs from which to retrieve file assets.     
         """
-
+        args = client.get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS, *args)
         args = ['assets.' + arg for arg in args]
         kwargs = {'ids': [int(self.id)]}
         if column_ids:
@@ -134,6 +143,16 @@ class Item(_Item):
             *args,
             **kwargs)[0]['assets']
         return [en.Asset(**asset_data) for asset_data in assets_data]
+
+    def remove_files(self, file_column: FileValue, *argv):
+        item_data = client.change_column_value(
+            self.__creds.api_key_v2,
+            self.id,
+            file_column.id,
+            self.__board.id,
+            file_column.format(),
+            *argv)
+        return Item(creds=self.__creds, **item_data)
 
     @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
     def get_board(self, *args):
@@ -267,25 +286,6 @@ class Item(_Item):
             limit=1,
             updates={'limit': limit, 'page': page})[0]['updates']
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
-
-    def add_file(self, file_column: FileValue, file_path: str, *argv):
-        asset_data = client.add_file_to_column(
-            self.__creds.api_key_v2,
-            self.id,
-            file_column.id,
-            file_path,
-            *argv)
-        return en.Asset(**asset_data)
-
-    def remove_files(self, file_column: FileValue, *argv):
-        item_data = client.change_column_value(
-            self.__creds.api_key_v2,
-            self.id,
-            file_column.id,
-            self.__board.id,
-            file_column.format(),
-            *argv)
-        return Item(creds=self.__creds, **item_data)
 
 
 class ColumnValueRequired(Exception):
