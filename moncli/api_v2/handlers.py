@@ -51,9 +51,12 @@ def change_multiple_column_value(api_key: str, item_id: str, board_id: str, colu
     return execute_mutation(api_key, constants.CHANGE_MULTIPLE_COLUMN_VALUES, *args, **kwargs)
 
 
-def get_assets(api_key: str, *args, **kwargs):
+def get_assets(api_key: str, ids: list, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ASSETS_OPTIONAL_PARAMS, **kwargs)
-    return execute_query(api_key, constants.ASSETS)
+    ids = [util.IntValue(id).value for id in ids]
+    kwargs['ids'] = util.ListValue(ids)
+    return execute_query(api_key, constants.ASSETS, *args, **kwargs)
 
 
 def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
@@ -163,6 +166,7 @@ def get_tags(api_key: str, *args, **kwargs):
 
 def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kwargs):
     name = constants.ADD_FILE_TO_UPDATE
+    args = get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS, *args)
     kwargs['file'] = util.FileValue('$file')
     kwargs['update_id'] = util.IntValue(update_id)
     operation = util.create_mutation(name, *args, **kwargs)
@@ -173,6 +177,7 @@ def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kw
 
 def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: str, *args, **kwargs):
     name = constants.ADD_FILE_TO_COLUMN
+    args = get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS)
     kwargs['file'] = util.FileValue('$file')
     kwargs['item_id'] = util.IntValue(item_id)
     kwargs['column_id'] = util.StringValue(column_id)

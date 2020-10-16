@@ -28,14 +28,6 @@ DEFAULT_GROUP_QUERY_FIELDS = [
     'position'
 ]
 
-DEFAULT_ITEM_QUERY_FIELDS = [
-    'id',
-    'name',
-    'created_at',
-    'creator_id',
-    'state'
-]
-
 DEFAULT_COLUMN_VALUE_QUERY_FIELDS = [
     'id',
     'title',
@@ -123,11 +115,6 @@ DEFAULT_WEBHOOK_QUERY_FIELDS = [
     'board_id'
 ]
 
-DEFAULT_FILE_QUERY_FIELDS = [
-    'id',
-    'name',
-    'url'
-]
  
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {

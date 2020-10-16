@@ -48,7 +48,6 @@ class Update(_Update):
             ids=[int(self.creator_id)])[0]
         return en.User(creds=self.__creds, **user_data)
 
-    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
     def add_file(self, file_path: str, *args):
         asset_data = client.add_file_to_update(
             self.__creds.api_key_v2,

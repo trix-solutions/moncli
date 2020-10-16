@@ -73,9 +73,14 @@ DEFAULT_ITEM_QUERY_FIELDS = [
     'state'
 ]
 
+DEFAULT_ASSET_QUERY_FIELDS = [
+    'id',
+    'name',
+    'url'
+]
+
 
 ##
-
 
 ## Optional Parameters
 
@@ -143,6 +148,9 @@ DELETE_GROUP_OPTIONAL_PARAMS = {
 }
 
 ITEMS_OPTIONAL_PARAMS = {
+    'assets': {
+        'column_ids': (ArgumentValueKind.List, ArgumentValueKind.String)
+    },
     'limit': ArgumentValueKind.Int,
     'page': ArgumentValueKind.Int,
     'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
@@ -224,5 +232,5 @@ CREATE_WEBHOOK_OPTIONAL_PARAMS = {
 }
 
 ASSETS_OPTIONAL_PARAMS = {
-    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
+    
 }

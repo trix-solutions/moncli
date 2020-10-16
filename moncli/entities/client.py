@@ -13,6 +13,7 @@ class MondayClient():
 
     @property
     def me(self):
+        """Retrieve login user"""
         if not self.__me:
             self.__me = self.get_me()
         return self.__me
@@ -92,12 +93,54 @@ class MondayClient():
         return en.Board(creds=self.__creds, **board_data)
 
     @optional_arguments(constants.ASSETS_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
-    def get_assets(self, *args, **kwargs):
+    def get_assets(self, ids: list, *args):
+        """Retrieves the file assets for the login user's account.
+        __________
+        Parameters
+        __________
+        ids : `list[int/str]`
+            Ids of the assets/files you want to get.
+            Example:
+            >>> client.get_assets(ids=['12345678'])
+        *args : `str`
+            The list asset return fields.
+
+        _______
+        Returns
+        _______
+        assets : `list[moncli.entities.asset.Asset]`
+            A list of file assets uploaded to the account.
+
+        _____________
+        Return Fields
+        _____________
+        created_at : `str`
+            The file's creation date.
+        file_extension : `str`
+            The file's extension.
+        file_size : `int`
+            The file's size in bytes.
+        id : `str`
+            The file's unique identifier.
+        name : `str`
+            The file's name.
+        public_url : `str`
+            Public url to the asset, valid for 1 hour.
+        uploaded_by : `moncli.entities.user.User`
+            The user who uploaded the file
+        url : `str`
+            The user who uploaded the file
+        url_thumbnail : `str`
+            Url to view the asset in thumbnail mode. Only available for images.
+        """
+        
+        if not ids:
+            raise AssetIdsRequired()
+
         assets_data = client.get_assets(
             self.__creds.api_key_v2,
-            *args,
-            **kwargs)
+            ids,
+            *args)
         return [en.asset.Asset(**data) for data in assets_data]
     
     def get_items(self, *args,  **kwargs):
@@ -205,4 +248,8 @@ class BoardNotFound(Exception):
             self.message = 'Unable to find board with the ID: "{}".'.format(value)
         else:
             self.message = 'Unable to find the requested board.'
+
+class AssetIdsRequired(Exception):
+    def __init__(self):
+        self.message = "Ids parameter is required."
 

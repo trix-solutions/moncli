@@ -23,10 +23,14 @@ class Item(_Item):
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
+        self.__assets = None
         self.__board = None
         self.__creator = None
         self.__column_values = None
         self.__updates = None
+        assets = kwargs.pop('assets', None)
+        if assets:
+            self.assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
         board = kwargs.pop('board', None)
         if board:
             self.__board = en.Board(creds=self.__creds, **board)
@@ -76,6 +80,81 @@ class Item(_Item):
             self.__updates = self.get_updates()
         return self.__updates
 
+    def add_file(self, file_column: FileValue, file_path: str, *argv):
+        asset_data = client.add_file_to_column(
+            self.__creds.api_key_v2,
+            self.id,
+            file_column.id,
+            file_path,
+            *argv)
+        return en.Asset(**asset_data)
+
+    def get_files(self, column_ids: list = None, *args):
+        """Retrieves the file assets for the login user's account.
+        __________
+        Parameters
+        __________
+        *args : `str`
+            The list asset return fields.
+        **kwargs : `dict`
+            Optional keyword arguments for retrieving file assets from an item.
+            
+        _______
+        Returns
+        _______
+        assets : `list[moncli.entities.asset.Asset]`
+            A list of file assets uploaded to the account.
+
+        _____________
+        Return Fields
+        _____________
+        created_at : `str`
+            The file's creation date.
+        file_extension : `str`
+            The file's extension.
+        file_size : `int`
+            The file's size in bytes.
+        id : `str`
+            The file's unique identifier.
+        name : `str`
+            The file's name.
+        public_url : `str`
+            Public url to the asset, valid for 1 hour.
+        uploaded_by : `moncli.entities.user.User`
+            The user who uploaded the file
+        url : `str`
+            The user who uploaded the file
+        url_thumbnail : `str`
+            Url to view the asset in thumbnail mode. Only available for images.   
+
+        __________________
+        Optional Arguments
+        __________________
+        column_ids : `list[str]`
+            A list of column IDs from which to retrieve file assets.     
+        """
+        
+        args = client.get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS, *args)
+        args = ['assets.' + arg for arg in args]
+        kwargs = {'ids': [int(self.id)]}
+        if column_ids:
+            kwargs['assets'] = {'column_ids': column_ids}
+        assets_data = client.get_items(
+            self.__creds.api_key_v2,
+            *args,
+            **kwargs)[0]['assets']
+        return [en.Asset(**asset_data) for asset_data in assets_data]
+
+    def remove_files(self, file_column: FileValue, *argv):
+        item_data = client.change_column_value(
+            self.__creds.api_key_v2,
+            self.id,
+            file_column.id,
+            self.__board.id,
+            file_column.format(),
+            *argv)
+        return Item(creds=self.__creds, **item_data)
+
     @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
     def get_board(self, *args):
         args = ['board.' + arg for arg in args]
@@ -83,7 +162,6 @@ class Item(_Item):
             self.__creds.api_key_v2,
             *args,
             ids=[int(self.id)])[0]['board']
-
         return en.Board(creds=self.__creds, **board_data)
 
     @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
@@ -209,26 +287,6 @@ class Item(_Item):
             limit=1,
             updates={'limit': limit, 'page': page})[0]['updates']
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
-
-    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
-    def add_file(self, file_column: FileValue, file_path: str, *argv):
-        asset_data = client.add_file_to_column(
-            self.__creds.api_key_v2,
-            self.id,
-            file_column.id,
-            file_path,
-            *argv)
-        return en.Asset(**asset_data)
-
-    def remove_files(self, file_column: FileValue, *argv):
-        item_data = client.change_column_value(
-            self.__creds.api_key_v2,
-            self.id,
-            file_column.id,
-            self.__board.id,
-            file_column.format(),
-            *argv)
-        return Item(creds=self.__creds, **item_data)
 
 
 class ColumnValueRequired(Exception):
