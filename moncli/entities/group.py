@@ -2,6 +2,7 @@ from schematics.models import Model
 from schematics import types
 
 from .. import api_v2 as client, config, entities as en
+from ..api_v2 import constants
 from ..decorators import default_field_list
 
 class _Group(Model):
@@ -73,7 +74,6 @@ class Group(_Group):
             board_id=self.__board_id,
             **group_data)
 
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def add_item(self, item_name: str, *args, **kwargs):
         item_data = client.create_item(
             self.__creds.api_key_v2,
@@ -85,6 +85,7 @@ class Group(_Group):
         return en.Item(creds=self.__creds, **item_data)
 
     def get_items(self, *args):
+        args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
         args = ['groups.items.' + field for field in args]
         items_data = client.get_boards(
             self.__creds.api_key_v2, 

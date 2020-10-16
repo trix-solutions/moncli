@@ -61,6 +61,22 @@ ADD_FILE_TO_COLUMN = 'add_file_to_column'
 
 ##
 
+
+## Default Fields
+
+
+DEFAULT_ITEM_QUERY_FIELDS = [
+    'id',
+    'name',
+    'created_at',
+    'creator_id',
+    'state'
+]
+
+
+##
+
+
 ## Optional Parameters
 
 BOARDS_OPTIONAL_PARAMS = {
@@ -132,7 +148,7 @@ ITEMS_OPTIONAL_PARAMS = {
     'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
     'newest_first': ArgumentValueKind.Bool,
     'column_values': {
-        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.Default),
     },
     'updates': {
         'limit': ArgumentValueKind.Int,
@@ -146,7 +162,7 @@ ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS = {
     'column_type': ArgumentValueKind.String,
     'state': ArgumentValueKind.Enum,
     'column_values': {
-        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.Default),
     },
     'updates': {
         'limit': ArgumentValueKind.Int,

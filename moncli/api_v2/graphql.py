@@ -36,7 +36,8 @@ class GraphQLNode():
 
     def format_arguments(self, body: str):
 
-        formatted_args = ', '.join(["{}:{}".format(key, value) for key, value in self.arguments.items()])
+        formatted_args = ', '.join(['{}:{}'.format(key, value) for key, value in self.arguments.items()])
+        formatted_args = formatted_args.replace("'", '"')
         return '{} ({})'.format(body, formatted_args)
 
 
@@ -54,16 +55,15 @@ class GraphQLField(GraphQLNode):
 
         for field in argv:
 
-            if field == None or field == '':
+            if not field or field == '':
                 continue
             
             if type(field) is str:
-
                 field_split = field.split('.')
                 existing_field = self.get_field(field_split[0])
 
                 # Add the new fields to the existing field
-                if existing_field != None:
+                if existing_field:
                     existing_field.add_fields('.'.join(field_split[1:]))
                     continue
 
@@ -84,6 +84,10 @@ class GraphQLField(GraphQLNode):
                 if formatted_value:
                     self.arguments.__setitem__(key, formatted_value)
             else:
+                field = self.get_field(key)
+                if not field:
+                    raise GraphQLError('Unable to add arguments to "{}" because it was not specified as an output field'.format(key))
+
                 self.get_field(key).add_arguments(**value)
 
 
@@ -157,59 +161,47 @@ class GraphQLOperation(GraphQLField):
 
 
 class ArgumentValue():
-
     def __init__(self, value):
         self.value = value
 
-        
     def format(self):
-        pass
+        return self.value
 
 
 class StringValue(ArgumentValue):
-
     def __init__(self, value):
         super(StringValue, self).__init__(str(value))
-    
 
     def format(self):
         return '"{}"'.format(self.value)
 
 
 class IntValue(ArgumentValue):
-
     def __init__(self, value):
         super(IntValue, self).__init__(int(value))
-    
 
     def format(self):
         return self.value
 
 
 class BoolValue(ArgumentValue):
-
     def __init__(self, value):
         super(BoolValue, self).__init__(value)
 
-    
     def format(self):
         return str(self.value).lower()
 
 
 class ListValue(ArgumentValue):
-
     def __init__(self, value):
         super(ListValue, self).__init__(list(value))
-
 
     def format(self):
         return self.value
 
 class EnumValue(ArgumentValue):
-
     def __init__(self, value):
         super(EnumValue, self).__init__(value)
-
 
     def format(self):
         enum : Enum = self.value
@@ -217,26 +209,23 @@ class EnumValue(ArgumentValue):
 
 
 class JsonValue(ArgumentValue):
-
     def __init__(self, value):
         super(JsonValue, self).__init__(value)
 
-    
     def format(self):
         return json.dumps(json.dumps(self.value))
 
 
 class FileValue(ArgumentValue):
-
     def __init__(self, value):
         super(FileValue, self).__init__(value)
 
-    
     def format(self):
         return str(self.value)
 
 
 class ArgumentValueKind(Enum):
+    Default = 0
     String = 1
     Int = 2
     Bool = 3
@@ -247,7 +236,9 @@ class ArgumentValueKind(Enum):
 
 
 def create_value(value, value_type: ArgumentValueKind):
-    if value_type == ArgumentValueKind.String:
+    if value_type == ArgumentValueKind.Default:
+        return ArgumentValue(value)
+    elif value_type == ArgumentValueKind.String:
         return StringValue(value)   
     elif value_type == ArgumentValueKind.Int:
         return IntValue(value)
@@ -259,3 +250,8 @@ def create_value(value, value_type: ArgumentValueKind):
         return ListValue(value)
     elif value_type == ArgumentValueKind.Json:
         return JsonValue(value)
+
+
+class GraphQLError(Exception):
+    def __init__(self, message: str):
+        self.message = message

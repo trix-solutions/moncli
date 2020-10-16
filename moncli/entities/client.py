@@ -100,8 +100,6 @@ class MondayClient():
             **kwargs)
         return [en.asset.Asset(**data) for data in assets_data]
     
-    @optional_arguments(constants.ITEMS_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def get_items(self, *args,  **kwargs):
         items_data = client.get_items(
             self.__creds.api_key_v2, 

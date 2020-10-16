@@ -33,7 +33,10 @@ class Item(_Item):
         creator = kwargs.pop('creator', None)
         if creator:
             self.__creator = en.User(creds=self.__creds, **creator)
-        kwargs.pop('column_values', None)
+        column_values = kwargs.pop('column_values', None)
+        if column_values:
+            columns_map = { column.id: column for column in self.board.columns }
+            self.__column_values = [en.create_column_value(columns_map[data['id']].column_type, **data) for data in column_values]
         updates = kwargs.pop('updates', None)
         if updates:
             self.__updates = [en.Update(creds=self.__creds)]
@@ -63,7 +66,8 @@ class Item(_Item):
 
     @property
     def column_values(self):
-        self.__column_values = self.get_column_values()
+        if not self.__column_values:
+            self.__column_values = self.get_column_values()
         return self.__column_values
 
     @property
@@ -124,7 +128,6 @@ class Item(_Item):
                 return column_value
     
     @optional_arguments(constants.CHANGE_COLUMN_VALUE_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def change_column_value(self, column_value = None, *args):
         if column_value is None:
             raise ColumnValueRequired()
@@ -144,7 +147,6 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
     
     @optional_arguments(constants.CHANGE_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def change_multiple_column_values(self, column_values, *args):
         if type(column_values) == dict:
             values = column_values
@@ -161,7 +163,6 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
 
     @optional_arguments(constants.MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def move_to_group(self, group_id: str, *args):
         item_data = client.move_item_to_group(
             self.__creds.api_key_v2,
@@ -171,7 +172,6 @@ class Item(_Item):
 
         return Item(creds=self.__creds, **item_data)
 
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def archive(self, *args):
         item_data = client.archive_item(
             self.__creds.api_key_v2,
@@ -180,7 +180,6 @@ class Item(_Item):
 
         return Item(creds=self.__creds, **item_data)
 
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def delete(self, *args):
         item_data = client.delete_item(
             self.__creds.api_key_v2,
@@ -219,9 +218,8 @@ class Item(_Item):
             file_column.id,
             file_path,
             *argv)
-        return en.asset.Asset(**asset_data)
+        return en.Asset(**asset_data)
 
-    @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)
     def remove_files(self, file_column: FileValue, *argv):
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
