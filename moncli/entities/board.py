@@ -188,6 +188,9 @@ class Board(_Board):
 
     @default_field_list(config.DEFAULT_WEBHOOK_QUERY_FIELDS)
     def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):
+        # Modify kwargs to config if supplied.
+        if kwargs:
+            kwargs = {'config': kwargs}
         webhook_data = client.create_webhook(
             self.__creds.api_key_v2, 
             self.id, 
