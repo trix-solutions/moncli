@@ -156,6 +156,41 @@ def test_should_archive_a_board(get_me, archive_board):
     eq_(board.id, id)
 
 
+@patch.object(MondayClient, 'get_me')
+@raises(en.client.AssetIdsRequired)
+def test_should_fail_to_retrieve_assets_with_no_ids(get_me):
+
+    # Arrange
+    get_me.return_value = GET_ME_RETURN_VALUE
+    client = MondayClient(USERNAME, '', '')
+
+    # Act
+    client.get_assets([])
+
+
+@patch('moncli.api_v2.get_assets')
+@patch.object(MondayClient, 'get_me')
+def test_should_retrieve_assets(get_me, get_assets):
+
+    # Arrange
+    asset_id = '12345'
+    name = '33.jpg'
+    url = 'http://test.monday.com/files/33.jpg'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_assets.return_value = [{'id': asset_id, 'name': name, 'url': url}]
+
+    client = MondayClient(USERNAME, '', '')
+    
+    # Act
+    assets = client.get_assets([12345])
+
+    # Assert
+    ok_(assets)
+    eq_(assets[0].id, asset_id)
+    eq_(assets[0].name, name)
+    eq_(assets[0].url, url)
+
+
 @patch('moncli.api_v2.get_items')
 @patch.object(MondayClient, 'get_me')
 def test_should_get_items(get_me, get_items):

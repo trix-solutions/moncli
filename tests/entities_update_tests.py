@@ -60,7 +60,7 @@ def test_update_should_return_creator_of_update_reply(get_users, get_updates, ge
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_updates')
 @patch('moncli.api_v2.add_file_to_update')
-def test_should_get_updates(add_file_to_update, get_updates, get_me):
+def test_should_add_file_to_update(add_file_to_update, get_updates, get_me):
 
     # Arrange 
     id = '1'

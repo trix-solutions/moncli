@@ -135,6 +135,9 @@ class MondayClient():
             Url to view the asset in thumbnail mode. Only available for images.
         """
         
+        if not ids:
+            raise AssetIdsRequired()
+
         assets_data = client.get_assets(
             self.__creds.api_key_v2,
             ids,
@@ -246,4 +249,8 @@ class BoardNotFound(Exception):
             self.message = 'Unable to find board with the ID: "{}".'.format(value)
         else:
             self.message = 'Unable to find the requested board.'
+
+class AssetIdsRequired(Exception):
+    def __init__(self):
+        self.message = "Ids parameter is required."
 
