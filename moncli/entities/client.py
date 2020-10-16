@@ -93,7 +93,6 @@ class MondayClient():
         return en.Board(creds=self.__creds, **board_data)
 
     @optional_arguments(constants.ASSETS_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
     def get_assets(self, ids: list, *args):
         """Retrieves the file assets for the login user's account.
         __________

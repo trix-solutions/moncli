@@ -80,7 +80,6 @@ class Item(_Item):
             self.__updates = self.get_updates()
         return self.__updates
 
-    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
     def get_assets(self, column_ids: list = None, *args):
         """Retrieves the file assets for the login user's account.
         __________
@@ -127,7 +126,7 @@ class Item(_Item):
         assets_data = client.get_items(
             self.__creds.api_key_v2,
             *args,
-            **kwargs)
+            **kwargs)[0]['assets']
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
     @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
@@ -263,7 +262,6 @@ class Item(_Item):
             updates={'limit': limit, 'page': page})[0]['updates']
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
-    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
     def add_file(self, file_column: FileValue, file_path: str, *argv):
         asset_data = client.add_file_to_column(
             self.__creds.api_key_v2,
