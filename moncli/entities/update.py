@@ -55,7 +55,7 @@ class Update(_Update):
             self.id,
             file_path,
             *args)
-        return en.objects.Asset(asset_data)
+        return en.asset.Asset(**asset_data)
 
 
 class _Reply(Model):

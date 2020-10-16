@@ -90,6 +90,15 @@ class MondayClient():
             board_id,
             *args)
         return en.Board(creds=self.__creds, **board_data)
+
+    @optional_arguments(constants.ASSETS_OPTIONAL_PARAMS)
+    @default_field_list(config.DEFAULT_FILE_QUERY_FIELDS)
+    def get_assets(self, *args, **kwargs):
+        assets_data = client.get_assets(
+            self.__creds.api_key_v2,
+            *args,
+            **kwargs)
+        return [en.asset.Asset(**data) for data in assets_data]
     
     @optional_arguments(constants.ITEMS_OPTIONAL_PARAMS)
     @default_field_list(config.DEFAULT_ITEM_QUERY_FIELDS)

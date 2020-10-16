@@ -54,6 +54,7 @@ CREATE_WEBHOOK = 'create_webhook'
 DELETE_WEBHOOK = 'delete_webhook'
 
 # Files
+ASSETS = 'assets'
 ADD_FILE_TO_UPDATE = 'add_file_to_update'
 ADD_FILE_TO_COLUMN = 'add_file_to_column'
 
@@ -204,4 +205,8 @@ TEAMS_OPTIONAL_PARAMS = {
 
 CREATE_WEBHOOK_OPTIONAL_PARAMS = {
     'config': ArgumentValueKind.Json
+}
+
+ASSETS_OPTIONAL_PARAMS = {
+    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
 }

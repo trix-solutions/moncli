@@ -76,21 +76,6 @@ class Webhook(Model):
         return str(self.to_primitive())
 
 
-class Asset(Model):
-    id = types.StringType(required=True)
-    created_at = types.DateType()
-    file_extension = types.StringType()
-    file_size = types.IntType()
-    name = types.StringType()
-    public_url = types.StringType()
-    # uploaded_by =
-    url = types.StringType()
-    url_thumbnail = types.StringType()
-
-    def __repr__(self):
-        return str(self.to_primitive())
-
-
 class StatusSettings(Model):
 
     labels = types.DictType(types.StringType())
