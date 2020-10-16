@@ -367,6 +367,32 @@ def test_item_should_add_file(add_file_to_column, get_items, get_me):
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
+def test_item_should_get_files(get_items, get_me):
+    
+    # Arrange
+    asset_id = '12345'
+    name = '33.jpg'
+    url = 'https://test.monday.com/12345/33.jpg'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
+    
+    client = MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    get_items.return_value = [{'id': '1','assets': [{'id': asset_id, 'name': name, 'url': url}]}]
+
+    # Act
+    assets = item.get_files()
+
+    # Assert 
+    ok_(assets != None)
+    eq_(assets[0].id, '12345')
+    eq_(assets[0].name, '33.jpg')
+    eq_(assets[0].url, 'https://test.monday.com/12345/33.jpg')
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.change_column_value')
 def test_item_should_remove_files(change_column_value, get_items, get_me):
     

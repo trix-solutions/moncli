@@ -133,6 +133,7 @@ class Item(_Item):
         column_ids : `list[str]`
             A list of column IDs from which to retrieve file assets.     
         """
+        
         args = client.get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS, *args)
         args = ['assets.' + arg for arg in args]
         kwargs = {'ids': [int(self.id)]}
