@@ -87,9 +87,9 @@ class Item(_Item):
         __________
         *args : `str`
             The list asset return fields.
-        column_ids (Optional) : `list[str]`
-            A list of column IDs from which to retrieve file assets.
-
+        **kwargs : `dict`
+            Optional keyword arguments for retrieving file assets from an item.
+            
         _______
         Returns
         _______
@@ -116,7 +116,13 @@ class Item(_Item):
         url : `str`
             The user who uploaded the file
         url_thumbnail : `str`
-            Url to view the asset in thumbnail mode. Only available for images.        
+            Url to view the asset in thumbnail mode. Only available for images.   
+
+        __________________
+        Optional Arguments
+        __________________
+        column_ids : `list[str]`
+            A list of column IDs from which to retrieve file assets.     
         """
 
         args = ['assets.' + arg for arg in args]

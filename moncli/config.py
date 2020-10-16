@@ -122,6 +122,12 @@ DEFAULT_WEBHOOK_QUERY_FIELDS = [
     'id',
     'board_id'
 ]
+
+DEFAULT_ASSET_QUERY_FIELDS = [
+    'id',
+    'name',
+    'url'
+]
  
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {
