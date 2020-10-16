@@ -1,7 +1,7 @@
 from schematics.models import Model
 from schematics import types
 
-from .. import api_v2 as client, config, enums, entities as en, error
+from .. import api_v2 as client, config, enums, entities as en
 from ..api_v2 import constants
 from ..decorators import default_field_list, optional_arguments
 from ..entities import column_value as cv
@@ -192,7 +192,7 @@ class Board(_Board):
         # Modify kwargs to config if supplied.
         if kwargs:
             if event != enums.WebhookEventType.change_specific_column_value:
-                raise error.MoncliError(400, 'Configurations not available for this webhook type.')
+                raise WebhookConfigurationError(event)
             kwargs = {'config': kwargs}
         webhook_data = client.create_webhook(
             self.__creds.api_key_v2, 
@@ -238,3 +238,7 @@ class TooManyGetColumnValueParameters(Exception):
 class NotEnoughGetColumnValueParameters(Exception):
     def __init__(self):
         self.message = "Either the 'id' or 'title' is required when querying a column value."
+
+class WebhookConfigurationError(Exception):
+    def __init__(self, event: enums.WebhookEventType):
+        self.message = "Webhook event type '{}' does not support configuraitons".format(event.name)
