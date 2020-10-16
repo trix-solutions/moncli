@@ -33,6 +33,7 @@ def create_column(api_key: str, board_id: str, title: str, column_type: ColumnTy
 
 
 def change_column_value(api_key: str, item_id: str, column_id: str, board_id: str, value: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CHANGE_COLUMN_VALUE_OPTIONAL_PARAMS)
     kwargs['item_id'] = util.IntValue(item_id)
     kwargs['column_id'] = util.StringValue(column_id)
@@ -42,6 +43,7 @@ def change_column_value(api_key: str, item_id: str, column_id: str, board_id: st
 
 
 def change_multiple_column_value(api_key: str, item_id: str, board_id: str, column_values: dict, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CHANGE_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
     kwargs['board_id'] = util.IntValue(board_id)
@@ -83,6 +85,7 @@ def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
 
 def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_ITEM_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_name'] = util.StringValue(item_name)
     kwargs['board_id'] = util.IntValue(board_id)    
@@ -90,12 +93,13 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
 
 
 def get_items(api_key: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ITEMS_OPTIONAL_PARAMS, **kwargs) 
-    operation = util.create_query(constants.ITEMS, *args, **kwargs)
-    return requests.execute_query(api_key, operation=operation)[constants.ITEMS]
+    return execute_query(api_key, constants.ITEMS, *args, **kwargs)
 
 
 def get_items_by_column_values(api_key: str, board_id: str, column_id: str, column_value: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['column_id'] = util.StringValue(column_id)
@@ -104,6 +108,7 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
 
 def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
     kwargs['group_id'] = util.StringValue(group_id)
@@ -111,12 +116,14 @@ def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwarg
 
 
 def archive_item(api_key: str, item_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ARCHIVE_ITEM_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
     return execute_mutation(api_key, constants.ARCHIVE_ITEM, *args, **kwargs)
 
 
 def delete_item(api_key: str, item_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.DELETE_ITEM_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
     return execute_mutation(api_key, constants.DELETE_ITEM, *args, **kwargs)
@@ -225,6 +232,11 @@ def execute_mutation(api_key: str, name: str, *args, **kwargs):
     return result[name]
 
 
+def get_field_list(fields: list, *args):
+    if not args:
+        return fields
+    return args
+
 def get_method_arguments(mappings: dict, **kwargs):
     result = {}
     for key, value in mappings.items():   
@@ -235,7 +247,7 @@ def get_method_arguments(mappings: dict, **kwargs):
                 data = [util.create_value(item, value[1]).format() for item in kwargs[key]]
                 result[key] = util.create_value(data, value[0])
             elif type(value) is dict:
-                result[key] = get_method_arguments(value, **kwargs[key])
+                result[key] = get_method_arguments(value, **(kwargs[key]))
         except KeyError:
             # Ignore if no kwargs found
             continue
