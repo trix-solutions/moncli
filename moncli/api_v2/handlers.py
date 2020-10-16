@@ -99,7 +99,6 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
 
 def move_item_to_group(api_key: str, item_id: str, group_id: str, *argv, **kwargs):
-
     kwargs = get_method_arguments(constants.MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
     kwargs['group_id'] = util.StringValue(group_id)
