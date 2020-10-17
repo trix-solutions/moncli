@@ -270,12 +270,13 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
 
     @optional_arguments(constants.CREATE_UPDATE_OPTIONAL_PARAMS)
-    def add_update(self, body: str, *args):
+    def add_update(self, body: str, *args, **kwargs):
         update_data = client.create_update(
             self.__creds.api_key_v2, 
             body, 
             self.id,
-            *args)
+            *args,
+            **kwargs)
         return en.Update(creds=self.__creds, **update_data)
 
     def get_updates(self, *args, **kwargs):
