@@ -2,9 +2,10 @@ from unittest.mock import patch
 from nose.tools import ok_, eq_
 
 from moncli.api_v2 import handlers, constants
-from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType
+from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType, WebhookEventType, WorkspaceKind
 
 EXECUTE_QUERY_PATCH = 'moncli.api_v2.requests.execute_query'
+UPLOAD_FILE_PATCH = 'moncli.api_v2.requests.upload_file'
 
 def setup():
     print('SETUP')
@@ -360,7 +361,6 @@ def test_get_teams(execute_query):
     ok_(len(teams) == 1)
     
 
-
 @patch(EXECUTE_QUERY_PATCH)
 def test_get_me(execute_query):
 
@@ -375,3 +375,99 @@ def test_get_me(execute_query):
     ok_(me != None)
     ok_(type(me) is dict)
     ok_(me['name'] == name)
+
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_create_webhook(execute_query):
+
+    # Arrange
+    board_id = '12345'
+    url = 'http://test.webhook.com/webhook/test'
+    event = WebhookEventType.create_item
+    webhook_id = '12345678'
+    execute_query.return_value = {constants.CREATE_WEBHOOK: {'id': webhook_id, 'board_id': int(board_id)}}
+
+    # Act
+    webhook = handlers.create_webhook('', board_id, url, event)
+
+    # Assert
+    ok_(webhook != None)
+    ok_(type(webhook) is dict)
+    ok_(webhook['id'] == webhook_id)
+    ok_(webhook['board_id'] == int(board_id))
+
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_delete_webhook(execute_query):
+
+    # Arrange
+    board_id = '12345'
+    webhook_id = '12345678'
+    execute_query.return_value = {constants.DELETE_WEBHOOK: {'id': webhook_id, 'board_id': int(board_id)}}
+
+    # Act
+    webhook = handlers.delete_webhook('', webhook_id)
+
+    # Assert
+    ok_(webhook != None)
+    ok_(type(webhook) is dict)
+    ok_(webhook['id'] == webhook_id)
+    ok_(webhook['board_id'] == int(board_id))
+
+
+@patch(UPLOAD_FILE_PATCH)
+def test_add_file_to_update(upload_file):
+
+    # Arrange
+    name = '33.jpg'
+    url = 'https://test.monday.com/12345/{}'.format(name)
+    upload_file.return_value = {constants.ADD_FILE_TO_UPDATE: {'id': '12345', 'name': name, 'url': url}}
+
+    # Act
+    asset = handlers.add_file_to_update('', '12345', '/Users/test/{}'.format(name))
+    
+    # Assert
+    ok_(asset != None)
+    ok_(type(asset) is dict)
+    ok_(asset['name'] == name)
+    ok_(asset['url'] == url)
+
+
+@patch(UPLOAD_FILE_PATCH)
+def test_add_file_to_column(upload_file):
+
+    # Arrange
+    name = '33.jpg'
+    url = 'https://test.monday.com/12345/{}'.format(name)
+    upload_file.return_value = {constants.ADD_FILE_TO_COLUMN: {'id': '12345', 'name': name, 'url': url}}
+
+    # Act
+    asset = handlers.add_file_to_column('', '12345', 'files', '/Users/test/{}'.format(name))
+    
+    # Assert
+    ok_(asset != None)
+    ok_(type(asset) is dict)
+    ok_(asset['name'] == name)
+    ok_(asset['url'] == url)
+
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_create_workspace(execute_query):
+
+    # Arrange
+    id = '12345'
+    name = 'Workspace'
+    kind = WorkspaceKind.open
+    description = 'This is a test workspace'
+    execute_query.return_value = {constants.CREATE_WORKSPACE: {'id': id, 'name': name, 'kind': kind.name, 'description': description}}
+
+    # Act
+    workspace = handlers.create_workspace('', name, kind, description=description)
+
+    # Assert
+    ok_(workspace != None)
+    ok_(type(workspace) is dict)
+    ok_(workspace['id'] == id)
+    ok_(workspace['name'] == name)
+    ok_(workspace['kind'] == kind.name)
+    ok_(workspace['description'] == description)

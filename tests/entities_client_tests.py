@@ -3,7 +3,7 @@ from nose.tools import ok_, eq_, raises
 
 from moncli import MondayClient, entities as en
 from moncli.api_v2 import constants
-from moncli.enums import BoardKind, NotificationTargetType
+from moncli.enums import BoardKind, NotificationTargetType, WorkspaceKind
 
 USERNAME = 'test.user@foobar.org' 
 GET_ME_RETURN_VALUE = en.User(**{'creds': None, 'id': '1', 'email': USERNAME})
@@ -282,6 +282,29 @@ def test_should_retrieve_list_of_tags(get_me, get_tags):
     ok_(tags != None)
     eq_(len(tags), 1)
     eq_(tags[0].name, name)
+
+@patch('moncli.api_v2.create_workspace')
+@patch.object(MondayClient, 'get_me')
+def test_should_create_workspace(get_me, create_workspace):
+
+    # Arrange
+    id = '12345'
+    name = 'Workspace'
+    kind = WorkspaceKind.open
+    description = 'This is a test workspace.'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    create_workspace.return_value = {'id': id, 'name': name, 'kind': kind.name, 'description': description}
+    client = MondayClient(USERNAME, '', '')
+
+    # Act
+    workspace = client.create_workspace(name, kind, description=description)
+
+    # Assert
+    ok_(workspace != None)
+    eq_(workspace.id, id)
+    eq_(workspace.name, name)
+    eq_(workspace.kind, kind.name)
+    eq_(workspace.description, description)
 
 
 @patch('moncli.api_v2.get_users')

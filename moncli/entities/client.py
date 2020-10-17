@@ -224,6 +224,53 @@ class MondayClient():
             *args)
         return en.Account(creds=self.__creds, **account_data)
 
+    def create_workspace(self, name: str, kind: enums.WorkspaceKind, *args, **kwargs):
+        """Creates a new workspace
+        __________
+        Parameters
+        __________
+        name : `str`
+            The workspace's name.
+        kind : `moncli.enums.WorkspaceKind`
+            The workspace's kind (open / closed)
+        *args : `list`
+            The list of workspace return fields.
+        **kwargs : `dict`
+            Optional keyword arguments listed below.
+        
+        _______
+        Returns
+        _______
+        workspace : `moncli.entities.objects.Workspace`
+            The newly created workspace
+
+        _____________
+        Return Fields
+        _____________
+        id : `str`
+            The workspace's unique identifier
+        name : `str`
+            The workspace's name
+        kind : `str`
+            The workspace's kind (open / closed)
+        description : `str`
+            The workspace's description
+
+        __________________
+        Optional Arguments
+        __________________
+        description : `str`
+            The workspace's description.
+        """
+        
+        workspace_data = client.create_workspace(
+            self.__creds.api_key_v2,
+            name, 
+            kind,
+            *args,
+            **kwargs)
+        return en.Workspace(workspace_data)
+        
 
 class AuthorizationError(Exception):
     def __init__(self, user_name: str):

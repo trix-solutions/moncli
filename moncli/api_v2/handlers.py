@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 
-from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType
+from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind
 from . import graphql as util, requests, constants
 from .exceptions import MondayApiError
 
@@ -218,23 +218,31 @@ def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
     return execute_mutation(api_key, constants.DELETE_WEBHOOK, *args, **kwargs)
 
 
-def execute_query(api_key:str, name: str, *args, **kwargs):
-    operation = util.create_query(name, *args, **kwargs)
+def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_WORKSPACE_QUERY_FIELDS, *args)
+    kwargs = get_method_arguments(constants.CREATE_WORKSPACE_OPTIONAL_PARAMS, **kwargs)
+    kwargs['name'] = util.StringValue(name)
+    kwargs['kind'] = util.EnumValue(kind)
+    return execute_mutation(api_key, constants.CREATE_WORKSPACE, *args, **kwargs)
+
+
+def execute_query(api_key:str, query_name: str, *args, **kwargs):
+    operation = util.create_query(query_name, *args, **kwargs)
     result = requests.execute_query(api_key, operation=operation)
-    return result[name]
+    return result[query_name]
 
 
-def execute_mutation(api_key: str, name: str, *args, **kwargs):
+def execute_mutation(api_key: str, query_name: str, *args, **kwargs):
 
     if kwargs.__contains__('include_complexity'):
-        raise MondayApiError(name, 400, 'Query complexity cannot be retrieved for mutation requests.')
+        raise MondayApiError(query_name, 400, 'Query complexity cannot be retrieved for mutation requests.')
 
     if 'id' not in args:
         args += ('id',)
 
-    operation = util.create_mutation(name, *args, **kwargs)
+    operation = util.create_mutation(query_name, *args, **kwargs)
     result = requests.execute_query(api_key, operation=operation)
-    return result[name]
+    return result[query_name]
 
 
 def get_field_list(fields: list, *args):

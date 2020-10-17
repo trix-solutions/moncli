@@ -2,19 +2,19 @@ import json
 from enum import Enum 
 
 
-def create_field(name: str, *argv, **kwargs):
+def create_field(field_name: str, *argv, **kwargs):
 
-    return GraphQLField(name, *argv, **kwargs)
+    return GraphQLField(field_name, *argv, **kwargs)
 
 
-def create_query(name: str, *argv, **kwargs):
+def create_query(query_name: str, *argv, **kwargs):
     
-    return GraphQLOperation(OperationType.QUERY, name, *argv, **kwargs)
+    return GraphQLOperation(OperationType.QUERY, query_name, *argv, **kwargs)
 
 
-def create_mutation(name: str, *argv, **kwargs):
+def create_mutation(query_name: str, *argv, **kwargs):
     
-    return GraphQLOperation(OperationType.MUTATION, name, *argv, **kwargs)
+    return GraphQLOperation(OperationType.MUTATION, query_name, *argv, **kwargs)
 
 
 class OperationType(Enum):
@@ -24,9 +24,9 @@ class OperationType(Enum):
 
 class GraphQLNode():
 
-    def __init__(self, name: str):
+    def __init__(self, field_name: str):
 
-        self.name: str = name
+        self.name: str = field_name
         self.arguments: dict = {}
 
 
@@ -43,8 +43,8 @@ class GraphQLNode():
 
 class GraphQLField(GraphQLNode):
 
-    def __init__(self, name: str, *argv, **kwargs):
-        super(GraphQLField, self).__init__(name)
+    def __init__(self, field_name: str, *argv, **kwargs):
+        super(GraphQLField, self).__init__(field_name)
         self.__children: dict = {}
         
         self.add_fields(*argv)
@@ -129,10 +129,10 @@ class GraphQLField(GraphQLNode):
 
 class GraphQLOperation(GraphQLField):
 
-    def __init__(self, action_type: OperationType, name: str, *argv, **kwargs):
+    def __init__(self, action_type: OperationType, query_name: str, *argv, **kwargs):
 
         self.action_type = action_type.name.lower()
-        super(GraphQLOperation, self).__init__(name, *argv, **kwargs)
+        super(GraphQLOperation, self).__init__(query_name, *argv, **kwargs)
         self.query_variables: dict = {}
 
 
