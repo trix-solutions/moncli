@@ -449,3 +449,25 @@ def test_add_file_to_column(upload_file):
     ok_(type(asset) is dict)
     ok_(asset['name'] == name)
     ok_(asset['url'] == url)
+
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_create_workspace(execute_query):
+
+    # Arrange
+    id = '12345'
+    name = 'Workspace'
+    kind = WorkspaceKind.open
+    description = 'This is a test workspace'
+    execute_query.return_value = {constants.CREATE_WORKSPACE: {'id': id, 'name': name, 'kind': kind.name, 'description': description}}
+
+    # Act
+    workspace = handlers.create_workspace(name, kind, description)
+
+    # Assert
+    ok_(workspace != None)
+    ok_(type(workspace) is dict)
+    ok_(workspace['id'] == id)
+    ok_(workspace['name'] == name)
+    ok_(workspace['kind'] == kind.name)
+    ok_(workspace['description'] == description)
