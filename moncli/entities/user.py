@@ -64,9 +64,8 @@ class User(_User):
 
         return str(o)
 
-    @default_field_list(config.DEFAULT_ACCOUNT_QUERY_FIELDS)
     def get_account(self, *args):
-        args = ['account.' + arg for arg in args]
+        args = ['account.' + arg for arg in client.get_field_list(constants.DEFAULT_ACCOUNT_QUERY_FIELDS)]
         account_data = client.get_users(
             self.__creds.api_key_v2, 
             *args,
@@ -76,9 +75,8 @@ class User(_User):
             creds=self.__creds,
             **account_data)
     
-    @default_field_list(config.DEFAULT_TEAM_QUERY_FIELDS)
     def get_teams(self, *args):
-        args = ['teams.' + arg for arg in args]
+        args = ['teams.' + arg for arg in client.get_field_list(constants.DEFAULT_TEAM_QUERY_FIELDS)]
         teams_data = client.get_users(
             self.__creds.api_key_v2,
             *args,
@@ -129,9 +127,8 @@ class Team(_Team):
             o['users'] = self.__users
         return str(o)
 
-    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
     def get_users(self, *args):
-        args = ['users.' + arg for arg in args]
+        args = ['users.' + arg for arg in client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)]
         users_data = client.get_teams(
             self.__creds.api_key_v2, 
             *args,
@@ -175,9 +172,8 @@ class Account(_Account):
             o['plan'] = self.__plan
         return str(o)
 
-    @default_field_list(config.DEFAULT_PLAN_QUERY_FIELDS)
     def get_plan(self, *args):
-        args = ['plan.' + arg for arg in args]
+        args = ['plan.' + arg for arg in client.get_field_list(constants.DEFAULT_PLAN_QUERY_FIELDS)]
         plan_data = client.get_account(
             self.__creds.api_key_v2, 
             *args)['plan']
