@@ -30,7 +30,7 @@ class Item(_Item):
         self.__updates = None
         assets = kwargs.pop('assets', None)
         if assets:
-            self.assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
+            self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
         board = kwargs.pop('board', None)
         if board:
             self.__board = en.Board(creds=self.__creds, **board)
@@ -48,12 +48,16 @@ class Item(_Item):
 
     def __repr__(self):
         o = self.to_primitive()
+        if self.__assets:
+            o['assets'] = self.__assets.to_primitive()
         if self.__board:
             o['board'] = self.__board.to_primitive()
+        if self.__creator:
+            o['creator'] = self.__creator.to_primitive()
         if self.__column_values:
             o['column_values'] = [value.to_primitive() for value in self.__column_values]
         if self.__updates:
-            o['column_values'] = [value.to_primitive() for value in self.__updates]
+            o['updates'] = [value.to_primitive() for value in self.__updates]
         return str(o)
 
     @property
@@ -155,8 +159,8 @@ class Item(_Item):
             *argv)
         return Item(creds=self.__creds, **item_data)
 
-    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
     def get_board(self, *args):
+        args = client.get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS, *args)
         args = ['board.' + arg for arg in args]
         board_data = client.get_items(
             self.__creds.api_key_v2,
