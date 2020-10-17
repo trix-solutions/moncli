@@ -2,6 +2,7 @@ from schematics import types
 from schematics.models import Model
 
 from .. import api_v2 as client, config
+from ..api_v2 import constants
 from ..decorators import default_field_list
 from .user import User
 
