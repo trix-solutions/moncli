@@ -49,12 +49,13 @@ def upload_file(api_key: str, file_path: str, timeout = constants.TIMEOUT, **kwa
     
 
 def _process_repsonse(api_key: str, timeout: int, resp, data, **kwargs):
-    
+
     text: dict = resp.json()
 
     if resp.status_code == 403 or resp.status_code == 500:
         raise MondayApiError(json.dumps(data), resp.status_code, '', [text['error_message']])
     if text.__contains__('errors'):
+        errors = text['errors']
         if not 'Query has complexity of' in errors[0]['message']: # May my sins be forgiven someday...
             error_query = json.dumps(data)
             status_code = resp.status_code
@@ -66,6 +67,6 @@ def _process_repsonse(api_key: str, timeout: int, resp, data, **kwargs):
     # Raise exception for parse errors.
     if text.__contains__('error_code'):
         error_query = json.dumps(data)
-        raise MondayApiError(error_query, 400, text['error_code'], text['error_message'])
+        raise MondayApiError(error_query, 400, text['error_code'], [text['error_message']])
 
     return text['data']
