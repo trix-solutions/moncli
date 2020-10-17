@@ -462,7 +462,7 @@ def test_create_workspace(execute_query):
     execute_query.return_value = {constants.CREATE_WORKSPACE: {'id': id, 'name': name, 'kind': kind.name, 'description': description}}
 
     # Act
-    workspace = handlers.create_workspace(name, kind, description)
+    workspace = handlers.create_workspace('', name, kind, description=description)
 
     # Assert
     ok_(workspace != None)
