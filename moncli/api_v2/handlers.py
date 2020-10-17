@@ -137,6 +137,7 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
 
 
 def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_UPDATE_OPTIONAL_PARAMS, **kwargs)
     kwargs['body'] = util.StringValue(body)
     kwargs['item_id'] = util.IntValue(item_id)
@@ -144,6 +145,7 @@ def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
 
 
 def get_updates(api_key: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.UPDATES_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, constants.UPDATES, *args, **kwargs)
 
@@ -239,7 +241,7 @@ def execute_query(api_key:str, query_name: str, *args, **kwargs):
 def execute_mutation(api_key: str, query_name: str, *args, **kwargs):
 
     if kwargs.__contains__('include_complexity'):
-        raise MondayApiError(query_name, 400, 'Query complexity cannot be retrieved for mutation requests.')
+        raise MondayApiError(query_name, 400, '', ['Query complexity cannot be retrieved for mutation requests.'])
 
     if 'id' not in args:
         args += ('id',)
