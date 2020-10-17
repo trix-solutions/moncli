@@ -19,7 +19,6 @@ class MondayClient():
         return self.__me
 
     @optional_arguments(constants.CREATE_BOARD_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
     def create_board(self, board_name: str, board_kind: enums.BoardKind, *args):
         board_data = client.create_board(
             self.__creds.api_key_v2, 
@@ -29,7 +28,6 @@ class MondayClient():
         return en.Board(creds=self.__creds, **board_data)
 
     @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
     def get_boards(self, *args, **kwargs):
         boards_data = client.get_boards(
             self.__creds.api_key_v2, 
@@ -48,7 +46,6 @@ class MondayClient():
             return self.get_board_by_name(name)
 
     @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
     def get_board_by_id(self, id: str, *args):
         try:
             board_data = client.get_boards(
@@ -84,7 +81,6 @@ class MondayClient():
         raise BoardNotFound('name', name)   
 
     @optional_arguments(constants.ARCHIVE_BOARD_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_BOARD_QUERY_FIELDS)
     def archive_board(self, board_id: str, *args):
         board_data = client.archive_board(
             self.__creds.api_key_v2, 

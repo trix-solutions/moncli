@@ -18,6 +18,7 @@ class _Board(Model):
     permissions = types.StringType()
     pos = types.StringType()
     state = types.StringType()
+    workspace_id = types.StringType()
 
 
 class Board(_Board):
@@ -37,6 +38,10 @@ class Board(_Board):
         items = kwargs.pop('items', None)
         if items:
             self.__items = [en.Item(creds=self.__creds, **item) for item in items]
+        self.__workspace = None
+        workspace = kwargs.pop('workspace', None)
+        if workspace:
+            self.__workspace = en.Workspace(workspace)
         super(Board, self).__init__(kwargs)
 
     def __repr__(self):
@@ -70,8 +75,15 @@ class Board(_Board):
             self.__items = self.get_items()
         return self.__items
 
+    @property
+    def workspace(self):
+        """Retrieve workspace"""
+        if not self.__workspace:
+            self.__workspace = self.get_workspace()
+        return self.__workspace
+
+
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_COLUMN_QUERY_FIELDS)
     def add_column(self, title:str, column_type: enums.ColumnType, *args): 
         column_data = client.create_column(
             self.__creds.api_key_v2, 
@@ -81,8 +93,8 @@ class Board(_Board):
             *args)
         return en.Column(column_data)
    
-    @default_field_list(config.DEFAULT_COLUMN_QUERY_FIELDS)
     def get_columns(self, *args):
+        args = client.get_field_list(constants.DEFAULT_COLUMN_QUERY_FIELDS, *args)
         args = ['columns.' + arg for arg in args]
         column_data = client.get_boards(
             self.__creds.api_key_v2,
@@ -217,6 +229,29 @@ class Board(_Board):
             **kwargs)
         webhook_data['is_active'] = False
         return en.objects.Webhook(webhook_data)
+
+    def get_workspace(self, *args):
+        """Retrieves the board workspace
+        _____________
+        Return Fields
+        _____________
+        id : `str`
+            The workspace's unique identifier.
+        name : `str`
+            The workspace's name.
+        kind : `str`
+            The workspace's kind (open / closed)
+        description : `str`
+            The workspace's description
+        """
+        
+        args = client.get_field_list(constants.DEFAULT_WORKSPACE_QUERY_FIELDS, *args)
+        args = ['workspace.{}'.format(arg) for arg in args]
+        workspace_data = client.get_boards(
+            self.__creds.api_key_v2,
+            *args,
+            ids=[self.id])[0]['workspace']
+        return en.Workspace(workspace_data)
 
         
 class TooManyGetGroupParameters(Exception):

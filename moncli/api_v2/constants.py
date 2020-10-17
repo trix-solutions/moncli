@@ -68,6 +68,26 @@ ADD_FILE_TO_COLUMN = 'add_file_to_column'
 ## Default Fields
 
 
+DEFAULT_BOARD_QUERY_FIELDS = [
+    'id', 
+    'name', 
+    'board_folder_id', 
+    'board_kind', 
+    'description', 
+    'permissions',
+    'pos',
+    'state'
+]
+
+DEFAULT_COLUMN_QUERY_FIELDS = [
+    'id',
+    'title',
+    'settings_str',
+    'archived',
+    'type',
+    'width'
+]
+
 DEFAULT_ITEM_QUERY_FIELDS = [
     'id',
     'name',
@@ -121,7 +141,8 @@ BOARDS_OPTIONAL_PARAMS = {
 }
 
 CREATE_BOARD_OPTIONAL_PARAMS = {
-
+    'workspace_id': ArgumentValueKind.Int,
+    'template_id': ArgumentValueKind.Int
 }
 
 ARCHIVE_BOARD_OPTIONAL_PARAMS = {

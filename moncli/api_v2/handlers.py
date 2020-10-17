@@ -6,6 +6,7 @@ from .exceptions import MondayApiError
 
 
 def create_board(api_key: str, board_name: str, board_kind: BoardKind, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS)
     kwargs = get_method_arguments(constants.CREATE_BOARD_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_name'] = util.StringValue(board_name)
     kwargs['board_kind'] = util.EnumValue(board_kind)
@@ -13,18 +14,21 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind, *args, **
 
 
 def get_boards(api_key: str, *args, **kwargs) -> List[Dict[str, Any]]:
+    args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS)
     kwargs = get_method_arguments(constants.BOARDS_OPTIONAL_PARAMS, **kwargs)
     operation = util.create_query(constants.BOARDS, *args, **kwargs)
     return requests.execute_query(api_key, operation=operation)[constants.BOARDS]   
 
 
 def archive_board(api_key: str, board_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS)
     kwargs = get_method_arguments(constants.ARCHIVE_BOARD_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     return execute_mutation(api_key, constants.ARCHIVE_BOARD, *args, **kwargs)
 
     
 def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_COLUMN_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['title'] = util.StringValue(title)
