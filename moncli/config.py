@@ -1,15 +1,6 @@
 from .enums import ColumnType
 
 
-DEFAULT_COLUMN_QUERY_FIELDS = [
-    'id',
-    'title',
-    'settings_str',
-    'archived',
-    'type',
-    'width'
-]
-
 DEFAULT_GROUP_QUERY_FIELDS = [
     'id', 
     'title', 

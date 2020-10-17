@@ -79,6 +79,15 @@ DEFAULT_BOARD_QUERY_FIELDS = [
     'state'
 ]
 
+DEFAULT_COLUMN_QUERY_FIELDS = [
+    'id',
+    'title',
+    'settings_str',
+    'archived',
+    'type',
+    'width'
+]
+
 DEFAULT_ITEM_QUERY_FIELDS = [
     'id',
     'name',

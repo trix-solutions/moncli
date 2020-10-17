@@ -28,6 +28,7 @@ def archive_board(api_key: str, board_id: str, *args, **kwargs):
 
     
 def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_COLUMN_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['title'] = util.StringValue(title)

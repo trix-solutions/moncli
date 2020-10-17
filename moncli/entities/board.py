@@ -71,7 +71,6 @@ class Board(_Board):
         return self.__items
 
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_COLUMN_QUERY_FIELDS)
     def add_column(self, title:str, column_type: enums.ColumnType, *args): 
         column_data = client.create_column(
             self.__creds.api_key_v2, 
@@ -81,8 +80,8 @@ class Board(_Board):
             *args)
         return en.Column(column_data)
    
-    @default_field_list(config.DEFAULT_COLUMN_QUERY_FIELDS)
     def get_columns(self, *args):
+        args = client.get_field_list(constants.DEFAULT_COLUMN_QUERY_FIELDS, *args)
         args = ['columns.' + arg for arg in args]
         column_data = client.get_boards(
             self.__creds.api_key_v2,
