@@ -32,12 +32,14 @@ class Update(_Update):
 
     @property
     def creator(self):
+        """The update's creator."""
         if not self.__creator:
             self.__creator = self.get_creator()
         return self.__creator
 
     @property
     def replies(self):
+        """The update's replies."""
         return self.__replies
 
     @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
@@ -47,6 +49,15 @@ class Update(_Update):
             *args,
             ids=[int(self.creator_id)])[0]
         return en.User(creds=self.__creds, **user_data)
+
+    def add_reply(self, body: str, *args):
+        update_data = client.create_update(
+            self.__creds.api_key_v2,
+            body,
+            self.item_id,
+            *args,
+            parent_id=self.id)
+        return en.Update(creds=self.__creds, **update_data)
 
     def add_file(self, file_path: str, *args):
         asset_data = client.add_file_to_update(

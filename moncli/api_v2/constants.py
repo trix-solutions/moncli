@@ -96,6 +96,25 @@ DEFAULT_ITEM_QUERY_FIELDS = [
     'state'
 ]
 
+DEFAULT_UPDATE_QUERY_FIELDS = [
+    'id',
+    'body',
+    'created_at',
+    'creator_id',
+    'item_id',
+    'text_body',
+    'updated_at'
+]
+
+DEFAULT_REPLY_QUERY_FIELDS = [
+    'id',
+    'body',
+    'created_at',
+    'creator_id',
+    'text_body',
+    'updated_at'
+]
+
 DEFAULT_ASSET_QUERY_FIELDS = [
     'id',
     'name',
@@ -232,7 +251,7 @@ UPDATES_OPTIONAL_PARAMS = {
 }
 
 CREATE_UPDATE_OPTIONAL_PARAMS = {
-
+    'parent_id': ArgumentValueKind.Int
 }
 
 CREATE_NOTIFICATION_OPTIONAL_PARAMS ={

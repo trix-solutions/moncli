@@ -270,18 +270,17 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
 
     @optional_arguments(constants.CREATE_UPDATE_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_UPDATE_QUERY_FIELDS)
-    def add_update(self, body: str, *args):
+    def add_update(self, body: str, *args, **kwargs):
         update_data = client.create_update(
             self.__creds.api_key_v2, 
             body, 
             self.id,
-            *args)
+            *args,
+            **kwargs)
         return en.Update(creds=self.__creds, **update_data)
 
-    @default_field_list(config.DEFAULT_UPDATE_QUERY_FIELDS)
     def get_updates(self, *args, **kwargs):
-        args = ['updates.' + arg for arg in args]
+        args = ['updates.' + arg for arg in client.get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)]
         limit = kwargs.pop('limit', 25)
         page = kwargs.pop('page', 1)
         updates_data = client.get_items(

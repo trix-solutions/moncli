@@ -18,25 +18,6 @@ DEFAULT_COLUMN_VALUE_QUERY_FIELDS = [
     'additional_info'
 ]
 
-DEFAULT_UPDATE_QUERY_FIELDS = [
-    'id',
-    'body',
-    'created_at',
-    'creator_id',
-    'item_id',
-    'text_body',
-    'updated_at'
-]
-
-DEFAULT_REPLY_QUERY_FIELDS = [
-    'id',
-    'body',
-    'created_at',
-    'creator_id',
-    'text_body',
-    'updated_at'
-]
-
 DEFAULT_TAG_QUERY_FIELDS = [
     'id',
     'name',

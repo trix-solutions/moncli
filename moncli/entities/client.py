@@ -147,7 +147,6 @@ class MondayClient():
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
         
     @optional_arguments(constants.UPDATES_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_UPDATE_QUERY_FIELDS)
     def get_updates(self, *args, **kwargs):
         updates_data = client.get_updates(
             self.__creds.api_key_v2, 
