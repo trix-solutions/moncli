@@ -68,6 +68,17 @@ ADD_FILE_TO_COLUMN = 'add_file_to_column'
 ## Default Fields
 
 
+DEFAULT_BOARD_QUERY_FIELDS = [
+    'id', 
+    'name', 
+    'board_folder_id', 
+    'board_kind', 
+    'description', 
+    'permissions',
+    'pos',
+    'state'
+]
+
 DEFAULT_ITEM_QUERY_FIELDS = [
     'id',
     'name',

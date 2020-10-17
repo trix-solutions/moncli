@@ -1,14 +1,5 @@
 from .enums import ColumnType
 
-DEFAULT_BOARD_QUERY_FIELDS = [
-    'id', 
-    'name', 
-    'board_folder_id', 
-    'board_kind', 
-    'description', 
-    'permissions',
-    'pos',
-    'state']
 
 DEFAULT_COLUMN_QUERY_FIELDS = [
     'id',
