@@ -53,6 +53,9 @@ ACCOUNT = 'account'
 CREATE_WEBHOOK = 'create_webhook'
 DELETE_WEBHOOK = 'delete_webhook'
 
+# Workspace
+CREATE_WORKSPACE = 'create_workspace'
+
 # Files
 ASSETS = 'assets'
 ADD_FILE_TO_UPDATE = 'add_file_to_update'
@@ -77,6 +80,13 @@ DEFAULT_ASSET_QUERY_FIELDS = [
     'id',
     'name',
     'url'
+]
+
+DEFAULT_WORKSPACE_QUERY_FIELDS = [
+    'id',
+    'name',
+    'kind',
+    'description'
 ]
 
 
@@ -229,6 +239,10 @@ TEAMS_OPTIONAL_PARAMS = {
 
 CREATE_WEBHOOK_OPTIONAL_PARAMS = {
     'config': ArgumentValueKind.Json
+}
+
+CREATE_WORKSPACE_OPTIONAL_PARAMS = {
+    'description': ArgumentValueKind.String
 }
 
 ASSETS_OPTIONAL_PARAMS = {
