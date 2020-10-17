@@ -28,12 +28,6 @@ DEFAULT_NOTIFICATION_QUERY_FIELDS = [
     'id',
     'text'
 ]
-
-DEFAULT_WEBHOOK_QUERY_FIELDS = [
-    'id',
-    'board_id'
-]
-
  
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {

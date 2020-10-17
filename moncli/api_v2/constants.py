@@ -121,6 +121,11 @@ DEFAULT_ASSET_QUERY_FIELDS = [
     'url'
 ]
 
+DEFAULT_WEBHOOK_QUERY_FIELDS = [
+    'id',
+    'board_id'
+]
+
 DEFAULT_WORKSPACE_QUERY_FIELDS = [
     'id',
     'name',

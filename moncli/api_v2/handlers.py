@@ -211,11 +211,12 @@ def get_me(api_key: str, *args, **kwargs):
 
 
 def get_account(api_key: str, *args, **kwargs):
-    args = get_field_list(constants.DEFAULT_ACCOUNT_WUERY_FIELDS, *args)
+    args = get_field_list(constants.DEFAULT_ACCOUNT_QUERY_FIELDS, *args)
     return execute_query(api_key, constants.ACCOUNT, *args, **kwargs)
 
 
 def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventType, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_WEBHOOK_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_WEBHOOK_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['url'] = util.StringValue(url)
@@ -224,6 +225,7 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
 
 
 def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_WEBHOOK_QUERY_FIELDS, *args)
     kwargs['id'] = util.IntValue(webhook_id)
     return execute_mutation(api_key, constants.DELETE_WEBHOOK, *args, **kwargs)
 
