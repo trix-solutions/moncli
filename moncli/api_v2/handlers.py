@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 
-from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType
+from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind
 from . import graphql as util, requests, constants
 from .exceptions import MondayApiError
 
@@ -216,6 +216,10 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
 def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
     kwargs['id'] = util.IntValue(webhook_id)
     return execute_mutation(api_key, constants.DELETE_WEBHOOK, *args, **kwargs)
+
+
+def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwargs):
+    pass
 
 
 def execute_query(api_key:str, name: str, *args, **kwargs):
