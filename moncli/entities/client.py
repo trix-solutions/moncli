@@ -262,7 +262,14 @@ class MondayClient():
         description : `str`
             The workspace's description.
         """
-        pass
+        
+        workspace_data = client.create_workspace(
+            self.__creds.api_key_v2,
+            name, 
+            kind,
+            *args,
+            **kwargs)
+        return en.Workspace(workspace_data)
         
 
 class AuthorizationError(Exception):
