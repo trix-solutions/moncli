@@ -76,6 +76,16 @@ class Webhook(Model):
         return str(self.to_primitive())
 
 
+class Workspace(Model):
+    id = types.StringType(required=True)
+    name = types.StringType()
+    kind = types.StringType()
+    description = types.StringType()
+
+    def __repr__(self):
+        return str(self.to_primitive())
+
+
 class StatusSettings(Model):
 
     labels = types.DictType(types.StringType())
