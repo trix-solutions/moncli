@@ -19,10 +19,19 @@ class _Update(Model):
 class Update(_Update):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
-        replies = kwargs.pop('replies', [])
-        super(Update, self).__init__(kwargs)
-        self.__replies = [Reply(creds=self.__creds, item_id=self.item_id, **reply) for reply in replies]
         self.__creator = None
+        creator = kwargs.pop('creator', None)
+        if creator:
+            self.__creator = en.User(cred=self.__creds, **creator)
+        self.__replies = None
+        replies = kwargs.pop('replies', None)
+        if replies:
+            self.__reply = [Reply(creds=self.__creds, item_id=self.item_id, **reply) for reply in replies]
+        self.__assets = None
+        assets = kwargs.pop('assets')
+        if assets:
+            self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
+        super(Update, self).__init__(kwargs)
 
     def __repr__(self):
         o = self.to_primitive()
@@ -42,8 +51,13 @@ class Update(_Update):
         """The update's replies."""
         return self.__replies
 
-    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
+    @property
+    def assets(self):
+        """The update's assets/files."""
+        return self.__assets
+
     def get_creator(self, *args):
+        args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
         user_data = client.get_users(
             self.__creds.api_key_v2,
             *args,
@@ -66,6 +80,9 @@ class Update(_Update):
             file_path,
             *args)
         return en.Asset(**asset_data)
+
+    def get_files(self, *args):
+        return None
 
 
 class _Reply(Model):
@@ -93,8 +110,8 @@ class Reply(_Reply):
             self.__creator = self.get_creator()
         return self.__creator
     
-    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
     def get_creator(self, *args):
+        args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
         user_data = client.get_users(
             self.__creds.api_key_v2,
             *args,
