@@ -194,20 +194,24 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
 
 
 def get_users(api_key: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.USERS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, constants.USERS, *args, **kwargs)
 
 
 def get_teams(api_key: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_TEAM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.TEAMS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, constants.TEAMS, *args, **kwargs)
 
 
 def get_me(api_key: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)
     return execute_query(api_key, constants.ME, *args, **kwargs)
 
 
 def get_account(api_key: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ACCOUNT_WUERY_FIELDS, *args)
     return execute_query(api_key, constants.ACCOUNT, *args, **kwargs)
 
 
