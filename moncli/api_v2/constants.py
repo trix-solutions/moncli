@@ -121,7 +121,8 @@ BOARDS_OPTIONAL_PARAMS = {
 }
 
 CREATE_BOARD_OPTIONAL_PARAMS = {
-
+    'workspace_id': ArgumentValueKind.Int,
+    'template_id': ArgumentValueKind.Int
 }
 
 ARCHIVE_BOARD_OPTIONAL_PARAMS = {
