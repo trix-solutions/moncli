@@ -191,6 +191,24 @@ def test_create_item(execute_query):
 
 
 @patch(EXECUTE_QUERY_PATCH)
+def test_clear_item_updates(execute_query):
+
+    # Arrange
+    id = '1'
+    item_name = 'Item One'
+    execute_query.return_value = {constants.CLEAR_ITEM_UPDATES: {'id': id, 'name': item_name}}
+
+    # Act
+    item = handlers.clear_item_updates('', id)
+    
+    # Assert
+    ok_(item)
+    ok_(type(item) is dict)
+    eq_(item['id'], id)
+    eq_(item['name'], item_name)
+
+
+@patch(EXECUTE_QUERY_PATCH)
 def test_get_items(execute_query):
 
     # Arrange
