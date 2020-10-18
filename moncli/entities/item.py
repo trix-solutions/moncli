@@ -302,6 +302,44 @@ class Item(_Item):
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
     def clear_updates(self, *args):
+        """Clear item's updates.
+        __________
+        Parameters
+        __________
+        *args : `tuple`
+            The list of optional fields to return.
+
+        _____________
+        Return Fields
+        _____________
+        assets : `list[moncli.entities.asset.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.board.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.column_value.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.user.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.group.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.user.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.update.Update`
+            The item's updates.
+        """
+        
         args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
         item_data = client.clear_item_updates(
             self.__creds.api_key_v2,
