@@ -126,3 +126,26 @@ def test_should_get_files_from_update(get_updates, get_me):
     eq_(assets[0].id, id)
     eq_(assets[0].name, name)
     eq_(assets[0].url, url)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_updates')
+def test_should_remove_update(get_updates, get_me):
+
+    # Arrange 
+    id = '1'
+    item_id = '1'
+    creator_id = '1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_updates.return_value = [{'id': '1', 'item_id': '1', 'creator_id': '1'}]
+    client = MondayClient(USERNAME, '', '')
+    update = client.get_updates()[0]
+
+    # Act
+    update = update.remove()
+
+    # Assert
+    ok_(update)
+    eq_(update.id, id)
+    eq_(update.item_id, item_id)
+    eq_(update.creator_id, creator_id)
