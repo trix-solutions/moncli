@@ -134,7 +134,7 @@ class Update(_Update):
         return []   
 
     def delete(self, *args):
-        """Deletes the selected update
+        """Delete the selected update.
         __________
         Parameters
         __________
