@@ -150,6 +150,12 @@ def get_updates(api_key: str, *args, **kwargs):
     return execute_query(api_key, constants.UPDATES, *args, **kwargs)
 
 
+def delete_update(api_key: str, id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)
+    kwargs['id'] = util.IntValue(id)
+    return execute_mutation(api_key, constants.DELETE_UPDATE, *args, **kwargs)
+
+
 def create_notification(api_key: str, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, *args, **kwargs):
     kwargs = get_method_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS, **kwargs)
     kwargs['text'] = util.StringValue(text)

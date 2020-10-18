@@ -287,17 +287,17 @@ def test_get_updates(execute_query):
 def test_delete_update(execute_query):
 
     # Arrange
-    id = '1',
+    id = '1'
     item_id = '1'
     creator_id = '1'
-    execute_query.return_value = {constants.DELETE_UPDATE: {'id': id, 'item_id': item_id, 'creator_id': creator_id}
+    execute_query.return_value = {constants.DELETE_UPDATE: {'id': id, 'item_id': item_id, 'creator_id': creator_id}}
 
     # Act
     update = handlers.delete_update('', '1')
     
     # Assert
-    ok_(updates != None)
-    ok_(type(updates) is dict)
+    ok_(update)
+    ok_(type(update) is dict)
     eq_(update['id'], id)
     eq_(update['item_id'], item_id)
     eq_(update['creator_id'], creator_id)
