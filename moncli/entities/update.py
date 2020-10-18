@@ -49,6 +49,8 @@ class Update(_Update):
     @property
     def replies(self):
         """The update's replies."""
+        if not self.__replies:
+            self.__replies = self.get_replies()
         return self.__replies
 
     @property
@@ -72,6 +74,31 @@ class Update(_Update):
             *args,
             parent_id=self.id)
         return en.Update(creds=self.__creds, **update_data)
+
+    def get_replies(self, *args):
+         # Hard configure the pagination rate.
+        page = 1
+        page_limit = 500
+        record_count = 500
+
+        args = ['replies.{}'.format(arg) for arg in constants.DEFAULT_REPLY_QUERY_FIELDS]
+
+        while record_count >= page_limit:
+            updates_data = client.get_updates(
+                self.__creds.api_key_v2, 
+                'id', 'item_id', *args,
+                limit=page_limit,
+                page=page)
+            
+            try:
+                target_update = [update for update in updates_data if update['id'] == self.id][0]
+                return [Reply(creds=self.__creds, item_id=target_update['item_id'], **reply_data) for reply_data in target_update['replies']]
+            except KeyError:
+                if len(target_update) == 0:
+                    page += 1
+                    record_count = len(updates_data)
+                    continue
+        return [] 
 
     def add_file(self, file_path: str, *args):
         asset_data = client.add_file_to_update(
