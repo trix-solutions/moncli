@@ -29,6 +29,7 @@ DELETE_ITEM = 'delete_item'
 # Updates
 UPDATES = 'updates'
 CREATE_UPDATE = 'create_update'
+DELETE_UPDATE = 'delete_update'
 
 # Notifications
 CREATE_NOTIFICATION = 'create_notification'
