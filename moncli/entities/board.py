@@ -26,6 +26,10 @@ class Board(_Board):
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
+        self.__activity_logs = None
+        activity_logs = kwargs.pop('activity_logs', None)
+        if activity_logs != None:
+            self.__activity_logs = [en.ActivityLog(log) for log in activity_logs]
         self.__columns = None
         columns = kwargs.pop('columns', None)
         if columns:
@@ -46,6 +50,8 @@ class Board(_Board):
 
     def __repr__(self):
         o = self.to_primitive()
+        if self.__activity_logs != None:
+            o['activity_logs'] = [log.to_primitive() for log in self.__activity_logs]
         if self.__columns:
             o['columns'] = [column.to_primitive() for column in self.__columns]
         if self.__groups:
