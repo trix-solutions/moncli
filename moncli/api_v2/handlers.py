@@ -114,6 +114,12 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
     return execute_query(api_key, constants.ITEMS_BY_COLUMN_VALUES, *args, **kwargs)
 
 
+def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
+    kwargs['item_id'] = util.IntValue(item_id)
+    return execute_mutation(api_key, constants.CLEAR_ITEM_UPDATES, *args, **kwargs)
+
+
 def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwargs):
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS, **kwargs)

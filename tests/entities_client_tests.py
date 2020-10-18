@@ -229,6 +229,26 @@ def test_should_get_updates(get_me, get_updates):
     eq_(updates[0].body, body)
 
 
+@patch('moncli.api_v2.clear_item_updates')
+@patch.object(MondayClient, 'get_me')
+def test_should_clear_item_updates(get_me, clear_item_updates):
+
+    # Arrange 
+    id = '1'
+    name = 'Hello, world!'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    clear_item_updates.return_value = {'id': id, 'name': name}
+    client = MondayClient(USERNAME, '', '')
+
+    # Act 
+    item = client.clear_item_updates(id)
+
+    # Assert
+    ok_(item)
+    eq_(item.id, id)
+    eq_(item.name, name)
+
+
 @patch('moncli.api_v2.delete_update')
 @patch.object(MondayClient, 'get_me')
 def test_should_delete_update(get_me, delete_update):

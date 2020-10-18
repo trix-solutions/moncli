@@ -29,7 +29,7 @@ class Item(_Item):
         self.__column_values = None
         self.__updates = None
         assets = kwargs.pop('assets', None)
-        if assets:
+        if assets != None:
             self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
         board = kwargs.pop('board', None)
         if board:
@@ -38,12 +38,12 @@ class Item(_Item):
         if creator:
             self.__creator = en.User(creds=self.__creds, **creator)
         column_values = kwargs.pop('column_values', None)
-        if column_values:
+        if column_values != None:
             columns_map = { column.id: column for column in self.board.columns }
             self.__column_values = [en.create_column_value(columns_map[data['id']].column_type, **data) for data in column_values]
         updates = kwargs.pop('updates', None)
-        if updates:
-            self.__updates = [en.Update(creds=self.__creds)]
+        if updates != None:
+            self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
         super(Item, self).__init__(kwargs)
 
     def __repr__(self):
@@ -63,7 +63,7 @@ class Item(_Item):
     @property
     def assets(self):
         """The item's assets/files."""
-        if not self.__assets:
+        if self.__assets == None:
             self.__assets = self.get_files()
         return self.__assets
 
@@ -84,14 +84,14 @@ class Item(_Item):
     @property
     def column_values(self):
         """The item's column_values."""
-        if not self.__column_values:
+        if self.__column_values == None:
             self.__column_values = self.get_column_values()
         return self.__column_values
 
     @property
     def updates(self):
         """The item's updates."""
-        if not self.__updates: 
+        if self.__updates == None: 
             self.__updates = self.get_updates()
         return self.__updates
 
@@ -302,6 +302,99 @@ class Item(_Item):
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
 
+    def delete_update(self, update_id: str, *args):
+        """Delete an item's update
+        __________
+        Parameters
+        __________
+        update_id : `str`
+            The update's unique identifier
+        *args : `tuple`
+            The list of optional fields to return.
+
+        _____________
+        Return Fields
+        _____________
+        assets : `list[moncli.entities.asset.Asset]`
+            The update's assets/files.
+        body: `str`
+            The update's html formatted body.
+        created_at: `str`
+            The update's creation date.
+        creator : `moncli.entities.user.User`
+            The update's creator
+        creator_id : `str`
+            The unique identifier of the update creator.
+        id : `str`
+            The update's unique identifier.
+        item_id : `str`
+            The update's item ID.
+        replies : `list[moncli.entities.reply.Reply]
+            The update's replies.
+        text_body : `str`
+            The update's text body.
+        updated_at : `str`
+            The update's last edit date.
+        """
+
+        updates = self.get_updates(*args)
+        target_update = [update for update in updates if update.id == update_id]
+        if not target_update:
+            raise UpdateNotFound(update_id)
+        return target_update[0].delete()
+
+
+    def clear_updates(self, *args):
+        """Clear item's updates.
+        __________
+        Parameters
+        __________
+        *args : `tuple`
+            The list of optional fields to return.
+
+        _____________
+        Return Fields
+        _____________
+        assets : `list[moncli.entities.asset.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.board.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.column_value.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.user.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.group.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.user.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.update.Update`
+            The item's updates.
+        """
+
+        args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
+        item_data = client.clear_item_updates(
+            self.__creds.api_key_v2,
+            self.id,
+            *args)
+        return en.Item(creds=self.__creds, **item_data)
+
+
 class ColumnValueRequired(Exception):
     def __init__(self):
         self.message = "A column value is required if no 'column_id' value is present."
+
+class UpdateNotFound(Exception):
+    def __init__(self, update_id: str):
+        self.message = "Item does not contain update with ID '{}'.".format(update_id)
