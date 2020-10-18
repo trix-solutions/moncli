@@ -85,11 +85,12 @@ def test_should_return_list_of_replies_for_an_update(get_updates, get_me):
 def test_should_add_file_to_update(add_file_to_update, get_updates, get_me):
 
     # Arrange 
-    id = '1'
-    body = 'Hello, world!'
+    id = '12345'
+    name = '33.jpg'
+    url = 'https://test.monday.com/12345/33.jpg'
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_updates.return_value = [{'id': id, 'body': body}]
-    add_file_to_update.return_value = {'id': '12345', 'name': '33.jpg', 'url': 'https://test.monday.com/12345/33.jpg'}
+    get_updates.return_value = [{'id': '1', 'item_id': '1', 'creator_id': GET_ME_RETURN_VALUE.id}]
+    add_file_to_update.return_value = {'id': '12345', 'name': name, 'url': url}
     client = MondayClient(USERNAME, '', '')
     update = client.get_updates()[0]
 
@@ -98,6 +99,30 @@ def test_should_add_file_to_update(add_file_to_update, get_updates, get_me):
 
     # Assert
     ok_(asset != None)
-    eq_(asset.id, '12345')
-    eq_(asset.name, '33.jpg')
-    eq_(asset.url, 'https://test.monday.com/12345/33.jpg')
+    eq_(asset.id, id)
+    eq_(asset.name, name)
+    eq_(asset.url, url)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_updates')
+def test_should_get_files_from_update(get_updates, get_me):
+
+    # Arrange 
+    id = '12345'
+    name = '33.jpg'
+    url = 'https://test.monday.com/12345/33.jpg'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_updates.return_value = [{'id': '1', 'item_id': '1', 'creator_id': '1'}]
+    client = MondayClient(USERNAME, '', '')
+    update = client.get_updates()[0]
+    get_updates.return_value = [{'id': '1', 'item_id': '1', 'creator_id': '1', 'assets': [{'id': id, 'name': name, 'url': url}]}]
+
+    # Act
+    assets = update.get_files()
+
+    # Assert
+    ok_(assets)
+    eq_(assets[0].id, id)
+    eq_(assets[0].name, name)
+    eq_(assets[0].url, url)
