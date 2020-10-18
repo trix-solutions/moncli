@@ -187,9 +187,8 @@ class MondayClient():
         return [en.Tag(tag_data) for tag_data in tags_data]
     
     @optional_arguments(constants.USERS_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
     def get_users(self, *args, **kwargs):
-        
+        args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
         users_data = client.get_users(
             self.__creds.api_key_v2, 
             *args,
@@ -197,23 +196,23 @@ class MondayClient():
         return [en.User(creds=self.__creds, **user_data) for user_data in users_data]
     
     @optional_arguments(constants.TEAMS_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_TEAM_QUERY_FIELDS)
     def get_teams(self, *args, **kwargs):
+        args = client.get_field_list(constants.DEFAULT_TEAM_QUERY_FIELDS, *args)
         teams_data = client.get_teams(
             self.__creds.api_key_v2,
             *args,
             **kwargs)
         return [en.Team(creds=self.__creds, **team_data) for team_data in teams_data]
     
-    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
     def get_me(self, *args):
+        args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
         user_data = client.get_me(
             self.__creds.api_key_v2, 
             *args)
         return en.User(creds=self.__creds, **user_data)
 
-    @default_field_list(config.DEFAULT_ACCOUNT_QUERY_FIELDS)
     def get_account(self, *args):
+        args = client.get_field_list(constants.DEFAULT_ACCOUNT_QUERY_FIELDS)
         account_data = client.get_account(
             self.__creds.api_key_v2,
             *args)
