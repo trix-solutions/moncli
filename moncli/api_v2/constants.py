@@ -81,6 +81,16 @@ DEFAULT_BOARD_QUERY_FIELDS = [
     'state'
 ]
 
+DEFAULT_ACTIVITY_LOG_QUERY_FIELDS = [
+    'account_id',
+    'created_at',
+    'data',
+    'entity',
+    'event',
+    'id',
+    'user_id'
+]
+
 DEFAULT_COLUMN_QUERY_FIELDS = [
     'id',
     'title',
@@ -191,6 +201,16 @@ BOARDS_OPTIONAL_PARAMS = {
     'board_kind': ArgumentValueKind.Enum,
     'state': ArgumentValueKind.Enum,
     'newest_first': ArgumentValueKind.Bool,
+    'activity_logs': {
+        'limit': ArgumentValueKind.Int,
+        'page': ArgumentValueKind.Int,
+        'user_ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+        'column_ids': (ArgumentValueKind.List, ArgumentValueKind.String),
+        'group_ids': (ArgumentValueKind.List, ArgumentValueKind.String),
+        'item_ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+        'from': ArgumentValueKind.String,
+        'to': ArgumentValueKind.String
+    },
     'groups': {
         'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
         'items': {
