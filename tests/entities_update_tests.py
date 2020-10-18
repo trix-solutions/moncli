@@ -7,12 +7,12 @@ USERNAME = 'test.user@foobar.org'
 GET_ME_RETURN_VALUE = en.User(**{'creds': None, 'id': '1', 'email': USERNAME})
 
 @patch.object(MondayClient, 'get_me')
-@patch.object(MondayClient, 'get_updates')
+@patch('moncli.api_v2.get_updates')
 def test_update_should_return_list_of_replies(get_updates, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_updates.return_value = [en.Update(creds=None, **{'id': '1', 'creator_id': '1', 'item_id': '1', 'replies': [{'id': '2', 'creator_id': '1'}]})]
+    get_updates.return_value = [{'id': '1', 'creator_id': '1', 'item_id': '1', 'replies': [{'id': '2', 'creator_id': '1'}]}]
     client = MondayClient(USERNAME, '', '')
     
     # Act
@@ -24,13 +24,13 @@ def test_update_should_return_list_of_replies(get_updates, get_me):
     eq_(len(updates[0].replies), 1)
 
 @patch.object(MondayClient, 'get_me')
-@patch.object(MondayClient, 'get_updates')
+@patch('moncli.api_v2.get_updates')
 @patch('moncli.api_v2.get_users')
 def test_update_should_return_creator(get_users, get_updates, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_updates.return_value = [en.Update(creds=en.MondayClientCredentials('', ''), **{'id': '1', 'creator_id': '1', 'item_id': '1', 'replies': [{'id': '2', 'creator_id': '1'}]})]
+    get_updates.return_value = [{'id': '1', 'creator_id': '1', 'item_id': '1'}]
     get_users.return_value = [GET_ME_RETURN_VALUE.to_primitive()]
     client = MondayClient(USERNAME, '', '')
     update = client.get_updates()[0]
@@ -41,13 +41,13 @@ def test_update_should_return_creator(get_users, get_updates, get_me):
 
 
 @patch.object(MondayClient, 'get_me')
-@patch.object(MondayClient, 'get_updates')
+@patch('moncli.api_v2.get_updates')
 @patch('moncli.api_v2.get_users')
 def test_update_should_return_creator_of_update_reply(get_users, get_updates, get_me):
 
     # Arrange
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_updates.return_value = [en.Update(creds=en.MondayClientCredentials('', ''), **{'id': '1', 'creator_id': '1', 'item_id': '1', 'replies': [{'id': '2', 'creator_id': '1'}]})]
+    get_updates.return_value = [{'id': '1', 'creator_id': '1', 'item_id': '1', 'replies': [{'id': '2', 'creator_id': '1'}]}]
     get_users.return_value = [GET_ME_RETURN_VALUE.to_primitive()]
     client = MondayClient(USERNAME, '', '')
     reply = client.get_updates()[0].replies[0]
@@ -55,6 +55,28 @@ def test_update_should_return_creator_of_update_reply(get_users, get_updates, ge
     # Assert
     ok_(reply != None)
     eq_(reply.creator.to_primitive(), GET_ME_RETURN_VALUE.to_primitive())
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_updates')
+def test_should_return_list_of_replies_for_an_update(get_updates, get_me):
+
+    # Arrange
+    reply_id = '12345'
+    reply_body = 'Reply text'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_updates.return_value = [{'id': '1', 'creator_id': '1', 'item_id': '1'}]
+    client = MondayClient(USERNAME, '', '')
+    update = client.get_updates()[0]
+    get_updates.return_value = [{'id': '1', 'creator_id': '1', 'item_id': '1', 'replies': [{'id': reply_id, 'body': reply_body}]}]
+
+    # Act 
+    replies = update.get_replies()
+
+    # Assert
+    ok_(replies)
+    eq_(replies[0].id, reply_id)
+    eq_(replies[0].body, reply_body)
 
 
 @patch.object(MondayClient, 'get_me')

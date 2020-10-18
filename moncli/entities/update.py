@@ -26,7 +26,7 @@ class Update(_Update):
         self.__replies = None
         replies = kwargs.pop('replies', None)
         if replies:
-            self.__reply = [Reply(creds=self.__creds, item_id=self.item_id, **reply) for reply in replies]
+            self.__replies = [Reply(creds=self.__creds, item_id=kwargs['item_id'], **reply) for reply in replies]
         self.__assets = None
         assets = kwargs.pop('assets', None)
         if assets:
