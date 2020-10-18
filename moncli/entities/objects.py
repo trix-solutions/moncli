@@ -13,6 +13,19 @@ class MondayClientCredentials():
         self.api_key_v2 = api_key_v2
 
 
+class ActivityLog(Model):
+    id = types.StringType(required=True)
+    account_id = types.StringType()
+    created_at = types.StringType()
+    data = types.StringType()
+    entity = types.StringType()
+    event = types.StringType()
+    user_id = types.StringType()
+
+    def __repr__(self):
+        return str(self.to_primitive())
+
+
 class Column(Model):
     id = types.StringType(required=True)
     title = types.StringType()
