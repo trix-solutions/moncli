@@ -220,13 +220,35 @@ def test_should_get_updates(get_me, get_updates):
     client = MondayClient(USERNAME, '', '')
 
     # Act 
-    items = client.get_updates()
+    updates = client.get_updates()
 
     # Assert
-    ok_(items != None)
-    ok_(len(items), 1)
-    eq_(items[0].id, id)
-    eq_(items[0].body, body)
+    ok_(updates != None)
+    ok_(len(updates), 1)
+    eq_(updates[0].id, id)
+    eq_(updates[0].body, body)
+
+
+@patch('moncli.api_v2.delete_update')
+@patch.object(MondayClient, 'get_me')
+def test_should_delete_update(get_me, delete_update):
+
+    # Arrange 
+    id = '1'
+    item_id = '1'
+    creator_id = GET_ME_RETURN_VALUE.id
+    get_me.return_value = GET_ME_RETURN_VALUE
+    delete_update.return_value = {'id': id, 'item_id': item_id, 'creator_id': creator_id}
+    client = MondayClient(USERNAME, '', '')
+
+    # Act 
+    update = client.delete_update(id)
+
+    # Assert
+    ok_(update)
+    eq_(update.id, id)
+    eq_(update.item_id, item_id)
+    eq_(update.creator_id, creator_id)
 
 
 @patch('moncli.api_v2.create_notification')

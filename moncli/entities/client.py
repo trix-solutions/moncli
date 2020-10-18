@@ -153,6 +153,47 @@ class MondayClient():
             *args,
             **kwargs)
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
+
+    def delete_update(self, id: str, *args):
+        """Delete an update.
+        __________
+        Parameters
+        __________
+        id : `str`
+            The update's unique identifier.
+        *args : `tuple`
+            The list of update fields to return.
+            
+        _____________
+        Return Fields
+        _____________
+        assets : `list[moncli.entities.asset.Asset]`
+            The update's assets/files.
+        body: `str`
+            The update's html formatted body.
+        created_at: `str`
+            The update's creation date.
+        creator : `moncli.entities.user.User`
+            The update's creator
+        creator_id : `str`
+            The unique identifier of the update creator.
+        id : `str`
+            The update's unique identifier.
+        item_id : `str`
+            The update's item ID.
+        replies : `list[moncli.entities.reply.Reply]
+            The update's replies.
+        text_body : `str`
+            The update's text body.
+        updated_at : `str`
+            The update's last edit date.
+        """
+        
+        update_data = client.delete_update(
+            self.__creds.api_key_v2, 
+            id, 
+            *args)
+        return en.Update(creds=self.__creds, **update_data)
     
     @optional_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS)
     @default_field_list(config.DEFAULT_NOTIFICATION_QUERY_FIELDS)
