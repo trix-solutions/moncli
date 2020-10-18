@@ -301,6 +301,49 @@ class Item(_Item):
             updates={'limit': limit, 'page': page})[0]['updates']
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
+
+    def delete_update(self, update_id: str, *args):
+        """Delete an item's update
+        __________
+        Parameters
+        __________
+        update_id : `str`
+            The update's unique identifier
+        *args : `tuple`
+            The list of optional fields to return.
+
+        _____________
+        Return Fields
+        _____________
+        assets : `list[moncli.entities.asset.Asset]`
+            The update's assets/files.
+        body: `str`
+            The update's html formatted body.
+        created_at: `str`
+            The update's creation date.
+        creator : `moncli.entities.user.User`
+            The update's creator
+        creator_id : `str`
+            The unique identifier of the update creator.
+        id : `str`
+            The update's unique identifier.
+        item_id : `str`
+            The update's item ID.
+        replies : `list[moncli.entities.reply.Reply]
+            The update's replies.
+        text_body : `str`
+            The update's text body.
+        updated_at : `str`
+            The update's last edit date.
+        """
+
+        updates = self.get_updates(*args, limit=25, page=1)
+        target_update = [update for update in updates if update.id == update_id]
+        if not target_update:
+            raise UpdateNotFound(update_id)
+        return target_update[0].delete()
+
+
     def clear_updates(self, *args):
         """Clear item's updates.
         __________
@@ -339,7 +382,7 @@ class Item(_Item):
         updates : `moncli.entities.update.Update`
             The item's updates.
         """
-        
+
         args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
         item_data = client.clear_item_updates(
             self.__creds.api_key_v2,
@@ -351,3 +394,7 @@ class Item(_Item):
 class ColumnValueRequired(Exception):
     def __init__(self):
         self.message = "A column value is required if no 'column_id' value is present."
+
+class UpdateNotFound(Exception):
+    def __init__(self, update_id: str):
+        self.message = "Item does not contain update with ID '{}'.".format(update_id)
