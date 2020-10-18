@@ -337,7 +337,7 @@ class Item(_Item):
             The update's last edit date.
         """
 
-        updates = self.get_updates(*args, limit=25, page=1)
+        updates = self.get_updates(*args)
         target_update = [update for update in updates if update.id == update_id]
         if not target_update:
             raise UpdateNotFound(update_id)
