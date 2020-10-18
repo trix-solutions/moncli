@@ -153,6 +153,13 @@ class MondayClient():
             *args,
             **kwargs)
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
+
+    def delete_update(self, id: str, *args):
+        update_data = client.delete_update(
+            self.__creds.api_key_v2,
+            id,
+            *args)
+        return en.Update(creds=self.__creds, **update_data)
     
     @optional_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS)
     @default_field_list(config.DEFAULT_NOTIFICATION_QUERY_FIELDS)
