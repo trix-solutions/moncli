@@ -133,6 +133,13 @@ class Update(_Update):
                     continue
         return []   
 
+    def remove(self, *args):
+        update_data = client.delete_update(
+            self.__creds.api_key_v2,
+            self.id,
+            *args)
+        return Update(creds=self.__creds, **update_data)
+
 
 class _Reply(Model):
     id = types.StringType(required=True)

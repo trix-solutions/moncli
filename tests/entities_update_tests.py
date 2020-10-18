@@ -130,14 +130,16 @@ def test_should_get_files_from_update(get_updates, get_me):
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_updates')
-def test_should_remove_update(get_updates, get_me):
+@patch('moncli.api_v2.delete_update')
+def test_should_should_update(delete_update, get_updates, get_me):
 
     # Arrange 
     id = '1'
     item_id = '1'
     creator_id = '1'
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_updates.return_value = [{'id': '1', 'item_id': '1', 'creator_id': '1'}]
+    get_updates.return_value = [{'id': id, 'item_id': item_id, 'creator_id': creator_id}]
+    delete_update.return_value = {'id': id, 'item_id': item_id, 'creator_id': creator_id}
     client = MondayClient(USERNAME, '', '')
     update = client.get_updates()[0]
 
