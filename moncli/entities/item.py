@@ -61,25 +61,36 @@ class Item(_Item):
         return str(o)
 
     @property
+    def assets(self):
+        """The item's assets/files."""
+        if not self.__assets:
+            self.__assets = self.get_files()
+        return self.__assets
+
+    @property
     def board(self):
+        """The board that contains this item."""
         if not self.__board:
             self.__board = self.get_board()
         return self.__board
 
     @property
     def creator(self):
+        """The item's creator."""
         if not self.__creator:
             self.__creator = self.get_creator()
         return self.__creator
 
     @property
     def column_values(self):
+        """The item's column_values."""
         if not self.__column_values:
             self.__column_values = self.get_column_values()
         return self.__column_values
 
     @property
     def updates(self):
+        """The item's updates."""
         if not self.__updates: 
             self.__updates = self.get_updates()
         return self.__updates
@@ -168,9 +179,8 @@ class Item(_Item):
             ids=[int(self.id)])[0]['board']
         return en.Board(creds=self.__creds, **board_data)
 
-    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
     def get_creator(self, *args):
-        args = ['creator.' + arg for arg in args]
+        args = ['creator.' + arg for arg in client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)]
         user_data = client.get_items(
             self.__creds.api_key_v2,
             *args,

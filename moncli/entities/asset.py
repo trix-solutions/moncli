@@ -34,9 +34,8 @@ class Asset(_Asset):
             self.__uploaded_by = self.get_uploaded_by_user()
         return self.__uploaded_by
 
-    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
     def get_uploaded_by_user(self, *args):
-        args = ['uploaded_by.' + arg for arg in args]
+        args = ['uploaded_by.' + arg for arg in client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)]
         user_data = client.get_assets(
             self.__creds.api_key_v2
             *args,

@@ -24,60 +24,10 @@ DEFAULT_TAG_QUERY_FIELDS = [
     'color'
 ]
 
-DEFAULT_USER_QUERY_FIELDS = [
-    'id',
-    'name',
-    'url',
-    'email',
-    'enabled',
-    'birthday',
-    'country_code',
-    'is_guest',
-    'is_pending',
-    'join_date',
-    'location',
-    'mobile_phone',
-    'phone',
-    'photo_original',
-    'photo_thumb',
-    'photo_tiny',
-    'time_zone_identifier',
-    'title',
-    'utc_hours_diff'
-]
-
-DEFAULT_TEAM_QUERY_FIELDS = [
-    'id',
-    'name',
-    'picture_url'
-]
-
-DEFAULT_ACCOUNT_QUERY_FIELDS = [
-    'id',
-    'name',
-    'first_day_of_the_week',
-    'logo',
-    'show_timeline_weekends',
-    'slug'
-]
-
-DEFAULT_PLAN_QUERY_FIELDS = [
-    'max_users',
-    'period',
-    'tier',
-    'version'
-]
-
 DEFAULT_NOTIFICATION_QUERY_FIELDS = [
     'id',
     'text'
 ]
-
-DEFAULT_WEBHOOK_QUERY_FIELDS = [
-    'id',
-    'board_id'
-]
-
  
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {

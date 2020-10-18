@@ -19,10 +19,19 @@ class _Update(Model):
 class Update(_Update):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
-        replies = kwargs.pop('replies', [])
-        super(Update, self).__init__(kwargs)
-        self.__replies = [Reply(creds=self.__creds, item_id=self.item_id, **reply) for reply in replies]
         self.__creator = None
+        creator = kwargs.pop('creator', None)
+        if creator:
+            self.__creator = en.User(cred=self.__creds, **creator)
+        self.__replies = None
+        replies = kwargs.pop('replies', None)
+        if replies:
+            self.__reply = [Reply(creds=self.__creds, item_id=self.item_id, **reply) for reply in replies]
+        self.__assets = None
+        assets = kwargs.pop('assets', None)
+        if assets:
+            self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
+        super(Update, self).__init__(kwargs)
 
     def __repr__(self):
         o = self.to_primitive()
@@ -40,10 +49,17 @@ class Update(_Update):
     @property
     def replies(self):
         """The update's replies."""
+        if not self.__replies:
+            self.__replies = self.get_replies()
         return self.__replies
 
-    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
+    @property
+    def assets(self):
+        """The update's assets/files."""
+        return self.__assets
+
     def get_creator(self, *args):
+        args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
         user_data = client.get_users(
             self.__creds.api_key_v2,
             *args,
@@ -59,6 +75,31 @@ class Update(_Update):
             parent_id=self.id)
         return en.Update(creds=self.__creds, **update_data)
 
+    def get_replies(self, *args):
+         # Hard configure the pagination rate.
+        page = 1
+        page_limit = 500
+        record_count = 500
+
+        args = ['replies.{}'.format(arg) for arg in constants.DEFAULT_REPLY_QUERY_FIELDS]
+
+        while record_count >= page_limit:
+            updates_data = client.get_updates(
+                self.__creds.api_key_v2, 
+                'id', 'item_id', *args,
+                limit=page_limit,
+                page=page)
+            
+            try:
+                target_update = [update for update in updates_data if update['id'] == self.id][0]
+                return [Reply(creds=self.__creds, item_id=target_update['item_id'], **reply_data) for reply_data in target_update['replies']]
+            except KeyError:
+                if len(target_update) == 0:
+                    page += 1
+                    record_count = len(updates_data)
+                    continue
+        return [] 
+
     def add_file(self, file_path: str, *args):
         asset_data = client.add_file_to_update(
             self.__creds.api_key_v2,
@@ -66,6 +107,31 @@ class Update(_Update):
             file_path,
             *args)
         return en.Asset(**asset_data)
+
+    def get_files(self, *args):
+         # Hard configure the pagination rate.
+        page = 1
+        page_limit = 500
+        record_count = 500
+
+        args = ['assets.{}'.format(arg) for arg in constants.DEFAULT_ASSET_QUERY_FIELDS]
+
+        while record_count >= page_limit:
+            updates_data = client.get_updates(
+                self.__creds.api_key_v2, 
+                'id', *args,
+                limit=page_limit,
+                page=page)
+            
+            try:
+                target_update = [update for update in updates_data if update['id'] == self.id][0]
+                return [en.Asset(creds=self.__creds, **asset_data) for asset_data in target_update['assets']]
+            except KeyError:
+                if len(target_update) == 0:
+                    page += 1
+                    record_count = len(updates_data)
+                    continue
+        return []   
 
 
 class _Reply(Model):
@@ -93,8 +159,8 @@ class Reply(_Reply):
             self.__creator = self.get_creator()
         return self.__creator
     
-    @default_field_list(config.DEFAULT_USER_QUERY_FIELDS)
     def get_creator(self, *args):
+        args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
         user_data = client.get_users(
             self.__creds.api_key_v2,
             *args,
