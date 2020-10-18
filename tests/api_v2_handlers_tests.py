@@ -284,6 +284,26 @@ def test_get_updates(execute_query):
 
 
 @patch(EXECUTE_QUERY_PATCH)
+def test_remove_update(execute_query):
+
+    # Arrange
+    id = '1',
+    item_id = '1'
+    creator_id = '1'
+    execute_query.return_value = {constants.REMOVE_UPDATE: {'id': id, 'item_id': item_id, 'creator_id': creator_id}
+
+    # Act
+    update = handlers.remove_update('', '1')
+    
+    # Assert
+    ok_(updates != None)
+    ok_(type(updates) is dict)
+    eq_(update['id'], id)
+    eq_(update['item_id'], item_id)
+    eq_(update['creator_id'], creator_id)
+
+
+@patch(EXECUTE_QUERY_PATCH)
 def test_create_notification(execute_query):
 
     # Arrange
