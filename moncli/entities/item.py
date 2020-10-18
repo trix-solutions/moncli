@@ -29,7 +29,7 @@ class Item(_Item):
         self.__column_values = None
         self.__updates = None
         assets = kwargs.pop('assets', None)
-        if assets:
+        if assets != None:
             self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
         board = kwargs.pop('board', None)
         if board:
@@ -38,12 +38,12 @@ class Item(_Item):
         if creator:
             self.__creator = en.User(creds=self.__creds, **creator)
         column_values = kwargs.pop('column_values', None)
-        if column_values:
+        if column_values != None:
             columns_map = { column.id: column for column in self.board.columns }
             self.__column_values = [en.create_column_value(columns_map[data['id']].column_type, **data) for data in column_values]
         updates = kwargs.pop('updates', None)
-        if updates:
-            self.__updates = [en.Update(creds=self.__creds)]
+        if updates != None:
+            self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
         super(Item, self).__init__(kwargs)
 
     def __repr__(self):
@@ -63,7 +63,7 @@ class Item(_Item):
     @property
     def assets(self):
         """The item's assets/files."""
-        if not self.__assets:
+        if self.__assets == None:
             self.__assets = self.get_files()
         return self.__assets
 
@@ -84,14 +84,14 @@ class Item(_Item):
     @property
     def column_values(self):
         """The item's column_values."""
-        if not self.__column_values:
+        if self.__column_values == None:
             self.__column_values = self.get_column_values()
         return self.__column_values
 
     @property
     def updates(self):
         """The item's updates."""
-        if not self.__updates: 
+        if self.__updates == None: 
             self.__updates = self.get_updates()
         return self.__updates
 
@@ -300,6 +300,14 @@ class Item(_Item):
             limit=1,
             updates={'limit': limit, 'page': page})[0]['updates']
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
+
+    def clear_updates(self, *args):
+        args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
+        item_data = client.clear_item_updates(
+            self.__creds.api_key_v2,
+            self.id,
+            *args)
+        return en.Item(creds=self.__creds, **item_data)
 
 
 class ColumnValueRequired(Exception):

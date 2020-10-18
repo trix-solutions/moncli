@@ -344,6 +344,28 @@ def test_item_should_get_list_of_item_updates(get_items, get_me):
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.clear_item_updates')
+def test_item_should_clear_item_updates(clear_item_updates, get_items, get_me):
+
+    # Arrange
+    id = '1'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': id, 'updates':[{'id': '2', 'item_id': '1', 'creator_id': '1', 'replies': [{'id': '3', 'creator_id': '1'}]}]}]
+    clear_item_updates.return_value = {'id': id, 'updates':[]}
+    client = MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    # Act
+    updated_item = item.clear_updates()
+
+    # Assert 
+    ok_(updated_item)
+    eq_(updated_item.id, id)
+    eq_(len(updated_item.updates), 0)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.add_file_to_column')
 def test_item_should_add_file(add_file_to_column, get_items, get_me):
     
