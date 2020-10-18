@@ -144,7 +144,7 @@ def test_should_should_update(delete_update, get_updates, get_me):
     update = client.get_updates()[0]
 
     # Act
-    update = update.remove()
+    update = update.delete()
 
     # Assert
     ok_(update)
