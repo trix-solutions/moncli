@@ -28,7 +28,7 @@ class Update(_Update):
         if replies:
             self.__reply = [Reply(creds=self.__creds, item_id=self.item_id, **reply) for reply in replies]
         self.__assets = None
-        assets = kwargs.pop('assets')
+        assets = kwargs.pop('assets', None)
         if assets:
             self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
         super(Update, self).__init__(kwargs)
@@ -82,7 +82,29 @@ class Update(_Update):
         return en.Asset(**asset_data)
 
     def get_files(self, *args):
-        return None
+         # Hard configure the pagination rate.
+        page = 1
+        page_limit = 500
+        record_count = 500
+
+        args = ['assets.{}'.format(arg) for arg in constants.DEFAULT_ASSET_QUERY_FIELDS]
+
+        while record_count >= page_limit:
+            updates_data = client.get_updates(
+                self.__creds.api_key_v2, 
+                'id', *args,
+                limit=page_limit,
+                page=page)
+            
+            try:
+                target_update = [update for update in updates_data if update['id'] == self.id][0]
+                return [en.Asset(creds=self.__creds, **asset_data) for asset_data in target_update['assets']]
+            except KeyError:
+                if len(target_update) == 0:
+                    page += 1
+                    record_count = len(updates_data)
+                    continue
+        return []   
 
 
 class _Reply(Model):
