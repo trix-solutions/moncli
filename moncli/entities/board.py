@@ -93,6 +93,8 @@ class Board(_Board):
         Get the board's items (rows).
     get_items_by_column_values : `list[moncli.entities.item.Item]`
         Search items in this board by their column values.
+    get_column_value : `moncli.entities.column_value.ColumnValue`
+        Create a column value from a board's column.
     create_webhook : `moncli.entities.objects.Webhook`
         Create a new webhook.
     delete_webhook : `moncli.entities.objects.Webhook`
@@ -156,6 +158,7 @@ class Board(_Board):
     @property
     def groups(self):
         """Retrieve board groups"""
+        
         if not self.__groups:
             self.__groups = self.get_groups()
         return self.__groups
@@ -462,6 +465,52 @@ class Board(_Board):
 
     @optional_arguments(constants.CREATE_ITEM_OPTIONAL_PARAMS)
     def add_item(self, item_name: str, *args, **kwargs):
+        """Create a new item in the board.
+        __________
+        Parameters
+        __________
+        item_name : `str`
+            The new item's name.
+
+        _____________
+        Return Fields
+        _____________
+        assets : `list[moncli.entities.asset.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.board.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.column_value.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.user.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.group.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.user.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.update.Update`
+            The item's updates.
+
+        __________________
+        Optional Arguments
+        __________________
+        group_id : `str`
+            The group's unique identifier.
+        column_values : `json`
+            The column values of the new item.
+        """
+
         column_values = kwargs.pop('column_values', None)
         if column_values:
             if type(column_values) == dict:
@@ -480,10 +529,62 @@ class Board(_Board):
         return en.Item(creds=self.__creds, **item_data)
 
 
-    def get_items(self, *args):
+    def get_items(self, *args, **kwargs):
+        """Get the board's items (rows).
+        __________
+        Parameters
+        __________
+        *args : `tuple`
+            The list of item return fields.
+        **kwargs : `dict`
+            The optional keyword arguments for getting items.
+        
+        _____________
+        Return Fields
+        _____________
+        assets : `list[moncli.entities.asset.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.board.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.column_value.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.user.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.group.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.user.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.update.Update`
+            The item's updates.
+
+        __________________
+        Optional Arguments
+        __________________
+        ids : `list[str]`
+            The list of items unique identifiers.
+        limit : `int`
+            Number of items to get.
+        page : `int`
+            Page number to get, starting at 1.
+        """
+        
         if not args:
             args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS)
         args = ['items.' + arg for arg in args]
+        if kwargs:
+            kwargs = {'items': kwargs}
         items_data = client.get_boards(
             self.__creds.api_key_v2,
             *args, 
@@ -492,7 +593,62 @@ class Board(_Board):
 
 
     @optional_arguments(constants.ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS)
-    def get_items_by_column_values(self, column_value: en.ColumnValue, *args, **kwargs):      
+    def get_items_by_column_values(self, column_value: en.ColumnValue, *args, **kwargs):
+        """Search items in this board by their column values.
+        __________
+        Parameters
+        __________
+        *args : `tuple`
+            The list of item return fields.
+        **kwargs : `dict`
+            The optional keyword arguments for searching items.
+        _____________
+        Return Fields
+        _____________
+        assets : `list[moncli.entities.asset.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.board.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.column_value.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.user.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.group.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.user.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.update.Update`
+            The item's updates.
+
+        __________________
+        Optional Arguments
+        __________________
+        limit : `int`
+            Number of items to get.
+        page : `int`
+            Page number to get, starting at 1.
+        column_id : `str`
+            The column's unique identifier.
+        column_value : `str`
+            The column value to search items by.
+        column_type : `str`
+            The column type.
+        state : `moncli.enumns.State`
+            The state of the item (all / active / archived / deleted), the default is active.
+        """
+
         if type(column_value) == cv.DateValue:
             value = column_value.date
         elif type(column_value) == cv.StatusValue:
@@ -509,10 +665,30 @@ class Board(_Board):
             **kwargs)
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data]
 
+
     def get_column_values(self):
+        """This method has not yet been implemented."""
         pass
 
     def get_column_value(self, id: str = None, title: str = None, **kwargs):
+        """Create a column value from a board's column.
+        __________
+        Parameters
+        __________
+        id : `str`
+            The column's unique identifier.
+        title : `str`
+            The column's title.
+        **kwargs : `dict`
+            Optional keyword arguments for getting a column value.
+
+        __________________
+        Optional Arguments
+        __________________
+        settings : `moncli.entities.objects.StatusSettings`/`moncli.entities.objects.DropdownSettings`
+            Column settings required for retrieving a status or dropdown column.
+        """
+
         if id is None and title is None:
             raise NotEnoughGetColumnValueParameters()
         if id is not None and title is not None:
@@ -530,7 +706,38 @@ class Board(_Board):
             kwargs['settings'] = column.settings     
         return cv.create_column_value(column_type, id=column.id, title=column.title)
 
+
     def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):
+        """Create a new webhook.
+        __________
+        Parameters
+        __________
+        url : `str`
+            The webhook URL.
+        event : `moncli.enums.WebhookEventType`
+            The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update).
+        *args : `tuple`
+            The list of webhook return fields.
+        **kwargs : `dict`
+            The optional keyword arguments for creating a webhook.
+
+        _____________
+        Return Fields
+        _____________
+        board_id : `str`
+            The webhook's board id.
+        id : `str`
+            The webhook's unique identifier.
+
+        __________________
+        Optional Arguments
+        __________________
+        config : `dict`
+            The webhook config.
+            Example: This argument is currenlty only available for the 'change_specific_column_value' event.
+            >>> board.create_webhook('http://test.website.com/webhook/test, WebhookEventType.change_specific_column_value', {'columnId': 'column_1'})
+        """
+
         # Modify kwargs to config if supplied.
         if kwargs:
             if event != enums.WebhookEventType.change_specific_column_value:
@@ -546,14 +753,33 @@ class Board(_Board):
         webhook_data['is_active'] = True
         return en.objects.Webhook(webhook_data)
 
-    def delete_webhook(self, webhook_id: str, *args, **kwargs):
+
+    def delete_webhook(self, webhook_id: str, *args):
+        """Delete a new webhook.
+        __________
+        Parameters
+        __________
+        id : `str`
+            The webhook's unique identifier.
+        *args : `tuple`
+            The list of webhook return fields.
+
+        _____________
+        Return Fields
+        _____________
+        board_id : `str`
+            The webhook's board id.
+        id : `str`
+            The webhook's unique identifier.
+        """
+
         webhook_data = client.delete_webhook(
             self.__creds.api_key_v2, 
             webhook_id,
-            *args,
-            **kwargs)
+            *args)
         webhook_data['is_active'] = False
         return en.objects.Webhook(webhook_data)
+
 
     def get_workspace(self, *args):
         """Retrieves the board workspace
