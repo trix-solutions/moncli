@@ -10,6 +10,52 @@ from moncli.enums import ColumnType, BoardKind, WebhookEventType
 USERNAME = 'test.user@foobar.org' 
 GET_ME_RETURN_VALUE = en.User(**{'creds': None, 'id': '1', 'email': USERNAME})
 
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_boards')
+def test_should_get_activity_logs(get_boards, get_me):
+
+    # Arrange
+    id = '12345'
+    account_id = '123456'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_boards.return_value = [{'id': '1', 'name': 'Test Board 1'}]
+    client = MondayClient(USERNAME, '', '')
+    board = client.get_boards(ids=['1'])[0]
+    get_boards.return_value = [{'id': '1', 'name': 'Test Board 1', 'activity_logs': [{'id': id, 'account_id': account_id}]}]
+
+    # Act 
+    activity_logs = board.get_activity_logs()
+
+    # Assert
+    ok_(activity_logs)
+    eq_(activity_logs[0].id, id)
+    eq_(activity_logs[0].account_id, account_id)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_boards')
+def test_should_get_activity_logs_with_kwargs(get_boards, get_me):
+
+    # Arrange
+    id = '12345'
+    item_id = '1234'
+    account_id = '123456'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_boards.return_value = [{'id': '1', 'name': 'Test Board 1'}]
+    client = MondayClient(USERNAME, '', '')
+    board = client.get_boards(ids=['1'])[0]
+    get_boards.return_value = [{'id': '1', 'name': 'Test Board 1', 'activity_logs': [{'id': id, 'account_id': account_id}]}]
+
+    # Act 
+    activity_logs = board.get_activity_logs(item_ids=[item_id])
+
+    # Assert
+    ok_(activity_logs)
+    eq_(activity_logs[0].id, id)
+    eq_(activity_logs[0].account_id, account_id)
+
+
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.create_board')
 @patch('moncli.api_v2.create_column')

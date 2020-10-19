@@ -14,7 +14,7 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind, *args, **
 
 
 def get_boards(api_key: str, *args, **kwargs) -> List[Dict[str, Any]]:
-    args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS)
+    args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.BOARDS_OPTIONAL_PARAMS, **kwargs)
     operation = util.create_query(constants.BOARDS, *args, **kwargs)
     return requests.execute_query(api_key, operation=operation)[constants.BOARDS]   
