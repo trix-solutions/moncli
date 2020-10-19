@@ -88,6 +88,65 @@ class Board(_Board):
             self.__workspace = self.get_workspace()
         return self.__workspace
 
+    
+    def get_activity_logs(self, *args, **kwargs):
+        """Get board log events.
+        __________
+        Parameters
+        __________
+        *args : `tuple`
+            The list of activity log return fields.
+        **kwargs : `dict`
+            Optional keyword arguments for retrieving activity logs.
+
+        _____________
+        Return Fields
+        _____________
+        account_id : `str`
+            The unique identifier of the user's account.
+        created_at : `str`
+            The create date
+        data : `str`
+            The item's column values in string form.
+        entity : `str`
+            The activity log's entity.
+        event : `str`
+            The activity log's event.
+        id : `str`
+            The activity log's unique identifier.
+        user_id : `str`
+            The user's unique identifier.
+
+        __________________
+        Optional Arguments
+        __________________
+        limit : `int`
+            Number of items to get, the default is 25.
+        page : `int`
+            Page number to get, starting at 1.
+        user_ids : `list[int]`
+            User ids to filter.
+        column_ids : `list[str]`
+            Column ids to filter.
+        group_ids : `list[str]`
+            Group ids to filter.
+        item_ids : `list[int]`
+            Item id to filter
+        from : `date`
+            From timespamp (ISO8601).
+        to : `date`
+            To timespamp (ISO8601).
+        """
+
+        args = ['activity_logs.{}'.format(arg) for arg in client.get_field_list(constants.DEFAULT_ACTIVITY_LOG_QUERY_FIELDS, *args)]
+        if kwargs:
+            kwargs = {'activity_logs': kwargs}
+        activity_logs_data = client.get_boards(
+            self.__creds.api_key_v2,
+            *args,
+            **kwargs)
+        return [en.ActivityLog(activity_log) for activity_log in activity_logs_data]
+
 
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
     def add_column(self, title:str, column_type: enums.ColumnType, *args): 
