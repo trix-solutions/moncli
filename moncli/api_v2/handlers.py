@@ -64,6 +64,7 @@ def get_assets(api_key: str, ids: list, *args, **kwargs):
 
 
 def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.DUPLICATE_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['group_id'] = util.StringValue(group_id)
@@ -71,6 +72,7 @@ def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs)
 
 
 def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['group_name'] = util.StringValue(group_name)
@@ -78,6 +80,7 @@ def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
 
 
 def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ARCHIVE_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['group_id'] = util.StringValue(group_id)    
@@ -85,6 +88,7 @@ def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
 
 def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.DELETE_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['group_id'] = util.StringValue(group_id)       
@@ -163,6 +167,7 @@ def delete_update(api_key: str, id: str, *args, **kwargs):
 
 
 def create_notification(api_key: str, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_NOTIFICATION_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS, **kwargs)
     kwargs['text'] = util.StringValue(text)
     kwargs['user_id'] = util.IntValue(user_id)
@@ -172,12 +177,14 @@ def create_notification(api_key: str, text: str, user_id: str, target_id: str, t
 
 
 def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_OR_GET_TAG_OPTIONAL_PARAMS, **kwargs)
     kwargs['tag_name'] = util.StringValue(tag_name)
     return execute_mutation(api_key, constants.CREATE_OR_GET_TAG, *args, **kwargs)
 
 
 def get_tags(api_key: str, *args, **kwargs):
+    args = get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.TAGS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, constants.TAGS, *args, **kwargs)
 
