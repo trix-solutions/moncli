@@ -3,7 +3,7 @@ from schematics import types
 
 from .. import api_v2 as client, config, enums, entities as en
 from ..api_v2 import constants
-from ..decorators import default_field_list, optional_arguments
+from ..decorators import optional_arguments
 from ..entities import column_value as cv
 
 
@@ -14,6 +14,7 @@ class _Board(Model):
     name = types.StringType()
     board_folder_id = types.IntType()
     board_kind = types.StringType()
+    communication = types.StringType()
     description = types.StringType()
     permissions = types.StringType()
     pos = types.StringType()
@@ -22,7 +23,83 @@ class _Board(Model):
 
 
 class Board(_Board):
-    """The entity model for a board"""
+    """The entity model for a board
+    __________
+    Properties
+    __________
+    activity_logs : `list[moncli.entities.object.ActivityLog]`
+        The board log events.
+    board_folder_id : `int`
+        The board's folder unique identifier.
+    board_kind : `str`
+        The board's kind (public / private / share).
+    columns : `list[moncli.entities.object.Column]`
+        The board's visible columns.
+    communication : `str`
+        Get the board communication value - typically meeting ID.
+    description : `str`
+        The board's description.
+    groups : `list[moncli.entities.group.Group]`
+        The board's visible groups.
+    id : `str`
+        The unique identifier of the board.
+    items : `list[moncli.entities.item.Item]`
+        The board's items (rows).
+    name : `str`
+        The board's name.
+    owner : `moncli.entities.user.User`
+        The owner of the board.
+    permissions : `str`
+        The board's permissions.
+    pos : `str`
+        The board's position.
+    state : `str`
+        The board's state (all / active / archived / deleted).
+    subscribers : `list[moncli.entities.user.User]`
+        The board's subscribers.
+    tags : `list[moncli.entities.objects.Tag]`
+        The board's specific tags.
+    top_group : `moncli.entities.group.Group`
+        The top group at this board.
+    updated_at : `str`
+        The last time the board was updated at (ISO8601 DateTime).
+    updates : `list[moncli.entities.update.Update]`
+        The board's updates.
+    views : `list[moncli.entities.board.BoardView]`
+        The board's views.
+    workspace : `moncli.entities.objects.Workspace`
+        The workspace that contains this board (null for main workspace).
+    workspace_id : `str`
+        The board's workspace unique identifier (null for main workspace).
+
+    _______
+    Methods
+    _______
+    get_activity_logs : `list[moncli.entities.objects.ActivityLog]`
+        Get the board log events. 
+    add_column : `moncli.entities.objects.Column`
+        Create a new column in board.
+    get_columns : `list[moncli.entities.objects.Column]`
+        Get the board's visible columns.
+    add_group : `moncli.entities.group.Group`
+        Creates a new group in the board.
+    get_groups : `list[moncli.entities.group.Group]`
+        Get the board's visible groups.
+    get_group : `moncli.entities.group.Group`
+        Get a group belonging to the board by ID or title.
+    add_item : `moncli.entities.item.Item`
+        Create a new item in the board.
+    get_items : `list[moncli.entities.item.Item]`
+        Get the board's items (rows).
+    get_items_by_column_values : `list[moncli.entities.item.Item]`
+        Search items in this board by their column values.
+    create_webhook : `moncli.entities.objects.Webhook`
+        Create a new webhook.
+    delete_webhook : `moncli.entities.objects.Webhook`
+        Delete a new webhook.
+    get_workspace : `moncli.entities.objects.Workspace`
+        Get the board's workspace that contains this board (null for main workspace).
+    """
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
@@ -61,8 +138,17 @@ class Board(_Board):
         return str(o)
  
     @property
+    def activity_logs(self):
+        """The board log events"""
+
+        if self.__activity_logs == None:
+            self.__activity_logs = self.get_activity_logs()
+        return self.__activity_logs
+
+    @property
     def columns(self):
         """Retrieve board columns"""
+
         if not self.__columns:
             self.__columns = self.get_columns()
         return self.__columns
@@ -77,6 +163,7 @@ class Board(_Board):
     @property
     def items(self):
         """Retrieve board items"""
+
         if not self.__items:
             self.__items = self.get_items()
         return self.__items
@@ -84,6 +171,7 @@ class Board(_Board):
     @property
     def workspace(self):
         """Retrieve workspace"""
+
         if not self.__workspace:
             self.__workspace = self.get_workspace()
         return self.__workspace
@@ -151,16 +239,90 @@ class Board(_Board):
 
 
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
-    def add_column(self, title:str, column_type: enums.ColumnType, *args): 
+    def add_column(self, title:str, column_type: enums.ColumnType, *args, **kwargs): 
+        """Create a new column in board.
+        __________
+        Parameters
+        __________
+        title : `str`
+            The new column's title.
+        column_type : `moncli.enums.ColumnType`
+            The type of column to create.
+        *args : `tuple`
+            The list of column return fields.
+        **kwargs : `dict`
+            The optional keywork arguments.
+
+        _____________
+        Return Fields
+        _____________
+        archived : `bool`
+            Is the column archived or not.
+        id : `str`
+            The column's unique identifier.
+        pos : `str`
+            The column's position in the board.
+        settings_str : `str`
+            The column's settings in a string form.
+        title : `str`
+            The column's title.
+        type : `str`
+            The column's type.
+        width : `int`
+            The column's width.
+
+        __________________
+        Optional Arguments
+        __________________
+        defaults : `json`
+            The new column's defaults.
+        """
+
         column_data = client.create_column(
             self.__creds.api_key_v2, 
             self.id, 
             title, 
             column_type, 
-            *args)
+            *args,
+            **kwargs)
         return en.Column(column_data)
+
    
-    def get_columns(self, *args):
+    def get_columns(self, *args, **kwargs):
+        """Get the board's visible columns.
+        __________
+        Parameters
+        __________
+        *args : `tuple`
+            The list of column return fields.
+        **kwargs : `dict`
+            The optional keywork arguments.
+
+        _____________
+        Return Fields
+        _____________
+        archived : `bool`
+            Is the column archived or not.
+        id : `str`
+            The column's unique identifier.
+        pos : `str`
+            The column's position in the board.
+        settings_str : `str`
+            The column's settings in a string form.
+        title : `str`
+            The column's title.
+        type : `str`
+            The column's type.
+        width : `int`
+            The column's width.
+
+        __________________
+        Optional Arguments
+        __________________
+        ids : `str`
+            A list of column unique identifiers.
+        """
+
         args = client.get_field_list(constants.DEFAULT_COLUMN_QUERY_FIELDS, *args)
         args = ['columns.' + arg for arg in args]
         column_data = client.get_boards(
@@ -170,9 +332,37 @@ class Board(_Board):
             limit=1)[0]['columns']
         return [en.Column(data) for data in column_data]
 
+
     @optional_arguments(constants.CREATE_GROUP_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_GROUP_QUERY_FIELDS)
     def add_group(self, group_name: str, *args):
+        """Creates a new group in the board.
+        __________
+        Parameters
+        __________
+        group_name : `str`
+            The name of the new group.
+        *args : `tuple`
+            The list of group return fields.
+
+        _____________
+        Return Fields
+        _____________
+        archived : `bool`
+            Is the group archived or not.
+        color : `str`
+            The group's color.
+        deleted : `bool`
+            Is the group deleted or not.
+        id : `str`
+            The group's unique identifier.
+        items : `list[moncli.entities.item.Item]`
+            The items in the group.
+        position : `str`
+            The group's position in the board.
+        title : `str`
+            The group's title.
+        """
+
         group_data = client.create_group(
             self.__creds.api_key_v2,
             self.id,
@@ -183,24 +373,92 @@ class Board(_Board):
             board_id=self.id,
             **group_data)
 
-    @default_field_list(config.DEFAULT_GROUP_QUERY_FIELDS)
-    def get_groups(self, *args):
-        args = ['groups.' + arg for arg in args]
+
+    def get_groups(self, *args, **kwargs):
+        """Get the board's visible groups.
+        __________
+        Parameters
+        __________
+        *args : `tuple`
+            The list of group return fields.
+        **kwargs : `dict`
+            Optional keyword arguments for getting board groups.
+
+        _____________
+        Return Fields
+        _____________
+        archived : `bool`
+            Is the group archived or not.
+        color : `str`
+            The group's color.
+        deleted : `bool`
+            Is the group deleted or not.
+        id : `str`
+            The group's unique identifier.
+        items : `list[moncli.entities.item.Item]`
+            The items in the group.
+        position : `str`
+            The group's position in the board.
+        title : `str`
+            The group's title.
+
+        __________________
+        Optional Arguments
+        __________________
+        ids : `list[string]`
+            A list of group unique identifiers.
+        """
+
+        args = ['groups.' + arg for arg in client.get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)]
         groups_data = client.get_boards(
             self.__creds.api_key_v2,
             *args,
             ids=[int(self.id)])[0]['groups']
         return [en.Group(creds=self.__creds, board_id=self.id, **data) for data in groups_data]
   
-    def get_group(self, id: str = None, title: str = None):     
+
+    def get_group(self, id: str = None, title: str = None, *args):
+        """Get a group belonging to the board by ID or title.
+        __________
+        Parameters
+        __________
+        id : `str`
+            The group's unique identifier.
+            NOTE: This parameter is mutually exclusive and cannot be used with 'title'.
+        title : `str`
+            The group's title.
+            NOTE: This parameter is mutually exclusive and cannot be used with 'id'.
+        *args : `tuple`
+            The list of group return fields.
+
+        _____________
+        Return Fields
+        _____________
+        archived : `bool`
+            Is the group archived or not.
+        color : `str`
+            The group's color.
+        deleted : `bool`
+            Is the group deleted or not.
+        id : `str`
+            The group's unique identifier.
+        items : `list[moncli.entities.item.Item]`
+            The items in the group.
+        position : `str`
+            The group's position in the board.
+        title : `str`
+            The group's title.
+        """
+
         if id is None and title is None:
             raise NotEnoughGetGroupParameters()
         if id is not None and title is not None:
             raise TooManyGetGroupParameters()
         if id is not None:
-            return [group for group in self.groups if group.id == id][0]
+            return self.get_groups(*args, ids=[id])[0]
         else:
-            return [group for group in self.groups if group.title == title][0]
+            return [group for group in self.get_groups(*args) if group.title == title][0]
+
 
     @optional_arguments(constants.CREATE_ITEM_OPTIONAL_PARAMS)
     def add_item(self, item_name: str, *args, **kwargs):
@@ -221,6 +479,7 @@ class Board(_Board):
             **kwargs)
         return en.Item(creds=self.__creds, **item_data)
 
+
     def get_items(self, *args):
         if not args:
             args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS)
@@ -230,6 +489,7 @@ class Board(_Board):
             *args, 
             ids=[int(self.id)])[0]['items']
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
+
 
     @optional_arguments(constants.ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS)
     def get_items_by_column_values(self, column_value: en.ColumnValue, *args, **kwargs):      
