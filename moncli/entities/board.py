@@ -132,9 +132,9 @@ class Board(_Board):
             Group ids to filter.
         item_ids : `list[int]`
             Item id to filter
-        from : `date`
+        from : `str`
             From timespamp (ISO8601).
-        to : `date`
+        to : `str`
             To timespamp (ISO8601).
         """
 
@@ -143,8 +143,10 @@ class Board(_Board):
             kwargs = {'activity_logs': kwargs}
         activity_logs_data = client.get_boards(
             self.__creds.api_key_v2,
+            'id', 'name',
             *args,
-            **kwargs)
+            ids=[self.id],
+            **kwargs)[0]['activity_logs']
         return [en.ActivityLog(activity_log) for activity_log in activity_logs_data]
 
 
