@@ -108,6 +108,34 @@ DEFAULT_ITEM_QUERY_FIELDS = [
     'state'
 ]
 
+DEFAULT_GROUP_QUERY_FIELDS = [
+    'id', 
+    'title', 
+    'archived', 
+    'color', 
+    'deleted', 
+    'position'
+]
+
+DEFAULT_COLUMN_VALUE_QUERY_FIELDS = [
+    'id',
+    'title',
+    'text',
+    'value',
+    'additional_info'
+]
+
+DEFAULT_TAG_QUERY_FIELDS = [
+    'id',
+    'name',
+    'color'
+]
+
+DEFAULT_NOTIFICATION_QUERY_FIELDS = [
+    'id',
+    'text'
+]
+
 DEFAULT_UPDATE_QUERY_FIELDS = [
     'id',
     'body',
