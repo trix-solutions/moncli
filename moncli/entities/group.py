@@ -3,7 +3,6 @@ from schematics import types
 
 from .. import api_v2 as client, config, entities as en
 from ..api_v2 import constants
-from ..decorators import default_field_list
 
 class _Group(Model):
 
@@ -38,7 +37,6 @@ class Group(_Group):
             self.__items = self.get_items()
         return self.__items
 
-    @default_field_list(config.DEFAULT_GROUP_QUERY_FIELDS)
     def duplicate(self, add_to_top: bool = False, *args):
         group_data = client.duplicate_group(
             self.__creds.api_key_v2, 
@@ -50,7 +48,6 @@ class Group(_Group):
             board_id=self.__board_id,
             **group_data)
 
-    @default_field_list(config.DEFAULT_GROUP_QUERY_FIELDS)
     def archive(self, *args):
         group_data = client.archive_group(
             self.__creds.api_key_v2,
@@ -62,7 +59,6 @@ class Group(_Group):
             board_id=self.__board_id,
             **group_data)
 
-    @default_field_list(config.DEFAULT_GROUP_QUERY_FIELDS)
     def delete(self, *args):
         group_data = client.delete_group(
             self.__creds.api_key_v2,

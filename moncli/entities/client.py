@@ -1,6 +1,6 @@
 from .. import api_v2 as client, config, enums, entities as en
 from ..api_v2 import constants
-from ..decorators import default_field_list, optional_arguments
+from ..decorators import optional_arguments
 
 
 class MondayClient():
@@ -244,7 +244,6 @@ class MondayClient():
         return en.Item(creds=self.__creds, **item_data)
     
     @optional_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_NOTIFICATION_QUERY_FIELDS)
     def create_notification(self, text: str, user_id: str, target_id: str, target_type: enums.NotificationTargetType, *args, **kwargs):
         notification_data = client.create_notification(
             self.__creds.api_key_v2, 
@@ -257,7 +256,6 @@ class MondayClient():
         return en.Notification(notification_data)
     
     @optional_arguments(constants.CREATE_OR_GET_TAG_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_TAG_QUERY_FIELDS)
     def create_or_get_tag(self, tag_name: str, *args, **kwargs):
         tag_data = client.create_or_get_tag(
             self.__creds.api_key_v2, 
@@ -266,7 +264,6 @@ class MondayClient():
         return en.Tag(tag_data)
         
     @optional_arguments(constants.TAGS_OPTIONAL_PARAMS)
-    @default_field_list(config.DEFAULT_TAG_QUERY_FIELDS)
     def get_tags(self, *args, **kwargs):
         
         tags_data = client.get_tags(
@@ -277,7 +274,6 @@ class MondayClient():
     
     @optional_arguments(constants.USERS_OPTIONAL_PARAMS)
     def get_users(self, *args, **kwargs):
-        args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
         users_data = client.get_users(
             self.__creds.api_key_v2, 
             *args,

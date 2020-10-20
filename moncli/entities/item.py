@@ -6,11 +6,13 @@ from schematics import types
 
 from .. import api_v2 as client, config, entities as en, enums
 from ..api_v2 import constants
-from ..decorators import default_field_list, optional_arguments
+from ..decorators import optional_arguments
 from .column_value import FileValue
 
 
 class _Item(Model):
+    """Item Base Model"""
+
     id = types.StringType(required=True)
     name = types.StringType()
     created_at = types.StringType()
@@ -20,6 +22,49 @@ class _Item(Model):
 
 
 class Item(_Item):
+    """An item (table row)
+    
+    __________
+    Properties
+    __________
+    assets : `list[moncli.entities.asset.Asset]`
+        The item's assets/files.
+    board : `moncli.entities.board.Board`
+        The board that contains this item.
+    column_values : `list[moncli.entities.column_value.ColumnValue]`
+        The item's column values.
+    created_at : `str`
+        The item's create date.
+    creator : `moncli.entities.user.User`
+        The item's creator.
+    creator_id : `str`
+        The item's unique identifier.
+    group : `moncli.entities.group.Group`
+        The group that contains this item.
+    id : `str`
+        The item's unique identifier.
+    name : `str`
+        The item's name.
+    state : `str`
+        The board's state (all / active / archived / deleted)
+    subscriber : `moncli.entities.user.User`
+        The pulse's subscribers.
+    updated_at : `str`
+        The item's last update date.
+    updates : `moncli.entities.update.Update`
+        The item's updates.
+
+    _______
+    Methods
+    _______
+    add_file : `moncli.entities.Asset`
+        Add a file to a column value.
+    get_files : `list[moncli.entities.Asset]`
+        Retrieves the file assets for the login user's account.
+    
+    """
+
+
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
@@ -95,14 +140,16 @@ class Item(_Item):
             self.__updates = self.get_updates()
         return self.__updates
 
-    def add_file(self, file_column: FileValue, file_path: str, *argv):
+
+    def add_file(self, file_column: FileValue, file_path: str, *args):
         asset_data = client.add_file_to_column(
             self.__creds.api_key_v2,
             self.id,
             file_column.id,
             file_path,
-            *argv)
+            *args)
         return en.Asset(**asset_data)
+
 
     def get_files(self, column_ids: list = None, *args):
         """Retrieves the file assets for the login user's account.
@@ -160,14 +207,15 @@ class Item(_Item):
             **kwargs)[0]['assets']
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
-    def remove_files(self, file_column: FileValue, *argv):
+
+    def remove_files(self, file_column: FileValue, *args):
         item_data = client.change_column_value(
             self.__creds.api_key_v2,
             self.id,
             file_column.id,
             self.__board.id,
             file_column.format(),
-            *argv)
+            *args)
         return Item(creds=self.__creds, **item_data)
 
     def get_board(self, *args):
@@ -187,12 +235,11 @@ class Item(_Item):
             ids=[int(self.id)])[0]['creator']
         return en.User(creds=self.__creds, **user_data)
    
-    @default_field_list(config.DEFAULT_COLUMN_VALUE_QUERY_FIELDS)
     def get_column_values(self, *args):
         # Pulls the columns from the board containing the item and maps 
         # column ID to type.
         columns_map = { column.id: column for column in self.board.columns }
-        args = ['column_values.' + arg for arg in args]
+        args = ['column_values.' + arg for arg in client.get_field_list(constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS, *args)]
         column_values_data = client.get_items(
             self.__creds.api_key_v2,
             *args,
