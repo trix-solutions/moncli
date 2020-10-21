@@ -382,7 +382,7 @@ class Board(_Board):
             Is the group deleted or not.
         id : `str`
             The group's unique identifier.
-        items : `list[moncli.entities.item.Item]`
+        items : `list[moncli.entities.Item]`
             The items in the group.
         position : `str`
             The group's position in the board.
@@ -428,7 +428,7 @@ class Board(_Board):
             Is the group deleted or not.
         id : `str`
             The group's unique identifier.
-        items : `list[moncli.entities.item.Item]`
+        items : `list[moncli.entities.Item]`
             The items in the group.
         position : `str`
             The group's position in the board.
@@ -481,7 +481,7 @@ class Board(_Board):
             Is the group deleted or not.
         id : `str`
             The group's unique identifier.
-        items : `list[moncli.entities.item.Item]`
+        items : `list[moncli.entities.Item]`
             The items in the group.
         position : `str`
             The group's position in the board.
@@ -517,19 +517,19 @@ class Board(_Board):
         _____________
         Return Fields
         _____________
-        assets : `list[moncli.entities.asset.Asset]`
+        assets : `list[moncli.entities.Asset]`
             The item's assets/files.
-        board : `moncli.entities.board.Board`
+        board : `moncli.entities.Board`
             The board that contains this item.
-        column_values : `list[moncli.entities.column_value.ColumnValue]`
+        column_values : `list[moncli.entities.ColumnValue]`
             The item's column values.
         created_at : `str`
             The item's create date.
-        creator : `moncli.entities.user.User`
+        creator : `moncli.entities.User`
             The item's creator.
         creator_id : `str`
             The item's unique identifier.
-        group : `moncli.entities.group.Group`
+        group : `moncli.entities.Group`
             The group that contains this item.
         id : `str`
             The item's unique identifier.
@@ -537,11 +537,11 @@ class Board(_Board):
             The item's name.
         state : `str`
             The board's state (all / active / archived / deleted)
-        subscriber : `moncli.entities.user.User`
+        subscriber : `moncli.entities.User`
             The pulse's subscribers.
         updated_at : `str`
             The item's last update date.
-        updates : `moncli.entities.update.Update`
+        updates : `moncli.entities.Update`
             The item's updates.
 
         __________________
@@ -590,19 +590,19 @@ class Board(_Board):
         _____________
         Return Fields
         _____________
-        assets : `list[moncli.entities.asset.Asset]`
+        assets : `list[moncli.entities.Asset]`
             The item's assets/files.
-        board : `moncli.entities.board.Board`
+        board : `moncli.entities.Board`
             The board that contains this item.
-        column_values : `list[moncli.entities.column_value.ColumnValue]`
+        column_values : `list[moncli.entities.ColumnValue]`
             The item's column values.
         created_at : `str`
             The item's create date.
-        creator : `moncli.entities.user.User`
+        creator : `moncli.entities.User`
             The item's creator.
         creator_id : `str`
             The item's unique identifier.
-        group : `moncli.entities.group.Group`
+        group : `moncli.entities.Group`
             The group that contains this item.
         id : `str`
             The item's unique identifier.
@@ -610,11 +610,11 @@ class Board(_Board):
             The item's name.
         state : `str`
             The board's state (all / active / archived / deleted)
-        subscriber : `moncli.entities.user.User`
+        subscriber : `moncli.entities.User`
             The pulse's subscribers.
         updated_at : `str`
             The item's last update date.
-        updates : `moncli.entities.update.Update`
+        updates : `moncli.entities.Update`
             The item's updates.
 
         __________________
@@ -660,19 +660,19 @@ class Board(_Board):
         _____________
         Return Fields
         _____________
-        assets : `list[moncli.entities.asset.Asset]`
+        assets : `list[moncli.entities.Asset]`
             The item's assets/files.
-        board : `moncli.entities.board.Board`
+        board : `moncli.entities.Board`
             The board that contains this item.
-        column_values : `list[moncli.entities.column_value.ColumnValue]`
+        column_values : `list[moncli.entities.ColumnValue]`
             The item's column values.
         created_at : `str`
             The item's create date.
-        creator : `moncli.entities.user.User`
+        creator : `moncli.entities.User`
             The item's creator.
         creator_id : `str`
             The item's unique identifier.
-        group : `moncli.entities.group.Group`
+        group : `moncli.entities.Group`
             The group that contains this item.
         id : `str`
             The item's unique identifier.
@@ -680,11 +680,11 @@ class Board(_Board):
             The item's name.
         state : `str`
             The board's state (all / active / archived / deleted)
-        subscriber : `moncli.entities.user.User`
+        subscriber : `moncli.entities.User`
             The pulse's subscribers.
         updated_at : `str`
             The item's last update date.
-        updates : `moncli.entities.update.Update`
+        updates : `moncli.entities.Update`
             The item's updates.
 
         __________________
@@ -856,6 +856,18 @@ class Board(_Board):
 
     def get_workspace(self, *args):
         """Retrieves the board workspace
+        __________
+        Parameters
+        __________
+        *args : `tuple`
+            The workspace return fields.
+
+        _______
+        Returns
+        _______
+        workspace : `list[moncli.entities.Workspace]`
+            The board workspace.
+
         _____________
         Return Fields
         _____________
