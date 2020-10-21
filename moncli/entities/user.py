@@ -90,9 +90,9 @@ class User(_User):
     _______
     Methods
     _______
-    get_account : `moncli.entities.user.Account`
+    get_account : `moncli.entities.Account`
         Get the user's account.
-    get_teams : `list[moncli.entities.user.Team]`
+    get_teams : `list[moncli.entities.Team]`
         Get teams the user is a member in.
     send_notification : `moncli.entities.objects.Notification`
         Create a new notification.
@@ -142,6 +142,12 @@ class User(_User):
         __________
         *args : `tuple`
             The list of account return fields.
+        
+        _______
+        Returns
+        _______
+        account : `moncli.entities.Account`
+            The user's account.
 
         _____________
         Return Fields
@@ -154,7 +160,7 @@ class User(_User):
             The account's logo.
         name : `str`
             The account's name.
-        plan : `moncli.entities.objects.Plan`
+        plan : `moncli.entities.Plan`
             The account's payment plan.
         show_timeline_weekends : `bool`
             Show weekends in timeline.
@@ -179,6 +185,12 @@ class User(_User):
         __________
         *args : `tuple`
             The list of team return fields.
+
+        _______
+        Returns
+        _______
+        teams : `list[moncli.entities.Team]`
+            Teams the user is a member in.
 
         _____________
         Return Fields
@@ -219,6 +231,12 @@ class User(_User):
             The list of noficiation return fields.
         **kwargs : `dict`
             Optional keyword arguments.
+
+        _______
+        Returns
+        _______
+        notification : `moncli.entities.ActivityLog`
+            The new notification.
 
         _____________
         Return Fields
@@ -265,13 +283,13 @@ class Team(_Team):
         The team's name.
     picture_url : `str`
         The team's picture url.
-    users : `moncli.entities.user.User`
+    users : `moncli.entities.User`
         The users in the team.
 
     _______
     Methods
     _______
-    get_users : `list[moncli.entities.user.User]`
+    get_users : `list[moncli.entities.User]`
         Get the users in the team.
     """
 
@@ -307,10 +325,16 @@ class Team(_Team):
         **kwargs : dict
             Optional keyword arguments for querying the team's users.
 
+        _______
+        Returns
+        _______
+        users : `list[moncli.entities.User]`
+            The users in the team.
+
         _____________
         Return Fields
         _____________
-        account : `moncli.entities.user.Account`
+        account : `moncli.entities.Account`
             The user's account.
         birthday : `str`
             The user's birthday.
@@ -350,7 +374,7 @@ class Team(_Team):
             The user's photo in small thumbnail size (50x50).
         photo_tiny : `str`
             The user's photo in tiny size (30x30).
-        teams : `list[moncli.entities.user.Team]`
+        teams : `list[moncli.entities.Team]`
             The teams the user is a member in.
         time_zone_identifier : `str`
             The user's time zone identifier.
@@ -409,7 +433,7 @@ class Account(_Account):
         The account's logo.
     name : `str`
         The account's name.
-    plan : `moncli.entities.objects.Plan`
+    plan : `moncli.entities.Plan`
         The account's payment plan.
     show_timeline_weekends : `bool`
         Show weekends in timeline.
@@ -419,7 +443,7 @@ class Account(_Account):
     _______
     Methods
     _______
-    get_plan : `moncli.entities.user.Plan`
+    get_plan : `moncli.entities.Plan`
         Get the account's payment plan.
     """
 
@@ -459,6 +483,12 @@ class Account(_Account):
         *args : `tuple`
             The list of plan optional return fields.
         
+        _______
+        Returns
+        _______
+        plan : `moncli.entities.Plan`
+            The account's payment plan.
+        
         _____________
         Return Fields
         _____________
@@ -471,6 +501,7 @@ class Account(_Account):
         version : `int`
             The plan's version.
         """
+        
         args = ['plan.' + arg for arg in client.get_field_list(constants.DEFAULT_PLAN_QUERY_FIELDS)]
         plan_data = client.get_account(
             self.__creds.api_key_v2, 
