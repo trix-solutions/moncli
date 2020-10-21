@@ -190,6 +190,12 @@ class Board(_Board):
         **kwargs : `dict`
             Optional keyword arguments for retrieving activity logs.
 
+        _______
+        Returns
+        _______
+        activity_logs : `list[moncli.entities.ActivityLog]`
+            The board's activity logs.
+
         _____________
         Return Fields
         _____________
@@ -256,6 +262,12 @@ class Board(_Board):
         **kwargs : `dict`
             The optional keywork arguments.
 
+        _______
+        Returns
+        _______
+        column : `moncli.entities.Column`
+            The created column.
+
         _____________
         Return Fields
         _____________
@@ -300,6 +312,12 @@ class Board(_Board):
             The list of column return fields.
         **kwargs : `dict`
             The optional keywork arguments.
+
+        _______
+        Returns
+        _______
+        columns : `list[moncli.entities.Column]`
+            The board's columns.
 
         _____________
         Return Fields
@@ -347,6 +365,12 @@ class Board(_Board):
         *args : `tuple`
             The list of group return fields.
 
+        _______
+        Returns
+        _______
+        group : `moncli.entities.Group`
+            The created group.
+
         _____________
         Return Fields
         _____________
@@ -386,6 +410,12 @@ class Board(_Board):
             The list of group return fields.
         **kwargs : `dict`
             Optional keyword arguments for getting board groups.
+
+        _______
+        Returns
+        _______
+        groups : `list[moncli.entities.Groups]`
+            The board's groups.
 
         _____________
         Return Fields
@@ -434,6 +464,12 @@ class Board(_Board):
         *args : `tuple`
             The list of group return fields.
 
+        _______
+        Returns
+        _______
+        group : `moncli.entities.Group`
+            The board's requested group.
+
         _____________
         Return Fields
         _____________
@@ -471,6 +507,12 @@ class Board(_Board):
         __________
         item_name : `str`
             The new item's name.
+
+        _______
+        Returns
+        _______
+        item : `moncli.entities.Item`
+            The created item.
 
         _____________
         Return Fields
@@ -538,6 +580,12 @@ class Board(_Board):
             The list of item return fields.
         **kwargs : `dict`
             The optional keyword arguments for getting items.
+
+        _______
+        Returns
+        _______
+        items : `list[moncli.entities.Item]`
+            The board's items.
         
         _____________
         Return Fields
@@ -602,6 +650,13 @@ class Board(_Board):
             The list of item return fields.
         **kwargs : `dict`
             The optional keyword arguments for searching items.
+
+        _______
+        Returns
+        _______
+        items : `list[moncli.entities.Item]`
+            The board's queried items.
+
         _____________
         Return Fields
         _____________
@@ -682,6 +737,12 @@ class Board(_Board):
         **kwargs : `dict`
             Optional keyword arguments for getting a column value.
 
+        _______
+        Returns
+        _______
+        column_value : `list[moncli.entities.ColumnValue]`
+            A new column_value instance.
+
         __________________
         Optional Arguments
         __________________
@@ -720,6 +781,12 @@ class Board(_Board):
             The list of webhook return fields.
         **kwargs : `dict`
             The optional keyword arguments for creating a webhook.
+
+        _______
+        Returns
+        _______
+        webhook : `moncli.entities.Webhook`
+            The created webhook.
 
         _____________
         Return Fields
@@ -763,6 +830,12 @@ class Board(_Board):
             The webhook's unique identifier.
         *args : `tuple`
             The list of webhook return fields.
+
+        _______
+        Returns
+        _______
+        webhook : `moncli.entities.Webhook`
+            The deleted webhook.
 
         _____________
         Return Fields
