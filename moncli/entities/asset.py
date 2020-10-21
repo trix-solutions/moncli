@@ -37,7 +37,7 @@ class Asset(_Asset):
         The file's name.
     public_url : `str`
         Public url to the asset, valid for 1 hour.
-    uploaded_by : `moncli.entities.user.User`
+    uploaded_by : `moncli.entities.User`
         The user who uploaded the file
     url : `str`
         The user who uploaded the file
@@ -47,7 +47,7 @@ class Asset(_Asset):
     _______
     Methods
     _______
-    get_uploaded_by_user : `moncli.entities.user.User`
+    get_uploaded_by_user : `moncli.entities.User`
         Get the user who uploaded the file.
     """
 
@@ -74,11 +74,17 @@ class Asset(_Asset):
         __________
         *args : `tuple`
             The list of user return fields.
+  
+        _______
+        Returns
+        _______
+        user : `moncli.entities.User`
+            The user who uploaded the file.
         
         _____________
         Return Fields
         _____________
-        account : `moncli.entities.user.Account`
+        account : `moncli.entities.Account`
             The user's account.
         birthday : `str`
             The user's birthday.
@@ -118,7 +124,7 @@ class Asset(_Asset):
             The user's photo in small thumbnail size (50x50).
         photo_tiny : `str`
             The user's photo in tiny size (30x30).
-        teams : `list[moncli.entities.user.Team]`
+        teams : `list[moncli.entities.Team]`
             The teams the user is a member in.
         time_zone_identifier : `str`
             The user's time zone identifier.
