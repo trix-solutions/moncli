@@ -59,15 +59,15 @@ class Board(_Board):
         The board's subscribers.
     tags : `list[moncli.entities.objects.Tag]`
         The board's specific tags.
-    top_group : `moncli.entities.group.Group`
+    top_group : `moncli.entities.Group`
         The top group at this board.
     updated_at : `str`
         The last time the board was updated at (ISO8601 DateTime).
-    updates : `list[moncli.entities.update.Update]`
+    updates : `list[moncli.entities.Update]`
         The board's updates.
-    views : `list[moncli.entities.board.BoardView]`
+    views : `list[moncli.entities.BoardView]`
         The board's views.
-    workspace : `moncli.entities.objects.Workspace`
+    workspace : `moncli.entities.Workspace`
         The workspace that contains this board (null for main workspace).
     workspace_id : `str`
         The board's workspace unique identifier (null for main workspace).
@@ -75,31 +75,31 @@ class Board(_Board):
     _______
     Methods
     _______
-    get_activity_logs : `list[moncli.entities.objects.ActivityLog]`
+    get_activity_logs : `list[moncli.entities.ActivityLog]`
         Get the board log events. 
-    add_column : `moncli.entities.objects.Column`
+    add_column : `moncli.entities.Column`
         Create a new column in board.
-    get_columns : `list[moncli.entities.objects.Column]`
+    get_columns : `list[moncli.entities.Column]`
         Get the board's visible columns.
-    add_group : `moncli.entities.group.Group`
+    add_group : `moncli.entities.Group`
         Creates a new group in the board.
-    get_groups : `list[moncli.entities.group.Group]`
+    get_groups : `list[moncli.entities.Group]`
         Get the board's visible groups.
-    get_group : `moncli.entities.group.Group`
+    get_group : `moncli.entities.Group`
         Get a group belonging to the board by ID or title.
-    add_item : `moncli.entities.item.Item`
+    add_item : `moncli.entities.Item`
         Create a new item in the board.
-    get_items : `list[moncli.entities.item.Item]`
+    get_items : `list[moncli.entities.Item]`
         Get the board's items (rows).
-    get_items_by_column_values : `list[moncli.entities.item.Item]`
+    get_items_by_column_values : `list[moncli.entities.Item]`
         Search items in this board by their column values.
-    get_column_value : `moncli.entities.column_value.ColumnValue`
+    get_column_value : `moncli.entities.ColumnValue`
         Create a column value from a board's column.
-    create_webhook : `moncli.entities.objects.Webhook`
+    create_webhook : `moncli.entities.Webhook`
         Create a new webhook.
-    delete_webhook : `moncli.entities.objects.Webhook`
+    delete_webhook : `moncli.entities.Webhook`
         Delete a new webhook.
-    get_workspace : `moncli.entities.objects.Workspace`
+    get_workspace : `moncli.entities.Workspace`
         Get the board's workspace that contains this board (null for main workspace).
     """
 
@@ -185,9 +185,9 @@ class Board(_Board):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of activity log return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             Optional keyword arguments for retrieving activity logs.
 
         _______
@@ -257,9 +257,9 @@ class Board(_Board):
             The new column's title.
         column_type : `moncli.enums.ColumnType`
             The type of column to create.
-        *args : `tuple`
+        args : `tuple`
             The list of column return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             The optional keywork arguments.
 
         _______
@@ -308,9 +308,9 @@ class Board(_Board):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of column return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             The optional keywork arguments.
 
         _______
@@ -362,7 +362,7 @@ class Board(_Board):
         __________
         group_name : `str`
             The name of the new group.
-        *args : `tuple`
+        args : `tuple`
             The list of group return fields.
 
         _______
@@ -406,9 +406,9 @@ class Board(_Board):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of group return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             Optional keyword arguments for getting board groups.
 
         _______
@@ -461,7 +461,7 @@ class Board(_Board):
         title : `str`
             The group's title.
             NOTE: This parameter is mutually exclusive and cannot be used with 'id'.
-        *args : `tuple`
+        args : `tuple`
             The list of group return fields.
 
         _______
@@ -576,9 +576,9 @@ class Board(_Board):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of item return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             The optional keyword arguments for getting items.
 
         _______
@@ -646,9 +646,9 @@ class Board(_Board):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of item return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             The optional keyword arguments for searching items.
 
         _______
@@ -734,7 +734,7 @@ class Board(_Board):
             The column's unique identifier.
         title : `str`
             The column's title.
-        **kwargs : `dict`
+        kwargs : `dict`
             Optional keyword arguments for getting a column value.
 
         _______
@@ -777,9 +777,9 @@ class Board(_Board):
             The webhook URL.
         event : `moncli.enums.WebhookEventType`
             The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update).
-        *args : `tuple`
+        args : `tuple`
             The list of webhook return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             The optional keyword arguments for creating a webhook.
 
         _______
@@ -828,7 +828,7 @@ class Board(_Board):
         __________
         id : `str`
             The webhook's unique identifier.
-        *args : `tuple`
+        args : `tuple`
             The list of webhook return fields.
 
         _______
@@ -859,7 +859,7 @@ class Board(_Board):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The workspace return fields.
 
         _______

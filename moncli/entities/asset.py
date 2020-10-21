@@ -72,7 +72,7 @@ class Asset(_Asset):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of user return fields.
   
         _______

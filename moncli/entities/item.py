@@ -178,7 +178,7 @@ class Item(_Item):
             The file column value to be updated.
         file_path : `str`
             The file path.
-        *args : `tuple`
+        args : `tuple`
             Optional file return fields.
 
         _______
@@ -224,9 +224,9 @@ class Item(_Item):
         __________
         Parameters
         __________
-        *args : `str`
+        args : `str`
             The list asset return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             Optional keyword arguments for retrieving file assets from an item.
             
         _______
@@ -283,7 +283,7 @@ class Item(_Item):
         __________
         file_column : moncli.entities.FileValue
             The file column value to be updated.
-        *args : `tuple`
+        args : `tuple`
             Optional file return fields.
 
         _______
@@ -330,7 +330,7 @@ class Item(_Item):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             Optional board return fields.
 
         _______
@@ -402,7 +402,7 @@ class Item(_Item):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of user return fields.
 
         _______
@@ -479,7 +479,7 @@ class Item(_Item):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             Optional column value return fields.
 
         _______
@@ -535,7 +535,7 @@ class Item(_Item):
         title : `str`
             The column's title.
             NOTE: This parameter is mutually exclusive and cannot be used with 'id'.
-        *args : `tuple`
+        args : `tuple`
             Optional column value return fields.
 
         _______
@@ -582,7 +582,7 @@ class Item(_Item):
         __________
         column_value : `moncli.entities.ColumnValue`
             The column value to update.
-        *args : `tuple`
+        args : `tuple`
             Optional item return fields.
 
         _______
@@ -649,7 +649,7 @@ class Item(_Item):
         column_values : `list[moncli.entities.ColumnValue] / dict`
             The column value to update. 
             NOTE: This value can either be a list of moncli.entities.ColumnValue objects or a formatted dictionary.
-        *args : `tuple`
+        args : `tuple`
             Optional item return fields.
 
         _______
@@ -712,7 +712,7 @@ class Item(_Item):
         __________
         group_id : `str`
             The group's unique identifier.
-        *args : `tuple`
+        args : `tuple`
             Optional item return fields.
 
         _______
@@ -765,7 +765,7 @@ class Item(_Item):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             Optional item return fields.
 
         _______
@@ -817,7 +817,7 @@ class Item(_Item):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             Optional item return fields.
 
         _______
@@ -872,9 +872,9 @@ class Item(_Item):
         __________
         body : `str`
             The update text.
-        *args : `tuple`
+        args : `tuple`
             Optional update return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             Optional keyword arguments for adding an update.
 
         _______
@@ -928,9 +928,9 @@ class Item(_Item):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             Optional update return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             Optional keyword arguments for getting item updates.
 
         _______
@@ -991,7 +991,7 @@ class Item(_Item):
         __________
         update_id : `str`
             The update's unique identifier
-        *args : `tuple`
+        args : `tuple`
             The list of optional fields to return.
 
         _______
@@ -1037,7 +1037,7 @@ class Item(_Item):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of optional fields to return.
 
         _______

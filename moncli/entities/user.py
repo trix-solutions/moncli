@@ -140,7 +140,7 @@ class User(_User):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of account return fields.
         
         _______
@@ -183,7 +183,7 @@ class User(_User):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of team return fields.
 
         _______
@@ -227,9 +227,9 @@ class User(_User):
             The target's unique identifier.
         target_type : `moncli.enums.NotificationTargetType`
             The target's type (Project / Post)
-        *args : `tuple`
+        args : `tuple`
             The list of noficiation return fields.
-        **kwargs : `dict`
+        kwargs : `dict`
             Optional keyword arguments.
 
         _______
@@ -320,9 +320,9 @@ class Team(_Team):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of user return fields.
-        **kwargs : dict
+        kwargs : `dict`
             Optional keyword arguments for querying the team's users.
 
         _______
@@ -480,7 +480,7 @@ class Account(_Account):
         __________
         Parameters
         __________
-        *args : `tuple`
+        args : `tuple`
             The list of plan optional return fields.
         
         _______
