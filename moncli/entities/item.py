@@ -886,13 +886,13 @@ class Item(_Item):
         _____________
         Return Fields
         _____________
-        assets : `list[moncli.entities.asset.Asset]`
+        assets : `list[moncli.entities.Asset]`
             The update's assets/files.
         body: `str`
             The update's html formatted body.
         created_at: `str`
             The update's creation date.
-        creator : `moncli.entities.user.User`
+        creator : `moncli.entities.User`
             The update's creator
         creator_id : `str`
             The unique identifier of the update creator.
@@ -900,7 +900,7 @@ class Item(_Item):
             The update's unique identifier.
         item_id : `str`
             The update's item ID.
-        replies : `list[moncli.entities.reply.Reply]
+        replies : `list[moncli.reply.Reply]
             The update's replies.
         text_body : `str`
             The update's text body.
@@ -942,13 +942,13 @@ class Item(_Item):
         _____________
         Return Fields
         _____________
-        assets : `list[moncli.entities.asset.Asset]`
+        assets : `list[moncli.entities.Asset]`
             The update's assets/files.
         body: `str`
             The update's html formatted body.
         created_at: `str`
             The update's creation date.
-        creator : `moncli.entities.user.User`
+        creator : `moncli.entities.User`
             The update's creator
         creator_id : `str`
             The unique identifier of the update creator.
@@ -956,7 +956,7 @@ class Item(_Item):
             The update's unique identifier.
         item_id : `str`
             The update's item ID.
-        replies : `list[moncli.entities.reply.Reply]
+        replies : `list[moncli.entities.Reply]
             The update's replies.
         text_body : `str`
             The update's text body.
@@ -1003,13 +1003,13 @@ class Item(_Item):
         _____________
         Return Fields
         _____________
-        assets : `list[moncli.entities.asset.Asset]`
+        assets : `list[moncli.entities.Asset]`
             The update's assets/files.
         body: `str`
             The update's html formatted body.
         created_at: `str`
             The update's creation date.
-        creator : `moncli.entities.user.User`
+        creator : `moncli.entities.User`
             The update's creator
         creator_id : `str`
             The unique identifier of the update creator.
@@ -1017,7 +1017,7 @@ class Item(_Item):
             The update's unique identifier.
         item_id : `str`
             The update's item ID.
-        replies : `list[moncli.entities.reply.Reply]
+        replies : `list[moncli.entities.Reply]
             The update's replies.
         text_body : `str`
             The update's text body.
