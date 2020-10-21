@@ -725,6 +725,7 @@ class Board(_Board):
         """This method has not yet been implemented."""
         pass
 
+
     def get_column_value(self, id: str = None, title: str = None, **kwargs):
         """Create a column value from a board's column.
         __________

@@ -27,19 +27,19 @@ class Item(_Item):
     __________
     Properties
     __________
-    assets : `list[moncli.entities.asset.Asset]`
+    assets : `list[moncli.entities.set.Asset]`
         The item's assets/files.
-    board : `moncli.entities.board.Board`
+    board : `moncli.entities.Board`
         The board that contains this item.
-    column_values : `list[moncli.entities.column_value.ColumnValue]`
+    column_values : `list[moncli.entities.ColumnValue]`
         The item's column values.
     created_at : `str`
         The item's create date.
-    creator : `moncli.entities.user.User`
+    creator : `moncli.entities.User`
         The item's creator.
     creator_id : `str`
         The item's unique identifier.
-    group : `moncli.entities.group.Group`
+    group : `moncli.entities.Group`
         The group that contains this item.
     id : `str`
         The item's unique identifier.
@@ -47,11 +47,11 @@ class Item(_Item):
         The item's name.
     state : `str`
         The board's state (all / active / archived / deleted)
-    subscriber : `moncli.entities.user.User`
+    subscriber : `moncli.entities.User`
         The pulse's subscribers.
     updated_at : `str`
         The item's last update date.
-    updates : `moncli.entities.update.Update`
+    updates : `moncli.entities.Update`
         The item's updates.
 
     _______
@@ -414,7 +414,7 @@ class Item(_Item):
         _____________
         Return Fields
         _____________
-        account : `moncli.entities.user.Account`
+        account : `moncli.entities.Account`
             The user's account.
         birthday : `str`
             The user's birthday.
@@ -454,7 +454,7 @@ class Item(_Item):
             The user's photo in small thumbnail size (50x50).
         photo_tiny : `str`
             The user's photo in tiny size (30x30).
-        teams : `list[moncli.entities.user.Team]`
+        teams : `list[moncli.entities.Team]`
             The teams the user is a member in.
         time_zone_identifier : `str`
             The user's time zone identifier.
