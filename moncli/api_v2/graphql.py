@@ -74,6 +74,22 @@ class GraphQLNode():
 
 
 class GraphQLField(GraphQLNode):
+    """A GraphQL field node.
+
+    _______
+    Methods
+    _______
+    add_fields : `void`
+        Add fields to node.
+    add_arguments : `void`
+        Add arguments to node.
+    get_field : `moncli.api_v2.graphql.GraphQLField`
+        Get a child field of the given GraphQL field.
+    format_body : `str`
+        Format the GraphQL node into a query string.
+    format_children : `str`
+        Format child fields into query string.
+    """
 
     def __init__(self, field_name: str, *args, **kwargs):
         super(GraphQLField, self).__init__(field_name)
@@ -84,6 +100,14 @@ class GraphQLField(GraphQLNode):
 
 
     def add_fields(self, *args):
+        """Add fields to node.
+
+        __________
+        Parameters
+        __________
+        args : `tuple`
+            The list of child fields to add.
+        """
 
         for field in args:
 
@@ -108,6 +132,14 @@ class GraphQLField(GraphQLNode):
 
 
     def add_arguments(self, **kwargs):
+        """Add arguments to node.
+
+        __________
+        Parameters
+        __________
+        kwargs : `dict`
+            The field's argument pairs.
+        """
 
         for key, value in kwargs.items():
             if isinstance(value, ArgumentValue):
@@ -124,6 +156,20 @@ class GraphQLField(GraphQLNode):
 
 
     def get_field(self, path: str):
+        """Get a child field of the given GraphQL field.
+
+        __________
+        Parameters
+        __________
+        path : `str`
+            The string field path of the field.
+
+        _______
+        Returns
+        _______
+        field : `moncli.api_v2.graphql.GraphQLField`
+            The retrieved graphql field.
+        """
 
         split_path = path.split('.')
         child_name = split_path[0]
@@ -141,6 +187,7 @@ class GraphQLField(GraphQLNode):
 
 
     def format_body(self):
+        """Format the GraphQL node into a query string."""
 
         body: str = self.name
 
@@ -154,12 +201,48 @@ class GraphQLField(GraphQLNode):
 
     
     def format_children(self, body: str):
+        """Format child fields into query string.
+        
+        __________
+        Parameters
+        __________
+        body : `str`
+            The body of the base query to be amended.
+
+        _______
+        Returns
+        _______
+        query_string : `str`
+            The amended GraphQL query string.
+
+        """
 
         formatted_children = ', '.join([child.format_body() for child in self.__children.values()])
         return '{} {{ {} }}'.format(body, formatted_children)
 
 
 class GraphQLOperation(GraphQLField):
+    """A GraphQL node for operations.
+    
+    __________
+    Properties
+    __________
+    action_type : `str`
+        The action type of the operation (query / mutation)
+    query_name : `str`
+        The name of the executed command.
+    args : `tuple`
+        A collection of added fields.
+    kwargs : `dict`
+        A collection of argument mappings 
+
+    
+    _______
+    Methods
+    _______
+    add_query_variable : `void`
+        Add a query variable to the query.
+    """
 
     def __init__(self, action_type: OperationType, query_name: str, *args, **kwargs):
 
@@ -169,11 +252,22 @@ class GraphQLOperation(GraphQLField):
 
 
     def add_query_variable(self, key: str, value):
+        """Add a query variable to the query.
+
+        __________
+        Parameters
+        __________
+        key : `str`
+            The query variable key.
+        value : `object`
+            The query variable value.
+        """
 
         self.query_variables.__setitem__(key, value)  
 
 
     def format_body(self):
+        """Format the GraphQL node into a query string."""
 
         body: str = self.name
 
@@ -193,6 +287,7 @@ class GraphQLOperation(GraphQLField):
 
 
 class ArgumentValue():
+    """Base GraphQL argument type and format."""
     def __init__(self, value):
         self.value = value
 
@@ -201,6 +296,7 @@ class ArgumentValue():
 
 
 class StringValue(ArgumentValue):
+    """GraphQL string argument type and format."""
     def __init__(self, value):
         super(StringValue, self).__init__(str(value))
 
@@ -209,6 +305,7 @@ class StringValue(ArgumentValue):
 
 
 class IntValue(ArgumentValue):
+    """GraphQL integer argument type and format."""
     def __init__(self, value):
         super(IntValue, self).__init__(int(value))
 
@@ -217,6 +314,7 @@ class IntValue(ArgumentValue):
 
 
 class BoolValue(ArgumentValue):
+    """GraphQL boolean argument type and format."""
     def __init__(self, value):
         super(BoolValue, self).__init__(value)
 
@@ -225,6 +323,7 @@ class BoolValue(ArgumentValue):
 
 
 class ListValue(ArgumentValue):
+    """GraphQL list argument type and format."""
     def __init__(self, value):
         super(ListValue, self).__init__(list(value))
 
@@ -232,6 +331,7 @@ class ListValue(ArgumentValue):
         return self.value
 
 class EnumValue(ArgumentValue):
+    """GraphQL enum argument type and format."""
     def __init__(self, value):
         super(EnumValue, self).__init__(value)
 
@@ -241,6 +341,7 @@ class EnumValue(ArgumentValue):
 
 
 class JsonValue(ArgumentValue):
+    """GraphQL json argument type and format."""
     def __init__(self, value):
         super(JsonValue, self).__init__(value)
 
@@ -249,6 +350,7 @@ class JsonValue(ArgumentValue):
 
 
 class FileValue(ArgumentValue):
+    """GraphQL file argument type and format."""
     def __init__(self, value):
         super(FileValue, self).__init__(value)
 
@@ -257,26 +359,98 @@ class FileValue(ArgumentValue):
 
 
 class GraphQLError(Exception):
+    """GraphQL client error."""
     def __init__(self, message: str):
         self.message = message
 
 
 def create_field(field_name: str, *args, **kwargs):
+    """Create a GraphQL field.
+
+    __________
+    Parameters
+    __________
+    field_name : `str`
+        The name of the parent field to create.
+    args : `tuple`
+        A collection of child fields to add.
+    kwargs : `dict`
+        A field argument value map for queried return fields.
+
+    _______
+    Returns
+    _______
+    field : `moncli.api_v2.graphql.GraphQLField`
+        A graphql field node.
+    """
 
     return GraphQLField(field_name, *args, **kwargs)
 
 
 def create_query(query_name: str, *args, **kwargs):
+    """Create a GraphQL query operation.
+
+    __________
+    Parameters
+    __________
+    query_name : `str`
+        The name of the query to be run.
+    args : `tuple`
+        A collection of child return fields to add.
+    kwargs : `dict`
+        A field argument value map for queried return fields.
+
+    _______
+    Returns
+    _______
+    field : `moncli.api_v2.graphql.GraphQLOperation`
+        A graphql query operation node.
+    """
     
     return GraphQLOperation(OperationType.QUERY, query_name, *args, **kwargs)
 
 
 def create_mutation(query_name: str, *args, **kwargs):
+    """Create a GraphQL mutation operation.
+
+    __________
+    Parameters
+    __________
+    query_name : `str`
+        The name of the mutation to be run.
+    args : `tuple`
+        A collection of child return fields to add.
+    kwargs : `dict`
+        A field argument value map for queried return fields.
+
+    _______
+    Returns
+    _______
+    field : `moncli.api_v2.graphql.GraphQLOperation`
+        A graphql mutation operation node.
+    """
     
     return GraphQLOperation(OperationType.MUTATION, query_name, *args, **kwargs)
 
 
 def create_value(value, value_type: ArgumentValueKind):
+    """Transform value into ArgumentValue
+    
+    __________
+    Parameters
+    __________
+    value : `object`
+        Any data object value.
+    value_type : `moncli.api_v2.graphql.ArgumentValueKind`
+        The argument value conversion type.
+
+    _______
+    Results
+    _______
+    value = `moncli.api_v2.graphql.ArgumentValue`
+        The GraphQL argument value.
+    """
+
     if value_type == ArgumentValueKind.Default:
         return ArgumentValue(value)
     elif value_type == ArgumentValueKind.String:
