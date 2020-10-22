@@ -566,7 +566,7 @@ class NameValue(ColumnValue):
 
 
 class NumberValue(ColumnValue):
-    """A name column value.
+    """A number column value.
     
     __________
     Properties
@@ -698,11 +698,23 @@ class PeopleValue(ColumnValue):
 
 
 class PhoneValue(ColumnValue):
+    """A phone column value.
+    
+    __________
+    Properties
+    __________
+    phone : `str`
+        The phone number value.
+    country_short_name : `str`
+        The iso-2 country code.
+    """
+
     def __init__(self, **kwargs):
         super(PhoneValue, self).__init__(**kwargs)
 
     @property
     def phone(self):
+        """The phone number value."""
         try:
             return loads(self.value)['phone']
         except KeyError:
@@ -714,6 +726,7 @@ class PhoneValue(ColumnValue):
 
     @property
     def country_short_name(self):
+        """The iso-2 country code."""
         try:
             return loads(self.value)['countryShortName']
         except KeyError:
@@ -734,11 +747,21 @@ class PhoneValue(ColumnValue):
 
 
 class RatingValue(ColumnValue):
+    """A rating column value.
+    
+    __________
+    Properties
+    __________
+    rating : `int`
+        The rating value.
+    """
+
     def __init__(self, **kwargs):
         super(RatingValue, self).__init__(**kwargs)
 
     @property
     def rating(self):
+        """The rating value."""
         try:
             return loads(self.value)['rating']
         except KeyError:
@@ -759,6 +782,17 @@ class RatingValue(ColumnValue):
 
 
 class StatusValue(ColumnValue):
+    """A status column value.
+    
+    __________
+    Properties
+    __________
+    index : `int`
+        The id of the status label.
+    label : `str`
+        Display text of the status label.
+    """
+
     def __init__(self, **kwargs):
         try:
             self.__settings = kwargs.pop('settings')
@@ -768,6 +802,7 @@ class StatusValue(ColumnValue):
 
     @property
     def index(self):
+        """The id of the status label."""
         try:
             return loads(self.value)['index']
         except KeyError: 
@@ -786,6 +821,7 @@ class StatusValue(ColumnValue):
 
     @property
     def label(self):
+        """Display text of the status label"""
         try:
             return loads(self.value)['label']
         except KeyError:
@@ -813,39 +849,86 @@ class StatusValue(ColumnValue):
         
 
 class TagsValue(ColumnValue):
+    """A tags column value.
+    
+    __________
+    Properties
+    __________
+    tag_ids : `list[int]`
+        The list of tag ids assigned to column value. 
+
+    _______
+    Methods
+    _______
+    add : `void`
+        Add tag to column value.
+    remove : `void`
+        Remove tag from column value.
+    """
     def __init__(self, **kwargs):
         super(TagsValue, self).__init__(**kwargs)
 
     @property
     def tag_ids(self):
+        """The list of tag ids assigned to column value."""
         try:
             return loads(self.value)['tag_ids']
         except KeyError:
             return []
-
-    def add(self, tag_id: int):
-        tag_ids = self.tag_ids
-        if tag_id not in tag_ids:
-            tag_ids.append(tag_id)
-            self.set_value(tag_ids=tag_ids)
-
-    def remove(self, tag_id: int):
-        tag_ids = self.tag_ids
-        if tag_id in tag_ids:
-            tag_ids.remove(tag_id)
-            self.set_value(tag_ids=tag_ids)
 
     def format(self):
         """Format for column value update."""
         return { 'tag_ids': self.tag_ids }
 
 
+    def add(self, tag_id: int):
+        """Add tag to column value.
+
+        __________
+        Parameters
+        __________
+        tag_id : `int`
+            The id of the tag to add.
+        """
+
+        tag_ids = self.tag_ids
+        if tag_id not in tag_ids:
+            tag_ids.append(tag_id)
+            self.set_value(tag_ids=tag_ids)
+
+
+    def remove(self, tag_id: int):
+        """Remove tag from column value.
+
+        __________
+        Parameters
+        __________
+        tag_id : `int`
+            The id of the tag to remove.
+        """
+        
+        tag_ids = self.tag_ids
+        if tag_id in tag_ids:
+            tag_ids.remove(tag_id)
+            self.set_value(tag_ids=tag_ids)
+
+
 class TeamValue(ColumnValue):
+    """A team column value.
+    
+    __________
+    Properties
+    __________
+    team_id : `int`
+        The id of the assigned team.
+    """
+    
     def __init__(self, **kwargs):
         super(TeamValue, self).__init__(**kwargs)
 
     @property 
     def team_id(self):
+        """The id of the assigned team."""
         try:
             return loads(self.value)['team_id']
         except KeyError:
@@ -866,12 +949,22 @@ class TeamValue(ColumnValue):
 
 
 class TextValue(ColumnValue):
+    """A text column value.
+    
+    __________
+    Properties
+    __________
+    text_value : `str`
+        The column text value.
+    """
+
     null_value = ''
     def __init__(self, **kwargs):
         super(TextValue, self).__init__(**kwargs)
 
     @property
     def text_value(self):
+        """The column text value."""
         value = loads(self.value)
         if value == self.null_value:
             return None
@@ -892,11 +985,23 @@ class TextValue(ColumnValue):
 
 
 class TimelineValue(ColumnValue):
+    """A timeline column value.
+    
+    __________
+    Properties
+    __________
+    from_date : `str`
+        The timeline start date.
+    to_date : `str`
+        The timeline end date.
+    """
+
     def __init__(self, **kwargs):
         super(TimelineValue, self).__init__(**kwargs)
 
     @property
     def from_date(self):
+        """The timeline start date."""
         try:
             return loads(self.value)['from']
         except KeyError:
@@ -912,6 +1017,7 @@ class TimelineValue(ColumnValue):
 
     @property
     def to_date(self):
+        """The timeline end date."""
         try:
             return loads(self.value)['to']
         except KeyError:
