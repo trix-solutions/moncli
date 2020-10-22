@@ -451,11 +451,23 @@ class HourValue(ColumnValue):
 
 
 class LinkValue(ColumnValue):
+    """A link column value.
+    
+    __________
+    Properties
+    __________
+    url : `str`
+        The url address.
+    url_text : `str`
+        The display text.
+    """
+
     def __init__(self, **kwargs):
         super(LinkValue, self).__init__(**kwargs)
 
     @property
     def url(self):
+        """The url address."""
         try:
             return loads(self.value)['url']
         except KeyError:
@@ -467,6 +479,7 @@ class LinkValue(ColumnValue):
 
     @property
     def url_text(self):
+        """The display text."""
         try:
             return loads(self.value)['text']
         except KeyError:
@@ -484,11 +497,20 @@ class LinkValue(ColumnValue):
 
 
 class LongTextValue(ColumnValue):
+    """A long text column value.
+    
+    __________
+    Properties
+    __________
+    long_text : `str`
+        The long text value.
+    """
     def __init__(self, **kwargs):
         super(LongTextValue, self).__init__(**kwargs)
 
     @property
     def long_text(self):
+        """The longtext value."""
         try:
             return loads(self.value)['text']
         except KeyError:
@@ -509,6 +531,15 @@ class LongTextValue(ColumnValue):
 
 
 class NameValue(ColumnValue):
+    """A name column value.
+    
+    __________
+    Properties
+    __________
+    name : `str`
+        The name value.
+    """
+
     null_value = SIMPLE_NULL_VALUE
 
     def __init__(self, **kwargs):
@@ -516,6 +547,7 @@ class NameValue(ColumnValue):
 
     @property
     def name(self):
+        """The name value."""
         try:
             return loads(self.value)
         except Exception:
@@ -534,6 +566,15 @@ class NameValue(ColumnValue):
 
 
 class NumberValue(ColumnValue):
+    """A name column value.
+    
+    __________
+    Properties
+    __________
+    number : `int/float`
+        The integer or float number value.
+    """
+
     null_value = SIMPLE_NULL_VALUE
 
     def __init__(self, **kwargs):
@@ -541,6 +582,7 @@ class NumberValue(ColumnValue):
 
     @property
     def number(self):
+        """The integer or float number value."""
         value = loads(self.value)
         if value == self.null_value:
             return None
@@ -565,6 +607,7 @@ class NumberValue(ColumnValue):
         return SIMPLE_NULL_VALUE
 
     def __isfloat(self, value):
+        """Is the value a float."""
         try:
             float(value)
         except ValueError:
@@ -572,6 +615,7 @@ class NumberValue(ColumnValue):
         return True
   
     def __isint(self, value):
+        """Is the value an int."""
         try:
             a = float(value)
             b = int(a)
@@ -581,11 +625,29 @@ class NumberValue(ColumnValue):
 
 
 class PeopleValue(ColumnValue):
+    """A people column value.
+    
+    __________
+    Properties
+    __________
+    persons_and_teams : `list[dict]`
+        The persons and teams assigned to the column value.
+
+    _______
+    Methods
+    _______
+    add_people : `void`
+        Add user or team to column value.
+    remove_people : `void`
+        Remove user or team from column value.
+    """
+    
     def __init__(self, **kwargs):
         super(PeopleValue, self).__init__(**kwargs)
     
     @property
     def persons_and_teams(self):
+        """The persons and teams assigned to the column value."""
         try:
             return loads(self.value)['personsAndTeams']
         except KeyError:
@@ -597,7 +659,17 @@ class PeopleValue(ColumnValue):
             return { 'personsAndTeams': self.persons_and_teams }
         return self.null_value
 
+
     def add_people(self, person_or_team):
+        """Add user or team to column value.
+    
+        __________
+        Parameters
+        __________
+        person_or_team : `moncli.entities.User/moncli.entities.Team`
+            The person/team added to the column value.
+        """
+
         kind = enums.PeopleKind.person
         if type(person_or_team) == en.Team:
             kind = enums.PeopleKind.team
@@ -607,7 +679,17 @@ class PeopleValue(ColumnValue):
             persons_and_teams.append(value)
             self.set_value(personsAndTeams=persons_and_teams)
 
+
     def remove_people(self, id: int):
+        """Remove user or team from column value.
+    
+        __________
+        Parameters
+        __________
+        id : `int`
+            The id of the person/team to be removed.
+        """
+
         persons_and_teams = []
         for entity in self.persons_and_teams:
             if int(entity['id']) != id:
