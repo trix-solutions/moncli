@@ -57,6 +57,7 @@ class ColumnValue(_ColumnValue):
     set_value : `void`
         Sets the value of the column.
     """
+
     null_value = COMPLEX_NULL_VALUE
 
     def __init__(self, **kwargs):
@@ -196,6 +197,7 @@ class DateValue(ColumnValue):
     time : `str`
         The time value.
     """
+
     def __init__(self, **kwargs):
         super(DateValue, self).__init__(**kwargs)
 
@@ -238,6 +240,23 @@ class DateValue(ColumnValue):
         
 
 class DropdownValue(ColumnValue):
+    """A dropdown column value.
+    
+    __________
+    Properties
+    __________
+    labels : `list[moncli.entities.DropdownLabel]`
+        Labels currently assigned to the column value.
+
+    _______
+    Methods
+    _______
+    add_label : `void`
+        Add a label to the column value by id.
+    remove_label : `void`
+        Remove a label from the column value by id.
+    """
+
     def __init__(self, **kwargs):
         try:
             self.__settings = kwargs.pop('settings')
@@ -247,19 +266,33 @@ class DropdownValue(ColumnValue):
 
     @property
     def labels(self):
+        """Labels currently assigned to column value."""
+
         try:
             ids = loads(self.value)['ids']
             return [label for label in self.__settings.labels if label.id in ids]
         except KeyError:
             return []
 
+
     def format(self):
         """Format for column value update."""
+
         if len(self.labels) == 0:
             return {}
         return { 'ids': [label.id for label in self.labels] }
 
+
     def add_label(self, id: int):
+        """Add a label to the column value by id.
+
+        __________
+        Parameters
+        __________
+        id : `int`
+            The label ID of the label to add as defined in the column settings.
+        """
+
         try:
             label = self.__settings[id]
         except KeyError:
@@ -273,7 +306,17 @@ class DropdownValue(ColumnValue):
         value['ids'].append(label.id)
         self.set_value(ids=value['ids'])
 
+
     def remove_label(self, id: int):
+        """Remove a label from the column value by id.
+
+        __________
+        Parameters
+        __________
+        id : `int`
+            The label ID of the label to remove as defined in the column settings.
+        """
+
         try:
             label = self.__settings[id]
         except KeyError:
