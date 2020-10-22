@@ -2,27 +2,44 @@ import json
 from enum import Enum 
 
 
-def create_field(field_name: str, *argv, **kwargs):
-
-    return GraphQLField(field_name, *argv, **kwargs)
-
-
-def create_query(query_name: str, *argv, **kwargs):
-    
-    return GraphQLOperation(OperationType.QUERY, query_name, *argv, **kwargs)
-
-
-def create_mutation(query_name: str, *argv, **kwargs):
-    
-    return GraphQLOperation(OperationType.MUTATION, query_name, *argv, **kwargs)
-
-
 class OperationType(Enum):
+    """GraphQL query operation type."""
     QUERY = 1
     MUTATION = 2
 
 
+class ArgumentValueKind(Enum):
+    """GraphQL types for arguments and variables."""
+    Default = 0
+    String = 1
+    Int = 2
+    Bool = 3
+    Enum = 4
+    List = 5
+    Json = 6
+    File = 7
+
+
 class GraphQLNode():
+    """Base node in a GraphQL query.
+    
+    __________
+    Properties
+    __________
+    name : `str`
+        Query node entity name.
+    arguments : `dict`
+        Arguments associated with the query node entity.
+
+    
+    _______
+    Methods
+    _______
+    format_body : `str`
+        Formats the GraphQL node into a query string.
+    format_arguments : `str`
+        Formats arguments as a query string.
+    """
 
     def __init__(self, field_name: str):
 
@@ -31,10 +48,25 @@ class GraphQLNode():
 
 
     def format_body(self):
+        """Formats the GraphQL node into a query string."""
         pass
 
 
     def format_arguments(self, body: str):
+        """Formats arguments as query string.
+
+        __________
+        Parameters
+        __________
+        body : `str`
+            The name of the GraphQL field being formatted with arguments.
+
+        _______
+        Returns
+        _______
+        query_string : `str`
+            GraphQL-formatted query string.
+        """
 
         formatted_args = ', '.join(['{}:{}'.format(key, value) for key, value in self.arguments.items()])
         formatted_args = formatted_args.replace("'", '"')
@@ -43,17 +75,17 @@ class GraphQLNode():
 
 class GraphQLField(GraphQLNode):
 
-    def __init__(self, field_name: str, *argv, **kwargs):
+    def __init__(self, field_name: str, *args, **kwargs):
         super(GraphQLField, self).__init__(field_name)
         self.__children: dict = {}
         
-        self.add_fields(*argv)
+        self.add_fields(*args)
         self.add_arguments(**kwargs)
 
 
-    def add_fields(self, *argv):
+    def add_fields(self, *args):
 
-        for field in argv:
+        for field in args:
 
             if not field or field == '':
                 continue
@@ -129,10 +161,10 @@ class GraphQLField(GraphQLNode):
 
 class GraphQLOperation(GraphQLField):
 
-    def __init__(self, action_type: OperationType, query_name: str, *argv, **kwargs):
+    def __init__(self, action_type: OperationType, query_name: str, *args, **kwargs):
 
         self.action_type = action_type.name.lower()
-        super(GraphQLOperation, self).__init__(query_name, *argv, **kwargs)
+        super(GraphQLOperation, self).__init__(query_name, *args, **kwargs)
         self.query_variables: dict = {}
 
 
@@ -224,15 +256,24 @@ class FileValue(ArgumentValue):
         return str(self.value)
 
 
-class ArgumentValueKind(Enum):
-    Default = 0
-    String = 1
-    Int = 2
-    Bool = 3
-    Enum = 4
-    List = 5
-    Json = 6
-    File = 7
+class GraphQLError(Exception):
+    def __init__(self, message: str):
+        self.message = message
+
+
+def create_field(field_name: str, *args, **kwargs):
+
+    return GraphQLField(field_name, *args, **kwargs)
+
+
+def create_query(query_name: str, *args, **kwargs):
+    
+    return GraphQLOperation(OperationType.QUERY, query_name, *args, **kwargs)
+
+
+def create_mutation(query_name: str, *args, **kwargs):
+    
+    return GraphQLOperation(OperationType.MUTATION, query_name, *args, **kwargs)
 
 
 def create_value(value, value_type: ArgumentValueKind):
@@ -250,8 +291,3 @@ def create_value(value, value_type: ArgumentValueKind):
         return ListValue(value)
     elif value_type == ArgumentValueKind.Json:
         return JsonValue(value)
-
-
-class GraphQLError(Exception):
-    def __init__(self, message: str):
-        self.message = message
