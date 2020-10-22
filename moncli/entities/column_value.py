@@ -330,12 +330,23 @@ class DropdownValue(ColumnValue):
 
 
 class EmailValue(ColumnValue):
+    """An email column value.
+    
+    __________
+    Properties
+    __________
+    email : `str`
+        The email address.
+    email_text : `str`
+        The display text.
+    """
 
     def __init__(self, **kwargs):
         super(EmailValue, self).__init__(**kwargs)
 
     @property
     def email(self):
+        """The email address."""
         try:
             return loads(self.value)['email']
         except KeyError:
@@ -347,6 +358,7 @@ class EmailValue(ColumnValue):
 
     @property
     def email_text(self):
+        """The display text."""
         try:
             return loads(self.value)['text']
         except KeyError:
@@ -364,12 +376,21 @@ class EmailValue(ColumnValue):
 
 
 class FileValue(ColumnValue):
+    """A file column value.
+    
+    __________
+    Properties
+    __________
+    files : `list[dict]`
+        List of files attached to file column.
+    """
 
     def __init__(self, **kwargs):
         super(FileValue, self).__init__(**kwargs)
 
     @property
     def files(self):
+        """List of files attached to file column."""
         try:
             return loads(self.value)['files']
         except KeyError:
@@ -381,11 +402,23 @@ class FileValue(ColumnValue):
 
 
 class HourValue(ColumnValue):
+    """An hour column value.
+    
+    __________
+    Properties
+    __________
+    hour : `int`
+        The hour (2-digit).
+    minute : `int`
+        The minute (2-digit).
+    """
+
     def __init__(self, **kwargs):
         super(HourValue, self).__init__(**kwargs)
 
     @property
     def hour(self):
+        """The hour (2-digit)."""
         try:
             return loads(self.value)['hour']
         except KeyError:
@@ -397,6 +430,7 @@ class HourValue(ColumnValue):
     
     @property
     def minute(self):
+        """The minute (2-digit)."""
         try:
             return loads(self.value)['minute']
         except KeyError:
