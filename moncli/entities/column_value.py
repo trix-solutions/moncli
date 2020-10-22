@@ -14,6 +14,8 @@ SIMPLE_NULL_VALUE = ''
 COMPLEX_NULL_VALUE = {}
 
 class _ColumnValue(Model):
+    """Base column value model"""
+
     id = StringType(required=True)
     title = StringType()
     text = StringType()
@@ -28,6 +30,33 @@ class _ColumnValue(Model):
 
 
 class ColumnValue(_ColumnValue):
+    """The value of an items column.
+
+    __________
+    Properties
+    __________
+    additional_info : `json`
+        The column value's additional information.
+    id : `str`
+        The column's unique identifier.
+    text : `str`
+        The column's textual value in string form.
+    title : `str`
+        The columns title.
+    type : `str`
+        The column's type.
+    value : `json`
+        The column's value in json format.
+
+    
+    _______
+    Methods
+    _______
+    format : `dict`
+        Format for column value update.
+    set_value : `void`
+        Sets the value of the column.
+    """
     null_value = COMPLEX_NULL_VALUE
 
     def __init__(self, **kwargs):
@@ -36,9 +65,20 @@ class ColumnValue(_ColumnValue):
         if not self.value:
             self.value = dumps(self.null_value)
 
-    def set_value(self, *argv, **kwargs): 
-        if len(argv) > 0:
-            self.value = dumps(argv[0])
+    def set_value(self, *args, **kwargs): 
+        """Sets the value of the column.
+
+        __________
+        Parameters
+        __________
+        args : `tuple`
+            The column value for a string/int/boolean column value.
+        kwargs : `dict`
+            The column value for a complex dictionary object.    
+        """
+
+        if len(args) > 0:
+            self.value = dumps(args[0])
         elif len(kwargs) > 0:
             value_obj = loads(self.value)
             for key, value in kwargs.items():
@@ -49,11 +89,21 @@ class ColumnValue(_ColumnValue):
 
 
 class CheckboxValue(ColumnValue):
+    """A checkbox column value.
+    
+    __________
+    Properties
+    __________
+    checked : `bool`
+        Is the column checked.
+    """
+
     def __init__(self, **kwargs):
         super(CheckboxValue, self).__init__(**kwargs)
         
     @property
     def checked(self):
+        """Is the column checked"""
         try:
             return loads(self.value)['checked']
         except KeyError:
@@ -68,17 +118,30 @@ class CheckboxValue(ColumnValue):
 
     
     def format(self):
+        """Format for columjn value update."""
         if self.checked:
             return { 'checked': 'true' }
         return self.null_value
 
 
 class CountryValue(ColumnValue):
+    """A checkbox column value.
+    
+    __________
+    Properties
+    __________
+    country_code : `str`
+        The country code.
+    country_name : `str`
+        The country name.
+    """
+
     def __init__(self, **kwargs):
         super(CountryValue, self).__init__(**kwargs)
 
     @property
     def country_code(self):
+        """The country code."""
         try:
             return loads(self.value)['countryCode']
         except KeyError:
@@ -96,6 +159,7 @@ class CountryValue(ColumnValue):
 
     @property
     def country_name(self):
+        """The country name."""
         try:
             return loads(self.value)['countryName']
         except KeyError:
@@ -112,6 +176,7 @@ class CountryValue(ColumnValue):
         self.set_value(countryCode=country.alpha_2, countryName=country.name)
  
     def format(self):
+        """Format for column value update."""
         if self.country_code and self.country_name:
             return {
                 'countryCode': self.country_code,
@@ -121,11 +186,22 @@ class CountryValue(ColumnValue):
 
 
 class DateValue(ColumnValue):
+    """A date column value.
+
+    __________
+    Properties
+    __________
+    date : `str`
+        The date value.
+    time : `str`
+        The time value.
+    """
     def __init__(self, **kwargs):
         super(DateValue, self).__init__(**kwargs)
 
     @property
     def date(self):
+        """The date value."""
         try:
             return loads(self.value)['date']
         except KeyError:
@@ -139,6 +215,7 @@ class DateValue(ColumnValue):
 
     @property
     def time(self):
+        """The time value."""
         try:
             return loads(self.value)['time']
         except KeyError:
@@ -151,6 +228,7 @@ class DateValue(ColumnValue):
         self.set_value(time=value)
 
     def format(self):
+        """Format for column value update."""
         if self.date:
             result = {'date': self.date}
             if self.time:
@@ -176,6 +254,7 @@ class DropdownValue(ColumnValue):
             return []
 
     def format(self):
+        """Format for column value update."""
         if len(self.labels) == 0:
             return {}
         return { 'ids': [label.id for label in self.labels] }
@@ -235,6 +314,7 @@ class EmailValue(ColumnValue):
         self.set_value(text=value)
     
     def format(self):
+        """Format for column value update."""
         if self.email:  
             return { 'email': self.email, 'text': self.email_text }
         return self.null_value
@@ -253,6 +333,7 @@ class FileValue(ColumnValue):
             return None
 
     def format(self):
+        """Format for column value update."""
         return { 'clear_all': True }
 
 
@@ -286,6 +367,7 @@ class HourValue(ColumnValue):
         self.set_value(minute=0)
 
     def format(self):
+        """Format for column value update."""
         if self.hour:
             return { 'hour': self.hour, 'minute': self.minute }
         return self.null_value
@@ -318,6 +400,7 @@ class LinkValue(ColumnValue):
         return self.set_value(text=value)
 
     def format(self):
+        """Format for column value update."""
         if self.url:
             return { 'url': self.url, 'text': self.url_text }
         return self.null_value
@@ -342,6 +425,7 @@ class LongTextValue(ColumnValue):
         self.set_value()
 
     def format(self):
+        """Format for column value update."""
         if self.long_text:
             return {'text': self.long_text}
         return self.null_value
@@ -368,6 +452,7 @@ class NameValue(ColumnValue):
             self.set_value()
     
     def format(self):
+        """Format for column value update."""
         return self.name
 
 
@@ -397,6 +482,7 @@ class NumberValue(ColumnValue):
             self.set_value()
 
     def format(self):
+        """Format for column value update."""
         if self.number:
             return str(self.number)
         return SIMPLE_NULL_VALUE
@@ -429,6 +515,7 @@ class PeopleValue(ColumnValue):
             return [] 
 
     def format(self):
+        """Format for column value update."""
         if self.persons_and_teams:
             return { 'personsAndTeams': self.persons_and_teams }
         return self.null_value
@@ -481,6 +568,7 @@ class PhoneValue(ColumnValue):
         self.set_value(countryShortName=value)
     
     def format(self):
+        """Format for column value update."""
         if self.phone and self.country_short_name:
             return { 'phone': self.phone, 'countryShortName': self.country_short_name }
         return { 'phone': '', 'countryShortName': '' }
@@ -505,6 +593,7 @@ class RatingValue(ColumnValue):
             self.set_value()
 
     def format(self):
+        """Format for column value update."""
         if self.rating:
             return { 'rating': self.rating }
         return self.null_value
@@ -558,6 +647,7 @@ class StatusValue(ColumnValue):
             self.set_value()
 
     def format(self):
+        """Format for column value update."""
         if self.index or self.index == 0:
             return {'index': self.index}
         return self.null_value
@@ -587,6 +677,7 @@ class TagsValue(ColumnValue):
             self.set_value(tag_ids=tag_ids)
 
     def format(self):
+        """Format for column value update."""
         return { 'tag_ids': self.tag_ids }
 
 
@@ -609,6 +700,7 @@ class TeamValue(ColumnValue):
             self.set_value()
 
     def format(self):
+        """Format for column value update."""
         if self.team_id is not None:
             return { 'team_id': self.team_id }
         return self.null_value
@@ -634,6 +726,7 @@ class TextValue(ColumnValue):
             self.set_value()
 
     def format(self):
+        """Format for column value update."""
         if self.text_value:
             return self.text_value
         return self.null_value
@@ -674,6 +767,7 @@ class TimelineValue(ColumnValue):
             self.set_value()
 
     def format(self):
+        """Format for column value update."""
         if self.from_date and self.to_date:
             return { 'from': self.from_date, 'to': self.to_date }
         return self.null_value
@@ -702,6 +796,7 @@ class TimezoneValue(ColumnValue):
             self.set_value()  
 
     def format(self):
+        """Format for column value update."""
         if self.timezone:
             return { 'timezone': self.timezone }
         return self.null_value
@@ -747,11 +842,12 @@ class WeekValue(ColumnValue):
             self.set_value()
 
     def format(self):
+        """Format for column value update."""
         if self.start_date and self.end_date:
             return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
         return self.null_value
 
-    def set_value(self, *argv, **kwargs):
+    def set_value(self, *args, **kwargs):
         value = loads(self.value)
         if len(kwargs) == 0:
             value = self.null_value
