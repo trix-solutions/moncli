@@ -575,7 +575,7 @@ class Item(_Item):
     
 
     @optional_arguments(constants.CHANGE_COLUMN_VALUE_OPTIONAL_PARAMS)
-    def change_column_value(self, column_value: en.ColumnValue = None, *args):
+    def change_column_value(self, column_value = None, *args):
         """Get an item's column value by ID or title.
         __________
         Parameters

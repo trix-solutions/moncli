@@ -7,6 +7,16 @@ from .. import config
 from ..enums import ColumnType
 
 class MondayClientCredentials():
+    """monday.com client credentials.
+    
+    __________
+    Properties
+    __________
+    api_key_v1 : `str`
+        The access key for monday.com API v1.
+    api_key_v2 : `str`
+        The access key for monday.com API v2.
+    """
 
     def __init__(self, api_key_v1: str, api_key_v2: str):
         self.api_key_v1 = api_key_v1
@@ -14,6 +24,25 @@ class MondayClientCredentials():
 
 
 class ActivityLog(Model):
+    """monday.com client credentials.
+    
+    __________
+    Properties
+    __________
+    account_id : `str`
+        The user's payment account.
+    created_at : `str`
+        The activity log's created date.
+    data : `str`
+        The item's column values in string form.
+    entity : `str`
+        The monday.com object being updated.
+    id : `str`
+        The activity log's unique identifier.
+    user_id : `str`
+        The user who performed the change.
+    """
+
     id = types.StringType(required=True)
     account_id = types.StringType()
     created_at = types.StringType()
@@ -27,6 +56,31 @@ class ActivityLog(Model):
 
 
 class Column(Model):
+    """A board's column.
+    
+    __________
+    Properties
+    __________
+    archived : `bool`
+        Is the column archived or not.
+    id : `str`
+        The column's unique identifier.
+    pos : `str`
+        The column's position in the board. 
+    settings_str : `str`
+        The column's settings in a string form.
+    settings : `moncli.entities.Settings`
+        The settings in entity form (status / dropdown)
+    title : `str`
+        The column's title.
+    type : `str`
+        The column's type.
+    column_type : `moncli.entities.ColumnType`
+        The column's type as an enum.
+    width : `int`
+        The column's width.
+    """
+
     id = types.StringType(required=True)
     title = types.StringType()
     archived = types.BooleanType()
@@ -54,6 +108,17 @@ class Column(Model):
 
 
 class Notification(Model):
+    """A notification.
+
+    __________
+    Properties
+    __________
+    id : `str`
+        The notification`s unique identifier.
+    text : `str`
+        the notification text.
+    """
+
     id = types.StringType(required=True)
     text = types.StringType()
 
@@ -62,6 +127,19 @@ class Notification(Model):
 
 
 class Tag(Model):
+    """A tag.
+
+    __________
+    Properties
+    __________
+    color : `str`
+        The tag's color.
+    id : `str`
+        The tag's unique identifier.
+    name : `str`
+        The tag's name.
+    """
+
     id = types.StringType(required=True)
     name = types.StringType()
     color = types.StringType()
@@ -71,6 +149,21 @@ class Tag(Model):
 
 
 class Plan(Model):
+    """ A payment plan.
+    
+    __________
+    Properties
+    __________
+    max_users : `int`
+        The maximum users allowed in the plan.
+    period : `str`
+        The plan's time period.
+    tier : `str`
+        The plan's tier.
+    version : `int`
+        The plan's version.
+    """
+
     max_users = types.IntType()
     period = types.StringType()
     tier = types.StringType()
@@ -81,6 +174,19 @@ class Plan(Model):
 
 
 class Webhook(Model):
+    """ Monday webhooks
+
+    __________
+    Properties
+    __________
+    board_id : `str`
+        The webhook's board id.
+    id : `str`
+        The webhook's unique identifier.
+    is_active : `bool`
+        If the webhook is still active.
+    """
+
     id = types.StringType(required=True)
     board_id = types.StringType()
     is_active = types.BooleanType(default=False)
@@ -90,6 +196,20 @@ class Webhook(Model):
 
 
 class Workspace(Model):
+    """ A monday.com workspace
+
+    __________
+    Properties
+    __________
+    description : `str`
+        The workspace's description.
+    id : `int`
+        The workspace`s unique identifier.
+    kind : `moncli.enums.WorkspaceKind`
+        The workspace's kind (open / closed)
+    name : `str`
+        The workspace's name.
+    """
     id = types.StringType(required=True)
     name = types.StringType()
     kind = types.StringType()
@@ -100,14 +220,49 @@ class Workspace(Model):
 
 
 class StatusSettings(Model):
+    """The settings of a status column
+
+    __________
+    Properties
+    __________
+    labels : `str`
+        The index / label parings of a status column option.
+    labels_colors : `dict`
+        The index / color property parings of a status column option.
+    labels_positions_v2 : `dict`
+        The position of each label by ID.
+
+    _______
+    Methods
+    _______
+    get_index : `str`
+        Get the label ID from the label value.
+    """
 
     labels = types.DictType(types.StringType())
     labels_colors = types.DictType(types.DictType(types.StringType()))
+    labels_positions_v2 = types.DictType(types.StringType())
 
     def __repr__(self):
         return str(self.to_primitive())
 
     def get_index(self, label: str):
+        """Get the label ID from the label value.
+
+
+        __________
+        Parameters
+        __________
+        label : `str`
+            The status column option label value.
+
+        _______
+        Returns
+        _______
+        index : `int`
+            The id of the status column option.
+        """
+
         for key, value in dict(self.labels).items():
             if value == label:
                 return int(key)
@@ -118,6 +273,16 @@ class StatusSettings(Model):
 
 
 class DropdownLabel(Model):
+    """Label options for a dropdown column
+
+    __________
+    Properties
+    __________
+    id : `int`
+        The label ID.
+    name : `str`
+        The label name.
+    """
 
     id = types.IntType(required=True)
     name = types.StringType(required=True)
@@ -127,6 +292,14 @@ class DropdownLabel(Model):
 
 
 class DropdownSettings(Model):
+    """Settings for a dropdown column
+    
+    __________
+    Properties
+    __________
+    labels : `list[moncli.entities.DropdownLabel]`
+        The dropdown column's list of labels. 
+    """
     
     labels = types.ListType(types.ModelType(DropdownLabel))
 
