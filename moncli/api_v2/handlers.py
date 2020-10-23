@@ -1093,17 +1093,19 @@ def archive_item(api_key: str, item_id: str, *args, **kwargs):
 
 
 def delete_item(api_key: str, item_id: str, *args, **kwargs):
-    """
+    """Delete an item.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        item_id : `int`
+            The item's unique identifier.
         args : `tuple`
-            The list of <> return fields.
+            The list of item return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for item.
 
     _______
     Returns
@@ -1140,12 +1142,6 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
             The item's last update date.
         updates : `moncli.entities.Update`
             The item's updates.
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
