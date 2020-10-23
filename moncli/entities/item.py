@@ -875,6 +875,63 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
 
 
+    def duplicate(self, *args, **kwargs):
+        """Duplicate an item.
+
+    __________
+    Parameters
+
+        args : `tuple`
+            The list of item return fields.
+        kwargs : `dict`
+            Optional keyword arguments for duplicating item.
+
+    _______
+    Returns
+        
+        item : `moncli.entities.Item`
+            The duplicated item.
+
+    _____________
+    Return Fields
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
+
+    __________________
+    Optional Arguments
+
+        with_updates : `bool`
+            Duplicate with the item's updates.
+    """
+
+    pass
+
+
     @optional_arguments(constants.CREATE_UPDATE_OPTIONAL_PARAMS)
     def add_update(self, body: str, *args, **kwargs):
         """Change the item's column values.
