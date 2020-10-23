@@ -500,29 +500,53 @@ def get_assets(api_key: str, ids: list, *args, **kwargs):
 
 
 def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
-    """
+    """Duplicate a group.
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        board_ id : `str`
+            The board's unique identifier.
+        group_id : `str`
+            The group's unique identifier.
+        args : `tuple`
+            The list of asset return fields.
+        kwargs : `dict`
+            Optional arguments for querying assets.
 
     _______
     Returns
         
         data : `dict`
-
+            A monday.com group in item form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        archived : `bool`
+            Is the group archived or not.
+        color : `str`
+            The group's color.
+        deleted : `bool`
+            Is the group deleted or not.
+        id : `str`
+            The group's unique identifier.
+        items : `list[moncli.entities.Item]`
+            The items in the group.
+        position : `str`
+            The group's position in the board.
+        title : `str`
+            The group's title.
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        add_to_top : `bool`
+            Should the new group be added to the top.
+        group_title : `str`
+            The group's title.
     """
     
     args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
