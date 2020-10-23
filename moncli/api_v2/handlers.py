@@ -1212,7 +1212,7 @@ def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
 
 
 def get_updates(api_key: str, *args, **kwargs):
-    """
+    """Get a collection of updates.
 
     __________
     Parameters
@@ -1220,9 +1220,9 @@ def get_updates(api_key: str, *args, **kwargs):
         api_key : `str`
             The monday.com v2 API user key.
         args : `tuple`
-            The list of <> return fields.
+            The list of update return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for querying updates.
 
     _______
     Returns
@@ -1256,9 +1256,11 @@ def get_updates(api_key: str, *args, **kwargs):
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        limit : `int`
+            Number of updates to get; the default is 25.
+        page : `int`
+            Page number to get, starting at 1.
     """
     
     args = get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)
