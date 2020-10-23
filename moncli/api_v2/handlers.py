@@ -1456,17 +1456,21 @@ def get_tags(api_key: str, *args, **kwargs):
 
 
 def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kwargs):
-    """
+    """Add a file to an update.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        update_id : `str`
+            The update to add the file to.
+        file_path : `str`
+            The path of the file to upload.
         args : `tuple`
-            The list of <> return fields.
+            The list of asset return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for adding file to update.
 
     _______
     Returns
@@ -1495,12 +1499,6 @@ def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kw
             The user who uploaded the file
         url_thumbnail : `str`
             Url to view the asset in thumbnail mode. Only available for images.  
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     name = constants.ADD_FILE_TO_UPDATE
