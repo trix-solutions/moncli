@@ -5,6 +5,34 @@ from . import MondayApiError
 
 
 def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
+    """Executes a graphql query via Rest.
+    
+    __________
+    Parameters
+    __________
+    api_key : `str`
+        The monday.com API v2 user key.
+    timeout : `int`
+        The default timeout for Rest requests.
+    kwargs : `dict`
+        Optional keyword arguments
+
+    _______
+    Returns
+    _______
+    data : `dict`
+        Response data in dictionary form.
+
+    __________________
+    Optional Arguments
+    __________________
+    operation : `moncli.api_v2.graphql.GraphQLOperation`
+        Perform request with input graphql operation.
+    query : `str`
+        Perform request with raw graphql query string.
+    variables : `dict`
+        Variables added to the query.
+    """
 
     query = None
     variables = None
@@ -28,6 +56,30 @@ def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
 
 
 def upload_file(api_key: str, file_path: str, timeout = constants.TIMEOUT, **kwargs):
+    """Executes a graphql query to upload a file via Rest.
+    
+    __________
+    Parameters
+    __________
+    api_key : `str`
+        The monday.com API v2 user key.
+    timeout : `int`
+        The default timeout for Rest requests.
+    kwargs : `dict`
+        Optional keyword arguments
+
+    _______
+    Returns
+    _______
+    data : `dict`
+        Response data in dictionary form.
+
+    __________________
+    Optional Arguments
+    __________________
+    operation : `moncli.api_v2.graphql.GraphQLOperation`
+        Perform file upload request with input graphql operation.
+    """
 
     query = None
     for key, value in kwargs.items():
@@ -49,6 +101,7 @@ def upload_file(api_key: str, file_path: str, timeout = constants.TIMEOUT, **kwa
     
 
 def _process_repsonse(api_key: str, timeout: int, resp, data, **kwargs):
+    """Process Rest graphql response/retry request."""
 
     text: dict = resp.json()
 

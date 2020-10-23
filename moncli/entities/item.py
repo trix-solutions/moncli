@@ -561,7 +561,6 @@ class Item(_Item):
             The column's value in json format.
         """
 
-        args = ['column_values.' + arg for arg in client.get_field_list(constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS, *args)]
         if id and title:
             raise en.board.TooManyGetColumnValueParameters()
         if id is None and title is None:
