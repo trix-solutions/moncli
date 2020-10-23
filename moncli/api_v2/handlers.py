@@ -343,11 +343,97 @@ def add_subscribers_to_board(api_key: str, board_id: str, user_ids: list, *args,
             Subscribers kind (subscriber / owner).
     """
 
-    args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
+    args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ADD_SUBSCRIBERS_TO_BOARD_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['user_ids'] = util.ListValue([int(id) for id in user_ids])
     return execute_mutation(api_key, constants.ADD_SUBSCRIBERS_TO_BOARD, *args, **kwargs)
+
+
+def delete_subscribers_from_board(api_key: str, board_id: str, user_ids: list, *args, **kwargs):
+    """Remove subscribers from the board.
+
+    __________
+    Parameters
+
+        api_key : `str`
+            The monday.com v2 API user key.
+        board_id : `str`
+            The board's unique identifier.
+        user_ids : `list[str]`
+            User ids to unsubscribe from board.
+        args : `tuple`
+            The list of user return fields.
+        kwargs : `dict`
+            Additional keyword arguments for deleting subscribers.
+
+    _______
+    Returns
+
+        data : `dict`
+            A monday.com user in dictionary form.
+    
+    _____________
+    Return Fields
+    
+        account : `moncli.entities.Account`
+            The user's account.
+        birthday : `str`
+            The user's birthday.
+        country_code : `str`
+            The user's country code.
+        created_at : `str`
+            The user's creation date.
+        email : `str`
+            The user's email.
+        enabled : `bool`
+            Is the user enabled or not.
+        id : `str`
+            The user's unique identifier.
+        is_guest : `bool`
+            Is the user a guest or not.
+        is_pending : `bool`
+            Is the user a pending user.
+        is_view_only : `bool`
+            Is the user a view only user or not.
+        join_date : `str`
+            The date the user joined the account.
+        location : `str`
+            The user' location.
+        mobile_phone : `str`
+            The user's mobile phone number.
+        name : `str`
+            The user's name.
+        phone : `str`
+            The user's phone number.
+        photo_original : `str`
+            The user's photo in the original size.
+        photo_small : `str`
+            The user's photo in small size (150x150).
+        photo_thumb : `str`
+            The user's photo in thumbnail size (100x100).
+        photo_thumb_small : `str`
+            The user's photo in small thumbnail size (50x50).
+        photo_tiny : `str`
+            The user's photo in tiny size (30x30).
+        teams : `list[moncli.entities.Team]`
+            The teams the user is a member in.
+        time_zone_identifier : `str`
+            The user's time zone identifier.
+        title : `str`
+            The user's title.
+        url : `str`
+            The user's profile url.
+        utc_hours_diff : `int`
+            The user's UTC hours difference.
+    """
+
+    args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)
+    kwargs = {
+        'board_id': util.IntValue(board_id),
+        'user_ids': util.ListValue([int(id) for id in user_ids])
+    }
+    return execute_mutation(api_key, constants.DELETE_SUBSCRIBERS_FROM_BOARD, *args, **kwargs)
 
     
 def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *args, **kwargs):
