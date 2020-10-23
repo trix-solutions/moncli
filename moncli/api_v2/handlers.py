@@ -6,6 +6,30 @@ from .exceptions import MondayApiError
 
 
 def create_board(api_key: str, board_name: str, board_kind: BoardKind, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+
     args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS)
     kwargs = get_method_arguments(constants.CREATE_BOARD_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_name'] = util.StringValue(board_name)
@@ -14,6 +38,30 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind, *args, **
 
 
 def get_boards(api_key: str, *args, **kwargs) -> List[Dict[str, Any]]:
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.BOARDS_OPTIONAL_PARAMS, **kwargs)
     operation = util.create_query(constants.BOARDS, *args, **kwargs)
@@ -21,6 +69,30 @@ def get_boards(api_key: str, *args, **kwargs) -> List[Dict[str, Any]]:
 
 
 def archive_board(api_key: str, board_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS)
     kwargs = get_method_arguments(constants.ARCHIVE_BOARD_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
@@ -28,6 +100,30 @@ def archive_board(api_key: str, board_id: str, *args, **kwargs):
 
     
 def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_COLUMN_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
@@ -37,6 +133,30 @@ def create_column(api_key: str, board_id: str, title: str, column_type: ColumnTy
 
 
 def change_column_value(api_key: str, item_id: str, column_id: str, board_id: str, value: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CHANGE_COLUMN_VALUE_OPTIONAL_PARAMS)
     kwargs['item_id'] = util.IntValue(item_id)
@@ -47,6 +167,30 @@ def change_column_value(api_key: str, item_id: str, column_id: str, board_id: st
 
 
 def change_multiple_column_value(api_key: str, item_id: str, board_id: str, column_values: dict, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CHANGE_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
@@ -56,6 +200,30 @@ def change_multiple_column_value(api_key: str, item_id: str, board_id: str, colu
 
 
 def get_assets(api_key: str, ids: list, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ASSETS_OPTIONAL_PARAMS, **kwargs)
     ids = [util.IntValue(id).value for id in ids]
@@ -64,6 +232,30 @@ def get_assets(api_key: str, ids: list, *args, **kwargs):
 
 
 def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.DUPLICATE_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
@@ -72,6 +264,30 @@ def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs)
 
 
 def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
@@ -80,6 +296,30 @@ def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
 
 
 def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ARCHIVE_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
@@ -88,6 +328,30 @@ def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
 
 def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.DELETE_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
@@ -96,6 +360,30 @@ def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
 
 def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_ITEM_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_name'] = util.StringValue(item_name)
@@ -104,12 +392,60 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
 
 
 def get_items(api_key: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ITEMS_OPTIONAL_PARAMS, **kwargs) 
     return execute_query(api_key, constants.ITEMS, *args, **kwargs)
 
 
 def get_items_by_column_values(api_key: str, board_id: str, column_id: str, column_value: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
@@ -119,12 +455,60 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
 
 def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs['item_id'] = util.IntValue(item_id)
     return execute_mutation(api_key, constants.CLEAR_ITEM_UPDATES, *args, **kwargs)
 
 
 def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
@@ -133,6 +517,30 @@ def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwarg
 
 
 def archive_item(api_key: str, item_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ARCHIVE_ITEM_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
@@ -140,6 +548,30 @@ def archive_item(api_key: str, item_id: str, *args, **kwargs):
 
 
 def delete_item(api_key: str, item_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.DELETE_ITEM_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
@@ -147,6 +579,30 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
 
 
 def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_UPDATE_OPTIONAL_PARAMS, **kwargs)
     kwargs['body'] = util.StringValue(body)
@@ -155,18 +611,90 @@ def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
 
 
 def get_updates(api_key: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.UPDATES_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, constants.UPDATES, *args, **kwargs)
 
 
 def delete_update(api_key: str, id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)
     kwargs['id'] = util.IntValue(id)
     return execute_mutation(api_key, constants.DELETE_UPDATE, *args, **kwargs)
 
 
 def create_notification(api_key: str, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_NOTIFICATION_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS, **kwargs)
     kwargs['text'] = util.StringValue(text)
@@ -177,6 +705,30 @@ def create_notification(api_key: str, text: str, user_id: str, target_id: str, t
 
 
 def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_OR_GET_TAG_OPTIONAL_PARAMS, **kwargs)
     kwargs['tag_name'] = util.StringValue(tag_name)
@@ -184,12 +736,60 @@ def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
 
 
 def get_tags(api_key: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.TAGS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, constants.TAGS, *args, **kwargs)
 
 
 def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     name = constants.ADD_FILE_TO_UPDATE
     args = get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS, *args)
     kwargs['file'] = util.FileValue('$file')
@@ -201,6 +801,30 @@ def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kw
 
 
 def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     name = constants.ADD_FILE_TO_COLUMN
     args = get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS)
     kwargs['file'] = util.FileValue('$file')
@@ -213,28 +837,148 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
 
 
 def get_users(api_key: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.USERS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, constants.USERS, *args, **kwargs)
 
 
 def get_teams(api_key: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_TEAM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.TEAMS_OPTIONAL_PARAMS, **kwargs)
     return execute_query(api_key, constants.TEAMS, *args, **kwargs)
 
 
 def get_me(api_key: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)
     return execute_query(api_key, constants.ME, *args, **kwargs)
 
 
 def get_account(api_key: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_ACCOUNT_QUERY_FIELDS, *args)
     return execute_query(api_key, constants.ACCOUNT, *args, **kwargs)
 
 
 def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventType, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_WEBHOOK_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_WEBHOOK_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
@@ -244,12 +988,60 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
 
 
 def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_WEBHOOK_QUERY_FIELDS, *args)
     kwargs['id'] = util.IntValue(webhook_id)
     return execute_mutation(api_key, constants.DELETE_WEBHOOK, *args, **kwargs)
 
 
 def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     args = get_field_list(constants.DEFAULT_WORKSPACE_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_WORKSPACE_OPTIONAL_PARAMS, **kwargs)
     kwargs['name'] = util.StringValue(name)
@@ -258,12 +1050,60 @@ def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwar
 
 
 def execute_query(api_key:str, query_name: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     operation = util.create_query(query_name, *args, **kwargs)
     result = requests.execute_query(api_key, operation=operation)
     return result[query_name]
 
 
 def execute_mutation(api_key: str, query_name: str, *args, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
 
     if kwargs.__contains__('include_complexity'):
         raise MondayApiError(query_name, 400, '', ['Query complexity cannot be retrieved for mutation requests.'])
@@ -277,11 +1117,59 @@ def execute_mutation(api_key: str, query_name: str, *args, **kwargs):
 
 
 def get_field_list(fields: list, *args):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     if not args:
         return fields
     return args
 
 def get_method_arguments(mappings: dict, **kwargs):
+    """
+
+    __________
+    Parameters
+    __________
+
+
+    _______
+    Returns
+    _______
+
+
+    _____________
+    Return Fields
+    _____________
+
+
+    __________________
+    Optional Arguments
+    __________________
+
+
+    """
+    
     result = {}
     for key, value in mappings.items():   
         try:
