@@ -308,7 +308,7 @@ def test_duplicate_item(execute_query):
     # Arrange
     id = '1'
     name = 'dupe'
-    execute_query.return_value = {constants.DUPLICATE_ITEM: {'id': id, 'name': dupe}}
+    execute_query.return_value = {constants.DUPLICATE_ITEM: {'id': id, 'name': name}}
 
     # Act
     duplicate_item = handlers.duplicate_item('', '1', '1')

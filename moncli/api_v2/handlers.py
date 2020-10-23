@@ -1387,7 +1387,13 @@ def duplicate_item(api_key: str, board_id: str, item_id: str, *args, **kwargs):
             Duplicate with the item's updates.
     """
     
-    pass
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
+    kwargs = {
+        'board_id': util.IntValue(board_id),
+        'item_id': util.IntValue(item_id)
+    }
+    kwargs = get_method_arguments(constants.DELETE_ITEM_OPTIONAL_PARAMS, **kwargs)
+    return execute_mutation(api_key, constants.DUPLICATE_ITEM, *args, **kwargs)
 
 
 def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
