@@ -247,6 +247,9 @@ BOARDS_OPTIONAL_PARAMS = {
         'from': ArgumentValueKind.String,
         'to': ArgumentValueKind.String
     },
+    'columns': {
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.String)
+    },
     'groups': {
         'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
         'items': {
@@ -259,9 +262,6 @@ BOARDS_OPTIONAL_PARAMS = {
         'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
         'limit': ArgumentValueKind.Int,
         'page': ArgumentValueKind.Int
-    },
-    'subscribers': {
-        'kind': ArgumentValueKind.Enum
     },
     'updates': {
         'limit': ArgumentValueKind.Int,
