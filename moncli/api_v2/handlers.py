@@ -618,9 +618,9 @@ def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
         group_id : `str`
             The group's unique identifier.
         args : `tuple`
-            The list of asset return fields.
+            The list of group return fields.
         kwargs : `dict`
-            Optional arguments for querying assets.
+            Optional arguments for archiving groups.
 
     _______
     Returns
@@ -666,6 +666,10 @@ def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
             The board's unique identifier.
         group_id : `str`
             The group's unique identifier.
+        args : `tuple`
+            The list of group return fields.
+        kwargs : `dict`
+            Optional arguments for deleting groups.
 
     _______
     Returns
