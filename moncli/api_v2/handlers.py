@@ -1908,17 +1908,21 @@ def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
 
 
 def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwargs):
-    """
+    """Create a new workspace.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        name : `str`
+            The Workspace's name
+        kind : `moncli.enums.WorkspaceKind`
+            The workspace's kind (open / closed)
         args : `tuple`
-            The list of <> return fields.
+            The list of workspace return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for creating workspace.
 
     _______
     Returns
@@ -1940,9 +1944,9 @@ def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwar
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        description : `str`
+            The Workspace's description.
     """
     
     args = get_field_list(constants.DEFAULT_WORKSPACE_QUERY_FIELDS, *args)
