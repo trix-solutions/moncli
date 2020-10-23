@@ -1873,17 +1873,19 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
 
 
 def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
-    """
+    """Delete a new webhook.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        webhook_id : `str`
+            The webhook's unique identifier.
         args : `tuple`
-            The list of <> return fields.
+            The list of webhook return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for deleting webhook.
 
     _______
     Returns
@@ -1898,12 +1900,6 @@ def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
             The webhook's board id.
         id : `str`
             The webhook's unique identifier.
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_WEBHOOK_QUERY_FIELDS, *args)
