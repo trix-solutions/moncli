@@ -449,29 +449,47 @@ def change_multiple_column_value(api_key: str, item_id: str, board_id: str, colu
 
 
 def get_assets(api_key: str, ids: list, *args, **kwargs):
-    """
+    """Get a collection of assets by ids.
 
     __________
     Parameters
-    __________
 
+        api_key : `str`
+            The monday.com v2 API user key.
+        ids : `list[str]`
+            Ids of the assets/files you want to get.
+        args : `tuple`
+            The list of asset return fields.
+        kwargs : `dict`
+            Optional arguments for querying assets.
 
     _______
     Returns
         
         data : `dict`
-
+            A monday.com asset in item form.
 
     _____________
     Return Fields
-    _____________
-
-
-    __________________
-    Optional Arguments
-    __________________
-
-
+    
+        created_at : `str`
+            The file's creation date.
+        file_extension : `str`
+            The file's extension.
+        file_size : `int`
+            The file's size in bytes.
+        id : `str`
+            The file's unique identifier.
+        name : `str`
+            The file's name.
+        public_url : `str`
+            Public url to the asset, valid for 1 hour.
+        uploaded_by : `moncli.entities.user.User`
+            The user who uploaded the file
+        url : `str`
+            The user who uploaded the file
+        url_thumbnail : `str`
+            Url to view the asset in thumbnail mode. Only available for images.   
     """
     
     args = get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS, *args)
