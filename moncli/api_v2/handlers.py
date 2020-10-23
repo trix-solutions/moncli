@@ -557,22 +557,41 @@ def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs)
 
 
 def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
-    """
+    """Creates a new group in a specific board.
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        board_id : `str`
+            The board's unique identifier.
+        group_name : `str`
+            The name of the new group.
 
     _______
     Returns
         
         data : `dict`
-
+            A monday.com group in item form.
 
     _____________
     Return Fields
-    _____________
+    
+        archived : `bool`
+            Is the group archived or not.
+        color : `str`
+            The group's color.
+        deleted : `bool`
+            Is the group deleted or not.
+        id : `str`
+            The group's unique identifier.
+        items : `list[moncli.entities.Item]`
+            The items in the group.
+        position : `str`
+            The group's position in the board.
+        title : `str`
+            The group's title.
 
 
     __________________
@@ -601,11 +620,25 @@ def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com group in item form.
 
     _____________
     Return Fields
-    _____________
+    
+        archived : `bool`
+            Is the group archived or not.
+        color : `str`
+            The group's color.
+        deleted : `bool`
+            Is the group deleted or not.
+        id : `str`
+            The group's unique identifier.
+        items : `list[moncli.entities.Item]`
+            The items in the group.
+        position : `str`
+            The group's position in the board.
+        title : `str`
+            The group's title.
 
 
     __________________
@@ -634,11 +667,25 @@ def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com group in item form.
 
     _____________
     Return Fields
-    _____________
+    
+        archived : `bool`
+            Is the group archived or not.
+        color : `str`
+            The group's color.
+        deleted : `bool`
+            Is the group deleted or not.
+        id : `str`
+            The group's unique identifier.
+        items : `list[moncli.entities.Item]`
+            The items in the group.
+        position : `str`
+            The group's position in the board.
+        title : `str`
+            The group's title.
 
 
     __________________
@@ -665,14 +712,39 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
 
     _______
     Returns
-        
+                
         data : `dict`
-
+            A monday.com column in item form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
 
     __________________
     Optional Arguments
@@ -700,12 +772,37 @@ def get_items(api_key: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com column in item form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
 
     __________________
     Optional Arguments
@@ -731,12 +828,37 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
     Returns
         
         data : `dict`
-
+            A monday.com column in item form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
 
     __________________
     Optional Arguments
@@ -765,12 +887,37 @@ def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com column in item form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
 
     __________________
     Optional Arguments
@@ -796,12 +943,37 @@ def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwarg
     Returns
         
         data : `dict`
-
+            A monday.com column in item form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
 
     __________________
     Optional Arguments
@@ -829,12 +1001,37 @@ def archive_item(api_key: str, item_id: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com column in item form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
 
     __________________
     Optional Arguments
@@ -861,12 +1058,37 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com column in item form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
 
     __________________
     Optional Arguments
@@ -893,12 +1115,31 @@ def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com column in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The update's assets/files.
+        body: `str`
+            The update's html formatted body.
+        created_at: `str`
+            The update's creation date.
+        creator : `moncli.entities.User`
+            The update's creator
+        creator_id : `str`
+            The unique identifier of the update creator.
+        id : `str`
+            The update's unique identifier.
+        item_id : `str`
+            The update's item ID.
+        replies : `list[moncli.entities.Reply]
+            The update's replies.
+        text_body : `str`
+            The update's text body.
+        updated_at : `str`
+            The update's last edit date.
 
     __________________
     Optional Arguments
@@ -926,12 +1167,31 @@ def get_updates(api_key: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com column in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The update's assets/files.
+        body: `str`
+            The update's html formatted body.
+        created_at: `str`
+            The update's creation date.
+        creator : `moncli.entities.User`
+            The update's creator
+        creator_id : `str`
+            The unique identifier of the update creator.
+        id : `str`
+            The update's unique identifier.
+        item_id : `str`
+            The update's item ID.
+        replies : `list[moncli.entities.Reply]
+            The update's replies.
+        text_body : `str`
+            The update's text body.
+        updated_at : `str`
+            The update's last edit date.
 
     __________________
     Optional Arguments
@@ -957,12 +1217,31 @@ def delete_update(api_key: str, id: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com column in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The update's assets/files.
+        body: `str`
+            The update's html formatted body.
+        created_at: `str`
+            The update's creation date.
+        creator : `moncli.entities.User`
+            The update's creator
+        creator_id : `str`
+            The unique identifier of the update creator.
+        id : `str`
+            The update's unique identifier.
+        item_id : `str`
+            The update's item ID.
+        replies : `list[moncli.entities.Reply]
+            The update's replies.
+        text_body : `str`
+            The update's text body.
+        updated_at : `str`
+            The update's last edit date.
 
     __________________
     Optional Arguments
@@ -988,12 +1267,15 @@ def create_notification(api_key: str, text: str, user_id: str, target_id: str, t
     Returns
         
         data : `dict`
-
+            A monday.com notification in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        id : `str`
+            The notification's unique identifier.
+        text : `str`
+            The notification text.
 
     __________________
     Optional Arguments
@@ -1023,12 +1305,17 @@ def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com tag in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        color : `str`
+            The tag's color.
+        id : `str`
+            The tag's unique identifier.
+        name : `str`
+            The tag's name.
 
     __________________
     Optional Arguments
@@ -1055,12 +1342,17 @@ def get_tags(api_key: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com tag in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        color : `str`
+            The tag's color.
+        id : `str`
+            The tag's unique identifier.
+        name : `str`
+            The tag's name.
 
     __________________
     Optional Arguments
@@ -1086,12 +1378,29 @@ def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kw
     Returns
         
         data : `dict`
-
+            A monday.com asset in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        created_at : `str`
+            The file's creation date.
+        file_extension : `str`
+            The file's extension.
+        file_size : `int`
+            The file's size in bytes.
+        id : `str`
+            The file's unique identifier.
+        name : `str`
+            The file's name.
+        public_url : `str`
+            Public url to the asset, valid for 1 hour.
+        uploaded_by : `moncli.entities.user.User`
+            The user who uploaded the file
+        url : `str`
+            The user who uploaded the file
+        url_thumbnail : `str`
+            Url to view the asset in thumbnail mode. Only available for images.  
 
     __________________
     Optional Arguments
@@ -1122,12 +1431,29 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
     Returns
         
         data : `dict`
-
+            A monday.com asset in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        created_at : `str`
+            The file's creation date.
+        file_extension : `str`
+            The file's extension.
+        file_size : `int`
+            The file's size in bytes.
+        id : `str`
+            The file's unique identifier.
+        name : `str`
+            The file's name.
+        public_url : `str`
+            Public url to the asset, valid for 1 hour.
+        uploaded_by : `moncli.entities.user.User`
+            The user who uploaded the file
+        url : `str`
+            The user who uploaded the file
+        url_thumbnail : `str`
+            Url to view the asset in thumbnail mode. Only available for images.  
 
     __________________
     Optional Arguments
@@ -1159,12 +1485,61 @@ def get_users(api_key: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com user in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        account : `moncli.entities.Account`
+            The user's account.
+        birthday : `str`
+            The user's birthday.
+        country_code : `str`
+            The user's country code.
+        created_at : `str`
+            The user's creation date.
+        email : `str`
+            The user's email.
+        enabled : `bool`
+            Is the user enabled or not.
+        id : `str`
+            The user's unique identifier.
+        is_guest : `bool`
+            Is the user a guest or not.
+        is_pending : `bool`
+            Is the user a pending user.
+        is_view_only : `bool`
+            Is the user a view only user or not.
+        join_date : `str`
+            The date the user joined the account.
+        location : `str`
+            The user' location.
+        mobile_phone : `str`
+            The user's mobile phone number.
+        name : `str`
+            The user's name.
+        phone : `str`
+            The user's phone number.
+        photo_original : `str`
+            The user's photo in the original size.
+        photo_small : `str`
+            The user's photo in small size (150x150).
+        photo_thumb : `str`
+            The user's photo in thumbnail size (100x100).
+        photo_thumb_small : `str`
+            The user's photo in small thumbnail size (50x50).
+        photo_tiny : `str`
+            The user's photo in tiny size (30x30).
+        teams : `list[moncli.entities.Team]`
+            The teams the user is a member in.
+        time_zone_identifier : `str`
+            The user's time zone identifier.
+        title : `str`
+            The user's title.
+        url : `str`
+            The user's profile url.
+        utc_hours_diff : `int`
+            The user's UTC hours difference.
 
     __________________
     Optional Arguments
@@ -1190,12 +1565,19 @@ def get_teams(api_key: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com team in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        id : `int`
+            The team's unique identifier.
+        name : `str`
+            The team's name.
+        picture_url : `str`
+            The team's picture url.
+        users : `moncli.entities.user.User`
+            The users in the team.
 
     __________________
     Optional Arguments
@@ -1221,12 +1603,61 @@ def get_me(api_key: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com user in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        account : `moncli.entities.Account`
+            The user's account.
+        birthday : `str`
+            The user's birthday.
+        country_code : `str`
+            The user's country code.
+        created_at : `str`
+            The user's creation date.
+        email : `str`
+            The user's email.
+        enabled : `bool`
+            Is the user enabled or not.
+        id : `str`
+            The user's unique identifier.
+        is_guest : `bool`
+            Is the user a guest or not.
+        is_pending : `bool`
+            Is the user a pending user.
+        is_view_only : `bool`
+            Is the user a view only user or not.
+        join_date : `str`
+            The date the user joined the account.
+        location : `str`
+            The user' location.
+        mobile_phone : `str`
+            The user's mobile phone number.
+        name : `str`
+            The user's name.
+        phone : `str`
+            The user's phone number.
+        photo_original : `str`
+            The user's photo in the original size.
+        photo_small : `str`
+            The user's photo in small size (150x150).
+        photo_thumb : `str`
+            The user's photo in thumbnail size (100x100).
+        photo_thumb_small : `str`
+            The user's photo in small thumbnail size (50x50).
+        photo_tiny : `str`
+            The user's photo in tiny size (30x30).
+        teams : `list[moncli.entities.Team]`
+            The teams the user is a member in.
+        time_zone_identifier : `str`
+            The user's time zone identifier.
+        title : `str`
+            The user's title.
+        url : `str`
+            The user's profile url.
+        utc_hours_diff : `int`
+            The user's UTC hours difference.
 
     __________________
     Optional Arguments
@@ -1251,12 +1682,25 @@ def get_account(api_key: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com account in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        first_day_of_the_week : `str`
+            The first day of the week for the account (sunday / monday).
+        id : `int`
+            The account's unique identifier.
+        logo : `str`
+            The account's logo.
+        name : `str`
+            The account's name.
+        plan : `moncli.entities.Plan`
+            The account's payment plan.
+        show_timeline_weekends : `bool`
+            Show weekends in timeline.
+        slug : `str`
+            The account's slug.
 
     __________________
     Optional Arguments
@@ -1281,12 +1725,12 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
     Returns
         
         data : `dict`
-
+            A monday.com webhook in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        
 
     __________________
     Optional Arguments
@@ -1315,7 +1759,7 @@ def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            A monday.com webhook in dictionary form.
 
     _____________
     Return Fields
@@ -1346,7 +1790,7 @@ def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwar
     Returns
         
         data : `dict`
-
+            A monday.com workspace in dictionary form.
 
     _____________
     Return Fields
@@ -1368,7 +1812,7 @@ def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwar
 
 
 def execute_query(api_key:str, query_name: str, *args, **kwargs):
-    """
+    """Execute query operation.
 
     __________
     Parameters
@@ -1379,7 +1823,7 @@ def execute_query(api_key:str, query_name: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
+            The query response in dictionary form.
 
     _____________
     Return Fields
@@ -1399,7 +1843,7 @@ def execute_query(api_key:str, query_name: str, *args, **kwargs):
 
 
 def execute_mutation(api_key: str, query_name: str, *args, **kwargs):
-    """
+    """Execute mutation operation.
 
     __________
     Parameters
@@ -1410,17 +1854,7 @@ def execute_mutation(api_key: str, query_name: str, *args, **kwargs):
     Returns
         
         data : `dict`
-
-
-    _____________
-    Return Fields
-    _____________
-
-
-    __________________
-    Optional Arguments
-    __________________
-
+            The query response in dictionary form.
 
     """
     
@@ -1437,29 +1871,21 @@ def execute_mutation(api_key: str, query_name: str, *args, **kwargs):
 
 
 def get_field_list(fields: list, *args):
-    """
+    """Get list of query fields.
 
     __________
     Parameters
-    __________
-
+    
+        fields : `list[str]`
+            A predefined collection of default fields.
+        args : `tuple`
+            Field names passed into the request.
 
     _______
     Returns
         
-        data : `dict`
-
-
-    _____________
-    Return Fields
-    _____________
-
-
-    __________________
-    Optional Arguments
-    __________________
-
-
+        fields : `list[str]`
+            The fields to be retrieved for the query.
     """
     
     if not args:
@@ -1468,29 +1894,22 @@ def get_field_list(fields: list, *args):
 
 
 def get_method_arguments(mappings: dict, **kwargs):
-    """
+    """Get mapped query field arguments.
 
     __________
     Parameters
-    __________
+    
+        mappings : `dict`
+            A predefined set of default mappings.
+        kwargs : `dict`
+            Argument parameters passed into the request.
 
 
     _______
     Returns
         
-        data : `dict`
-
-
-    _____________
-    Return Fields
-    _____________
-
-
-    __________________
-    Optional Arguments
-    __________________
-
-
+        arguments : `dict`
+            Arguments to be used for the query fields.
     """
     
     result = {}
