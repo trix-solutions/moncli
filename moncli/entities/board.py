@@ -79,6 +79,10 @@ class Board(_Board):
         Get the board log events. 
     get_views : `list[moncli.entities.BoardView]`
         Get the board's views.
+    add_subscribers : `list[moncli.entities.User]`
+        Add subscribers to this board.
+    get_subscribers : `list[monlci.entities.User]`
+        Get board subscribers.
     add_column : `moncli.entities.Column`
         Create a new column in board.
     get_columns : `list[moncli.entities.Column]`
@@ -404,6 +408,86 @@ class Board(_Board):
             **kwargs)
         return [en.User(creds=self.__creds, **user) for user in subscribers_data]
 
+    
+    def get_subscribers(self, *args):
+        """Get board subscribers
+
+        __________
+        Parameters
+
+            args : `tuple`
+                The list of user return fields.
+            
+        _______
+        Returns
+
+            subscribers : `list[moncli.entity.User]`
+                The board subscribers.
+
+        _____________
+        Return Fields
+
+            account : `moncli.entities.Account`
+                The user's account.
+            birthday : `str`
+                The user's birthday.
+            country_code : `str`
+                The user's country code.
+            created_at : `str`
+                The user's creation date.
+            email : `str`
+                The user's email.
+            enabled : `bool`
+                Is the user enabled or not.
+            id : `str`
+                The user's unique identifier.
+            is_guest : `bool`
+                Is the user a guest or not.
+            is_pending : `bool`
+                Is the user a pending user.
+            is_view_only : `bool`
+                Is the user a view only user or not.
+            join_date : `str`
+                The date the user joined the account.
+            location : `str`
+                The user' location.
+            mobile_phone : `str`
+                The user's mobile phone number.
+            name : `str`
+                The user's name.
+            phone : `str`
+                The user's phone number.
+            photo_original : `str`
+                The user's photo in the original size.
+            photo_small : `str`
+                The user's photo in small size (150x150).
+            photo_thumb : `str`
+                The user's photo in thumbnail size (100x100).
+            photo_thumb_small : `str`
+                The user's photo in small thumbnail size (50x50).
+            photo_tiny : `str`
+                The user's photo in tiny size (30x30).
+            teams : `list[moncli.entities.Team]`
+                The teams the user is a member in.
+            time_zone_identifier : `str`
+                The user's time zone identifier.
+            title : `str`
+                The user's title.
+            url : `str`
+                The user's profile url.
+            utc_hours_diff : `int`
+                The user's UTC hours difference.
+        """
+
+        args = ['subscribers.{}'.format(arg) for arg in client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)]
+        kwargs = {
+            'ids': [self.id]
+        }
+        users_data = client.get_boards(
+            self.__creds.api_key_v2,
+            *args,
+            **kwargs)[0]['subscribers']
+        return [en.User(creds=self.__creds, **user) for user in users_data]
 
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
     def add_column(self, title:str, column_type: enums.ColumnType, *args, **kwargs): 
