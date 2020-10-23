@@ -1512,17 +1512,23 @@ def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kw
 
 
 def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: str, *args, **kwargs):
-    """
+    """Add a file to a column value.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        item_id : `str`
+            The item to add the file to.
+        column_id : `str`
+            The column to add the file to.
+        file_path : `str`
+            The path of the file to add.
         args : `tuple`
-            The list of <> return fields.
+            The list of asset return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for adding file to column.
 
     _______
     Returns
@@ -1550,13 +1556,7 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
         url : `str`
             The user who uploaded the file
         url_thumbnail : `str`
-            Url to view the asset in thumbnail mode. Only available for images.  
-
-    __________________
-    Optional Arguments
-    __________________
-
-
+            Url to view the asset in thumbnail mode. Only available for images.
     """
     
     name = constants.ADD_FILE_TO_COLUMN
