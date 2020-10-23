@@ -609,12 +609,15 @@ def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
 
 
 def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
-    """
+    """Archives a group in a specific board.
 
     __________
     Parameters
-    __________
-
+    
+        board_id : `str`
+            The board's unique identifier.
+        group_id : `str`
+            The group's unique identifier.
 
     _______
     Returns
@@ -639,13 +642,6 @@ def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
             The group's position in the board.
         title : `str`
             The group's title.
-
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
@@ -656,12 +652,15 @@ def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
 
 def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
-    """
+    """Deletes a group in a specific board.
 
     __________
     Parameters
-    __________
-
+    
+        board_id : `str`
+            The board's unique identifier.
+        group_id : `str`
+            The group's unique identifier.
 
     _______
     Returns
@@ -686,13 +685,6 @@ def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
             The group's position in the board.
         title : `str`
             The group's title.
-
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
