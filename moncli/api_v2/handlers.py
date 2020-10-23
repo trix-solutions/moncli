@@ -1825,17 +1825,23 @@ def get_account(api_key: str, *args, **kwargs):
 
 
 def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventType, *args, **kwargs):
-    """
+    """Create a new webhook.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        board_id : `str`
+            The board's unique identifier.
+        url : `str`
+            The webhook URL.
+        event : `moncli.enum.WebhookEventType`
+            The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update).
         args : `tuple`
-            The list of <> return fields.
+            The list of webhook return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for creating webhook.
 
     _______
     Returns
@@ -1853,9 +1859,9 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        config : `json`
+            The webhook config.
     """
     
     args = get_field_list(constants.DEFAULT_WEBHOOK_QUERY_FIELDS, *args)
