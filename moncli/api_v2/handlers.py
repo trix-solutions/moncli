@@ -704,13 +704,17 @@ def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
 
 def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
-    """
+    """Create a new item.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        item_name : `str`
+            The new item's name.
+        board_id : `str`
+            The board's unique identifier.
         args : `tuple`
             The list of <> return fields.
         kwargs : `dict`
@@ -754,8 +758,11 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
 
     __________________
     Optional Arguments
-    __________________
-
+    
+        group_id : `str`
+            The group's unique identifier.
+        column_values : `json`
+            The column values of the new item.
 
     """
     
