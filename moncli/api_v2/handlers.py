@@ -1662,7 +1662,7 @@ def get_users(api_key: str, *args, **kwargs):
 
 
 def get_teams(api_key: str, *args, **kwargs):
-    """
+    """Get a collection of teams.
 
     __________
     Parameters
@@ -1670,9 +1670,9 @@ def get_teams(api_key: str, *args, **kwargs):
         api_key : `str`
             The monday.com v2 API user key.
         args : `tuple`
-            The list of <> return fields.
+            The list of team return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for querying teams.
 
     _______
     Returns
@@ -1694,9 +1694,9 @@ def get_teams(api_key: str, *args, **kwargs):
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        ids : `list[str]`
+            A list of teams unique identifiers.
     """
     
     args = get_field_list(constants.DEFAULT_TEAM_QUERY_FIELDS, *args)
