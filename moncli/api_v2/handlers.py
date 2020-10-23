@@ -1705,7 +1705,7 @@ def get_teams(api_key: str, *args, **kwargs):
 
 
 def get_me(api_key: str, *args, **kwargs):
-    """
+    """Get the connected user's information.
 
     __________
     Parameters
@@ -1776,12 +1776,6 @@ def get_me(api_key: str, *args, **kwargs):
             The user's profile url.
         utc_hours_diff : `int`
             The user's UTC hours difference.
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)
