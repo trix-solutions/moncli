@@ -322,25 +322,57 @@ def change_column_value(api_key: str, item_id: str, column_id: str, board_id: st
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        item_id : `str`
+            The item's unique identifier.
+        column_id : `str`
+            The column's unique identifier.
+        board_id : `str`
+            The board's unique identifier.
+        value : `json`
+            The new value of the column.
+        args : `tuple`
+            The list of item return fields.
+        kwargs : `dict`
+            Optional arguments for changing a column value.
 
     _______
     Returns
         
         data : `dict`
-
+            A monday.com column in item form.
 
     _____________
     Return Fields
-    _____________
-
-
-    __________________
-    Optional Arguments
-    __________________
-
-
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
     """
     
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
