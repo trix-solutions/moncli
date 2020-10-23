@@ -310,7 +310,7 @@ class Board(_Board):
         views_data = client.get_boards(
             self.__creds.api_key_v2,
             *args,
-            ids=[self.id]
+            ids=[self.id],
             **kwargs)[0]['views']
         return [en.BoardView(view) for view in views_data]
 
