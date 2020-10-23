@@ -774,7 +774,7 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
 
 
 def get_items(api_key: str, *args, **kwargs):
-    """
+    """Get a collection of items.
 
     __________
     Parameters
@@ -782,9 +782,9 @@ def get_items(api_key: str, *args, **kwargs):
         api_key : `str`
             The monday.com v2 API user key.
         args : `tuple`
-            The list of <> return fields.
+            The list of item return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for querying items.
 
     _______
     Returns
@@ -824,9 +824,15 @@ def get_items(api_key: str, *args, **kwargs):
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        limit : `int`
+            Number of items to get; the default is 25.
+        page : `int`
+            Page number to get, starting at 1.
+        ids : `list[str]`
+            A list of items unique identifiers.
+        mewest_first : `bool`
+            Get the recently created items at the top of the list.
     """
     
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
