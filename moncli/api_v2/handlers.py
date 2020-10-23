@@ -1320,17 +1320,25 @@ def delete_update(api_key: str, id: str, *args, **kwargs):
 
 
 def create_notification(api_key: str, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, *args, **kwargs):
-    """
+    """Create a new notfication.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        text : `str`
+            The notification text.
+        user_id : `str`
+            The user's unique identifier.
+        target_id : `str`
+            The target's unique identifier.
+        target_type : `moncli.enums.NotificationTargetType`
+            The target's type (Project / Post).
         args : `tuple`
-            The list of <> return fields.
+            The list of notification return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for creating notifications.
 
     _______
     Returns
@@ -1348,9 +1356,9 @@ def create_notification(api_key: str, text: str, user_id: str, target_id: str, t
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        payload : `json`
+            The notification payload.
     """
     
     args = get_field_list(constants.DEFAULT_NOTIFICATION_QUERY_FIELDS, *args)
