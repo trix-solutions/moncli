@@ -91,6 +91,13 @@ DEFAULT_ACTIVITY_LOG_QUERY_FIELDS = [
     'user_id'
 ]
 
+DEFAULT_BOARD_VIEW_QUERY_FIELDS = [
+    'id',
+    'name',
+    'settings_str',
+    'type'
+]
+
 DEFAULT_COLUMN_QUERY_FIELDS = [
     'id',
     'title',
@@ -255,6 +262,10 @@ BOARDS_OPTIONAL_PARAMS = {
     'updates': {
         'limit': ArgumentValueKind.Int,
         'page': ArgumentValueKind.Int
+    },
+    'views': {
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+        'type': ArgumentValueKind.String
     }
 }
 

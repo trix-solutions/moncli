@@ -77,6 +77,8 @@ class Board(_Board):
     _______
     get_activity_logs : `list[moncli.entities.ActivityLog]`
         Get the board log events. 
+    get_views : `list[moncli.entities.BoardView]`
+        Get the board's views.
     add_column : `moncli.entities.Column`
         Create a new column in board.
     get_columns : `list[moncli.entities.Column]`
@@ -105,26 +107,37 @@ class Board(_Board):
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
+        
         self.__activity_logs = None
         activity_logs = kwargs.pop('activity_logs', None)
         if activity_logs != None:
             self.__activity_logs = [en.ActivityLog(log) for log in activity_logs]
+        
         self.__columns = None
         columns = kwargs.pop('columns', None)
         if columns:
             self.__columns = [en.Column() for column in columns]
+        
         self.__groups = None
         groups = kwargs.pop('groups', None)
         if groups:
             self.__groups = [en.Group(creds=self.__creds, **groups) for group in groups]
+        
         self.__items = None
         items = kwargs.pop('items', None)
         if items:
             self.__items = [en.Item(creds=self.__creds, **item) for item in items]
+        
+        self.__views = None
+        views = kwargs.pop('views', None)
+        if views:
+            self.__views = [en.BoardView(view) for view in views]
+
         self.__workspace = None
         workspace = kwargs.pop('workspace', None)
         if workspace:
             self.__workspace = en.Workspace(workspace)
+
         super(Board, self).__init__(kwargs)
 
     def __repr__(self):
@@ -170,6 +183,12 @@ class Board(_Board):
         if not self.__items:
             self.__items = self.get_items()
         return self.__items
+
+    @property
+    def views(self):
+        if self.__views == None:
+            self.__views = self.get_views()
+        return self.__views
 
     @property
     def workspace(self):
@@ -245,6 +264,55 @@ class Board(_Board):
             ids=[self.id],
             **kwargs)[0]['activity_logs']
         return [en.ActivityLog(activity_log) for activity_log in activity_logs_data]
+
+    @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
+    def get_views(self, *args, **kwargs):
+        """Get the board's views.
+
+        __________
+        Parameters
+
+            args : `tuple`
+                The list of board view return fields.
+            kwargs : `dict`
+                Optional keyword arguments for querying board views.
+
+        _______
+        Returns
+
+            views : `list[moncli.entities.BoardView]`
+                The board's collection of board views.
+
+        _____________
+        Return Fields
+
+            id : `str`
+                The view's unique identifier.
+            name : `str`
+                The view's name.
+            settings_str : `str`
+                The view's settings in a string from.
+            type : `str`
+                The view's type.
+
+        __________________
+        Optional Arguments
+
+            ids : `str`
+                The list of view unique identifiers.
+            type :  `str`
+                The view's type.
+        """
+
+        args = ['views.{}'.format(arg) for arg in client.get_field_list(constants.DEFAULT_BOARD_VIEW_QUERY_FIELDS)]
+        if kwargs:
+            kwargs = {'views': kwargs}
+        views_data = client.get_boards(
+            self.__creds.api_key_v2,
+            *args,
+            ids=[self.id],
+            **kwargs)[0]['views']
+        return [en.BoardView(view) for view in views_data]
 
 
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
