@@ -57,6 +57,32 @@ def test_should_get_activity_logs_with_kwargs(get_boards, get_me):
 
 
 @patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_boards')
+def test_should_get_board_views(get_boards, get_me):
+
+    # Arrange
+    id = '123'
+    name = 'view'
+    settings_str = 'settings'
+    view_type = 'type'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_boards.return_value = [{'id': '1', 'name': 'Test Board 1'}]
+    client = MondayClient(USERNAME, '', '')
+    board = client.get_boards(ids=['1'])[0]
+    get_boards.return_value = [{'id': '1', 'name': 'Test Board 1', 'views': [{'id': id, 'name': name, 'settings_str': settings_str, 'type': view_type}]}]
+
+    # Act
+    views = board.get_views()
+
+    # Assert 
+    ok_(views)
+    eq_(views[0].id, id)
+    eq_(views[0].name, name)
+    eq_(views[0].settings_str, settings_str)
+    eq_(views[0].type, view_type)
+    
+
+@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.create_board')
 @patch('moncli.api_v2.create_column')
 def test_should_add_new_column(create_column, create_board, get_me):
