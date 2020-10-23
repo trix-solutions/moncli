@@ -974,17 +974,21 @@ def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
 
 
 def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwargs):
-    """
+    """Move an item to a different group.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        item_id : `str`
+            The item's unique identifier.
+        group_id : `str`
+            The group's unique identifier.
         args : `tuple`
-            The list of <> return fields.
+            The list of item return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for moving item to group.
 
     _______
     Returns
@@ -1021,12 +1025,6 @@ def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwarg
             The item's last update date.
         updates : `moncli.entities.Update`
             The item's updates.
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
