@@ -84,15 +84,15 @@ def test_should_get_board_views(get_boards, get_me):
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_boards')
-@patch('moncli.api_v2.add_subscriber_to_board')
-def test_should_add_subscriber(add_subscriber_to_board, get_boards, get_me):
+@patch('moncli.api_v2.add_subscribers_to_board')
+def test_should_add_subscribers(add_subscribers_to_board, get_boards, get_me):
 
     # Arrange
     user_id = '1'
     name = 'name'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_boards.return_value = [{'id': '1', 'name': 'name'}]
-    add_subscriber_to_board.return_value = {'id': user_id, 'name': name}
+    add_subscribers_to_board.return_value = {'id': user_id, 'name': name}
     client = MondayClient(USERNAME, '', '')
     board = client.get_boards(ids=['1'])[0]
 
@@ -103,6 +103,28 @@ def test_should_add_subscriber(add_subscriber_to_board, get_boards, get_me):
     ok_(subscriber)
     eq_(subscriber.id, user_id)
     eq_(subscriber.name, name)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_boards')
+def test_should_get_board_subscribers(get_boards, get_me):
+
+    # Arrange
+    user_id = '1'
+    name = 'name'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_boards.return_value = [{'id': '1', 'name': 'name'}]
+    client = MondayClient(USERNAME, '', '')
+    board = client.get_boards(ids=['1'])[0]
+    get_boards.return_value = [{'id': '1', 'subscribers': [{'id': user_id, 'name': name}]}]
+
+    # Act
+    subscribers = board.get_subscribers()
+
+    # Assert
+    ok_(subscribers)
+    eq_(subscribers[0].id, user_id)
+    eq_(subscribers[0].name, name)
 
 
 @patch.object(MondayClient, 'get_me')
