@@ -34,28 +34,28 @@ class ColumnValue(_ColumnValue):
 
     __________
     Properties
-    __________
-    additional_info : `json`
-        The column value's additional information.
-    id : `str`
-        The column's unique identifier.
-    text : `str`
-        The column's textual value in string form.
-    title : `str`
-        The columns title.
-    type : `str`
-        The column's type.
-    value : `json`
-        The column's value in json format.
+ 
+        additional_info : `json`
+            The column value's additional information.
+        id : `str`
+            The column's unique identifier.
+        text : `str`
+            The column's textual value in string form.
+        title : `str`
+            The columns title.
+        type : `str`
+            The column's type.
+        value : `json`
+            The column's value in json format.
 
     
     _______
     Methods
-    _______
-    format : `dict`
-        Format for column value update.
-    set_value : `void`
-        Sets the value of the column.
+
+        format : `dict`
+            Format for column value update.
+        set_value : `void`
+            Sets the value of the column.
     """
 
     null_value = COMPLEX_NULL_VALUE
@@ -71,11 +71,11 @@ class ColumnValue(_ColumnValue):
 
         __________
         Parameters
-        __________
-        args : `tuple`
-            The column value for a string/int/boolean column value.
-        kwargs : `dict`
-            The column value for a complex dictionary object.    
+
+            args : `tuple`
+                The column value for a string/int/boolean column value.
+            kwargs : `dict`
+                The column value for a complex dictionary object.    
         """
 
         if len(args) > 0:
@@ -94,9 +94,9 @@ class CheckboxValue(ColumnValue):
     
     __________
     Properties
-    __________
-    checked : `bool`
-        Is the column checked.
+
+        checked : `bool`
+            Is the column checked.
     """
 
     def __init__(self, **kwargs):
@@ -130,11 +130,11 @@ class CountryValue(ColumnValue):
     
     __________
     Properties
-    __________
-    country_code : `str`
-        The country code.
-    country_name : `str`
-        The country name.
+
+        country_code : `str`
+            The country code.
+        country_name : `str`
+            The country name.
     """
 
     def __init__(self, **kwargs):
@@ -191,11 +191,11 @@ class DateValue(ColumnValue):
 
     __________
     Properties
-    __________
-    date : `str`
-        The date value.
-    time : `str`
-        The time value.
+
+        date : `str`
+            The date value.
+        time : `str`
+            The time value.
     """
 
     def __init__(self, **kwargs):
@@ -244,17 +244,17 @@ class DropdownValue(ColumnValue):
     
     __________
     Properties
-    __________
-    labels : `list[moncli.entities.DropdownLabel]`
-        Labels currently assigned to the column value.
+
+        labels : `list[moncli.entities.DropdownLabel]`
+            Labels currently assigned to the column value.
 
     _______
     Methods
-    _______
-    add_label : `void`
-        Add a label to the column value by id.
-    remove_label : `void`
-        Remove a label from the column value by id.
+
+        add_label : `void`
+            Add a label to the column value by id.
+        remove_label : `void`
+            Remove a label from the column value by id.
     """
 
     def __init__(self, **kwargs):
@@ -288,9 +288,9 @@ class DropdownValue(ColumnValue):
 
         __________
         Parameters
-        __________
-        id : `int`
-            The label ID of the label to add as defined in the column settings.
+
+            id : `int`
+                The label ID of the label to add as defined in the column settings.
         """
 
         try:
@@ -312,9 +312,9 @@ class DropdownValue(ColumnValue):
 
         __________
         Parameters
-        __________
-        id : `int`
-            The label ID of the label to remove as defined in the column settings.
+
+            id : `int`
+                The label ID of the label to remove as defined in the column settings.
         """
 
         try:
@@ -334,11 +334,11 @@ class EmailValue(ColumnValue):
     
     __________
     Properties
-    __________
-    email : `str`
-        The email address.
-    email_text : `str`
-        The display text.
+
+        email : `str`
+            The email address.
+        email_text : `str`
+            The display text.
     """
 
     def __init__(self, **kwargs):
@@ -380,9 +380,9 @@ class FileValue(ColumnValue):
     
     __________
     Properties
-    __________
-    files : `list[dict]`
-        List of files attached to file column.
+
+        files : `list[dict]`
+            List of files attached to file column.
     """
 
     def __init__(self, **kwargs):
@@ -406,11 +406,11 @@ class HourValue(ColumnValue):
     
     __________
     Properties
-    __________
-    hour : `int`
-        The hour (2-digit).
-    minute : `int`
-        The minute (2-digit).
+
+        hour : `int`
+            The hour (2-digit).
+        minute : `int`
+            The minute (2-digit).
     """
 
     def __init__(self, **kwargs):
@@ -455,11 +455,11 @@ class LinkValue(ColumnValue):
     
     __________
     Properties
-    __________
-    url : `str`
-        The url address.
-    url_text : `str`
-        The display text.
+
+        url : `str`
+            The url address.
+        url_text : `str`
+            The display text.
     """
 
     def __init__(self, **kwargs):
@@ -501,9 +501,9 @@ class LongTextValue(ColumnValue):
     
     __________
     Properties
-    __________
-    long_text : `str`
-        The long text value.
+
+        long_text : `str`
+            The long text value.
     """
     def __init__(self, **kwargs):
         super(LongTextValue, self).__init__(**kwargs)
@@ -535,9 +535,9 @@ class NameValue(ColumnValue):
     
     __________
     Properties
-    __________
-    name : `str`
-        The name value.
+
+        name : `str`
+            The name value.
     """
 
     null_value = SIMPLE_NULL_VALUE
@@ -570,9 +570,9 @@ class NumberValue(ColumnValue):
     
     __________
     Properties
-    __________
-    number : `int/float`
-        The integer or float number value.
+
+        number : `int/float`
+            The integer or float number value.
     """
 
     null_value = SIMPLE_NULL_VALUE
@@ -629,17 +629,17 @@ class PeopleValue(ColumnValue):
     
     __________
     Properties
-    __________
-    persons_and_teams : `list[dict]`
-        The persons and teams assigned to the column value.
+
+        persons_and_teams : `list[dict]`
+            The persons and teams assigned to the column value.
 
     _______
     Methods
-    _______
-    add_people : `void`
-        Add user or team to column value.
-    remove_people : `void`
-        Remove user or team from column value.
+
+        add_people : `void`
+            Add user or team to column value.
+        remove_people : `void`
+            Remove user or team from column value.
     """
     
     def __init__(self, **kwargs):
@@ -665,9 +665,9 @@ class PeopleValue(ColumnValue):
     
         __________
         Parameters
-        __________
-        person_or_team : `moncli.entities.User/moncli.entities.Team`
-            The person/team added to the column value.
+
+            person_or_team : `moncli.entities.User/moncli.entities.Team`
+                The person/team added to the column value.
         """
 
         kind = enums.PeopleKind.person
@@ -685,9 +685,9 @@ class PeopleValue(ColumnValue):
     
         __________
         Parameters
-        __________
-        id : `int`
-            The id of the person/team to be removed.
+
+            id : `int`
+                The id of the person/team to be removed.
         """
 
         persons_and_teams = []
@@ -702,11 +702,11 @@ class PhoneValue(ColumnValue):
     
     __________
     Properties
-    __________
-    phone : `str`
-        The phone number value.
-    country_short_name : `str`
-        The iso-2 country code.
+
+        phone : `str`
+            The phone number value.
+        country_short_name : `str`
+            The iso-2 country code.
     """
 
     def __init__(self, **kwargs):
@@ -751,9 +751,9 @@ class RatingValue(ColumnValue):
     
     __________
     Properties
-    __________
-    rating : `int`
-        The rating value.
+
+        rating : `int`
+            The rating value.
     """
 
     def __init__(self, **kwargs):
@@ -786,11 +786,11 @@ class StatusValue(ColumnValue):
     
     __________
     Properties
-    __________
-    index : `int`
-        The id of the status label.
-    label : `str`
-        Display text of the status label.
+
+        index : `int`
+            The id of the status label.
+        label : `str`
+            Display text of the status label.
     """
 
     def __init__(self, **kwargs):
@@ -853,17 +853,17 @@ class TagsValue(ColumnValue):
     
     __________
     Properties
-    __________
-    tag_ids : `list[int]`
-        The list of tag ids assigned to column value. 
+
+        tag_ids : `list[int]`
+            The list of tag ids assigned to column value. 
 
     _______
     Methods
-    _______
-    add : `void`
-        Add tag to column value.
-    remove : `void`
-        Remove tag from column value.
+
+        add : `void`
+            Add tag to column value.
+        remove : `void`
+            Remove tag from column value.
     """
     def __init__(self, **kwargs):
         super(TagsValue, self).__init__(**kwargs)
@@ -886,9 +886,9 @@ class TagsValue(ColumnValue):
 
         __________
         Parameters
-        __________
-        tag_id : `int`
-            The id of the tag to add.
+
+            tag_id : `int`
+                The id of the tag to add.
         """
 
         tag_ids = self.tag_ids
@@ -902,9 +902,9 @@ class TagsValue(ColumnValue):
 
         __________
         Parameters
-        __________
-        tag_id : `int`
-            The id of the tag to remove.
+
+            tag_id : `int`
+                The id of the tag to remove.
         """
         
         tag_ids = self.tag_ids
@@ -918,9 +918,9 @@ class TeamValue(ColumnValue):
     
     __________
     Properties
-    __________
-    team_id : `int`
-        The id of the assigned team.
+
+        team_id : `int`
+            The id of the assigned team.
     """
     
     def __init__(self, **kwargs):
@@ -953,9 +953,9 @@ class TextValue(ColumnValue):
     
     __________
     Properties
-    __________
-    text_value : `str`
-        The column text value.
+
+        text_value : `str`
+            The column text value.
     """
 
     null_value = ''
@@ -989,11 +989,11 @@ class TimelineValue(ColumnValue):
     
     __________
     Properties
-    __________
-    from_date : `str`
-        The timeline start date.
-    to_date : `str`
-        The timeline end date.
+
+        from_date : `str`
+            The timeline start date.
+        to_date : `str`
+            The timeline end date.
     """
 
     def __init__(self, **kwargs):
@@ -1043,9 +1043,9 @@ class TimezoneValue(ColumnValue):
     
     __________
     Properties
-    __________
-    timezone : `str`
-        The timezone standard value.
+
+        timezone : `str`
+            The timezone standard value.
     """
     def __init__(self, **kwargs):
         super(TimezoneValue, self).__init__(**kwargs)
@@ -1081,17 +1081,17 @@ class WeekValue(ColumnValue):
     
     __________
     Properties
-    __________
-    start_date : `str`
-        The start date of the week.
-    end_date : `str`
-        The end date of the week.
+
+        start_date : `str`
+            The start date of the week.
+        end_date : `str`
+            The end date of the week.
 
     _______
     Methods
-    _______
-    set_value : `void`
-        Set week column value.
+
+        set_value : `void`
+            Set week column value.
     """
 
     null_value = {'week': ''}
@@ -1146,11 +1146,11 @@ class WeekValue(ColumnValue):
         
         __________
         Parameters
-        __________
-        args : `tuple`
-            This is not used.
-        kwargs : `dict`
-            The column value properties to be added/updated.
+
+            args : `tuple`
+                This is not used.
+            kwargs : `dict`
+                The column value properties to be added/updated.
         """
 
         value = loads(self.value)
@@ -1178,11 +1178,11 @@ def create_column_value(column_type: enums.ColumnType, **kwargs):
 
     __________
     Parameters
-    __________
-    column_type : `moncli.enums.ColumnType`
-        The column type to create.
-    kwargs : `dict`
-        The raw column value data.
+
+        column_type : `moncli.enums.ColumnType`
+            The column type to create.
+        kwargs : `dict`
+            The raw column value data.
     """
 
     return getattr(
@@ -1195,9 +1195,9 @@ def validate_date(date_string: str):
 
     __________
     Parameters
-    __________
-    date_string : `str`
-        The date string to be validated.
+
+        date_string : `str`
+            The date string to be validated.
     """
 
     try:
@@ -1211,9 +1211,9 @@ def validate_time(time_string: str):
 
     __________
     Parameters
-    __________
-    time_string : `str`
-        The time string to be validated.
+
+        time_string : `str`
+            The time string to be validated.
     """
 
     try:

@@ -66,7 +66,7 @@ def test_add_subscribers_to_board(execute_query):
     # Arrange
     user_id = '1'
     name = 'name'
-    execute_query.return_value = {constants.ADD_SUBSCRIBER_TO_BOARD: {'id': user_id, 'name': name}}
+    execute_query.return_value = {constants.ADD_SUBSCRIBERS_TO_BOARD: {'id': user_id, 'name': name}}
 
     # Act
     subscriber = handlers.add_subscribers_to_board('', '1', ['1'])
@@ -75,6 +75,23 @@ def test_add_subscribers_to_board(execute_query):
     ok_(subscriber)
     eq_(subscriber['id'], user_id)
     eq_(subscriber['name'], name)
+
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_remove_subscribers_from_board(execute_query):
+
+    # Arrange
+    user_id = '1'
+    name = 'name'
+    execute_query.return_value = {constants.DELETE_SUBSCRIBERS_FROM_BOARD: [{'id': user_id, 'name': name}]}
+
+    # Act
+    subscribers = handlers.delete_subscribers_from_board('', '1', ['1'])
+
+    # Assert
+    ok_(subscribers)
+    eq_(subscribers[0]['id'], user_id)
+    eq_(subscribers[0]['name'], name)
 
 
 @patch(EXECUTE_QUERY_PATCH)

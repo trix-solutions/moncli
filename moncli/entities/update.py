@@ -22,43 +22,43 @@ class Update(_Update):
     
     __________
     Properties
-    __________
-    assets : `list[moncli.entities.Asset]`
-        The update's assets/files.
-    body: `str`
-        The update's html formatted body.
-    created_at: `str`
-        The update's creation date.
-    creator : `moncli.entities.User`
-        The update's creator
-    creator_id : `str`
-        The unique identifier of the update creator.
-    id : `str`
-        The update's unique identifier.
-    item_id : `str`
-        The update's item ID.
-    replies : `list[moncli.entities.Reply]
-        The update's replies.
-    text_body : `str`
-        The update's text body.
-    updated_at : `str`
-        The update's last edit date.
+
+        assets : `list[moncli.entities.Asset]`
+            The update's assets/files.
+        body: `str`
+            The update's html formatted body.
+        created_at: `str`
+            The update's creation date.
+        creator : `moncli.entities.User`
+            The update's creator
+        creator_id : `str`
+            The unique identifier of the update creator.
+        id : `str`
+            The update's unique identifier.
+        item_id : `str`
+            The update's item ID.
+        replies : `list[moncli.entities.Reply]
+            The update's replies.
+        text_body : `str`
+            The update's text body.
+        updated_at : `str`
+            The update's last edit date.
     
     _______
     Methods
-    _______
-    get_creator : `moncli.entities.User`
-        Get the update's creator.
-    add_reply : `moncli.entities.Reply`
-        Add reply to update.
-    get_replies : `list[moncli.entities.Reply]`
-        Get update replies.
-    add_file : `moncli.entities.Asset`
-        Add a file to update.
-    get_files : `list[moncli.entities.Asset]
-        Get update's files.
-    delete : `moncli.entity.Update`
-        Delete an update.
+
+        get_creator : `moncli.entities.User`
+            Get the update's creator.
+        add_reply : `moncli.entities.Reply`
+            Add reply to update.
+        get_replies : `list[moncli.entities.Reply]`
+            Get update replies.
+        add_file : `moncli.entities.Asset`
+            Add a file to update.
+        get_files : `list[moncli.entities.Asset]
+            Get update's files.
+        delete : `moncli.entity.Update`
+            Delete an update.
     """
 
     def __init__(self, **kwargs):
@@ -106,69 +106,69 @@ class Update(_Update):
         """Get the update's creator.
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of user fields to return.
+
+            args : `tuple`
+                The list of user fields to return.
 
         _______
         Returns
-        _______
-        user : `moncli.entities.User`
-            The update's creator.
+
+            user : `moncli.entities.User`
+                The update's creator.
 
         _____________
         Return Fields
-        _____________
-        account : `moncli.entities.Account`
-            The user's account.
-        birthday : `str`
-            The user's birthday.
-        country_code : `str`
-            The user's country code.
-        created_at : `str`
-            The user's creation date.
-        email : `str`
-            The user's email.
-        enabled : `bool`
-            Is the user enabled or not.
-        id : `str`
-            The user's unique identifier.
-        is_guest : `bool`
-            Is the user a guest or not.
-        is_pending : `bool`
-            Is the user a pending user.
-        is_view_only : `bool`
-            Is the user a view only user or not.
-        join_date : `str`
-            The date the user joined the account.
-        location : `str`
-            The user' location.
-        mobile_phone : `str`
-            The user's mobile phone number.
-        name : `str`
-            The user's name.
-        phone : `str`
-            The user's phone number.
-        photo_original : `str`
-            The user's photo in the original size.
-        photo_small : `str`
-            The user's photo in small size (150x150).
-        photo_thumb : `str`
-            The user's photo in thumbnail size (100x100).
-        photo_thumb_small : `str`
-            The user's photo in small thumbnail size (50x50).
-        photo_tiny : `str`
-            The user's photo in tiny size (30x30).
-        teams : `list[moncli.entities.Team]`
-            The teams the user is a member in.
-        time_zone_identifier : `str`
-            The user's time zone identifier.
-        title : `str`
-            The user's title.
-        url : `str`
-            The user's profile url.
-        utc_hours_diff : `int`
-            The user's UTC hours difference.
+
+            account : `moncli.entities.Account`
+                The user's account.
+            birthday : `str`
+                The user's birthday.
+            country_code : `str`
+                The user's country code.
+            created_at : `str`
+                The user's creation date.
+            email : `str`
+                The user's email.
+            enabled : `bool`
+                Is the user enabled or not.
+            id : `str`
+                The user's unique identifier.
+            is_guest : `bool`
+                Is the user a guest or not.
+            is_pending : `bool`
+                Is the user a pending user.
+            is_view_only : `bool`
+                Is the user a view only user or not.
+            join_date : `str`
+                The date the user joined the account.
+            location : `str`
+                The user' location.
+            mobile_phone : `str`
+                The user's mobile phone number.
+            name : `str`
+                The user's name.
+            phone : `str`
+                The user's phone number.
+            photo_original : `str`
+                The user's photo in the original size.
+            photo_small : `str`
+                The user's photo in small size (150x150).
+            photo_thumb : `str`
+                The user's photo in thumbnail size (100x100).
+            photo_thumb_small : `str`
+                The user's photo in small thumbnail size (50x50).
+            photo_tiny : `str`
+                The user's photo in tiny size (30x30).
+            teams : `list[moncli.entities.Team]`
+                The teams the user is a member in.
+            time_zone_identifier : `str`
+                The user's time zone identifier.
+            title : `str`
+                The user's title.
+            url : `str`
+                The user's profile url.
+            utc_hours_diff : `int`
+                The user's UTC hours difference.
         """
 
         args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
@@ -181,41 +181,42 @@ class Update(_Update):
 
     def add_reply(self, body: str, *args):
         """Add reply to update.
+
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of reply fields to return.
+
+            args : `tuple`
+                The list of reply fields to return.
 
         _______
         Returns
-        _______
-        update : `moncli.entities.Update`
-            The updated update.
+
+            update : `moncli.entities.Update`
+                The updated update.
 
         _____________
         Return Fields
-        _____________
-        assets : `list[moncli.entities.Asset]`
-            The update's assets/files.
-        body: `str`
-            The update's html formatted body.
-        created_at: `str`
-            The update's creation date.
-        creator : `moncli.entities.User`
-            The update's creator
-        creator_id : `str`
-            The unique identifier of the update creator.
-        id : `str`
-            The update's unique identifier.
-        item_id : `str`
-            The update's item ID.
-        replies : `list[moncli.entities.Reply]
-            The update's replies.
-        text_body : `str`
-            The update's text body.
-        updated_at : `str`
-            The update's last edit date.
+
+            assets : `list[moncli.entities.Asset]`
+                The update's assets/files.
+            body: `str`
+                The update's html formatted body.
+            created_at: `str`
+                The update's creation date.
+            creator : `moncli.entities.User`
+                The update's creator
+            creator_id : `str`
+                The unique identifier of the update creator.
+            id : `str`
+                The update's unique identifier.
+            item_id : `str`
+                The update's item ID.
+            replies : `list[moncli.entities.Reply]
+                The update's replies.
+            text_body : `str`
+                The update's text body.
+            updated_at : `str`
+                The update's last edit date.
         """
 
         update_data = client.create_update(
@@ -231,33 +232,33 @@ class Update(_Update):
         """Get update replies.
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of update fields to return.
+
+            args : `tuple`
+                The list of update fields to return.
 
         _______
         Returns
-        _______
-        replies : `list[moncli.entities.Reply]`
-            The update's replies.
+
+            replies : `list[moncli.entities.Reply]`
+                The update's replies.
 
         _____________
         Return Fields
-        _____________
-        body : `str`
-            The reply's html formatted body.
-        created_at : `str`
-            The reply's creation date.
-        creator : `moncli.entities.User`
-            The reply's creator.
-        creator_id : `str`
-            The unique identifier of the reply creator.
-        id : `str`
-            The reply's unique identifier.
-        text_body : `str`
-            The reply's text body.
-        updated_at : `str`
-            The reply's last edit date.
+
+            body : `str`
+                The reply's html formatted body.
+            created_at : `str`
+                The reply's creation date.
+            creator : `moncli.entities.User`
+                The reply's creator.
+            creator_id : `str`
+                The unique identifier of the reply creator.
+            id : `str`
+                The reply's unique identifier.
+            text_body : `str`
+                The reply's text body.
+            updated_at : `str`
+                The reply's last edit date.
         """
 
          # Hard configure the pagination rate.
@@ -289,39 +290,39 @@ class Update(_Update):
         """Add a file to update.
         __________
         Parameters
-        __________
-        file_path : `str`
-            The path to the file to upload.
-        args : `tuple`
-            The list of update fields to return.
+
+            file_path : `str`
+                The path to the file to upload.
+            args : `tuple`
+                The list of update fields to return.
 
         _______
         Returns
-        _______
-        asset : `moncli.entities.Asset`
-            The newly created asset.
+
+            asset : `moncli.entities.Asset`
+                The newly created asset.
 
         _____________
         Return Fields
-        _____________
-        created_at : `str`
-            The file's creation date.
-        file_extension : `str`
-            The file's extension.
-        file_size : `int`
-            The file's size in bytes.
-        id : `str`
-            The file's unique identifier.
-        name : `str`
-            The file's name.
-        public_url : `str`
-            Public url to the asset, valid for 1 hour.
-        uploaded_by : `moncli.entities.user.User`
-            The user who uploaded the file
-        url : `str`
-            The user who uploaded the file
-        url_thumbnail : `str`
-            Url to view the asset in thumbnail mode. Only available for images.  
+
+            created_at : `str`
+                The file's creation date.
+            file_extension : `str`
+                The file's extension.
+            file_size : `int`
+                The file's size in bytes.
+            id : `str`
+                The file's unique identifier.
+            name : `str`
+                The file's name.
+            public_url : `str`
+                Public url to the asset, valid for 1 hour.
+            uploaded_by : `moncli.entities.user.User`
+                The user who uploaded the file
+            url : `str`
+                The user who uploaded the file
+            url_thumbnail : `str`
+                Url to view the asset in thumbnail mode. Only available for images.  
         """
 
         asset_data = client.add_file_to_update(
@@ -334,39 +335,40 @@ class Update(_Update):
 
     def get_files(self, *args):
         """Get update's files.
+
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of asset fields to return.
+
+            args : `tuple`
+                The list of asset fields to return.
 
         _______
         Returns
-        _______
-        assets : `list[moncli.entities.Asset]`
-            The update's files.
+
+            assets : `list[moncli.entities.Asset]`
+                The update's files.
 
         _____________
         Return Fields
-        _____________
-        created_at : `str`
-            The file's creation date.
-        file_extension : `str`
-            The file's extension.
-        file_size : `int`
-            The file's size in bytes.
-        id : `str`
-            The file's unique identifier.
-        name : `str`
-            The file's name.
-        public_url : `str`
-            Public url to the asset, valid for 1 hour.
-        uploaded_by : `moncli.entities.user.User`
-            The user who uploaded the file
-        url : `str`
-            The user who uploaded the file
-        url_thumbnail : `str`
-            Url to view the asset in thumbnail mode. Only available for images.  
+
+            created_at : `str`
+                The file's creation date.
+            file_extension : `str`
+                The file's extension.
+            file_size : `int`
+                The file's size in bytes.
+            id : `str`
+                The file's unique identifier.
+            name : `str`
+                The file's name.
+            public_url : `str`
+                Public url to the asset, valid for 1 hour.
+            uploaded_by : `moncli.entities.user.User`
+                The user who uploaded the file
+            url : `str`
+                The user who uploaded the file
+            url_thumbnail : `str`
+                Url to view the asset in thumbnail mode. Only available for images.  
         """
 
          # Hard configure the pagination rate.
@@ -396,42 +398,44 @@ class Update(_Update):
 
     def delete(self, *args):
         """Delete the selected update.
+
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of update fields to return.
+
+            args : `tuple`
+                The list of update fields to return.
 
         _______
         Returns
-        _______
-        update : `moncli.entities.Update`
-            The deleted update.
+
+            update : `moncli.entities.Update`
+                The deleted update.
 
         _____________
         Return Fields
-        _____________
-        assets : `list[moncli.entities.asset.Asset]`
-            The update's assets/files.
-        body: `str`
-            The update's html formatted body.
-        created_at: `str`
-            The update's creation date.
-        creator : `moncli.entities.user.User`
-            The update's creator
-        creator_id : `str`
-            The unique identifier of the update creator.
-        id : `str`
-            The update's unique identifier.
-        item_id : `str`
-            The update's item ID.
-        replies : `list[moncli.entities.reply.Reply]
-            The update's replies.
-        text_body : `str`
-            The update's text body.
-        updated_at : `str`
-            The update's last edit date.
+
+            assets : `list[moncli.entities.asset.Asset]`
+                The update's assets/files.
+            body: `str`
+                The update's html formatted body.
+            created_at: `str`
+                The update's creation date.
+            creator : `moncli.entities.user.User`
+                The update's creator
+            creator_id : `str`
+                The unique identifier of the update creator.
+            id : `str`
+                The update's unique identifier.
+            item_id : `str`
+                The update's item ID.
+            replies : `list[moncli.entities.reply.Reply]
+                The update's replies.
+            text_body : `str`
+                The update's text body.
+            updated_at : `str`
+                The update's last edit date.
         """
+
         update_data = client.delete_update(
             self.__creds.api_key_v2,
             self.id,
@@ -454,28 +458,29 @@ class Reply(_Reply):
     
     __________
     Properties
-    __________
-    body : `str`
-        The reply's html formatted body.
-    created_at : `str`
-        The reply's creation date.
-    creator : `moncli.entities.User`
-        The reply's creator.
-    creator_id : `str`
-        The unique identifier of the reply creator.
-    id : `str`
-        The reply's unique identifier.
-    text_body : `str`
-        The reply's text body.
-    updated_at : `str`
-        The reply's last edit date.
+
+        body : `str`
+            The reply's html formatted body.
+        created_at : `str`
+            The reply's creation date.
+        creator : `moncli.entities.User`
+            The reply's creator.
+        creator_id : `str`
+            The unique identifier of the reply creator.
+        id : `str`
+            The reply's unique identifier.
+        text_body : `str`
+            The reply's text body.
+        updated_at : `str`
+            The reply's last edit date.
 
     _______
     Methods
-    _______
-    get_creator : `moncli.entities.User`
-        Get the reply's creator.
+
+        get_creator : `moncli.entities.User`
+            Get the reply's creator.
     """
+
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
         self.__item_id = kwargs.pop('item_id')
@@ -494,67 +499,72 @@ class Reply(_Reply):
     
     def get_creator(self, *args):
         """Get the reply's creator.
+
         __________
         Parameters
-        __________
+
+            args : `tuple`
+                List of user return fields.
 
         _______
         Returns
-        _______
+        
+            creator : `moncli.entities.User`
+                The creator of this update.
 
         _____________
         Return Fields
-        _____________
-        account : `moncli.entities.Account`
-            The user's account.
-        birthday : `str`
-            The user's birthday.
-        country_code : `str`
-            The user's country code.
-        created_at : `str`
-            The user's creation date.
-        email : `str`
-            The user's email.
-        enabled : `bool`
-            Is the user enabled or not.
-        id : `str`
-            The user's unique identifier.
-        is_guest : `bool`
-            Is the user a guest or not.
-        is_pending : `bool`
-            Is the user a pending user.
-        is_view_only : `bool`
-            Is the user a view only user or not.
-        join_date : `str`
-            The date the user joined the account.
-        location : `str`
-            The user' location.
-        mobile_phone : `str`
-            The user's mobile phone number.
-        name : `str`
-            The user's name.
-        phone : `str`
-            The user's phone number.
-        photo_original : `str`
-            The user's photo in the original size.
-        photo_small : `str`
-            The user's photo in small size (150x150).
-        photo_thumb : `str`
-            The user's photo in thumbnail size (100x100).
-        photo_thumb_small : `str`
-            The user's photo in small thumbnail size (50x50).
-        photo_tiny : `str`
-            The user's photo in tiny size (30x30).
-        teams : `list[moncli.entities.Team]`
-            The teams the user is a member in.
-        time_zone_identifier : `str`
-            The user's time zone identifier.
-        title : `str`
-            The user's title.
-        url : `str`
-            The user's profile url.
-        utc_hours_diff : `int`
-            The user's UTC hours difference.
+
+            account : `moncli.entities.Account`
+                The user's account.
+            birthday : `str`
+                The user's birthday.
+            country_code : `str`
+                The user's country code.
+            created_at : `str`
+                The user's creation date.
+            email : `str`
+                The user's email.
+            enabled : `bool`
+                Is the user enabled or not.
+            id : `str`
+                The user's unique identifier.
+            is_guest : `bool`
+                Is the user a guest or not.
+            is_pending : `bool`
+                Is the user a pending user.
+            is_view_only : `bool`
+                Is the user a view only user or not.
+            join_date : `str`
+                The date the user joined the account.
+            location : `str`
+                The user' location.
+            mobile_phone : `str`
+                The user's mobile phone number.
+            name : `str`
+                The user's name.
+            phone : `str`
+                The user's phone number.
+            photo_original : `str`
+                The user's photo in the original size.
+            photo_small : `str`
+                The user's photo in small size (150x150).
+            photo_thumb : `str`
+                The user's photo in thumbnail size (100x100).
+            photo_thumb_small : `str`
+                The user's photo in small thumbnail size (50x50).
+            photo_tiny : `str`
+                The user's photo in tiny size (30x30).
+            teams : `list[moncli.entities.Team]`
+                The teams the user is a member in.
+            time_zone_identifier : `str`
+                The user's time zone identifier.
+            title : `str`
+                The user's title.
+            url : `str`
+                The user's profile url.
+            utc_hours_diff : `int`
+                The user's UTC hours difference.
         """
 
         args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)

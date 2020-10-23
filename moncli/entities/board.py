@@ -205,57 +205,58 @@ class Board(_Board):
     
     def get_activity_logs(self, *args, **kwargs):
         """Get board log events.
+        
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of activity log return fields.
-        kwargs : `dict`
-            Optional keyword arguments for retrieving activity logs.
+        
+            args : `tuple`
+                The list of activity log return fields.
+            kwargs : `dict`
+                Optional keyword arguments for retrieving activity logs.
 
         _______
         Returns
-        _______
-        activity_logs : `list[moncli.entities.ActivityLog]`
-            The board's activity logs.
+
+            activity_logs : `list[moncli.entities.ActivityLog]`
+                The board's activity logs.
 
         _____________
         Return Fields
-        _____________
-        account_id : `str`
-            The unique identifier of the user's account.
-        created_at : `str`
-            The create date
-        data : `str`
-            The item's column values in string form.
-        entity : `str`
-            The activity log's entity.
-        event : `str`
-            The activity log's event.
-        id : `str`
-            The activity log's unique identifier.
-        user_id : `str`
-            The user's unique identifier.
+
+            account_id : `str`
+                The unique identifier of the user's account.
+            created_at : `str`
+                The create date
+            data : `str`
+                The item's column values in string form.
+            entity : `str`
+                The activity log's entity.
+            event : `str`
+                The activity log's event.
+            id : `str`
+                The activity log's unique identifier.
+            user_id : `str`
+                The user's unique identifier.
 
         __________________
         Optional Arguments
-        __________________
-        limit : `int`
-            Number of items to get, the default is 25.
-        page : `int`
-            Page number to get, starting at 1.
-        user_ids : `list[int]`
-            User ids to filter.
-        column_ids : `list[str]`
-            Column ids to filter.
-        group_ids : `list[str]`
-            Group ids to filter.
-        item_ids : `list[int]`
-            Item id to filter
-        from : `str`
-            From timespamp (ISO8601).
-        to : `str`
-            To timespamp (ISO8601).
+
+            limit : `int`
+                Number of items to get, the default is 25.
+            page : `int`
+                Page number to get, starting at 1.
+            user_ids : `list[int]`
+                User ids to filter.
+            column_ids : `list[str]`
+                Column ids to filter.
+            group_ids : `list[str]`
+                Group ids to filter.
+            item_ids : `list[int]`
+                Item id to filter
+            from : `str`
+                From timespamp (ISO8601).
+            to : `str`
+                To timespamp (ISO8601).
         """
 
         args = ['activity_logs.{}'.format(arg) for arg in client.get_field_list(constants.DEFAULT_ACTIVITY_LOG_QUERY_FIELDS, *args)]
@@ -489,50 +490,133 @@ class Board(_Board):
             **kwargs)[0]['subscribers']
         return [en.User(creds=self.__creds, **user) for user in users_data]
 
+
+    def delete_subscribers(self, user_ids: list, *args):
+        """Remove subscribers from the board.
+
+        __________
+        Parameters
+
+            user_ids : `list[str]`
+                User ids to unsubscribe from board.
+            args : `tuple`
+                The list of user return fields.
+            kwargs : `dict`
+                Additional keyword arguments for deleting subscribers.
+
+        _______
+        Returns
+
+            subscribers : `list[moncli.entities.User]`
+                The users unsubscribed from the board.
+        
+        _____________
+        Return Fields
+        
+            account : `moncli.entities.Account`
+                The user's account.
+            birthday : `str`
+                The user's birthday.
+            country_code : `str`
+                The user's country code.
+            created_at : `str`
+                The user's creation date.
+            email : `str`
+                The user's email.
+            enabled : `bool`
+                Is the user enabled or not.
+            id : `str`
+                The user's unique identifier.
+            is_guest : `bool`
+                Is the user a guest or not.
+            is_pending : `bool`
+                Is the user a pending user.
+            is_view_only : `bool`
+                Is the user a view only user or not.
+            join_date : `str`
+                The date the user joined the account.
+            location : `str`
+                The user' location.
+            mobile_phone : `str`
+                The user's mobile phone number.
+            name : `str`
+                The user's name.
+            phone : `str`
+                The user's phone number.
+            photo_original : `str`
+                The user's photo in the original size.
+            photo_small : `str`
+                The user's photo in small size (150x150).
+            photo_thumb : `str`
+                The user's photo in thumbnail size (100x100).
+            photo_thumb_small : `str`
+                The user's photo in small thumbnail size (50x50).
+            photo_tiny : `str`
+                The user's photo in tiny size (30x30).
+            teams : `list[moncli.entities.Team]`
+                The teams the user is a member in.
+            time_zone_identifier : `str`
+                The user's time zone identifier.
+            title : `str`
+                The user's title.
+            url : `str`
+                The user's profile url.
+            utc_hours_diff : `int`
+                The user's UTC hours difference.
+        """
+        
+        users_data = client.delete_subscribers_from_board(
+            self.__creds.api_key_v2,
+            self.id,
+            user_ids,
+            *args)
+        return [en.User(creds=self.__creds, **user) for user in users_data]
+
+
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
     def add_column(self, title:str, column_type: enums.ColumnType, *args, **kwargs): 
         """Create a new column in board.
         __________
         Parameters
-        __________
-        title : `str`
-            The new column's title.
-        column_type : `moncli.enums.ColumnType`
-            The type of column to create.
-        args : `tuple`
-            The list of column return fields.
-        kwargs : `dict`
-            The optional keywork arguments.
+
+            title : `str`
+                The new column's title.
+            column_type : `moncli.enums.ColumnType`
+                The type of column to create.
+            args : `tuple`
+                The list of column return fields.
+            kwargs : `dict`
+                The optional keywork arguments.
 
         _______
         Returns
-        _______
-        column : `moncli.entities.Column`
-            The created column.
+
+            column : `moncli.entities.Column`
+                The created column.
 
         _____________
         Return Fields
-        _____________
-        archived : `bool`
-            Is the column archived or not.
-        id : `str`
-            The column's unique identifier.
-        pos : `str`
-            The column's position in the board.
-        settings_str : `str`
-            The column's settings in a string form.
-        title : `str`
-            The column's title.
-        type : `str`
-            The column's type.
-        width : `int`
-            The column's width.
+
+            archived : `bool`
+                Is the column archived or not.
+            id : `str`
+                The column's unique identifier.
+            pos : `str`
+                The column's position in the board.
+            settings_str : `str`
+                The column's settings in a string form.
+            title : `str`
+                The column's title.
+            type : `str`
+                The column's type.
+            width : `int`
+                The column's width.
 
         __________________
         Optional Arguments
-        __________________
-        defaults : `json`
-            The new column's defaults.
+
+            defaults : `json`
+                The new column's defaults.
         """
 
         column_data = client.create_column(
@@ -547,43 +631,44 @@ class Board(_Board):
    
     def get_columns(self, *args, **kwargs):
         """Get the board's visible columns.
+
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of column return fields.
-        kwargs : `dict`
-            The optional keywork arguments.
+
+            args : `tuple`
+                The list of column return fields.
+            kwargs : `dict`
+                The optional keywork arguments.
 
         _______
         Returns
-        _______
-        columns : `list[moncli.entities.Column]`
-            The board's columns.
+
+            columns : `list[moncli.entities.Column]`
+                The board's columns.
 
         _____________
         Return Fields
-        _____________
-        archived : `bool`
-            Is the column archived or not.
-        id : `str`
-            The column's unique identifier.
-        pos : `str`
-            The column's position in the board.
-        settings_str : `str`
-            The column's settings in a string form.
-        title : `str`
-            The column's title.
-        type : `str`
-            The column's type.
-        width : `int`
-            The column's width.
+
+            archived : `bool`
+                Is the column archived or not.
+            id : `str`
+                The column's unique identifier.
+            pos : `str`
+                The column's position in the board.
+            settings_str : `str`
+                The column's settings in a string form.
+            title : `str`
+                The column's title.
+            type : `str`
+                The column's type.
+            width : `int`
+                The column's width.
 
         __________________
         Optional Arguments
-        __________________
-        ids : `str`
-            A list of column unique identifiers.
+
+            ids : `str`
+                A list of column unique identifiers.
         """
 
         args = client.get_field_list(constants.DEFAULT_COLUMN_QUERY_FIELDS, *args)
@@ -601,35 +686,35 @@ class Board(_Board):
         """Creates a new group in the board.
         __________
         Parameters
-        __________
-        group_name : `str`
-            The name of the new group.
-        args : `tuple`
-            The list of group return fields.
+
+            group_name : `str`
+                The name of the new group.
+            args : `tuple`
+                The list of group return fields.
 
         _______
         Returns
-        _______
-        group : `moncli.entities.Group`
-            The created group.
+
+            group : `moncli.entities.Group`
+                The created group.
 
         _____________
         Return Fields
-        _____________
-        archived : `bool`
-            Is the group archived or not.
-        color : `str`
-            The group's color.
-        deleted : `bool`
-            Is the group deleted or not.
-        id : `str`
-            The group's unique identifier.
-        items : `list[moncli.entities.Item]`
-            The items in the group.
-        position : `str`
-            The group's position in the board.
-        title : `str`
-            The group's title.
+
+            archived : `bool`
+                Is the group archived or not.
+            color : `str`
+                The group's color.
+            deleted : `bool`
+                Is the group deleted or not.
+            id : `str`
+                The group's unique identifier.
+            items : `list[moncli.entities.Item]`
+                The items in the group.
+            position : `str`
+                The group's position in the board.
+            title : `str`
+                The group's title.
         """
 
         group_data = client.create_group(
@@ -645,43 +730,44 @@ class Board(_Board):
 
     def get_groups(self, *args, **kwargs):
         """Get the board's visible groups.
+
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of group return fields.
-        kwargs : `dict`
-            Optional keyword arguments for getting board groups.
+
+            args : `tuple`
+                The list of group return fields.
+            kwargs : `dict`
+                Optional keyword arguments for getting board groups.
 
         _______
         Returns
-        _______
-        groups : `list[moncli.entities.Groups]`
-            The board's groups.
+
+            groups : `list[moncli.entities.Groups]`
+                The board's groups.
 
         _____________
         Return Fields
-        _____________
-        archived : `bool`
-            Is the group archived or not.
-        color : `str`
-            The group's color.
-        deleted : `bool`
-            Is the group deleted or not.
-        id : `str`
-            The group's unique identifier.
-        items : `list[moncli.entities.Item]`
-            The items in the group.
-        position : `str`
-            The group's position in the board.
-        title : `str`
-            The group's title.
+
+            archived : `bool`
+                Is the group archived or not.
+            color : `str`
+                The group's color.
+            deleted : `bool`
+                Is the group deleted or not.
+            id : `str`
+                The group's unique identifier.
+            items : `list[moncli.entities.Item]`
+                The items in the group.
+            position : `str`
+                The group's position in the board.
+            title : `str`
+                The group's title.
 
         __________________
         Optional Arguments
-        __________________
-        ids : `list[string]`
-            A list of group unique identifiers.
+
+            ids : `list[string]`
+                A list of group unique identifiers.
         """
 
         args = ['groups.' + arg for arg in client.get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)]
@@ -694,41 +780,42 @@ class Board(_Board):
 
     def get_group(self, id: str = None, title: str = None, *args):
         """Get a group belonging to the board by ID or title.
+
         __________
         Parameters
-        __________
-        id : `str`
-            The group's unique identifier.
-            NOTE: This parameter is mutually exclusive and cannot be used with 'title'.
-        title : `str`
-            The group's title.
-            NOTE: This parameter is mutually exclusive and cannot be used with 'id'.
-        args : `tuple`
-            The list of group return fields.
+
+            id : `str`
+                The group's unique identifier.
+                NOTE: This parameter is mutually exclusive and cannot be used with 'title'.
+            title : `str`
+                The group's title.
+                NOTE: This parameter is mutually exclusive and cannot be used with 'id'.
+            args : `tuple`
+                The list of group return fields.
 
         _______
         Returns
-        _______
-        group : `moncli.entities.Group`
-            The board's requested group.
+
+            group : `moncli.entities.Group`
+                The board's requested group.
 
         _____________
         Return Fields
-        _____________
-        archived : `bool`
-            Is the group archived or not.
-        color : `str`
-            The group's color.
-        deleted : `bool`
-            Is the group deleted or not.
-        id : `str`
-            The group's unique identifier.
-        items : `list[moncli.entities.Item]`
-            The items in the group.
-        position : `str`
-            The group's position in the board.
-        title : `str`
-            The group's title.
+
+            archived : `bool`
+                Is the group archived or not.
+            color : `str`
+                The group's color.
+            deleted : `bool`
+                Is the group deleted or not.
+            id : `str`
+                The group's unique identifier.
+            items : `list[moncli.entities.Item]`
+                The items in the group.
+            position : `str`
+                The group's position in the board.
+            title : `str`
+                The group's title.
         """
 
         if id is None and title is None:
@@ -746,53 +833,53 @@ class Board(_Board):
         """Create a new item in the board.
         __________
         Parameters
-        __________
-        item_name : `str`
-            The new item's name.
+
+            item_name : `str`
+                The new item's name.
 
         _______
         Returns
-        _______
-        item : `moncli.entities.Item`
-            The created item.
+
+            item : `moncli.entities.Item`
+                The created item.
 
         _____________
         Return Fields
-        _____________
-        assets : `list[moncli.entities.Asset]`
-            The item's assets/files.
-        board : `moncli.entities.Board`
-            The board that contains this item.
-        column_values : `list[moncli.entities.ColumnValue]`
-            The item's column values.
-        created_at : `str`
-            The item's create date.
-        creator : `moncli.entities.User`
-            The item's creator.
-        creator_id : `str`
-            The item's unique identifier.
-        group : `moncli.entities.Group`
-            The group that contains this item.
-        id : `str`
-            The item's unique identifier.
-        name : `str`
-            The item's name.
-        state : `str`
-            The board's state (all / active / archived / deleted)
-        subscriber : `moncli.entities.User`
-            The pulse's subscribers.
-        updated_at : `str`
-            The item's last update date.
-        updates : `moncli.entities.Update`
-            The item's updates.
+
+            assets : `list[moncli.entities.Asset]`
+                The item's assets/files.
+            board : `moncli.entities.Board`
+                The board that contains this item.
+            column_values : `list[moncli.entities.ColumnValue]`
+                The item's column values.
+            created_at : `str`
+                The item's create date.
+            creator : `moncli.entities.User`
+                The item's creator.
+            creator_id : `str`
+                The item's unique identifier.
+            group : `moncli.entities.Group`
+                The group that contains this item.
+            id : `str`
+                The item's unique identifier.
+            name : `str`
+                The item's name.
+            state : `str`
+                The board's state (all / active / archived / deleted)
+            subscriber : `moncli.entities.User`
+                The pulse's subscribers.
+            updated_at : `str`
+                The item's last update date.
+            updates : `moncli.entities.Update`
+                The item's updates.
 
         __________________
         Optional Arguments
-        __________________
-        group_id : `str`
-            The group's unique identifier.
-        column_values : `json`
-            The column values of the new item.
+
+            group_id : `str`
+                The group's unique identifier.
+            column_values : `json`
+                The column values of the new item.
         """
 
         column_values = kwargs.pop('column_values', None)
@@ -815,59 +902,60 @@ class Board(_Board):
 
     def get_items(self, *args, **kwargs):
         """Get the board's items (rows).
+
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of item return fields.
-        kwargs : `dict`
-            The optional keyword arguments for getting items.
+
+            args : `tuple`
+                The list of item return fields.
+            kwargs : `dict`
+                The optional keyword arguments for getting items.
 
         _______
         Returns
-        _______
-        items : `list[moncli.entities.Item]`
-            The board's items.
+
+            items : `list[moncli.entities.Item]`
+                The board's items.
         
         _____________
         Return Fields
-        _____________
-        assets : `list[moncli.entities.Asset]`
-            The item's assets/files.
-        board : `moncli.entities.Board`
-            The board that contains this item.
-        column_values : `list[moncli.entities.ColumnValue]`
-            The item's column values.
-        created_at : `str`
-            The item's create date.
-        creator : `moncli.entities.User`
-            The item's creator.
-        creator_id : `str`
-            The item's unique identifier.
-        group : `moncli.entities.Group`
-            The group that contains this item.
-        id : `str`
-            The item's unique identifier.
-        name : `str`
-            The item's name.
-        state : `str`
-            The board's state (all / active / archived / deleted)
-        subscriber : `moncli.entities.User`
-            The pulse's subscribers.
-        updated_at : `str`
-            The item's last update date.
-        updates : `moncli.entities.Update`
-            The item's updates.
+
+            assets : `list[moncli.entities.Asset]`
+                The item's assets/files.
+            board : `moncli.entities.Board`
+                The board that contains this item.
+            column_values : `list[moncli.entities.ColumnValue]`
+                The item's column values.
+            created_at : `str`
+                The item's create date.
+            creator : `moncli.entities.User`
+                The item's creator.
+            creator_id : `str`
+                The item's unique identifier.
+            group : `moncli.entities.Group`
+                The group that contains this item.
+            id : `str`
+                The item's unique identifier.
+            name : `str`
+                The item's name.
+            state : `str`
+                The board's state (all / active / archived / deleted)
+            subscriber : `moncli.entities.User`
+                The pulse's subscribers.
+            updated_at : `str`
+                The item's last update date.
+            updates : `moncli.entities.Update`
+                The item's updates.
 
         __________________
         Optional Arguments
-        __________________
-        ids : `list[str]`
-            The list of items unique identifiers.
-        limit : `int`
-            Number of items to get.
-        page : `int`
-            Page number to get, starting at 1.
+
+            ids : `list[str]`
+                The list of items unique identifiers.
+            limit : `int`
+                Number of items to get.
+            page : `int`
+                Page number to get, starting at 1.
         """
         
         if not args:
@@ -885,65 +973,66 @@ class Board(_Board):
     @optional_arguments(constants.ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS)
     def get_items_by_column_values(self, column_value: en.ColumnValue, *args, **kwargs):
         """Search items in this board by their column values.
+
         __________
         Parameters
-        __________
-        args : `tuple`
-            The list of item return fields.
-        kwargs : `dict`
-            The optional keyword arguments for searching items.
+
+            args : `tuple`
+                The list of item return fields.
+            kwargs : `dict`
+                The optional keyword arguments for searching items.
 
         _______
         Returns
-        _______
-        items : `list[moncli.entities.Item]`
-            The board's queried items.
+
+            items : `list[moncli.entities.Item]`
+                The board's queried items.
 
         _____________
         Return Fields
-        _____________
-        assets : `list[moncli.entities.Asset]`
-            The item's assets/files.
-        board : `moncli.entities.Board`
-            The board that contains this item.
-        column_values : `list[moncli.entities.ColumnValue]`
-            The item's column values.
-        created_at : `str`
-            The item's create date.
-        creator : `moncli.entities.User`
-            The item's creator.
-        creator_id : `str`
-            The item's unique identifier.
-        group : `moncli.entities.Group`
-            The group that contains this item.
-        id : `str`
-            The item's unique identifier.
-        name : `str`
-            The item's name.
-        state : `str`
-            The board's state (all / active / archived / deleted)
-        subscriber : `moncli.entities.User`
-            The pulse's subscribers.
-        updated_at : `str`
-            The item's last update date.
-        updates : `moncli.entities.Update`
-            The item's updates.
+
+            assets : `list[moncli.entities.Asset]`
+                The item's assets/files.
+            board : `moncli.entities.Board`
+                The board that contains this item.
+            column_values : `list[moncli.entities.ColumnValue]`
+                The item's column values.
+            created_at : `str`
+                The item's create date.
+            creator : `moncli.entities.User`
+                The item's creator.
+            creator_id : `str`
+                The item's unique identifier.
+            group : `moncli.entities.Group`
+                The group that contains this item.
+            id : `str`
+                The item's unique identifier.
+            name : `str`
+                The item's name.
+            state : `str`
+                The board's state (all / active / archived / deleted)
+            subscriber : `moncli.entities.User`
+                The pulse's subscribers.
+            updated_at : `str`
+                The item's last update date.
+            updates : `moncli.entities.Update`
+                The item's updates.
 
         __________________
         Optional Arguments
-        __________________
-        limit : `int`
-            Number of items to get.
-        page : `int`
-            Page number to get, starting at 1.
-        column_id : `str`
-            The column's unique identifier.
-        column_value : `str`
-            The column value to search items by.
-        column_type : `str`
-            The column type.
-        state : `moncli.enumns.State`
-            The state of the item (all / active / archived / deleted), the default is active.
+
+            limit : `int`
+                Number of items to get.
+            page : `int`
+                Page number to get, starting at 1.
+            column_id : `str`
+                The column's unique identifier.
+            column_value : `str`
+                The column value to search items by.
+            column_type : `str`
+                The column type.
+            state : `moncli.enumns.State`
+                The state of the item (all / active / archived / deleted), the default is active.
         """
 
         if type(column_value) == cv.DateValue:
@@ -970,27 +1059,28 @@ class Board(_Board):
 
     def get_column_value(self, id: str = None, title: str = None, **kwargs):
         """Create a column value from a board's column.
+
         __________
         Parameters
-        __________
-        id : `str`
-            The column's unique identifier.
-        title : `str`
-            The column's title.
-        kwargs : `dict`
-            Optional keyword arguments for getting a column value.
+
+            id : `str`
+                The column's unique identifier.
+            title : `str`
+                The column's title.
+            kwargs : `dict`
+                Optional keyword arguments for getting a column value.
 
         _______
         Returns
-        _______
-        column_value : `list[moncli.entities.ColumnValue]`
-            A new column_value instance.
+
+            column_value : `list[moncli.entities.ColumnValue]`
+                A new column_value instance.
 
         __________________
         Optional Arguments
-        __________________
-        settings : `moncli.entities.objects.StatusSettings`/`moncli.entities.objects.DropdownSettings`
-            Column settings required for retrieving a status or dropdown column.
+
+            settings : `moncli.entities.objects.StatusSettings`/`moncli.entities.objects.DropdownSettings`
+                Column settings required for retrieving a status or dropdown column.
         """
 
         if id is None and title is None:
@@ -1013,39 +1103,40 @@ class Board(_Board):
 
     def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):
         """Create a new webhook.
+
         __________
         Parameters
-        __________
-        url : `str`
-            The webhook URL.
-        event : `moncli.enums.WebhookEventType`
-            The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update).
-        args : `tuple`
-            The list of webhook return fields.
-        kwargs : `dict`
-            The optional keyword arguments for creating a webhook.
+
+            url : `str`
+                The webhook URL.
+            event : `moncli.enums.WebhookEventType`
+                The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update).
+            args : `tuple`
+                The list of webhook return fields.
+            kwargs : `dict`
+                The optional keyword arguments for creating a webhook.
 
         _______
         Returns
-        _______
-        webhook : `moncli.entities.Webhook`
-            The created webhook.
+
+            webhook : `moncli.entities.Webhook`
+                The created webhook.
 
         _____________
         Return Fields
-        _____________
-        board_id : `str`
-            The webhook's board id.
-        id : `str`
-            The webhook's unique identifier.
+
+            board_id : `str`
+                The webhook's board id.
+            id : `str`
+                The webhook's unique identifier.
 
         __________________
         Optional Arguments
-        __________________
-        config : `dict`
-            The webhook config.
-            Example: This argument is currenlty only available for the 'change_specific_column_value' event.
-            >>> board.create_webhook('http://test.website.com/webhook/test, WebhookEventType.change_specific_column_value', {'columnId': 'column_1'})
+
+            config : `dict`
+                The webhook config.
+                Example: This argument is currenlty only available for the 'change_specific_column_value' event.
+                >>> board.create_webhook('http://test.website.com/webhook/test, WebhookEventType.change_specific_column_value', {'columnId': 'column_1'})
         """
 
         # Modify kwargs to config if supplied.
@@ -1066,27 +1157,28 @@ class Board(_Board):
 
     def delete_webhook(self, webhook_id: str, *args):
         """Delete a new webhook.
+
         __________
         Parameters
-        __________
-        id : `str`
-            The webhook's unique identifier.
-        args : `tuple`
-            The list of webhook return fields.
+
+            id : `str`
+                The webhook's unique identifier.
+            args : `tuple`
+                The list of webhook return fields.
 
         _______
         Returns
-        _______
-        webhook : `moncli.entities.Webhook`
-            The deleted webhook.
+
+            webhook : `moncli.entities.Webhook`
+                The deleted webhook.
 
         _____________
         Return Fields
-        _____________
-        board_id : `str`
-            The webhook's board id.
-        id : `str`
-            The webhook's unique identifier.
+
+            board_id : `str`
+                The webhook's board id.
+            id : `str`
+                The webhook's unique identifier.
         """
 
         webhook_data = client.delete_webhook(
@@ -1099,29 +1191,30 @@ class Board(_Board):
 
     def get_workspace(self, *args):
         """Retrieves the board workspace
+
         __________
         Parameters
-        __________
-        args : `tuple`
-            The workspace return fields.
+
+            args : `tuple`
+                The workspace return fields.
 
         _______
         Returns
-        _______
-        workspace : `list[moncli.entities.Workspace]`
-            The board workspace.
+
+            workspace : `list[moncli.entities.Workspace]`
+                The board workspace.
 
         _____________
         Return Fields
-        _____________
-        id : `str`
-            The workspace's unique identifier.
-        name : `str`
-            The workspace's name.
-        kind : `str`
-            The workspace's kind (open / closed)
-        description : `str`
-            The workspace's description
+
+            id : `str`
+                The workspace's unique identifier.
+            name : `str`
+                The workspace's name.
+            kind : `str`
+                The workspace's kind (open / closed)
+            description : `str`
+                The workspace's description
         """
         
         args = client.get_field_list(constants.DEFAULT_WORKSPACE_QUERY_FIELDS, *args)
