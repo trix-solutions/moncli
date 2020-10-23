@@ -255,6 +255,10 @@ BOARDS_OPTIONAL_PARAMS = {
     'updates': {
         'limit': ArgumentValueKind.Int,
         'page': ArgumentValueKind.Int
+    },
+    'views': {
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+        'type': ArgumentValueKind.String
     }
 }
 
