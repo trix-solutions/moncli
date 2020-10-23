@@ -1415,7 +1415,7 @@ def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
 
 
 def get_tags(api_key: str, *args, **kwargs):
-    """
+    """Get a collection of tags.
 
     __________
     Parameters
@@ -1423,9 +1423,9 @@ def get_tags(api_key: str, *args, **kwargs):
         api_key : `str`
             The monday.com v2 API user key.
         args : `tuple`
-            The list of <> return fields.
+            The list of tag return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for tag.
 
     _______
     Returns
@@ -1445,9 +1445,9 @@ def get_tags(api_key: str, *args, **kwargs):
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        ids : `list[str]`
+            A list of tags unique identifiers.
     """
     
     args = get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)
