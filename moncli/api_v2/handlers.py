@@ -1816,25 +1816,21 @@ def execute_query(api_key:str, query_name: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        query_name : `str`
+            The name of the executed query.
+        args : `tuple`
+            Collection of return fields.
+        kwargs : `dict`
+            Mapping of field arguments.
 
     _______
     Returns
         
         data : `dict`
             The query response in dictionary form.
-
-    _____________
-    Return Fields
-    _____________
-
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     operation = util.create_query(query_name, *args, **kwargs)
@@ -1847,8 +1843,15 @@ def execute_mutation(api_key: str, query_name: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        query_name : `str`
+            The name of the executed query.
+        args : `tuple`
+            Collection of return fields.
+        kwargs : `dict`
+            Mapping of field arguments.
 
     _______
     Returns
