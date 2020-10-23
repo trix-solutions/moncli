@@ -1571,7 +1571,7 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
 
 
 def get_users(api_key: str, *args, **kwargs):
-    """
+    """Get a collection of users.
 
     __________
     Parameters
@@ -1579,9 +1579,9 @@ def get_users(api_key: str, *args, **kwargs):
         api_key : `str`
             The monday.com v2 API user key.
         args : `tuple`
-            The list of <> return fields.
+            The list of user return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for querying users.
 
     _______
     Returns
@@ -1645,9 +1645,15 @@ def get_users(api_key: str, *args, **kwargs):
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        ids : `list[str]`
+            A list of users unique identifiers.
+        kind : `moncli.enums.UserKind`
+            The kind to search users by (all / non_guests / guests / non_pending).
+        newest_first : `bool`
+            Get the recently created users at the top of the list.
+        limit : `int`
+            Nimber of users to get.
     """
     
     args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)
