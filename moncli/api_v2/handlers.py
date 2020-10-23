@@ -1151,17 +1151,21 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
 
 
 def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
-    """
+    """Create a new update.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        body : `str`
+            The update text.
+        item_id : `str`
+            The item's unique identifier.
         args : `tuple`
-            The list of <> return fields.
+            The list of update return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for creating updates.
 
     _______
     Returns
@@ -1195,9 +1199,9 @@ def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        parent_id : `str`
+            The parent post identifier.
     """
     
     args = get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)
