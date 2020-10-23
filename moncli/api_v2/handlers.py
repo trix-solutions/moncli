@@ -841,17 +841,23 @@ def get_items(api_key: str, *args, **kwargs):
 
 
 def get_items_by_column_values(api_key: str, board_id: str, column_id: str, column_value: str, *args, **kwargs):
-    """
+    """Search items by their column values.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        board_id : `str`
+            The board's unique identifier.
+        column_id : `str`
+            The column's unique identifier.
+        column_value `str`
+            The column value to search items by.
         args : `tuple`
-            The list of <> return fields.
+            The list of item return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for querying items by column value.
 
     _______
     Returns
@@ -891,9 +897,15 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        limit : `int`
+            Number of items to get.
+        page : `int`
+            Page number to get, starting at 1.
+        column_type : `str`
+            The column type.
+        state : `moncli.enums.State`
+            The state of the item (all / active / archived / deleted); the default is active.
     """
     
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
