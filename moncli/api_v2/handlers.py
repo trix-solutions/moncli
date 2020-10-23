@@ -568,6 +568,10 @@ def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
             The board's unique identifier.
         group_name : `str`
             The name of the new group.
+        args : `tuple`
+            The list of group return fields.
+        kwargs : `dict`
+            Optional arguments for querying assets.
 
     _______
     Returns
@@ -592,13 +596,6 @@ def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
             The group's position in the board.
         title : `str`
             The group's title.
-
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
@@ -613,11 +610,17 @@ def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
     __________
     Parameters
-    
+
+        api_key : `str`
+            The monday.com v2 API user key.
         board_id : `str`
             The board's unique identifier.
         group_id : `str`
             The group's unique identifier.
+        args : `tuple`
+            The list of asset return fields.
+        kwargs : `dict`
+            Optional arguments for querying assets.
 
     _______
     Returns
@@ -656,7 +659,9 @@ def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
     __________
     Parameters
-    
+
+        api_key : `str`
+            The monday.com v2 API user key.
         board_id : `str`
             The board's unique identifier.
         group_id : `str`
@@ -699,8 +704,13 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -757,8 +767,13 @@ def get_items(api_key: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -813,8 +828,13 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -872,8 +892,13 @@ def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -928,8 +953,13 @@ def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwarg
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -986,8 +1016,13 @@ def archive_item(api_key: str, item_id: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1043,8 +1078,13 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1100,8 +1140,13 @@ def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1152,8 +1197,13 @@ def get_updates(api_key: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1202,8 +1252,13 @@ def delete_update(api_key: str, id: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1252,8 +1307,13 @@ def create_notification(api_key: str, text: str, user_id: str, target_id: str, t
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1290,8 +1350,13 @@ def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1327,8 +1392,13 @@ def get_tags(api_key: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1363,8 +1433,13 @@ def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kw
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1416,8 +1491,13 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1470,8 +1550,13 @@ def get_users(api_key: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1550,8 +1635,13 @@ def get_teams(api_key: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1588,8 +1678,13 @@ def get_me(api_key: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1667,8 +1762,13 @@ def get_account(api_key: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1710,8 +1810,13 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1747,8 +1852,13 @@ def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
@@ -1781,8 +1891,13 @@ def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwar
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of <> return fields.
+        kwargs : `dict`
+            Optional arguments for <>.
 
     _______
     Returns
