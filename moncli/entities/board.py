@@ -563,7 +563,14 @@ class Board(_Board):
             utc_hours_diff : `int`
                 The user's UTC hours difference.
         """
-        pass
+        
+        users_data = client.delete_subscribers_from_board(
+            self.__creds.api_key_v2,
+            self.id,
+            user_ids,
+            *args)
+        return [en.User(creds=self.__creds, **user) for user in users_data]
+
 
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
     def add_column(self, title:str, column_type: enums.ColumnType, *args, **kwargs): 
