@@ -876,7 +876,7 @@ class Item(_Item):
 
 
     def duplicate(self, *args, **kwargs):
-        """Duplicate an item.
+        """Duplicate this item.
 
     __________
     Parameters

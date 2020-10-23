@@ -303,6 +303,29 @@ def test_item_should_delete_item(delete_item, get_items, get_me):
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.duplicate_item')
+def test_item_should_duplicate_itself(duplicate_item, get_items, get_me):
+
+    # Arrange
+    id = '2'
+    name = 'Test Item 01 Dupe'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    duplicate_item.return_value = {'id': id, 'name': name}
+    client = MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    # Act
+    duplicate = item.duplicate()
+
+    # Assert 
+    ok_(duplicate)
+    eq_(item.id, id)
+    eq_(item.name, name)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.create_update')
 def test_item_should_add_update(create_update, get_items, get_me):
 
