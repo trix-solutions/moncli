@@ -265,6 +265,55 @@ class Board(_Board):
             **kwargs)[0]['activity_logs']
         return [en.ActivityLog(activity_log) for activity_log in activity_logs_data]
 
+    @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
+    def get_views(self, *args, **kwargs):
+        """Get the board's views.
+
+        __________
+        Parameters
+
+            args : `tuple`
+                The list of board view return fields.
+            kwargs : `dict`
+                Optional keyword arguments for querying board views.
+
+        _______
+        Returns
+
+            views : `list[moncli.entities.BoardView]`
+                The board's collection of board views.
+
+        _____________
+        Return Fields
+
+            id : `str`
+                The view's unique identifier.
+            name : `str`
+                The view's name.
+            settings_str : `str`
+                The view's settings in a string from.
+            type : `str`
+                The view's type.
+
+        __________________
+        Optional Arguments
+
+            ids : `str`
+                The list of view unique identifiers.
+            type :  `str`
+                The view's type.
+        """
+
+        args = ['views.{}'.format(arg) for arg in client.get_field_list(constants.DEFAULT_BOARD_VIEW_QUERY_FIELDS)]
+        if kwargs:
+            kwargs = {'views': kwargs}
+        views_data = client.get_boards(
+            self.__creds.api_key_v2,
+            *args,
+            ids=[self.id]
+            **kwargs)[0]['views']
+        return [en.BoardView(view) for view in views_data]
+
 
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
     def add_column(self, title:str, column_type: enums.ColumnType, *args, **kwargs): 
