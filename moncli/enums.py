@@ -79,3 +79,7 @@ class WebhookEventType(Enum):
 class WorkspaceKind(Enum):
     open = 1
     closed = 2
+
+class SubscriberKind(Enum):
+    subscriber = 1
+    owner = 2
