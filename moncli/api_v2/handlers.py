@@ -259,7 +259,7 @@ def archive_board(api_key: str, board_id: str, *args, **kwargs):
     return execute_mutation(api_key, constants.ARCHIVE_BOARD, *args, **kwargs)
 
 
-def add_subscriber_to_board(api_key: str, board_id: str, user_ids: list, *args, **kwargs):
+def add_subscribers_to_board(api_key: str, board_id: str, user_ids: list, *args, **kwargs):
     """Add subscribers to a board.
 
     __________
@@ -344,10 +344,10 @@ def add_subscriber_to_board(api_key: str, board_id: str, user_ids: list, *args, 
     """
 
     args = get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
-    kwargs = get_method_arguments(constants.ADD_SUBSCRIBER_TO_BOARD_OPTIONAL_PARAMS, **kwargs)
+    kwargs = get_method_arguments(constants.ADD_SUBSCRIBERS_TO_BOARD_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
     kwargs['user_ids'] = util.ListValue([int(id) for id in user_ids])
-    return execute_mutation(api_key, constants.ADD_SUBSCRIBER_TO_BOARD, *args, **kwargs)
+    return execute_mutation(api_key, constants.ADD_SUBSCRIBERS_TO_BOARD, *args, **kwargs)
 
     
 def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *args, **kwargs):

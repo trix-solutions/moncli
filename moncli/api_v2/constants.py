@@ -6,7 +6,7 @@ from .graphql import ArgumentValueKind
 BOARDS = 'boards'
 CREATE_BOARD = 'create_board'
 ARCHIVE_BOARD = 'archive_board'
-ADD_SUBSCRIBER_TO_BOARD = 'add_subscriber_to_board'
+ADD_SUBSCRIBERS_TO_BOARD = 'add_subscribers_to_board'
 
 # Columns
 CREATE_COLUMN = 'create_column'
@@ -282,7 +282,7 @@ ARCHIVE_BOARD_OPTIONAL_PARAMS = {
 
 }
 
-ADD_SUBSCRIBER_TO_BOARD_OPTIONAL_PARAMS = {
+ADD_SUBSCRIBERS_TO_BOARD_OPTIONAL_PARAMS = {
     'kind': ArgumentValueKind.Enum
 }
 

@@ -61,7 +61,7 @@ def test_archive_board(execute_query):
 
 
 @patch(EXECUTE_QUERY_PATCH)
-def test_add_subscriber_to_board(execute_query):
+def test_add_subscribers_to_board(execute_query):
 
     # Arrange
     user_id = '1'
@@ -69,7 +69,7 @@ def test_add_subscriber_to_board(execute_query):
     execute_query.return_value = {constants.ADD_SUBSCRIBER_TO_BOARD: {'id': user_id, 'name': name}}
 
     # Act
-    subscriber = handlers.add_subscriber_to_board('', '1', ['1'])
+    subscriber = handlers.add_subscribers_to_board('', '1', ['1'])
 
     # Assert
     ok_(subscriber)

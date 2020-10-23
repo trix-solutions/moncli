@@ -396,14 +396,14 @@ class Board(_Board):
                 Subscribers kind (subscriber / owner).
         """
 
-        subscriber_data = client.add_subscriber_to_board(
+        subscribers_data = client.add_subscribers_to_board(
             self.__creds.api_key_v2,
             self.id,
             user_ids,
             *args,
             **kwargs)
-        return en.User(creds=self.__creds, **subscriber_data)
-        
+        return [en.User(creds=self.__creds, **user) for user in subscribers_data]
+
 
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
     def add_column(self, title:str, column_type: enums.ColumnType, *args, **kwargs): 
