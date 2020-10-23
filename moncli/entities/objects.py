@@ -54,6 +54,27 @@ class ActivityLog(Model):
     def __repr__(self):
         return str(self.to_primitive())
 
+class BoardView(Model):
+    """A board's view.
+
+    __________
+    Properties
+
+        id : `str`
+            The view's unique identifier.
+        name : `str`
+            The view's name.
+        settings_str : `str`
+            The view's settings in a string from.
+        type : `str`
+            The view's type.
+    """
+
+    id = types.StringType(required=True)
+    name = types.StringType()
+    settings_str = types.StringType()
+    type = types.StringType()
+    
 
 class Column(Model):
     """A board's column.
