@@ -1269,17 +1269,19 @@ def get_updates(api_key: str, *args, **kwargs):
 
 
 def delete_update(api_key: str, id: str, *args, **kwargs):
-    """
+    """Delete an update.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        id : `int`
+            The update's unique identifier.
         args : `tuple`
-            The list of <> return fields.
+            The list of update return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for deleting updates.
 
     _______
     Returns
@@ -1310,12 +1312,6 @@ def delete_update(api_key: str, id: str, *args, **kwargs):
             The update's text body.
         updated_at : `str`
             The update's last edit date.
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)
