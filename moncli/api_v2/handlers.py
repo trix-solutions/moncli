@@ -917,17 +917,19 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
 
 def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
-    """
+    """Clear an item's updates.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        item_id : `str`
+            The item's unique identifier.
         args : `tuple`
-            The list of <> return fields.
+            The list of item return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for clearing item updates.
 
     _______
     Returns
@@ -964,12 +966,6 @@ def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
             The item's last update date.
         updates : `moncli.entities.Update`
             The item's updates.
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
