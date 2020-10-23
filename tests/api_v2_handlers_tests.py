@@ -61,6 +61,23 @@ def test_archive_board(execute_query):
 
 
 @patch(EXECUTE_QUERY_PATCH)
+def test_add_subscribers_to_board(execute_query):
+
+    # Arrange
+    user_id = '1'
+    name = 'name'
+    execute_query.return_value = {constants.ADD_SUBSCRIBER_TO_BOARD: {'id': user_id, 'name': name}}
+
+    # Act
+    subscriber = handlers.add_subscribers_to_board('', '1', ['1'])
+
+    # Assert
+    ok_(subscriber)
+    eq_(subscriber['id'], user_id)
+    eq_(subscriber['name'], name)
+
+
+@patch(EXECUTE_QUERY_PATCH)
 def test_create_column(execute_query):
 
     # Arrange

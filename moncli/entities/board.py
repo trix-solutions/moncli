@@ -265,6 +265,7 @@ class Board(_Board):
             **kwargs)[0]['activity_logs']
         return [en.ActivityLog(activity_log) for activity_log in activity_logs_data]
 
+
     @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
     def get_views(self, *args, **kwargs):
         """Get the board's views.
@@ -313,6 +314,95 @@ class Board(_Board):
             ids=[self.id],
             **kwargs)[0]['views']
         return [en.BoardView(view) for view in views_data]
+
+
+    def add_subscribers(self, user_ids: list, *args, **kwargs):
+        """Add subscribers to this board.
+
+        __________
+        Parameters
+
+            user_ids : `list[str]`
+                User ids to subscribe to a board.
+            args : `tuple`
+                List of user return fields.
+            kwargs : `dict`
+                Additional keyword arguments for adding subscribers to board.
+        
+        _______
+        Returns
+
+            user : `list[moncli.entity.User]`
+                The users subscribed to this board.
+        
+        _____________
+        Return Fields
+
+            account : `moncli.entities.Account`
+                The user's account.
+            birthday : `str`
+                The user's birthday.
+            country_code : `str`
+                The user's country code.
+            created_at : `str`
+                The user's creation date.
+            email : `str`
+                The user's email.
+            enabled : `bool`
+                Is the user enabled or not.
+            id : `str`
+                The user's unique identifier.
+            is_guest : `bool`
+                Is the user a guest or not.
+            is_pending : `bool`
+                Is the user a pending user.
+            is_view_only : `bool`
+                Is the user a view only user or not.
+            join_date : `str`
+                The date the user joined the account.
+            location : `str`
+                The user' location.
+            mobile_phone : `str`
+                The user's mobile phone number.
+            name : `str`
+                The user's name.
+            phone : `str`
+                The user's phone number.
+            photo_original : `str`
+                The user's photo in the original size.
+            photo_small : `str`
+                The user's photo in small size (150x150).
+            photo_thumb : `str`
+                The user's photo in thumbnail size (100x100).
+            photo_thumb_small : `str`
+                The user's photo in small thumbnail size (50x50).
+            photo_tiny : `str`
+                The user's photo in tiny size (30x30).
+            teams : `list[moncli.entities.Team]`
+                The teams the user is a member in.
+            time_zone_identifier : `str`
+                The user's time zone identifier.
+            title : `str`
+                The user's title.
+            url : `str`
+                The user's profile url.
+            utc_hours_diff : `int`
+                The user's UTC hours difference.
+
+        __________________
+        Optional Arguments
+
+            kind : `moncli.enums.SubscriberKind`
+                Subscribers kind (subscriber / owner).
+        """
+
+        subscribers_data = client.add_subscribers_to_board(
+            self.__creds.api_key_v2,
+            self.id,
+            user_ids,
+            *args,
+            **kwargs)
+        return [en.User(creds=self.__creds, **user) for user in subscribers_data]
 
 
     @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
