@@ -6,6 +6,7 @@ from .graphql import ArgumentValueKind
 BOARDS = 'boards'
 CREATE_BOARD = 'create_board'
 ARCHIVE_BOARD = 'archive_board'
+ADD_SUBSCRIBER_TO_BOARD = 'add_subscriber_to_board'
 
 # Columns
 CREATE_COLUMN = 'create_column'
@@ -258,6 +259,9 @@ BOARDS_OPTIONAL_PARAMS = {
         'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
         'limit': ArgumentValueKind.Int,
         'page': ArgumentValueKind.Int
+    },
+    'subscribers': {
+        'kind': ArgumentValueKind.Enum
     },
     'updates': {
         'limit': ArgumentValueKind.Int,
