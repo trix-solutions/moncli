@@ -6,28 +6,83 @@ from .exceptions import MondayApiError
 
 
 def create_board(api_key: str, board_name: str, board_kind: BoardKind, *args, **kwargs):
-    """
+    """Create a new board.
 
     __________
     Parameters
-    __________
 
+        api_key : `str`
+            The monday.com v2 API user key.
+        board_name : `str`
+            The board's name.
+        board_kind : `moncli.enums.BoardKind`
+            The board's kind (public / private / share)
+        args : `tuple`
+            The list of board return fields.
+        kwargs : `dict`
+            Optional keyword arguments for creating boards.
 
     _______
     Returns
-    _______
 
+        board_data : `dict`
+            A monday.com board in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        activity_logs : `list[moncli.entities.ActivityLog]`
+            The board log events.
+        board_folder_id : `int`
+            The board's folder unique identifier.
+        board_kind : `str`
+            The board's kind (public / private / share).
+        columns : `list[moncli.entities.Column]`
+            The board's visible columns.
+        communication : `str`
+            Get the board communication value - typically meeting ID.
+        description : `str`
+            The board's description.
+        groups : `list[moncli.entities.Group]`
+            The board's visible groups.
+        id : `str`
+            The unique identifier of the board.
+        items : `list[moncli.entities.Item]`
+            The board's items (rows).
+        name : `str`
+            The board's name.
+        owner : `moncli.entities.user.User`
+            The owner of the board.
+        permissions : `str`
+            The board's permissions.
+        pos : `str`
+            The board's position.
+        state : `str`
+            The board's state (all / active / archived / deleted).
+        subscribers : `list[moncli.entities.User]`
+            The board's subscribers.
+        tags : `list[moncli.entities.Tag]`
+            The board's specific tags.
+        top_group : `moncli.entities.Group`
+            The top group at this board.
+        updated_at : `str`
+            The last time the board was updated at (ISO8601 DateTime).
+        updates : `list[moncli.entities.Update]`
+            The board's updates.
+        views : `list[moncli.entities.BoardView]`
+            The board's views.
+        workspace : `moncli.entities.Workspace`
+            The workspace that contains this board (null for main workspace).
+        workspace_id : `str`
+            The board's workspace unique identifier (null for main workspace).
 
     __________________
     Optional Arguments
-    __________________
 
-
+        workspace_id : `int`
+            Optional workspace id.
+        template_id : `int`
+            Optional board template id.
     """
 
     args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS)
@@ -42,23 +97,83 @@ def get_boards(api_key: str, *args, **kwargs) -> List[Dict[str, Any]]:
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        args : `tuple`
+            The list of board return fields.
+        kwargs : `dict`
+            Optional keyword arguments for querying boards.
 
     _______
     Returns
-    _______
 
+        data : `dict`
+            A monday.com board in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+    
+        activity_logs : `list[moncli.entities.ActivityLog]`
+            The board log events.
+        board_folder_id : `int`
+            The board's folder unique identifier.
+        board_kind : `str`
+            The board's kind (public / private / share).
+        columns : `list[moncli.entities.Column]`
+            The board's visible columns.
+        communication : `str`
+            Get the board communication value - typically meeting ID.
+        description : `str`
+            The board's description.
+        groups : `list[moncli.entities.Group]`
+            The board's visible groups.
+        id : `str`
+            The unique identifier of the board.
+        items : `list[moncli.entities.Item]`
+            The board's items (rows).
+        name : `str`
+            The board's name.
+        owner : `moncli.entities.user.User`
+            The owner of the board.
+        permissions : `str`
+            The board's permissions.
+        pos : `str`
+            The board's position.
+        state : `str`
+            The board's state (all / active / archived / deleted).
+        subscribers : `list[moncli.entities.User]`
+            The board's subscribers.
+        tags : `list[moncli.entities.Tag]`
+            The board's specific tags.
+        top_group : `moncli.entities.Group`
+            The top group at this board.
+        updated_at : `str`
+            The last time the board was updated at (ISO8601 DateTime).
+        updates : `list[moncli.entities.Update]`
+            The board's updates.
+        views : `list[moncli.entities.BoardView]`
+            The board's views.
+        workspace : `moncli.entities.Workspace`
+            The workspace that contains this board (null for main workspace).
+        workspace_id : `str`
+            The board's workspace unique identifier (null for main workspace).
 
     __________________
     Optional Arguments
-    __________________
 
+        limit : `int`
+            Number of boards to get; the default is 25.
+        page : `int`
+            Page number to get, starting at 1.
+        ids : `list[str]`
+            A list of boards unique identifiers.
+        board_kind : `moncli.enumns.BoardKind`
+            The board's kind (public / private /share).
+        state : `moncli.enums.State`
+            The state of the board (all / active / archived / deleted),; the default is active.
+        newest_first : `bool`
+            Get the recently created boards at the top of the list.        
 
     """
     
@@ -73,24 +188,69 @@ def archive_board(api_key: str, board_id: str, *args, **kwargs):
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        board_id : `str`
+            The board's unique identifier.
+        args : `tuple`
+            The list of board return fields.
+        kwargs : `dict`
+            Optional keyword arguments for archiving boards.
 
     _______
     Returns
-    _______
-
+        
+        data : `dict`
+            A monday.com board in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
-
-    __________________
-    Optional Arguments
-    __________________
-
-
+    
+        activity_logs : `list[moncli.entities.ActivityLog]`
+            The board log events.
+        board_folder_id : `int`
+            The board's folder unique identifier.
+        board_kind : `str`
+            The board's kind (public / private / share).
+        columns : `list[moncli.entities.Column]`
+            The board's visible columns.
+        communication : `str`
+            Get the board communication value - typically meeting ID.
+        description : `str`
+            The board's description.
+        groups : `list[moncli.entities.Group]`
+            The board's visible groups.
+        id : `str`
+            The unique identifier of the board.
+        items : `list[moncli.entities.Item]`
+            The board's items (rows).
+        name : `str`
+            The board's name.
+        owner : `moncli.entities.user.User`
+            The owner of the board.
+        permissions : `str`
+            The board's permissions.
+        pos : `str`
+            The board's position.
+        state : `str`
+            The board's state (all / active / archived / deleted).
+        subscribers : `list[moncli.entities.User]`
+            The board's subscribers.
+        tags : `list[moncli.entities.Tag]`
+            The board's specific tags.
+        top_group : `moncli.entities.Group`
+            The top group at this board.
+        updated_at : `str`
+            The last time the board was updated at (ISO8601 DateTime).
+        updates : `list[moncli.entities.Update]`
+            The board's updates.
+        views : `list[moncli.entities.BoardView]`
+            The board's views.
+        workspace : `moncli.entities.Workspace`
+            The workspace that contains this board (null for main workspace).
+        workspace_id : `str`
+            The board's workspace unique identifier (null for main workspace).
     """
     
     args = get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS)
