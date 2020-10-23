@@ -1783,7 +1783,7 @@ def get_me(api_key: str, *args, **kwargs):
 
 
 def get_account(api_key: str, *args, **kwargs):
-    """
+    """Get the connected account's information.
 
     __________
     Parameters
@@ -1791,9 +1791,9 @@ def get_account(api_key: str, *args, **kwargs):
         api_key : `str`
             The monday.com v2 API user key.
         args : `tuple`
-            The list of <> return fields.
+            The list of account return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for querying accounts.
 
     _______
     Returns
@@ -1818,12 +1818,6 @@ def get_account(api_key: str, *args, **kwargs):
             Show weekends in timeline.
         slug : `str`
             The account's slug.
-
-    __________________
-    Optional Arguments
-    __________________
-
-
     """
     
     args = get_field_list(constants.DEFAULT_ACCOUNT_QUERY_FIELDS, *args)
