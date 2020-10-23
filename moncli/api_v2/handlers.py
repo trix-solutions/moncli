@@ -1371,17 +1371,19 @@ def create_notification(api_key: str, text: str, user_id: str, target_id: str, t
 
 
 def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
-    """
+    """Create a new tag or get it if it already exists.
 
     __________
     Parameters
     
         api_key : `str`
             The monday.com v2 API user key.
+        tag_name : `str`
+            The new tag's name.
         args : `tuple`
-            The list of <> return fields.
+            The list of tag return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for tag.
 
     _______
     Returns
@@ -1401,9 +1403,9 @@ def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
 
     __________________
     Optional Arguments
-    __________________
-
-
+    
+        board_id : `str`
+            The private board id to create the tag at (not needed for public boards).
     """
     
     args = get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)
