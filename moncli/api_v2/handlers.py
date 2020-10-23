@@ -1730,7 +1730,10 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
     _____________
     Return Fields
     
-        
+        board_id : `str`
+            The webhook's board id.
+        id : `str`
+            The webhook's unique identifier.
 
     __________________
     Optional Arguments
@@ -1763,8 +1766,11 @@ def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
 
     _____________
     Return Fields
-    _____________
-
+    
+        board_id : `str`
+            The webhook's board id.
+        id : `str`
+            The webhook's unique identifier.
 
     __________________
     Optional Arguments
@@ -1794,8 +1800,15 @@ def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwar
 
     _____________
     Return Fields
-    _____________
-
+    
+        id : `str`
+            The workspace's unique identifier.
+        name : `str`
+            The workspace's name.
+        kind : `str`
+            The workspace's kind (open / closed)
+        description : `str`
+            The workspace's description
 
     __________________
     Optional Arguments
