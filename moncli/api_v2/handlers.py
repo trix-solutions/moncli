@@ -260,28 +260,53 @@ def archive_board(api_key: str, board_id: str, *args, **kwargs):
 
     
 def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *args, **kwargs):
-    """
+    """Create a new column in board.
 
     __________
     Parameters
-    __________
-
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        board_id : `str`
+            The board's unique identifier.
+        title : `str`
+            The new column's title.
+        args : `tuple`
+            The list of column return fields.
+        kwargs : `dict`
+            Optional keyword arguments for creating columns.
 
     _______
     Returns
-    _______
-
+        
+        data : `dict`
+            A monday.com column in dictionary form.
 
     _____________
     Return Fields
-    _____________
-
+        
+        archived : `bool`
+            Is the column archived or not.
+        id : `str`
+            The column's unique identifier.
+        pos : `str`
+            The column's position in the board.
+        settings_str : `str`
+            The column's settings in a string form.
+        title : `str`
+            The column's title.
+        type : `str`
+            The column's type.
+        width : `int`
+            The column's width.
 
     __________________
     Optional Arguments
-    __________________
 
-
+        column_type : `moncli.enumns.ColumnType`
+            The type of column to create.
+        defaults : `json`
+            The new column's defaults.
     """
     
     args = get_field_list(constants.DEFAULT_COLUMN_QUERY_FIELDS, *args)
@@ -302,7 +327,8 @@ def change_column_value(api_key: str, item_id: str, column_id: str, board_id: st
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -336,7 +362,8 @@ def change_multiple_column_value(api_key: str, item_id: str, board_id: str, colu
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -369,7 +396,8 @@ def get_assets(api_key: str, ids: list, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -401,7 +429,8 @@ def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs)
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -433,7 +462,8 @@ def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -465,7 +495,8 @@ def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -497,7 +528,8 @@ def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -529,7 +561,8 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -561,7 +594,8 @@ def get_items(api_key: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -591,7 +625,8 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -624,7 +659,8 @@ def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -654,7 +690,8 @@ def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwarg
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -686,7 +723,8 @@ def archive_item(api_key: str, item_id: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -717,7 +755,8 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -748,7 +787,8 @@ def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -780,7 +820,8 @@ def get_updates(api_key: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -810,7 +851,8 @@ def delete_update(api_key: str, id: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -840,7 +882,8 @@ def create_notification(api_key: str, text: str, user_id: str, target_id: str, t
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -874,7 +917,8 @@ def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -905,7 +949,8 @@ def get_tags(api_key: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -935,7 +980,8 @@ def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kw
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -970,7 +1016,8 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1006,7 +1053,8 @@ def get_users(api_key: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1036,7 +1084,8 @@ def get_teams(api_key: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1066,7 +1115,8 @@ def get_me(api_key: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1095,7 +1145,8 @@ def get_account(api_key: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1124,7 +1175,8 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1157,7 +1209,8 @@ def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1187,7 +1240,8 @@ def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwar
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1219,7 +1273,8 @@ def execute_query(api_key:str, query_name: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1249,7 +1304,8 @@ def execute_mutation(api_key: str, query_name: str, *args, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1286,7 +1342,8 @@ def get_field_list(fields: list, *args):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
@@ -1305,6 +1362,7 @@ def get_field_list(fields: list, *args):
         return fields
     return args
 
+
 def get_method_arguments(mappings: dict, **kwargs):
     """
 
@@ -1315,7 +1373,8 @@ def get_method_arguments(mappings: dict, **kwargs):
 
     _______
     Returns
-    _______
+        
+        data : `dict`
 
 
     _____________
