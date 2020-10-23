@@ -66,7 +66,7 @@ def test_add_subscribers_to_board(execute_query):
     # Arrange
     user_id = '1'
     name = 'name'
-    execute_query.return_value = {constants.ADD_SUBSCRIBER_TO_BOARD: {'id': user_id, 'name': name}}
+    execute_query.return_value = {constants.ADD_SUBSCRIBERS_TO_BOARD: {'id': user_id, 'name': name}}
 
     # Act
     subscriber = handlers.add_subscribers_to_board('', '1', ['1'])

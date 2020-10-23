@@ -92,17 +92,17 @@ def test_should_add_subscribers(add_subscribers_to_board, get_boards, get_me):
     name = 'name'
     get_me.return_value = GET_ME_RETURN_VALUE
     get_boards.return_value = [{'id': '1', 'name': 'name'}]
-    add_subscribers_to_board.return_value = {'id': user_id, 'name': name}
+    add_subscribers_to_board.return_value = [{'id': user_id, 'name': name}]
     client = MondayClient(USERNAME, '', '')
     board = client.get_boards(ids=['1'])[0]
 
     # Act
-    subscriber = board.add_subscribers([user_id])
+    subscribers = board.add_subscribers([user_id])
 
     # Assert
-    ok_(subscriber)
-    eq_(subscriber.id, user_id)
-    eq_(subscriber.name, name)
+    ok_(subscribers)
+    eq_(subscribers[0].id, user_id)
+    eq_(subscribers[0].name, name)
 
 
 @patch.object(MondayClient, 'get_me')
@@ -120,6 +120,29 @@ def test_should_get_board_subscribers(get_boards, get_me):
 
     # Act
     subscribers = board.get_subscribers()
+
+    # Assert
+    ok_(subscribers)
+    eq_(subscribers[0].id, user_id)
+    eq_(subscribers[0].name, name)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_boards')
+@patch('moncli.api_v2.delete_subscribers_from_board')
+def test_should_delete_subscribers_from_board(delete_subscribers_from_board, get_boards, get_me):
+
+    # Arrange
+    user_id = '1'
+    name = 'name'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_boards.return_value = [{'id': '1', 'name': 'name'}]
+    client = MondayClient(USERNAME, '', '')
+    board = client.get_boards(ids=['1'])[0]
+    delete_subscribers_from_board.return_value = [{'id': user_id, 'name': name}]
+
+    # Act
+    subscribers = board.delete_subscribers(['1'])
 
     # Assert
     ok_(subscribers)
