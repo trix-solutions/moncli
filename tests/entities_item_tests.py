@@ -243,6 +243,29 @@ def test_item_should_change_multiple_column_values_with_column_value_list(change
 
 @patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
+@patch('moncli.api_v2.create_subitem')
+def test_item_should_add_a_subitem(create_subitem, get_items, get_me):
+
+    # Arrange
+    id = '2'
+    name = 'Test Subitem 01'
+    get_me.return_value = GET_ME_RETURN_VALUE
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    create_subitem.return_value = {'id': id, 'name': name}
+    client = MondayClient(USERNAME, '', '')
+    item = client.get_items()[0]
+
+    # Act
+    subitem = item.create_subitem(name)
+
+    # Assert 
+    ok_(subitem != None)
+    eq_(subitem.id, id)
+    eq_(subitem.name, name)
+
+
+@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.move_item_to_group')
 def test_item_should_move_item_to_group(move_item_to_group, get_items, get_me):
 

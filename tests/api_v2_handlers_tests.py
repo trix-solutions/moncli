@@ -225,6 +225,24 @@ def test_create_item(execute_query):
 
 
 @patch(EXECUTE_QUERY_PATCH)
+def test_create_subitem(execute_query):
+
+    # Arrange
+    id = '2'
+    item_name = 'Item One'
+    execute_query.return_value = {constants.CREATE_SUBITEM: {'id': id, 'name': item_name}}
+
+    # Act
+    subitem = handlers.create_subitem('', '1', item_name)
+    
+    # Assert
+    ok_(subitem != None)
+    ok_(type(subitem) is dict)
+    eq_(subitem['id'], id)
+    eq_(subitem['name'], item_name)
+
+
+@patch(EXECUTE_QUERY_PATCH)
 def test_clear_item_updates(execute_query):
 
     # Arrange

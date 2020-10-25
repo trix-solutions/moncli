@@ -893,9 +893,9 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
         board_id : `str`
             The board's unique identifier.
         args : `tuple`
-            The list of <> return fields.
+            The list of item return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for creating items.
 
     _______
     Returns
@@ -940,7 +940,6 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
             The group's unique identifier.
         column_values : `json`
             The column values of the new item.
-
     """
     
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
@@ -948,6 +947,73 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
     kwargs['item_name'] = util.StringValue(item_name)
     kwargs['board_id'] = util.IntValue(board_id)    
     return execute_mutation(api_key, constants.CREATE_ITEM, *args, **kwargs)
+
+
+def create_subitem(api_key: str, parent_item_id: str, item_name: str, *args, **kwargs):
+    """Create subitem.
+
+    __________
+    Parameters
+    
+        api_key : `str`
+            The monday.com v2 API user key.
+        parent_item_id : `str`
+            The parent item's unique identifier.
+        item_name : `str`
+            The new item's name.
+        args : `tuple`
+            The list of item return fields.
+        kwargs : `dict`
+            Optional arguments for creating subitems.
+
+    _______
+    Returns
+                
+        data : `dict`
+            A monday.com column in item form.
+
+    _____________
+    Return Fields
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
+
+    __________________
+    Optional Arguments
+    
+        column_values : `json`
+            The column values of the new item.
+    """
+
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
+    kwargs = get_method_arguments(constants.CREATE_SUBITEM_OPTIONAL_PARAMS, **kwargs)
+    kwargs['parent_item_id'] = util.IntValue(parent_item_id)
+    kwargs['item_name'] = util.StringValue(item_name)
+    return execute_mutation(api_key, constants.CREATE_SUBITEM, *args, **kwargs)
 
 
 def get_items(api_key: str, *args, **kwargs):
@@ -1959,9 +2025,9 @@ def get_me(api_key: str, *args, **kwargs):
         api_key : `str`
             The monday.com v2 API user key.
         args : `tuple`
-            The list of <> return fields.
+            The list of user return fields.
         kwargs : `dict`
-            Optional arguments for <>.
+            Optional arguments for getting my user.
 
     _______
     Returns

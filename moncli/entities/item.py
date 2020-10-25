@@ -707,6 +707,71 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
 
 
+    def create_subitem(self, item_name: str, *args, **kwargs):
+        """Create subitem.
+
+        __________
+        Parameters
+        
+            item_name : `str`
+                The new item's name.
+            args : `tuple`
+                The list of item return fields.
+            kwargs : `dict`
+                Optional arguments for creating subitems.
+
+        _______
+        Returns
+                    
+            subitem : `moncli.entities.Item`
+                The created subitem.
+
+        _____________
+        Return Fields
+        
+            assets : `list[moncli.entities.Asset]`
+                The item's assets/files.
+            board : `moncli.entities.Board`
+                The board that contains this item.
+            column_values : `list[moncli.entities.ColumnValue]`
+                The item's column values.
+            created_at : `str`
+                The item's create date.
+            creator : `moncli.entities.User`
+                The item's creator.
+            creator_id : `str`
+                The item's unique identifier.
+            group : `moncli.entities.Group`
+                The group that contains this item.
+            id : `str`
+                The item's unique identifier.
+            name : `str`
+                The item's name.
+            state : `str`
+                The board's state (all / active / archived / deleted)
+            subscriber : `moncli.entities.User`
+                The pulse's subscribers.
+            updated_at : `str`
+                The item's last update date.
+            updates : `moncli.entities.Update`
+                The item's updates.
+
+        __________________
+        Optional Arguments
+        
+            column_values : `json`
+                The column values of the new item.
+        """
+        
+        subitem_data = client.create_subitem(
+            self.__creds.api_key_v2,
+            self.id,
+            item_name,
+            *args,
+            **kwargs)
+        return en.Item(creds=self.__creds, **subitem_data)
+
+
     def move_to_group(self, group_id: str, *args):
         """Move item to a different group.
 

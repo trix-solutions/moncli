@@ -24,6 +24,7 @@ DELETE_GROUP = 'delete_group'
 ITEMS = 'items'
 ITEMS_BY_COLUMN_VALUES = 'items_by_column_values'
 CREATE_ITEM = 'create_item'
+CREATE_SUBITEM = 'create_subitem'
 CLEAR_ITEM_UPDATES = 'clear_item_updates'
 MOVE_ITEM_TO_GROUP = 'move_item_to_group'
 ARCHIVE_ITEM = 'archive_item'
@@ -352,8 +353,12 @@ ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS = {
     }
 }
 
-CREATE_ITEM_OPTIONAL_PARAMS ={
+CREATE_ITEM_OPTIONAL_PARAMS = {
     'group_id': ArgumentValueKind.String,
+    'column_values': ArgumentValueKind.Json
+}
+
+CREATE_SUBITEM_OPTIONAL_PARAMS = {
     'column_values': ArgumentValueKind.Json
 }
 
