@@ -358,7 +358,7 @@ CREATE_ITEM_OPTIONAL_PARAMS = {
     'column_values': ArgumentValueKind.Json
 }
 
-CREATE_ITEM_OPTIONAL_PARAMS = {
+CREATE_SUBITEM_OPTIONAL_PARAMS = {
     'column_values': ArgumentValueKind.Json
 }
 
