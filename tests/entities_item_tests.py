@@ -260,8 +260,8 @@ def test_item_should_add_a_subitem(create_subitem, get_items, get_me):
 
     # Assert 
     ok_(subitem != None)
-    eq_(item.id, id)
-    eq_(item.name, name)
+    eq_(subitem.id, id)
+    eq_(subitem.name, name)
 
 
 @patch.object(MondayClient, 'get_me')

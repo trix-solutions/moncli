@@ -762,7 +762,14 @@ class Item(_Item):
             column_values : `json`
                 The column values of the new item.
         """
-        pass
+        
+        subitem_data = client.create_subitem(
+            self.__creds,
+            self.id,
+            item_name,
+            *args,
+            **kwargs)
+        return en.Item(creds=self.__creds, **subitem_data)
 
 
     def move_to_group(self, group_id: str, *args):
