@@ -707,6 +707,10 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
 
 
+    def create_subitem(self, parent_item_id: str, item_name: str):
+        pass
+
+
     def move_to_group(self, group_id: str, *args):
         """Move item to a different group.
 

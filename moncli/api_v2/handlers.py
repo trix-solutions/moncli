@@ -1009,11 +1009,11 @@ def create_subitem(api_key: str, parent_item_id: str, item_name: str, *args, **k
             The column values of the new item.
     """
 
-    args = get_field_list(constants.DEFAULT_ITEM_QUERY_LIST, *args)
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.CREATE_SUBITEM_OPTIONAL_PARAMS, **kwargs)
     kwargs['parent_item_id'] = util.IntValue(parent_item_id)
     kwargs['item_name'] = util.StringValue(item_name)
-    return execute_mutation(api_key, *args, **kwargs)
+    return execute_mutation(api_key, constants.CREATE_SUBITEM, *args, **kwargs)
 
 
 def get_items(api_key: str, *args, **kwargs):
