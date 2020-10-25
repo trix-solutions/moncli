@@ -1161,6 +1161,40 @@ class WeekValue(ColumnValue):
                 value['week'] = {}
             value['week'][k] = v
         self.value = dumps(value)
+
+
+class ItemLinkValue(ColumnValue):
+    """An item link column value.
+    
+    __________
+    Properties
+
+        item_ids : `list[str]`
+            The list of linked items.
+
+    _______
+    Methods
+
+        add_item : `void`
+            Unique identifier of item to add.
+        remove_item : `void`
+            Unique identifier of item to remove.
+    """
+
+    def __init__(self, **kwargs):
+        super(ItemLinkValue, self).__init__(**kwargs)
+
+    @property
+    def item_ids(self):
+        try:
+            return loads(self.value)['item_ids']
+        except:
+            return []
+
+    
+    def format(self):
+        """Format for column value update."""
+        return {'item_ids': [int(id) for id in self.item_ids]}
         
 
 class ReadonlyValue(ColumnValue):
