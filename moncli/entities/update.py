@@ -3,7 +3,6 @@ from schematics.models import Model
 
 from .. import api_v2 as client, config, entities as en
 from ..api_v2 import constants
-from ..decorators import optional_arguments
 
 
 class _Update(Model):

@@ -1,6 +1,5 @@
 from .. import api_v2 as client, config, enums, entities as en
 from ..api_v2 import constants
-from ..decorators import optional_arguments
 
 
 class MondayClient():
@@ -69,7 +68,7 @@ class MondayClient():
             self.__me = self.get_me()
         return self.__me
 
-    @optional_arguments(constants.CREATE_BOARD_OPTIONAL_PARAMS)
+
     def create_board(self, board_name: str, board_kind: enums.BoardKind, *args, **kwargs):
         """Create a new board.
 
@@ -156,7 +155,6 @@ class MondayClient():
         return en.Board(creds=self.__creds, **board_data)
 
 
-    @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
     def get_boards(self, *args, **kwargs):
         """Get a collection of boards.
 
@@ -324,7 +322,6 @@ class MondayClient():
             return self.get_board_by_name(name)
 
 
-    @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
     def get_board_by_id(self, id: str, *args):
         """Get a board by unique identifier.
 
@@ -491,7 +488,6 @@ class MondayClient():
         raise BoardNotFound('name', name)   
 
 
-    @optional_arguments(constants.ARCHIVE_BOARD_OPTIONAL_PARAMS)
     def archive_board(self, board_id: str, *args):
         """Archive a board.
 
@@ -565,7 +561,6 @@ class MondayClient():
         return en.Board(creds=self.__creds, **board_data)
 
 
-    @optional_arguments(constants.ASSETS_OPTIONAL_PARAMS)
     def get_assets(self, ids: list, *args):
         """Get a collection of assets by IDs.
 
@@ -685,7 +680,6 @@ class MondayClient():
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
         
 
-    @optional_arguments(constants.UPDATES_OPTIONAL_PARAMS)
     def get_updates(self, *args, **kwargs):
         """Get a collection of updates.
 
@@ -847,7 +841,6 @@ class MondayClient():
         return en.Item(creds=self.__creds, **item_data)
 
 
-    @optional_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS)
     def create_notification(self, text: str, user_id: str, target_id: str, target_type: enums.NotificationTargetType, *args, **kwargs):
         """Create a new notification.
 
@@ -895,7 +888,6 @@ class MondayClient():
         return en.Notification(notification_data)
     
 
-    @optional_arguments(constants.CREATE_OR_GET_TAG_OPTIONAL_PARAMS)
     def create_or_get_tag(self, tag_name: str, *args, **kwargs):
         """Create a new tag or get it if it already exists.
 
@@ -940,7 +932,6 @@ class MondayClient():
         return en.Tag(tag_data)
 
 
-    @optional_arguments(constants.TAGS_OPTIONAL_PARAMS)
     def get_tags(self, *args, **kwargs):
         """Get a collection of tags.
 
@@ -982,7 +973,6 @@ class MondayClient():
         return [en.Tag(tag_data) for tag_data in tags_data]
     
 
-    @optional_arguments(constants.USERS_OPTIONAL_PARAMS)
     def get_users(self, *args, **kwargs):
         """Get a collection of users.
 
@@ -1074,7 +1064,6 @@ class MondayClient():
         return [en.User(creds=self.__creds, **user_data) for user_data in users_data]
     
 
-    @optional_arguments(constants.TEAMS_OPTIONAL_PARAMS)
     def get_teams(self, *args, **kwargs):
         """Get a collection of teams.
 

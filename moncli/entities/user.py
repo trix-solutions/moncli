@@ -3,7 +3,6 @@ from schematics import types
 
 from .. import api_v2 as client, config, enums, entities as en
 from ..api_v2 import constants
-from ..decorators import optional_arguments
 
 
 class _User(Model):
@@ -216,7 +215,6 @@ class User(_User):
         return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
     
 
-    @optional_arguments(constants.CREATE_NOTIFICATION_OPTIONAL_PARAMS)
     def send_notification(self, text: str, target_id: str, target_type: enums.NotificationTargetType, *args, **kwargs):
         """Create a new notification.
 
