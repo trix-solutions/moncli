@@ -193,7 +193,7 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_
     item = client.get_items()[0]
 
     # Act
-    item.change_column_value(column_id='text_column_01', column_value=[1,2,3,4,5])
+    item.change_column_value(column_value=[1,2,3,4,5])
 
 
 @patch.object(MondayClient, 'get_me')
@@ -310,7 +310,7 @@ def test_item_should_duplicate_itself(duplicate_item, get_items, get_me):
     id = '2'
     name = 'Test Item 01 Dupe'
     get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board':{'id': '1', 'name': 'Test Board'}}]
     duplicate_item.return_value = {'id': id, 'name': name}
     client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
@@ -320,8 +320,8 @@ def test_item_should_duplicate_itself(duplicate_item, get_items, get_me):
 
     # Assert 
     ok_(duplicate)
-    eq_(item.id, id)
-    eq_(item.name, name)
+    eq_(duplicate.id, id)
+    eq_(duplicate.name, name)
 
 
 @patch.object(MondayClient, 'get_me')
