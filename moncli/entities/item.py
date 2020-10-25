@@ -764,7 +764,7 @@ class Item(_Item):
         """
         
         subitem_data = client.create_subitem(
-            self.__creds,
+            self.__creds.api_key_v2,
             self.id,
             item_name,
             *args,

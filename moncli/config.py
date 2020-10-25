@@ -23,7 +23,8 @@ COLUMN_TYPE_MAPPINGS = {
     'timerange': ColumnType.timeline,
     'week': ColumnType.week,
     'timezone': ColumnType.world_clock,
-    'file': ColumnType.file
+    'file': ColumnType.file,
+    'subitems': ColumnType.subitems
 }
 
 COLUMN_TYPE_VALUE_MAPPINGS = {
