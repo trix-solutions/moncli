@@ -28,6 +28,7 @@ CLEAR_ITEM_UPDATES = 'clear_item_updates'
 MOVE_ITEM_TO_GROUP = 'move_item_to_group'
 ARCHIVE_ITEM = 'archive_item'
 DELETE_ITEM = 'delete_item'
+DUPLICATE_ITEM = 'duplicate_item'
 
 # Updates
 UPDATES = 'updates'
@@ -366,6 +367,12 @@ ARCHIVE_ITEM_OPTIONAL_PARAMS = {
 
 DELETE_ITEM_OPTIONAL_PARAMS = {
 
+}
+
+DUPLICATE_ITEM_ARGUMENTS = {
+    'board_id': ArgumentValueKind.Int,
+    'with_updates': ArgumentValueKind.Bool,
+    'item_id': ArgumentValueKind.Int
 }
 
 UPDATES_OPTIONAL_PARAMS = {

@@ -6,7 +6,6 @@ from schematics import types
 
 from .. import api_v2 as client, config, entities as en, enums
 from ..api_v2 import constants
-from ..decorators import optional_arguments
 from .column_value import FileValue
 
 
@@ -91,8 +90,6 @@ class Item(_Item):
         Clear all updates for item.
     
     """
-
-
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
@@ -580,7 +577,6 @@ class Item(_Item):
                 return column_value
     
 
-    @optional_arguments(constants.CHANGE_COLUMN_VALUE_OPTIONAL_PARAMS)
     def change_column_value(self, column_value = None, *args):
         """Get an item's column value by ID or title.
 
@@ -647,7 +643,6 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
     
 
-    @optional_arguments(constants.CHANGE_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS)
     def change_multiple_column_values(self, column_values, *args):
         """Change the item's column values.
 
@@ -712,7 +707,6 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
 
 
-    @optional_arguments(constants.MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS)
     def move_to_group(self, group_id: str, *args):
         """Move item to a different group.
 
@@ -875,7 +869,69 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
 
 
-    @optional_arguments(constants.CREATE_UPDATE_OPTIONAL_PARAMS)
+    def duplicate(self, *args, **kwargs):
+        """Duplicate this item.
+
+        __________
+        Parameters
+
+            args : `tuple`
+                The list of item return fields.
+            kwargs : `dict`
+                Optional keyword arguments for duplicating item.
+
+        _______
+        Returns
+            
+            item : `moncli.entities.Item`
+                The duplicated item.
+
+        _____________
+        Return Fields
+        
+            assets : `list[moncli.entities.Asset]`
+                The item's assets/files.
+            board : `moncli.entities.Board`
+                The board that contains this item.
+            column_values : `list[moncli.entities.ColumnValue]`
+                The item's column values.
+            created_at : `str`
+                The item's create date.
+            creator : `moncli.entities.User`
+                The item's creator.
+            creator_id : `str`
+                The item's unique identifier.
+            group : `moncli.entities.Group`
+                The group that contains this item.
+            id : `str`
+                The item's unique identifier.
+            name : `str`
+                The item's name.
+            state : `str`
+                The board's state (all / active / archived / deleted)
+            subscriber : `moncli.entities.User`
+                The pulse's subscribers.
+            updated_at : `str`
+                The item's last update date.
+            updates : `moncli.entities.Update`
+                The item's updates.
+
+        __________________
+        Optional Arguments
+
+            with_updates : `bool`
+                Duplicate with the item's updates.
+        """
+
+        item_data = client.duplicate_item(
+            self.__creds.api_key_v2,
+            self.board.id,
+            self.id,
+            *args,
+            *kwargs)
+        return en.Item(creds=self.__creds, **item_data)
+
+
     def add_update(self, body: str, *args, **kwargs):
         """Change the item's column values.
 

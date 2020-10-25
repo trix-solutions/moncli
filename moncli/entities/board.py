@@ -3,7 +3,6 @@ from schematics import types
 
 from .. import api_v2 as client, config, enums, entities as en
 from ..api_v2 import constants
-from ..decorators import optional_arguments
 from ..entities import column_value as cv
 
 
@@ -271,7 +270,6 @@ class Board(_Board):
         return [en.ActivityLog(activity_log) for activity_log in activity_logs_data]
 
 
-    @optional_arguments(constants.BOARDS_OPTIONAL_PARAMS)
     def get_views(self, *args, **kwargs):
         """Get the board's views.
 
@@ -573,7 +571,6 @@ class Board(_Board):
         return [en.User(creds=self.__creds, **user) for user in users_data]
 
 
-    @optional_arguments(constants.CREATE_COLUMN_OPTIONAL_PARAMS)
     def add_column(self, title:str, column_type: enums.ColumnType, *args, **kwargs): 
         """Create a new column in board.
         __________
@@ -681,7 +678,6 @@ class Board(_Board):
         return [en.Column(data) for data in column_data]
 
 
-    @optional_arguments(constants.CREATE_GROUP_OPTIONAL_PARAMS)
     def add_group(self, group_name: str, *args):
         """Creates a new group in the board.
         __________
@@ -828,7 +824,6 @@ class Board(_Board):
             return [group for group in self.get_groups(*args) if group.title == title][0]
 
 
-    @optional_arguments(constants.CREATE_ITEM_OPTIONAL_PARAMS)
     def add_item(self, item_name: str, *args, **kwargs):
         """Create a new item in the board.
         __________
@@ -970,7 +965,6 @@ class Board(_Board):
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
 
-    @optional_arguments(constants.ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS)
     def get_items_by_column_values(self, column_value: en.ColumnValue, *args, **kwargs):
         """Search items in this board by their column values.
 

@@ -1277,7 +1277,7 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
     
         api_key : `str`
             The monday.com v2 API user key.
-        item_id : `int`
+        item_id : `str`
             The item's unique identifier.
         args : `tuple`
             The list of item return fields.
@@ -1288,7 +1288,7 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
     Returns
         
         data : `dict`
-            A monday.com column in item form.
+            A monday.com item in dictionary form.
 
     _____________
     Return Fields
@@ -1325,6 +1325,75 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
     kwargs = get_method_arguments(constants.DELETE_ITEM_OPTIONAL_PARAMS, **kwargs)
     kwargs['item_id'] = util.IntValue(item_id)
     return execute_mutation(api_key, constants.DELETE_ITEM, *args, **kwargs)
+
+
+def duplicate_item(api_key: str, board_id: str, item_id: str, *args, **kwargs):
+    """Duplicate an item.
+
+    __________
+    Parameters
+
+        api_key : `str`
+            The monday.com v2 API user key.
+        board_id : `str`
+            The board's unique identifier.
+        item_id : `str`
+            The item's unique identifier.
+        args : `tuple`
+            The list of item return fields.
+        kwargs : `dict`
+            Optional arguments for item.
+
+    _______
+    Returns
+        
+        data : `dict`
+            A monday.com item in dictionary form.
+
+    _____________
+    Return Fields
+    
+        assets : `list[moncli.entities.Asset]`
+            The item's assets/files.
+        board : `moncli.entities.Board`
+            The board that contains this item.
+        column_values : `list[moncli.entities.ColumnValue]`
+            The item's column values.
+        created_at : `str`
+            The item's create date.
+        creator : `moncli.entities.User`
+            The item's creator.
+        creator_id : `str`
+            The item's unique identifier.
+        group : `moncli.entities.Group`
+            The group that contains this item.
+        id : `str`
+            The item's unique identifier.
+        name : `str`
+            The item's name.
+        state : `str`
+            The board's state (all / active / archived / deleted)
+        subscriber : `moncli.entities.User`
+            The pulse's subscribers.
+        updated_at : `str`
+            The item's last update date.
+        updates : `moncli.entities.Update`
+            The item's updates.
+
+    __________________
+    Optional Arguments
+
+        with_updates : `bool`
+            Duplicate with the item's updates.
+    """
+    
+    args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
+    kwargs = {
+        'board_id': util.IntValue(board_id),
+        'item_id': util.IntValue(item_id)
+    }
+    kwargs = get_method_arguments(constants.DELETE_ITEM_OPTIONAL_PARAMS, **kwargs)
+    return execute_mutation(api_key, constants.DUPLICATE_ITEM, *args, **kwargs)
 
 
 def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):

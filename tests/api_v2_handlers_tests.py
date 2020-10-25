@@ -303,6 +303,23 @@ def test_delete_item(execute_query):
 
 
 @patch(EXECUTE_QUERY_PATCH)
+def test_duplicate_item(execute_query):
+
+    # Arrange
+    id = '1'
+    name = 'dupe'
+    execute_query.return_value = {constants.DUPLICATE_ITEM: {'id': id, 'name': name}}
+
+    # Act
+    duplicate_item = handlers.duplicate_item('', '1', '1')
+    
+    # Assert
+    ok_(duplicate_item)
+    eq_(duplicate_item['id'], id)
+    eq_(duplicate_item['name'], name)
+
+
+@patch(EXECUTE_QUERY_PATCH)
 def test_create_update(execute_query):
 
     # Arrange
