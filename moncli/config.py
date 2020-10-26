@@ -24,7 +24,7 @@ COLUMN_TYPE_MAPPINGS = {
     'week': ColumnType.week,
     'timezone': ColumnType.world_clock,
     'file': ColumnType.file,
-    'subitems': ColumnType.subitems
+    'board-relation': ColumnType.board_relation
 }
 
 COLUMN_TYPE_VALUE_MAPPINGS = {
@@ -48,5 +48,6 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.timeline: 'TimelineValue',
     ColumnType.world_clock: 'TimezoneValue',
     ColumnType.week: 'WeekValue',
-    ColumnType.file: 'FileValue'
+    ColumnType.file: 'FileValue',
+    ColumnType.board_relation : 'ItemLinkValue'
 }
