@@ -4,6 +4,12 @@ A Python Client and CLI tool for Monday.com
 ### Table of Contents ###
 * [Setup](#setup). 
 * [Getting Started...](#getting-started)  
+   * [Introducing the MondayClient](#introducing-the-mondayclient)
+   * [Managing Boards](#managing-boards)
+   * [Working with Groups and Items](#working-with-groups-and-items)
+   * [Changing Column Values](#changing-column-values)
+   * [Posting Updates](#posting-updates)
+   * [Uploading Files](#uploading-files)
 * [Moncli Entities](#moncli-entities)  
    * [MondayClient](#mondayclient)  
    * [Board](#board)  
@@ -17,17 +23,38 @@ A Python Client and CLI tool for Monday.com
 * [Working with Column Values](#working-with-column-values)  
 * [Using the API v2 Client](#using-the-api-v2-client)  
 * [Creating Custom GraphQL Queries](#creating-custom-graphql-queries)  
-
+  
 
 ## Setup ##
 To add the moncli package to your project, simply execute the following command within your Python 3 environment using pip.  Please note that this package is currently available for Python 3
 ```
 $ pip3 install moncli
 ```
-
+   
 ## Getting Started... ##
 
+### Introducing the MondayClient ###
+Getting started with the moncli Python package is simple.  To begin, create a __MondayClient__ istance using the following code below:
+```
+>>> from moncli import MondayClient
+>>> client = MondayClient(user_name='user@email.com', api_key_v1='api_key_v1', api_key_v2='api_key_v2')
+```
+The __MondayClient__ object is the entry point for all client activities and includes functionality for board, item, tag, and user management.  
+The _api_key_v1_ and _api_key_v2_ parameters represent the user/account monday.com API access keys and can be found by navigating to __https://<your_instance_name>.monday.com/admin/integrations/api__ and copying both the API v1 (personal or company) and API v2 keys.  
+
+### Managing Boards ###
+
+### Working with Groups and Items ###
+
+### Changing Column Values ###
+
+### Posting Updates ###
+
+### Uploading Files ###
+
 ## Moncli Entities ##
+
+### MondayClient ###
 
 ### Board ###
 
@@ -51,20 +78,6 @@ $ pip3 install moncli
 
 ## Creating Custom GraphQL Queries ##
 (Coming soon...)
-
-
-## Using the Monday.com client ##
-The __MondayClient__ object is the entry point for all client activities and includes functionality for board, item, tag, and user management.  The following section will briefly overview what can be done with the __MondayClient__ object.
-
-### Creating a Client ###
-Before creating a new __MondayClient__, you will first need to retrieve your API v1 and v2 access keys by navigating to __https://<your_instance_name>.monday.com/admin/integrations/api__ and copying both the API v1 (personal or company) and API v2 keys.  
-
-To create a new Monday.com client, simply run Python 3 and execute the following commands.
-```
->>> from moncli import MondayClient
->>> client = MondayClient(user_name='user@email.com', api_key_v1='api_key_v1', api_key_v2='api_key_v2')
-```
-Please note that the __MondayClient__ object requires that the input 'username' matches the user declared on the API v2 token for authentication purposes.
 
 
 ### Creating a board ###
