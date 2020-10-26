@@ -39,10 +39,50 @@ Getting started with the moncli Python package is simple.  To begin, create a __
 >>> from moncli import MondayClient
 >>> client = MondayClient(user_name='user@email.com', api_key_v1='api_key_v1', api_key_v2='api_key_v2')
 ```
-The __MondayClient__ object is the entry point for all client activities and includes functionality for board, item, tag, and user management.  
-The _api_key_v1_ and _api_key_v2_ parameters represent the user/account monday.com API access keys and can be found by navigating to __https://<your_instance_name>.monday.com/admin/integrations/api__ and copying both the API v1 (personal or company) and API v2 keys.  
+The __MondayClient__ object is the entry point for all client activities and includes functionality for board, item, tag, and user management.
+
+The _api_key_v1_ and _api_key_v2_ parameters represent the user/account monday.com API access keys and can be found by navigating to __https://<your_instance_name>.monday.com/admin/integrations/api__ and copying both the API v1 (personal or company) and API v2 keys.
+
+Additional information regarding __MondayClient__ properties/methods can be found in the [MondayClient](#mondayclient) section below.
 
 ### Managing Boards ###
+New boards are created with the __MondayClient__ instance using the _create_board_ method as shown in the example below. 
+```
+>>> # Import Boardkind enum for parameter input.
+>>> from moncli import BoardKind
+>>>
+>>> # Create a new public board
+>>> board_name = 'New Public Board'
+>>> board_kind = BoardKind.public
+>>> new_board = client.create_board(board_name, board_kind)
+```  
+
+Existing boards are also retrieved with the __MondayClient__ using the _get_boards_ method using the _ids_ keyword argument as shown below.
+```
+>>> board_ids = ['12345']
+>>> retrieved_boards = client.get_boards(ids=[board_ids])
+```
+
+When looking to retrieve only a single board by either id or name, the _get_board_ method is also available on the __MondayClient__ instance using either the _id_ or _name_ keyword argument as shown below.  
+```
+>>> # Retrieve a board by ID.
+>>> board_id = '12345'
+>>> board_by_id = client.get_board(id=board_id)
+>>>
+>>> # Retrieve a board by Name
+>>> board_name = 'Existing Public Board'
+>>> retrieved_board = client.get_board(name='board_name')
+```
+
+__PLEASE NOTE:__ Querying boards by name is not a built-in feature for Monday.com and may be less performant that searching for a board by ID.
+
+Finally, boards are archived using the _archive_board_ method on the __MondayClient__ instance as shown below.
+```
+>>> board_id = '12345'
+>>> archived_board = client.archive_board(board_id)
+```
+
+Additional information regarding the __Board__ object can be found in the [Board](#board) section below.  
 
 ### Working with Groups and Items ###
 
@@ -81,18 +121,7 @@ The _api_key_v1_ and _api_key_v2_ parameters represent the user/account monday.c
 
 
 ### Creating a board ###
-Boards can be created with the __MondayClient__ object using the following command.  The __\*argv__ parameter can be used to determine which fields on the new board to return.  In the example below, only the _id_ field of the __Board__ object is returned after creation.
-```
->>> from moncli import BoardKind
->>>
->>> # Create a new board with default fields
->>> new_board = client.create_board(board_name='New Public Board', board_kind=BoardKind.public)
->>>
->>> # Create a new board with customized return fields
->>> field_list = ['id', 'name']
->>> new_board_with_custom_fields = client.create_board(board_name='New Public Board With Fields', board_kind=BoardKind.public, *field_list)
-```
-Please consult the Monday.com API v2 documentation [here](https://monday.com/developers/v2) for additional imformation regarding the __Board__ object return fields.
+
 
 
 ### Getting boards ###
