@@ -1,11 +1,56 @@
 # moncli
 A Python Client and CLI tool for Monday.com
 
+### Table of Contents ###
+* [Setup](#setup). 
+* [Getting Started...](#getting-started)  
+* [Moncli Entities](#moncli-entities)  
+   * [MondayClient](#mondayclient)  
+   * [Board](#board)  
+   * [Group](#group)  
+   * [Item](#item)  
+   * [Update](#update)  
+   * [File/Asset](#file)  
+   * [User](#user)  
+   * [Account](#account)  
+   * [Other Entities](#other-entities)  
+* [Working with Column Values](#working-with-column-values)  
+* [Using the API v2 Client](#using-the-api-v2-client)  
+* [Creating Custom GraphQL Queries](#creating-custom-graphql-queries)  
+
+
 ## Setup ##
 To add the moncli package to your project, simply execute the following command within your Python 3 environment using pip.  Please note that this package is currently available for Python 3
 ```
 $ pip3 install moncli
 ```
+
+## Getting Started... ##
+
+## Moncli Entities ##
+
+### Board ###
+
+### Group ###
+
+### Item ###
+
+### Update ###
+
+### File ###
+
+### User ###
+
+### Account ###
+
+### Other Entities ###
+
+## Working with Column Values ##
+
+## Using the API v2 Client ##
+
+## Creating Custom GraphQL Queries ##
+(Coming soon...)
 
 
 ## Using the Monday.com client ##
@@ -653,9 +698,6 @@ ColumnType: rating
 Properties:
 * _rating_ (int) - rating value (0-5)
 
-
-## Customized Queries and Mutations ##
-Coming soon...
 
 ## Additional Questions/Feature Requests:
 Please feel free to log an issue or request a new feature by submitting a new issue or reaching out to me at andrew.shatz@trix.solutions. Thank you and happy coding!!!
