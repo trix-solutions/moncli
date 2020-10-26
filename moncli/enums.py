@@ -38,6 +38,7 @@ class ColumnType(Enum):
     file = 29
     subitems = 30
     board_relation = 31
+    integration = 32
     name = 99999 # This column is a text type but comes standard with every board.
 
 
