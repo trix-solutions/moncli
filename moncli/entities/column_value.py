@@ -1170,15 +1170,15 @@ class ItemLinkValue(ColumnValue):
     Properties
 
         item_ids : `list[str]`
-            The list of linked items.
+            The list of linked items unique identifiers.
 
     _______
     Methods
 
         add_item : `void`
-            Unique identifier of item to add.
+            Add item to link list.
         remove_item : `void`
-            Unique identifier of item to remove.
+            remove item from remove.
     """
 
     def __init__(self, **kwargs):
@@ -1186,10 +1186,42 @@ class ItemLinkValue(ColumnValue):
 
     @property
     def item_ids(self):
+        """List of linked items unique identifiers."""
         try:
-            return loads(self.value)['item_ids']
+            return [str(id) for id in loads(self.value)['item_ids']]
         except:
             return []
+
+    def add_item(self, item_id: str):
+        """Add item to link list.
+
+        __________
+        Parameters
+
+            item_id : `str`
+                Item unique identifier to add.
+        """
+
+        ids = self.item_ids
+        ids.append(str(item_id))
+        self.value = dumps({'item_ids': [int(id) for id in ids]})
+
+
+    def remove_item(self, item_id: str):
+        """Remove item from link list.
+
+        __________
+        Parameters
+
+            item_id : `str`
+                Item unique identifier to remove.
+        """
+
+        if item_id not in self.item_ids:
+            raise ItemIdNotFound(item_id)
+
+        ids = [id for id in self.item_ids if id != item_id]
+        self.value = dumps({'item_ids': [int(id) for id in ids]})
 
     
     def format(self):
@@ -1319,3 +1351,7 @@ class StatusIndexError(Exception):
 class StatusLabelError(Exception):
     def __init__(self, label: str):
         self.message = 'Unable to find status value with label {}.'.format(label)
+
+class ItemIdNotFound(Exception):
+    def __init__(self, item_id: str):
+        self.message = 'Unable to find item ID "{}".'.format(item_id)
