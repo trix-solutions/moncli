@@ -1852,3 +1852,57 @@ def test_should_return_empty_week_column_value_when_only_end_date_set():
     eq_(column_value.start_date, None)
     eq_(column_value.end_date, end_date)
     eq_(format, cv.WeekValue.null_value)
+
+
+def test_should_create_empty_item_link_column():
+
+    # Arrange
+    column_type = ColumnType.board_relation
+
+    # Act
+    column_value = cv.create_column_value(column_type)
+
+    # Assert 
+    ok_(column_value)
+    eq_(column_value.item_ids, [])
+
+
+def test_should_add_item_id_empty_item_link_column():
+
+    # Arrange
+    column_type = ColumnType.board_relation
+    column_value = cv.create_column_value(column_type)
+
+    # Act
+    column_value.add_item('12345')
+    format = column_value.format()
+
+    # Assert 
+    ok_(column_value)
+    eq_(column_value.item_ids, ['12345'])
+    eq_(format, {'item_ids': [12345]})
+
+
+@raises(cv.ItemIdNotFound)
+def test_should_raise_error_when_removing_id_from_item_link_column():
+
+    # Arrange
+    column_type = ColumnType.board_relation
+    column_value = cv.create_column_value(column_type, value=json.dumps({'item_ids': [12345]}))
+
+    # Act
+    column_value.remove_item('1234')
+
+
+def test_should_remove_id_from_item_link_column():
+
+    # Arrange
+    column_type = ColumnType.board_relation
+    column_value = cv.create_column_value(column_type, value=json.dumps({'item_ids': [12345]}))
+
+    # Act
+    column_value.remove_item('12345')
+
+    # Assert 
+    ok_(column_value)
+    eq_(column_value.item_ids, [])
