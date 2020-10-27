@@ -742,7 +742,7 @@ Returns: [moncli.entities.ColumnValue](#working-with-column-values)
 |---|:------------:|:----------------|
 |id|str|The column's unique identifier.|
 |title|str|The column's title.|
-|settings|moncli.entities.objects.StatusSettings/moncli.entities.objects.DropdownSettings(#other-entities)|Column settings required for retrieving a status or dropdown column.|
+|settings (Optional)|moncli.entities.objects.StatusSettings/moncli.entities.objects.DropdownSettings(#other-entities)|Column settings required for retrieving a status or dropdown column.|
 
 ###### Example ######
 ```
@@ -760,7 +760,7 @@ Returns: [moncli.entities.Webhook](#other-entities)
 |---|:------------:|:----------------|
 |url|str|The webhook URL.|
 |event|moncli.enums.WebhookEventType|The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update).|
-|config||dict|The webhook config.|
+|config (Optional)|dict|The webhook config.|
 
 ###### Example ######
 ```
@@ -809,6 +809,96 @@ Returns: [moncli.entities.Workspace](#other-entities)
 ```
 
 ### Group ###
+This section contains all properties and methods contained within the __Group__ object.  
+
+#### Properties ####
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|archived|bool|Is the group archived or not.|
+|color|str|The group's color.|
+|deleted|bool|Is the group deleted or not.|
+|id|str|The group's unique identifier.|
+|items|[list[moncli.entities.Item]]|The items in the group.|
+|position|str|The group's position in the board.|
+|title|str|The group's title.|
+            
+#### Methods ####
+
+##### duplicate #####
+Duplicate this group.  
+Returns: [moncli.entities.Group](#group)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|add_to_top (default=False)|bool|Should the new group be added to the top.|
+|group_title (Optional)|str|The group's title.|
+
+###### Example ######
+```
+>>> duplicate = group.duplicate('id', 'name')
+>>> duplicate
+{'id': 'group_2', 'name': 'New Group (Duplicate)'}
+```
+
+##### archive #####
+Archives this group.  
+Returns: [moncli.entities.Group](#group)
+
+###### Example ######
+```
+>>> archived_group = group.archive('id', 'name', 'archived')
+>>> archived_group
+{'id': 'group_1', 'name': 'New Group', 'archived': True}
+```
+
+##### delete #####
+Delete this group.  
+Returns: [moncli.entities.Group](#group)
+
+###### Example ######
+```
+>>> deleted_group = group.delete('id', 'name', 'deleted')
+>>> archived_group
+{'id': 'group_1', 'name': 'New Group', 'deleted': True}
+```
+
+##### add_item #####
+Add item to this group.  
+Returns: [moncli.entities.Item](#item)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|item_name|str|The new item's name.|
+|column_values (Optional)|json|The column values of the new item.|
+
+###### Example ######
+```
+>>> item_name = 'New Item 1'
+>>> item = group.add_item(item_name, 'id', 'name')
+>>> item
+{'id': 1234567', 'name': 'New Item 1}
+```
+
+##### get_items #####
+Get items from this group.  
+Returns: [list[moncli.entities.Item]](#item)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|limit (Optional)|int|Number of items to get; the default is 25.|
+|page (Optional)|int|Page number to get, starting at 1.|
+|ids (Optional)|list[str]|A list of items unique identifiers.|
+|newest_first (Optional)|bool|Get the recently created items at the top of the list.|
+
+###### Example ######
+```
+>>> items = group.get_items('id', 'name')
+>>> items
+[{'id': '1234567', 'name': 'New Item 1'}]
+```
 
 ### Item ###
 
