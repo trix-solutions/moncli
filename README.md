@@ -6,7 +6,7 @@ A Python Client and CLI tool for Monday.com
 * [Getting Started...](#getting-started)  
    * [Introducing the MondayClient](#introducing-the-mondayclient)
    * [Managing Boards](#managing-boards)
-   * [Working with Groups and Items](#working-with-groups-and-items)
+   * [Working with Columns, Groups, and Items](#working-with-groups-and-items)
    * [Changing Column Values](#changing-column-values)
    * [Posting Updates](#posting-updates)
    * [Uploading Files](#uploading-files)
@@ -46,6 +46,8 @@ The _api_key_v1_ and _api_key_v2_ parameters represent the user/account monday.c
 Additional information regarding __MondayClient__ properties/methods can be found in the [MondayClient](#mondayclient) section below.
 
 ### Managing Boards ###
+Boards are cornerstones for any Monday.com setup, and __Board__ objects are no exception containing functionality for general data management with columns, groups, and items.  The next sections below will provide some general tools regarding __Board__ management.
+
 New boards are created with the __MondayClient__ instance using the _create_board_ method as shown in the example below. 
 ```
 >>> # Import Boardkind enum for parameter input.
@@ -84,7 +86,10 @@ Finally, boards are archived using the _archive_board_ method on the __MondayCli
 
 Additional information regarding the __Board__ object can be found in the [Board](#board) section below.  
 
-### Working with Groups and Items ###
+### Working with Columns, Groups, and Items ###
+Columns contain metadata that pertains to the data types available to current and future board items. Board columns are represented by the __Column__ object.  A new column is created and returned as a __Column__  
+
+Groups serve as collections of items for a board.  Once created by the __Board__ object using the _get_groups_ method, the __Group__ object gives users various methods for modification and item management as discussed in the following section.
 
 ### Changing Column Values ###
 
@@ -93,8 +98,14 @@ Additional information regarding the __Board__ object can be found in the [Board
 ### Uploading Files ###
 
 ## Moncli Entities ##
+The moncli client returns entities representing Monday.com objects after executing a successful request to the API.  These entities not only contain properties representing the return fields of the query/mutation, but also contain various methods for retrieving other related entities.   
+
+Aside from required parameters, entity methods also contain an \*args parameter that allows for a collection of custom return field inputs. Simply add the name of the field to return (as defined by the monday.com query) as a string. To return nested fields, simply list out the full path of the field in dot notation (ex. 'items.id' will return items associated with the query with a populated _id_ property.   
+
+Optional parameters for moncli entity methods are added as keyword arguments via the \*kwargs variable.
 
 ### MondayClient ###
+This section contains all properties and methods contained within the __MondayClient__ object.  
 
 ### Board ###
 
@@ -120,44 +131,6 @@ Additional information regarding the __Board__ object can be found in the [Board
 (Coming soon...)
 
 
-### Creating a board ###
-
-
-
-### Getting boards ###
-The following command will retrieve boards by name.  In addition, key-value parameters may be used to refine the search.  By default, the __MondayClient__ will return a list of boards containing only their _id_ and _name_ values.
-```
->>> boards = client.get_boards(page=1, limit=50)
-```
-The following command above will return a list of at most 50 board objects.  The full list of queryable parameters for __Board__ objects includes:
-* limit (int) - the maximum number of boards per page to return
-* page (int) - the page index starting at 1
-* ids (list[int]) - the IDs of boards to return
-* board_kind (BoardKind) - the type of board to return (public, private, share)
-* state (State) - the current state of the board (all, active, archived, deleted)
-* newest_first (bool) - indicates whether to sort by created date descending
-
-Once a list of boards has been retrieved, you can use the _id_ field to retrieve detailed board information for a particular board. This can be done using the command below. 
-```
->>> retrieved_board = client.get_board(id=boards[0].id)
-```
-
-Additionally, if you already know the name of the board that you wish to retrieve, simply use the same command with the _name_ parameter instead containing the name of the board to retrieve.
-```
->>> retrieved_board = client.get_board(name='some_board')
-```
-Please note that querying boards by name is not a built-in feature for Monday.com and may be less performant that searching for a board by ID.
-
-It is also important to note that while it is possible to query data for board columns, groups, and items in addition, the client requires that additional queryies be made for the additional data respectively after the initial board query.  These additional queries will be covered in more detail in the [Using Boards](https://github.com/trix-solutions/moncli/blob/initial-documentation/README.md#using-boards) section below.
-
-
-### Archiving a board ###
-The following command will archive a board and will return only a __Board__ object with an _id_ property corresponding to the archived board.
-```
->>> archived_board = client.archive_board(board_id=retrieved_board.id)
-```
-
-
 ### Getting items ###
 Items can be retrieved with the __MondayClient__ object using the following command. 
 ```
@@ -169,74 +142,6 @@ This example will retrieve the 25 most recently created items.  Optional paramet
 * ids (list[int]) - the IDs of the items to return
 * newest_first (bool) - indicates whether to sort by created date descending
 
-
-### Getting updates ###
-Updates can be retrieved with the __MondayClient__ object using the following command.
-```
->>> updates = client.get_updates(limit=10)
-```
-This example will retrieve the last 10 updates.  Optional parameters to use when querying __Update__ objects include:
-* limit (int) - the maximum number of updates per page to return
-* page (int) - the page index starting at 1
-
-
-### Creating a notification ###
-The __MondayClient__ object can be used to send notifications between users with the following command.
-```
->>> from moncli import NotificationTargetType
->>>
->>> notification = client.create_notification(text='notification_text', user_id='1234567', target_id='2345678', target_type=NotificationTargetType.Post) 
-```
-Optional parameters to use when creating and sending a notification include:
-* payload (json) - the notification payload
-
-
-### Creating a new/retriving an existing tag ###
-Creating a new/retrieving an existing tag can be done by the __MondayClient__ object using the following command.
-```
->>> new_tag = client.get_or_create_tag(tag_name='new_tag')
-```
-Optional parameters available when running the above command include:
-* board_id (str) - the ID of the private board using the tag (N/A for public boards)
-
-
-### Getting tags ###
-The __MondayClient__ can also retrieve __Tag__ objects using the following commannd
-```
->>> tags = client.get_tags()
-```
-Optional parameters to use when retrieving __Tag__ objects include:
-* ids (list\[int\]) - the IDs of the tags to return
-
-
-### Getting users ###
-Users can be retrieved from the __MondayClient__ object using the following command.
-```
->>> from moncli import UserKind
->>> users = client.get_users(kind=UserKind.guests)
-```
-This example will retrieve the first 25 (default limit) guest users.  Optional parameters when querying __Users__ include:
-* ids (list\[int\]) - the IDs of the users to return
-* kind (UserKind) - the kind of users (all, non-guests, guests, pending) to return
-* limit (int) - the maximum number of users per page to return
-* newest_first (bool) - indicates whether to sort by created date descending
-
-
-### Getting teams ###
-Teams can be retrieved from the __MondayClient__ object using the following command.
-```
->>> teams = client.get_teams(ids=[1234567,2345678])
-```
-This example will retrieve a list of __Team__ objects containing the input IDs.  Optional parameters when querying __Team__ objects include:
-* ids (list\[int\]) - the IDs of the teams to return
-
-
-### Getting... me ###
-Finally, the __MondayClient__ can fetch the user associated with the API v2 token as a __User__ object using the following command.
-```
->>> me = client.get_me()
-```
-This command is currently used by the __MondayClient__ to authorize the use of the API v2 token and can be put to very good use when sending notifications to other users from your own.
 
 
 ## Using Boards ##
