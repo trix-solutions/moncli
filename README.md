@@ -144,9 +144,18 @@ Returns: [list[moncli.entities.Board]](#board)
 ###### Parameters ######
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|limit (Optional)|int|Number of boards to get; the default is 25.|
+|page (Optional)|int|Page number to get, starting at 1.|
+|ids (Optional)|list[str]|A list of boards unique identifiers.|
+|board_kind (Optional)|moncli.enums.BoardKind|The board's kind (public / private / share)|
+|state|moncli.enums.State|The state of the board (all / active / archived / deleted), the default is active.|
 
 ###### Example ######
 ```
+>>> ids = ['12345']
+>>> boards = client.get_boards('id', 'name', ids=ids)
+>>> boards
+[{'id': '12345', 'name': 'New Public Board'}]
 ```
 
 ##### get_board #####
@@ -156,10 +165,20 @@ Returns: [moncli.entities.Board](#board)
 ###### Parameters ######
 | Name | Type | Description | 
 |---|:------------:|:----------------|
-
+|id|str|The unique identifier of the board to retrieve.  NOTE: This parameter is mutually exclusive and cannot be used with 'name'.|
+|name|str|The name of the board to retrieve.  NOTE: This parameter is mutially exclusive and cannot be used with 'id'.|
 
 ###### Example ######
 ```
+>>> id = '12345
+>>> board = client.get_board(id, None, 'id', 'name')
+>>> board
+{'id': '12345', 'name': 'New Public Board'}
+>>>
+>>> name = 'New Public Board'
+>>> board = client.get_board(None, name, 'id', 'name')
+>>> board
+{'id': '12345', 'name': 'New Public Board'}
 ```
 
 ##### get_board_by_id #####
@@ -169,10 +188,14 @@ Returns: [moncli.entities.Board](#board)
 ###### Parameters ######
 | Name | Type | Description | 
 |---|:------------:|:----------------|
-
+|id|str|The unique identifier of the board.|
 
 ###### Example ######
 ```
+>>> id = '12345
+>>> board = client.get_board_by_id(id, 'id', 'name')
+>>> board
+{'id': '12345', 'name': 'New Public Board'}
 ```
 
 
@@ -183,67 +206,261 @@ Returns: [moncli.entities.Board](#board)
 ###### Parameters ######
 | Name | Type | Description | 
 |---|:------------:|:----------------|
-
+|name|str|The name of the board to retrieve.|
 
 ###### Example ######
 ```
+>>> name = 'New Public Board
+>>> board = client.get_board_by_name(name, 'id', 'name')
+>>> board
+{'id': '12345', 'name': 'New Public Board'}
 ```
 
 ##### archive_board #####
 Archive a board.   
 Returns: [moncli.entities.Board](#board)
 
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|board_id|str|The board's unique identifier.|
+
+###### Example ######
+```
+>>> id = '12345'
+>>> archived_board = client.archive_board(id, 'id', 'name', 'state')
+>>> archived_board
+{'id': '12345', 'name': 'New Public Board', 'state': 'archived'}
+```
+
 ##### get_assets #####
 Get a collection of assets by IDs.   
 Returns: [list[moncli.entities.Asset]](#file)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|ids|list[str]|Ids of the assets/files you want to get.|
+
+###### Example ######
+```
+>>> assets_ids = ['12345678']
+>>> assets = client.get_assets(assets_ids, 'id', 'name', 'public_url')
+>>> assets
+[{'id': '12345678', 'name': 'test.jpg', 'public_url': 'https://test.monday.com/files/test.jpg'}]
+```
 
 ##### get_items #####
 Get a collection of items.     
 Returns: [list[moncli.entities.Item]](#item)
 
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|limit (Optional)|int|Number of items to get; the default is 25.|
+|page (Optional)|int|Page number to get, starting at 1.|
+|ids (Optional)|list[str]|A list of items unique identifiers.|
+|newest_first (Optional)|bool|Get the recently created items at the top of the list.|
+
+###### Example ######
+```
+>>> item_ids = ['123456']
+>>> items = client.get_items('id', 'name', ids=ids)
+>>> items
+[{'id': '123456', 'name': 'New Item'}]
+```
+
 ##### get_updates #####
 Get a collection of updates.  
 Returns: [list[moncli.entities.Update]](#update)
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|limit (Optional)|int|Number of updates to get; the default is 25.|
+|page (Optional)|int|Page number to get, starting at 1.|
+
+###### Example ######
+```
+>>> updates = client.get_updates('id', 'text_body')
+>>> updates
+[{'id': '1234567', 'text_body': 'Hello World'}]
+```
 
 ##### delete_update #####
 Delete an update.   
 Returns: [moncli.entities.Update](#update)
 
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|id|str|The update's unique identifier.|
+
+###### Example ######
+```
+>>> update_id = '1234567'
+>>> deleted_update = client.delete_update(update_id, 'id','text_body')
+>>> deleted_update
+{'id': '1234567', 'text_body': 'Hello World'}
+```
+
 ##### clear_item_updates #####
 Clear an item's updates.     
 Returns: [moncli.entities.Item](#item)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|item_id|str|The item's unique identifier.|
+
+###### Example ######
+```
+>>> item_id = '123456'
+>>> item = client.clear_item_updates(item_id, 'id', 'name', 'updates.id')
+>>> item
+{'id': '123456', 'name': 'New Item', 'updates': []}
+```
 
 ##### create_notification #####
 Create a new notification.  
 Returns: [moncli.entities.Notification](#other-entities)
 
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|text|str|The notification text.|
+|user_id|str|The user's unique identifier.|
+|target_id|str|The target's unique identifier.|
+|target_type|moncli.enums.NotificationTargetType|The target's type (Project / Post)|
+|payload|json|The notification payload.|
+
+###### Example ######
+```
+>>> from moncli.enums import NotificationTargetType
+>>>
+>>> text = 'Hello World'
+>>> user_id = '1234'
+>>> target_id = '1235'
+>>> notification_type = NotificationTargetType.Post
+>>> notification = client.create_notification(text, user_id, target_id, notification_type, 'id', 'text')
+>>> notification
+{'id': '123456789', 'text': 'Hello World'}
+```
+
 ##### create_or_get_tag #####
 Create a new tag or get it if it already exists.    
 Returns: [moncli.entities.Tag](#other-entities)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|tag_name|str|The new tag's name|
+|board_id (Optional)|str|The private board id to create the tag at (not needed for public boards).|
+
+###### Example ######
+```
+>>> tag_name = 'New Tag'
+>>> tag = client.create_or_get_tag(tag_name, 'id', 'name')
+>>> tag
+{'id': '1234567890', 'name': 'New Tag'}
+```
 
 ##### get_tags #####
 Get a collection of tags.  
 Returns: [list[moncli.entities.Tag]](#other-entities)
 
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|ids (Optional)|list[str]|The list of tags unique identifiers.|
+
+###### Example ######
+```
+>>> tags_ids = ['1234567890']
+>>> tags = client.get_tags('id','name', ids=tags_ids)
+>>> tags
+[{'id': '1234567890', 'name': 'New Tag'}]
+```
+
 ##### get_users #####
 Get a collection of users.  
 Returns: [list[moncli.entities.User]](#user)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|ids (Optional)|list[str]|A list of users unique identifiers.|
+|kind (Optional)|moncli.entities.UserKind|The kind to search users by (all / non_guests / guests / non_pending).|
+|newest_first (Optional)|bool|Get the recently created users at the top of the list.|
+|limit (Optional)|int|Number of users to get.|
+
+###### Example ######
+```
+>>> ids = ['1234']
+>>> users = client.get_users('id', 'name', ids=ids)
+>>> users
+[{'id': '1234', 'name': 'Test User'}]
+```
 
 ##### get_teams #####
 Get a collection of teams.  
 Returns: [list[moncli.entities.Team]](#user)
 
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|ids (Optional)|list[str]|A list of teams unique identifiers.|
+
+###### Example ######
+```
+>>> ids = ['123']
+>>> teams = client.get_teams('id', 'name', ids=ids)
+>>> teams
+{'id': '123', 'name': 'Test Team'}
+```
+
 ##### get_me #####
 Get the conected user's information.   
 Returns: [moncli.entities.User](#user)
+
+###### Example ######
+```
+>>> user = client.get_me('id','name')
+>>> user
+{'id': '1234', 'name': 'Test User'}
+```
 
 ##### get_account #####
 Get the connected user's account.   
 Returns: [moncli.entities.Account](#account)
 
+###### Example ######
+```
+>>> account = client.get_account('name', 'first_day_of_the_week')
+>>> account
+{'name': 'Test Account', 'first_day_of_the_week': 'monday'}
+```
+
 ##### create_workspace #####
 Create a new workspace.   
 Returns: [moncli.entities.Workspace](#other-entities)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|name|str|The workspace's name.|
+|kind|moncli.enums.WorkspaceKind|The workspace's kind (open / closed)|
+|description|str|The workspace's description.|
+
+###### Example ######
+```
+>>> from moncli.enums import WorkspaceKind
+>>>
+>>> name = 'New Workspace'
+>>> kind = WorkspaceKind.open
+>>> workspace = client.create_workspace(name, kind, 'id', 'name')
+>>> workspace
+{'id': '12', 'name': 'New Workspace'}
+```
 
 ### Board ###
 
@@ -264,6 +481,7 @@ Returns: [moncli.entities.Workspace](#other-entities)
 ## Working with Column Values ##
 
 ## Using the API v2 Client ##
+(Coming soon...)
 
 ## Creating Custom GraphQL Queries ##
 (Coming soon...)
