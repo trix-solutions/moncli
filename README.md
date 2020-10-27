@@ -449,7 +449,7 @@ Returns: [moncli.entities.Workspace](#other-entities)
 |---|:------------:|:----------------|
 |name|str|The workspace's name.|
 |kind|moncli.enums.WorkspaceKind|The workspace's kind (open / closed)|
-|description|str|The workspace's description.|
+|description (Optional)|str|The workspace's description.|
 
 ###### Example ######
 ```
@@ -463,6 +463,33 @@ Returns: [moncli.entities.Workspace](#other-entities)
 ```
 
 ### Board ###
+This section contains all properties and methods contained within the __Board__ object.  
+
+#### Properties ####
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|activity_logs|[list[moncli.entities.ActivityLog]](#other-entities)|The board log events.|
+|board_folder_id|str|The board's folder unique identifier.|
+|board_kind|str|The board's kind (public / private / share).|
+|columns|[list[moncli.entities.Column]](#other-entities)|The board's visible columns.|
+|communication|str|Get the board communication value - typically meeting ID.|
+|description|str|The board's description.|
+|groups|[list[moncli.entities.Group]](#group)|The board's visible groups.|
+|id|str|The unique identifier of the board.|
+|items|[list[moncli.entities.Item]](#item)|The board's items (rows).|
+|name|str|The board's name.|
+|owner|[moncli.entities.User](#user)|The owner of the board.|
+|permissions|str|The board's permissions.|
+|pos|str|The board's position.|
+|state|str|The board's state (all / active / archived / deleted).|
+|subscribers|[list[moncli.entities.User]](#user)|The board's subscribers.|
+tags|[list[moncli.entities.Tag]](#other-entities)|The board's specific tags.
+top_group|[moncli.entities.Group](#group)|The top group at this board.
+updated_at|str|The last time the board was updated at (ISO8601 DateTime).|
+updates|[list[moncli.entities.Update]](#update)|The board's updates.
+views|[list[moncli.entities.BoardView]](#other-entities)|The board's views.|
+workspace|[moncli.entities.Workspace](#other-entities)|The workspace that contains this board (null for main workspace).|
+workspace_id|str|The board's workspace unique identifier (null for main workspace).
 
 ### Group ###
 
