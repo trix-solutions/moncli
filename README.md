@@ -483,13 +483,83 @@ This section contains all properties and methods contained within the __Board__ 
 |pos|str|The board's position.|
 |state|str|The board's state (all / active / archived / deleted).|
 |subscribers|[list[moncli.entities.User]](#user)|The board's subscribers.|
-tags|[list[moncli.entities.Tag]](#other-entities)|The board's specific tags.
-top_group|[moncli.entities.Group](#group)|The top group at this board.
-updated_at|str|The last time the board was updated at (ISO8601 DateTime).|
-updates|[list[moncli.entities.Update]](#update)|The board's updates.
-views|[list[moncli.entities.BoardView]](#other-entities)|The board's views.|
-workspace|[moncli.entities.Workspace](#other-entities)|The workspace that contains this board (null for main workspace).|
-workspace_id|str|The board's workspace unique identifier (null for main workspace).
+|tags|[list[moncli.entities.Tag]](#other-entities)|The board's specific tags.
+|top_group|[moncli.entities.Group](#group)|The top group at this board.
+|updated_at|str|The last time the board was updated at (ISO8601 DateTime).|
+|updates|[list[moncli.entities.Update]](#update)|The board's updates.
+|views|[list[moncli.entities.BoardView]](#other-entities)|The board's views.|
+|workspace|[moncli.entities.Workspace](#other-entities)|The workspace that contains this board (null for main workspace).|
+|workspace_id|str|The board's workspace unique identifier (null for main workspace).
+
+#### Methods ####
+
+##### get_activity_logs #####
+Get the board log events.   
+Returns: [list[moncli.entities.ActivityLog]](#other-entities)
+
+##### get_views #####
+Get the board's views.   
+Returns: [list[moncli.entities.BoardView]](#other-entities)
+
+##### add_subscribers #####
+Add subscribers to this board.   
+Returns: list[moncli.entities.User]](#user)
+
+##### get_subscribers #####
+Get board subscribers.   
+Returns: list[moncli.entities.User]](#user)
+
+##### delete_subscribers #####
+Remove subscribers from the board.   
+Returns: list[moncli.entities.User]](#user)
+
+##### add_column #####
+Create a new column in board.   
+Returns: [moncli.entities.Column](#other-entities)
+
+##### get_columns #####
+Get the board's visible columns.   
+Returns: [list[moncli.entities.Column]](#other-entities)
+
+##### add_group #####
+Creates a new group in the board.   
+Returns: [moncli.entities.Group](#group)
+
+##### get_groups #####
+Get the board's visible groups.   
+Returns: [list[moncli.entities.Group]](#group)
+
+##### get_group #####
+Get a group belonging to the board by ID or title.   
+Returns: [moncli.entities.Group](#group)
+
+##### add_item #####
+Create a new item in the board.   
+Returns: [moncli.entities.Item](#item)
+
+##### get_items #####
+Get the board's items (rows).   
+Returns: [list[moncli.entities.Item]](#item)
+
+##### get_items_by_column_values #####
+Search items in this board by their column values.   
+Returns: [list[moncli.entities.Item]](#item)
+
+##### get_column_value #####
+Create a column value from a board's column.   
+Returns: [moncli.entities.ColumnValue](#working-with-column-values)
+
+##### create_webhook #####
+Create a new webhook.   
+Returns: [moncli.entities.Webhook](#other-entities)
+
+##### delete_webhook #####
+Delete a new webhook.   
+Returns: [moncli.entities.Webhook](#other-entities)
+
+##### get_workspace #####
+Get the board's workspace that contains this board (null for main workspace).   
+Returns: [moncli.entities.Workspace](#other-entities)
 
 ### Group ###
 
