@@ -104,21 +104,21 @@ Aside from required parameters, entity methods also contain an \*args parameter 
 
 Optional parameters for moncli entity methods are added as keyword arguments via the \*kwargs variable.
 
-### MondayClient ###
+## MondayClient ##
 This section contains all properties and methods contained within the __MondayClient__ object.  
 
-#### Properties ####
+### Properties ###
 |Name        |Type               |Description                 |
 |------------|:-----------------:|:---------------------------|
 |me          |[User](#user)      |The client login user.      |
 
-#### Methods ####
+### Methods ###
 
-##### create_board #####
+**create_board**  
 Create a new board.
 Returns: [moncli.entities.Board](#board)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |board_name    |str                      |The board's name.                           |
@@ -126,7 +126,7 @@ Returns: [moncli.entities.Board](#board)
 |workspace_id  |str                      |Optional workspace id.                      |
 |template_id   |str                      |Optional board template id.                 |
 
-###### Example ######
+*Example*
 ```
 >>> from moncli import BoardKind
 >>> 
@@ -137,11 +137,11 @@ Returns: [moncli.entities.Board](#board)
 {'id': '12345', 'name': 'New Public Board'}
 ```
 
-##### get_boards #####
+**get_boards**  
 Get a collection of boards.  
 Returns: [list[moncli.entities.Board]](#board)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |limit (Optional)|int|Number of boards to get; the default is 25.|
@@ -150,7 +150,7 @@ Returns: [list[moncli.entities.Board]](#board)
 |board_kind (Optional)|moncli.enums.BoardKind|The board's kind (public / private / share)|
 |state|moncli.enums.State|The state of the board (all / active / archived / deleted), the default is active.|
 
-###### Example ######
+*Example*
 ```
 >>> ids = ['12345']
 >>> boards = client.get_boards('id', 'name', ids=ids)
@@ -158,17 +158,17 @@ Returns: [list[moncli.entities.Board]](#board)
 [{'id': '12345', 'name': 'New Public Board'}]
 ```
 
-##### get_board #####
+**get_board**  
 Get a board by unique identifier or name.  
 Returns: [moncli.entities.Board](#board)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |id|str|The unique identifier of the board to retrieve.  NOTE: This parameter is mutually exclusive and cannot be used with 'name'.|
 |name|str|The name of the board to retrieve.  NOTE: This parameter is mutially exclusive and cannot be used with 'id'.|
 
-###### Example ######
+*Example*
 ```
 >>> id = '12345
 >>> board = client.get_board(id, None, 'id', 'name')
@@ -181,16 +181,16 @@ Returns: [moncli.entities.Board](#board)
 {'id': '12345', 'name': 'New Public Board'}
 ```
 
-##### get_board_by_id #####
+**get_board_by_id**  
 Get a board by unique identifier.   
 Returns: [moncli.entities.Board](#board)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |id|str|The unique identifier of the board.|
 
-###### Example ######
+*Example*
 ```
 >>> id = '12345
 >>> board = client.get_board_by_id(id, 'id', 'name')
@@ -199,16 +199,16 @@ Returns: [moncli.entities.Board](#board)
 ```
 
 
-##### get_board_by_name #####
+**get_board_by_name**  
 Get a board by name.   
 Returns: [moncli.entities.Board](#board)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |name|str|The name of the board to retrieve.|
 
-###### Example ######
+*Example*
 ```
 >>> name = 'New Public Board
 >>> board = client.get_board_by_name(name, 'id', 'name')
@@ -216,16 +216,16 @@ Returns: [moncli.entities.Board](#board)
 {'id': '12345', 'name': 'New Public Board'}
 ```
 
-##### archive_board #####
+**archive_board**  
 Archive a board.   
 Returns: [moncli.entities.Board](#board)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |board_id|str|The board's unique identifier.|
 
-###### Example ######
+*Example*
 ```
 >>> id = '12345'
 >>> archived_board = client.archive_board(id, 'id', 'name', 'state')
@@ -233,16 +233,16 @@ Returns: [moncli.entities.Board](#board)
 {'id': '12345', 'name': 'New Public Board', 'state': 'archived'}
 ```
 
-##### get_assets #####
+**get_assets**  
 Get a collection of assets by IDs.   
 Returns: [list[moncli.entities.Asset]](#file)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |ids|list[str]|Ids of the assets/files you want to get.|
 
-###### Example ######
+*Example*
 ```
 >>> assets_ids = ['12345678']
 >>> assets = client.get_assets(assets_ids, 'id', 'name', 'public_url')
@@ -250,11 +250,11 @@ Returns: [list[moncli.entities.Asset]](#file)
 [{'id': '12345678', 'name': 'test.jpg', 'public_url': 'https://test.monday.com/files/test.jpg'}]
 ```
 
-##### get_items #####
+**get_items**  
 Get a collection of items.     
 Returns: [list[moncli.entities.Item]](#item)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |limit (Optional)|int|Number of items to get; the default is 25.|
@@ -262,7 +262,7 @@ Returns: [list[moncli.entities.Item]](#item)
 |ids (Optional)|list[str]|A list of items unique identifiers.|
 |newest_first (Optional)|bool|Get the recently created items at the top of the list.|
 
-###### Example ######
+*Example*
 ```
 >>> item_ids = ['123456']
 >>> items = client.get_items('id', 'name', ids=ids)
@@ -270,7 +270,7 @@ Returns: [list[moncli.entities.Item]](#item)
 [{'id': '123456', 'name': 'New Item'}]
 ```
 
-##### get_updates #####
+**get_updates**  
 Get a collection of updates.  
 Returns: [list[moncli.entities.Update]](#update)
 ###### Parameters ######
@@ -462,10 +462,10 @@ Returns: [moncli.entities.Workspace](#other-entities)
 {'id': '12', 'name': 'New Workspace'}
 ```
 
-### Board ###
+## Board ##
 This section contains all properties and methods contained within the __Board__ object.  
 
-#### Properties ####
+### Properties ###
 |Name        |Type               |Description                 |
 |------------|:-----------------:|:---------------------------|
 |activity_logs|[list[moncli.entities.ActivityLog]](#other-entities)|The board log events.|
@@ -808,10 +808,10 @@ Returns: [moncli.entities.Workspace](#other-entities)
 {'name': 'New Workspace', 'kind': 'open'}
 ```
 
-### Group ###
+## Group ##
 This section contains all properties and methods contained within the __Group__ object.  
 
-#### Properties ####
+### Properties ###
 |Name        |Type               |Description                 |
 |------------|:-----------------:|:---------------------------|
 |archived|bool|Is the group archived or not.|
@@ -885,7 +885,7 @@ Returns: [moncli.entities.Item](#item)
 Get items from this group.  
 Returns: [list[moncli.entities.Item]](#item)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |limit (Optional)|int|Number of items to get; the default is 25.|
@@ -893,14 +893,19 @@ Returns: [list[moncli.entities.Item]](#item)
 |ids (Optional)|list[str]|A list of items unique identifiers.|
 |newest_first (Optional)|bool|Get the recently created items at the top of the list.|
 
-###### Example ######
+*Example*
 ```
 >>> items = group.get_items('id', 'name')
 >>> items
 [{'id': '1234567', 'name': 'New Item 1'}]
 ```
 
-### Item ###
+## Item ##
+This section contains all properties and methods contained within the __Board__ object.  
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
 
 ### Update ###
 
