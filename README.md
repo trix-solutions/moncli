@@ -107,6 +107,144 @@ Optional parameters for moncli entity methods are added as keyword arguments via
 ### MondayClient ###
 This section contains all properties and methods contained within the __MondayClient__ object.  
 
+#### Properties ####
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|me          |[User](#user)      |The client login user.      |
+
+#### Methods ####
+
+##### create_board #####
+Create a new board.
+Returns: [moncli.entities.Board](#board)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|board_name    |str                      |The board's name.                           |
+|board_kind    |moncli.enums.BoardKind   |The board's kind (public / private / share).|
+|workspace_id  |str                      |Optional workspace id.                      |
+|template_id   |str                      |Optional board template id.                 |
+
+###### Example ######
+```
+>>> from moncli import BoardKind
+>>> 
+>>> board_name = 'New Public Board'
+>>> board_kind = BoardKind.public
+>>> new_board = client.create_board(board_name, board_kind, 'id', 'name')
+>>> new_board
+{'id': '12345', 'name': 'New Public Board'}
+```
+
+##### get_boards #####
+Get a collection of boards.  
+Returns: [list[moncli.entities.Board]](#board)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+###### Example ######
+```
+```
+
+##### get_board #####
+Get a board by unique identifier or name.  
+Returns: [moncli.entities.Board](#board)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+
+###### Example ######
+```
+```
+
+##### get_board_by_id #####
+Get a board by unique identifier.   
+Returns: [moncli.entities.Board](#board)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+
+###### Example ######
+```
+```
+
+
+##### get_board_by_name #####
+Get a board by name.   
+Returns: [moncli.entities.Board](#board)
+
+###### Parameters ######
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+
+###### Example ######
+```
+```
+
+##### archive_board #####
+Archive a board.   
+Returns: [moncli.entities.Board](#board)
+
+##### get_assets #####
+Get a collection of assets by IDs.   
+Returns: [list[moncli.entities.Asset]](#file)
+
+##### get_items #####
+Get a collection of items.     
+Returns: [list[moncli.entities.Item]](#item)
+
+##### get_updates #####
+Get a collection of updates.  
+Returns: [list[moncli.entities.Update]](#update)
+
+##### delete_update #####
+Delete an update.   
+Returns: [moncli.entities.Update](#update)
+
+##### clear_item_updates #####
+Clear an item's updates.     
+Returns: [moncli.entities.Item](#item)
+
+##### create_notification #####
+Create a new notification.  
+Returns: [moncli.entities.Notification](#other-entities)
+
+##### create_or_get_tag #####
+Create a new tag or get it if it already exists.    
+Returns: [moncli.entities.Tag](#other-entities)
+
+##### get_tags #####
+Get a collection of tags.  
+Returns: [list[moncli.entities.Tag]](#other-entities)
+
+##### get_users #####
+Get a collection of users.  
+Returns: [list[moncli.entities.User]](#user)
+
+##### get_teams #####
+Get a collection of teams.  
+Returns: [list[moncli.entities.Team]](#user)
+
+##### get_me #####
+Get the conected user's information.   
+Returns: [moncli.entities.User](#user)
+
+##### get_account #####
+Get the connected user's account.   
+Returns: [moncli.entities.Account](#account)
+
+##### create_workspace #####
+Create a new workspace.   
+Returns: [moncli.entities.Workspace](#other-entities)
+
 ### Board ###
 
 ### Group ###
