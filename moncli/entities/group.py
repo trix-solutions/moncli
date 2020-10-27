@@ -73,6 +73,7 @@ class Group(_Group):
             self.__items = self.get_items()
         return self.__items
 
+
     def duplicate(self, add_to_top: bool = False, *args, **kwargs):
         """Duplicate this group.
 
