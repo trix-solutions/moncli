@@ -273,29 +273,30 @@ Returns: [list[moncli.entities.Item]](#item)
 **get_updates**  
 Get a collection of updates.  
 Returns: [list[moncli.entities.Update]](#update)
-###### Parameters ######
+
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |limit (Optional)|int|Number of updates to get; the default is 25.|
 |page (Optional)|int|Page number to get, starting at 1.|
 
-###### Example ######
+*Example*
 ```
 >>> updates = client.get_updates('id', 'text_body')
 >>> updates
 [{'id': '1234567', 'text_body': 'Hello World'}]
 ```
 
-##### delete_update #####
+**delete_update**  
 Delete an update.   
 Returns: [moncli.entities.Update](#update)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |id|str|The update's unique identifier.|
 
-###### Example ######
+*Example*
 ```
 >>> update_id = '1234567'
 >>> deleted_update = client.delete_update(update_id, 'id','text_body')
@@ -303,16 +304,16 @@ Returns: [moncli.entities.Update](#update)
 {'id': '1234567', 'text_body': 'Hello World'}
 ```
 
-##### clear_item_updates #####
+**clear_item_updates**  
 Clear an item's updates.     
 Returns: [moncli.entities.Item](#item)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |item_id|str|The item's unique identifier.|
 
-###### Example ######
+*Example*
 ```
 >>> item_id = '123456'
 >>> item = client.clear_item_updates(item_id, 'id', 'name', 'updates.id')
@@ -320,11 +321,11 @@ Returns: [moncli.entities.Item](#item)
 {'id': '123456', 'name': 'New Item', 'updates': []}
 ```
 
-##### create_notification #####
+**create_notification**  
 Create a new notification.  
 Returns: [moncli.entities.Notification](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |text|str|The notification text.|
@@ -333,7 +334,7 @@ Returns: [moncli.entities.Notification](#other-entities)
 |target_type|moncli.enums.NotificationTargetType|The target's type (Project / Post)|
 |payload|json|The notification payload.|
 
-###### Example ######
+*Example*
 ```
 >>> from moncli.enums import NotificationTargetType
 >>>
@@ -346,17 +347,17 @@ Returns: [moncli.entities.Notification](#other-entities)
 {'id': '123456789', 'text': 'Hello World'}
 ```
 
-##### create_or_get_tag #####
+**create_or_get_tag**  
 Create a new tag or get it if it already exists.    
 Returns: [moncli.entities.Tag](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |tag_name|str|The new tag's name|
 |board_id (Optional)|str|The private board id to create the tag at (not needed for public boards).|
 
-###### Example ######
+*Example*
 ```
 >>> tag_name = 'New Tag'
 >>> tag = client.create_or_get_tag(tag_name, 'id', 'name')
@@ -364,16 +365,16 @@ Returns: [moncli.entities.Tag](#other-entities)
 {'id': '1234567890', 'name': 'New Tag'}
 ```
 
-##### get_tags #####
+**get_tags**  
 Get a collection of tags.  
 Returns: [list[moncli.entities.Tag]](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |ids (Optional)|list[str]|The list of tags unique identifiers.|
 
-###### Example ######
+*Example*
 ```
 >>> tags_ids = ['1234567890']
 >>> tags = client.get_tags('id','name', ids=tags_ids)
@@ -381,11 +382,11 @@ Returns: [list[moncli.entities.Tag]](#other-entities)
 [{'id': '1234567890', 'name': 'New Tag'}]
 ```
 
-##### get_users #####
+**get_users**  
 Get a collection of users.  
 Returns: [list[moncli.entities.User]](#user)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |ids (Optional)|list[str]|A list of users unique identifiers.|
@@ -393,7 +394,7 @@ Returns: [list[moncli.entities.User]](#user)
 |newest_first (Optional)|bool|Get the recently created users at the top of the list.|
 |limit (Optional)|int|Number of users to get.|
 
-###### Example ######
+*Example*
 ```
 >>> ids = ['1234']
 >>> users = client.get_users('id', 'name', ids=ids)
@@ -401,16 +402,16 @@ Returns: [list[moncli.entities.User]](#user)
 [{'id': '1234', 'name': 'Test User'}]
 ```
 
-##### get_teams #####
+**get_teams**  
 Get a collection of teams.  
 Returns: [list[moncli.entities.Team]](#user)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |ids (Optional)|list[str]|A list of teams unique identifiers.|
 
-###### Example ######
+*Example*
 ```
 >>> ids = ['123']
 >>> teams = client.get_teams('id', 'name', ids=ids)
@@ -418,40 +419,40 @@ Returns: [list[moncli.entities.Team]](#user)
 {'id': '123', 'name': 'Test Team'}
 ```
 
-##### get_me #####
+**get_me**  
 Get the conected user's information.   
 Returns: [moncli.entities.User](#user)
 
-###### Example ######
+*Example*
 ```
 >>> user = client.get_me('id','name')
 >>> user
 {'id': '1234', 'name': 'Test User'}
 ```
 
-##### get_account #####
+**get_account**  
 Get the connected user's account.   
 Returns: [moncli.entities.Account](#account)
 
-###### Example ######
+*Example*
 ```
 >>> account = client.get_account('name', 'first_day_of_the_week')
 >>> account
 {'name': 'Test Account', 'first_day_of_the_week': 'monday'}
 ```
 
-##### create_workspace #####
+**create_workspace**  
 Create a new workspace.   
 Returns: [moncli.entities.Workspace](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |name|str|The workspace's name.|
 |kind|moncli.enums.WorkspaceKind|The workspace's kind (open / closed)|
 |description (Optional)|str|The workspace's description.|
 
-###### Example ######
+*Example*
 ```
 >>> from moncli.enums import WorkspaceKind
 >>>
@@ -493,11 +494,11 @@ This section contains all properties and methods contained within the __Board__ 
 
 #### Methods ####
 
-##### get_activity_logs #####
+**get_activity_logs**  
 Get the board log events.   
 Returns: [list[moncli.entities.ActivityLog]](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |limit|int|Number of items to get, the default is 25.|
@@ -509,41 +510,41 @@ Returns: [list[moncli.entities.ActivityLog]](#other-entities)
 |from|str|From timespamp (ISO8601).|
 |to|str|To timespamp (ISO8601).|
 
-###### Example ######
+*Example*
 ```
 >>> activity_logs = board.get_activity_logs('id','data')
 >>> activity_logs
 [{'id': '12345678901', 'data': 'INSERT_COLIMN_DATA_HERE'}]
 ```
 
-##### get_views #####
+**get_views**  
 Get the board's views.   
 Returns: [list[moncli.entities.BoardView]](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |ids (Optional)|str|The list of view unique identifiers.|
 |type (Optional)|str|The view's type.|
 
-###### Example ######
+*Example*
 ```
 >>> views = board.get_views('id', 'name')
 >>> views
 [{'id': 'test_view_1', 'name': 'Test View 1'}]
 ```
 
-##### add_subscribers #####
+**add_subscribers**  
 Add subscribers to this board.   
 Returns: list[moncli.entities.User]](#user)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |user_ids|list[str]|User ids to subscribe to a board.|
 |kind (Optional)|moncli.enums.SubscriberKind|Subscribers kind (subscriber / owner).|
 
-###### Example ######
+*Example*
 ```
 >>> user_ids = ['1234']
 >>> subscribers = board.add_subscribers(user_ids, 'id', 'name')
@@ -551,27 +552,27 @@ Returns: list[moncli.entities.User]](#user)
 [{'id': '1234', 'name': 'Test User'}]
 ```
 
-##### get_subscribers #####
+**get_subscribers**  
 Get board subscribers.   
 Returns: list[moncli.entities.User]](#user)
 
-###### Example ######
+*Example*
 ```
 >>> subscribers = board.get_subscribers('id', 'name')
 >>> subscribers
 [{'id': '1234', 'name': 'Test User'}]
 ```
 
-##### delete_subscribers #####
+**delete_subscribers**  
 Remove subscribers from the board.   
 Returns: list[moncli.entities.User]](#user)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |user_ids|list[str]|User ids to unsubscribe from board.
 
-###### Example ######
+*Example*
 ```
 >>> user_ids = ['1234']
 >>> subscribers = board.delete_subscribers(user_ids, 'id', 'name')
@@ -579,18 +580,18 @@ Returns: list[moncli.entities.User]](#user)
 [{'id': '1234', 'name': 'Test User'}]
 ```
 
-##### add_column #####
+**add_column**  
 Create a new column in board.   
 Returns: [moncli.entities.Column](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |title|str|The new column's title.|
 |column_type|moncli.enums.ColumnType|The type of column to create.|
 |defaults (Optional)|json|The new column's defaults.|
 
-###### Example ######
+*Example*
 ```
 >>> from moncli.enums import ColumnType
 >>>
@@ -601,64 +602,64 @@ Returns: [moncli.entities.Column](#other-entities)
 {'id': 'text_column_1', 'name': 'New Text Column'}
 ```
 
-##### get_columns #####
+**get_columns**  
 Get the board's visible columns.   
 Returns: [list[moncli.entities.Column]](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |ids (Optional)|str|A list of column unique identifiers.|
 
-###### Example ######
+*Example*
 ```
 >>> columns = board.get_columns()
 >>> columns
 {'id': 'text_column_1', 'name': 'New Text Column'}
 ```
 
-##### add_group #####
+**add_group**  
 Creates a new group in the board.   
 Returns: [moncli.entities.Group](#group)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |group_name|str|The name of the new group.|
 
-###### Example ######
+*Example*
 ```
 >>> group_name = 'New Group'
 >>> group = board.add_group(group_name, 'id', 'name')
 {'id': 'group_1', 'name': 'New Group'}
 ```
 
-##### get_groups #####
+**get_groups**  
 Get the board's visible groups.   
 Returns: [list[moncli.entities.Group]](#group)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |ids (Optional)|list[string]|A list of group unique identifiers.|
 
-###### Example ######
+*Example*
 ```
 >>> groups = board.get_groups('id', 'name')
 [{'id': 'group_1', 'name': 'New Group'}]
 ```
 
-##### get_group #####
+**get_group**  
 Get a group belonging to the board by ID or title.   
 Returns: [moncli.entities.Group](#group)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |id|str|The group's unique identifier.  NOTE: This parameter is mutually exclusive and cannot be used with 'title'.|
 |title|str|The group's title.  NOTE: This parameter is mutually exclusive and cannot be used with 'id'.|
 
-###### Example ######
+*Example*
 ```
 >>> # Get group by id.
 >>> group_id = 'group_1'
@@ -671,18 +672,18 @@ Returns: [moncli.entities.Group](#group)
 {'id': 'group_1', 'name': 'New Group'}
 ```
 
-##### add_item #####
+**add_item**  
 Create a new item in the board.   
 Returns: [moncli.entities.Item](#item)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |item_name|str|The new item's name.|
 |group_id (Optional)|str|The group's unique identifier.|
 |column_values (Optional)|json|The column values of the new item.|
                 
-###### Example ######
+*Example*
 ```
 >>> item_name = 'New Item'
 >>> item = board.add_item(item_name, 'id', 'name')
@@ -690,29 +691,29 @@ Returns: [moncli.entities.Item](#item)
 {'id': '1234567', 'name': 'New Item'}
 ```
 
-##### get_items #####
+**get_items**  
 Get the board's items (rows).   
 Returns: [list[moncli.entities.Item]](#item)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |ids (Optional)|list[str]|The list of items unique identifiers.|
 |limit (Optional)|int|Number of items to get.|
 |page (Optional)|int|Page number to get, starting at 1.|
 
-###### Example ######
+*Example*
 ```
 >>> items = board.get_items('id', 'name')
 >>> items
 [{'id': '1234567', 'name': 'New Item'}]
 ```
 
-##### get_items_by_column_values #####
+**get_items_by_column_values**  
 Search items in this board by their column values.   
 Returns: [list[moncli.entities.Item]](#item)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |column_value|moncli.entites.ColumnValue|The column value to search on.|
@@ -723,7 +724,7 @@ Returns: [list[moncli.entities.Item]](#item)
 |column_type (Optional)|str|The column type.|
 |state (Optional)|moncli.enumns.State|The state of the item (all / active / archived / deleted), the default is active.|
 
-###### Example ######
+*Example*
 ```
 >>> column_id = 'test_column'
 >>> column_value = board.get_column_value(column_id)
@@ -733,36 +734,36 @@ Returns: [list[moncli.entities.Item]](#item)
 [{'id': '1234567', 'name': 'New Item'}]
 ```
 
-##### get_column_value #####
+**get_column_value**  
 Create a column value from a board's column.   
 Returns: [moncli.entities.ColumnValue](#working-with-column-values)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |id|str|The column's unique identifier.|
 |title|str|The column's title.|
 |settings (Optional)|moncli.entities.objects.StatusSettings/moncli.entities.objects.DropdownSettings(#other-entities)|Column settings required for retrieving a status or dropdown column.|
 
-###### Example ######
+*Example*
 ```
 >>> column_value = board.get_column_value('test_column', 'Test Column')
 >>> column_value
 {'id': 'test_column', 'name': 'Test Column', 'value': '{\"text\": \"Test Value\"}'}
 ```
 
-##### create_webhook #####
+**create_webhook**  
 Create a new webhook.   
 Returns: [moncli.entities.Webhook](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |url|str|The webhook URL.|
 |event|moncli.enums.WebhookEventType|The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update).|
 |config (Optional)|dict|The webhook config.|
 
-###### Example ######
+*Example*
 ```
 >>> from moncli.enums import WebhookEventType
 >>>
@@ -780,16 +781,16 @@ Returns: [moncli.entities.Webhook](#other-entities)
 {'id': '2346', 'board_id': '12345'}
 ```
 
-##### delete_webhook #####
+**delete_webhook**  
 Delete a new webhook.   
 Returns: [moncli.entities.Webhook](#other-entities)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |id|str|The webhook's unique identifier.|
 
-###### Example ######
+*Example*
 ```
 >>> webhook_id = '2345'
 >>> webhook = board.delete_webhook(webhook_id, 'id', 'board_id')
@@ -797,11 +798,11 @@ Returns: [moncli.entities.Webhook](#other-entities)
 {'id': '2345', 'board_id': '12345'}
 ```
 
-##### get_workspace #####
+**get_workspace**  
 Get the board's workspace that contains this board (null for main workspace).   
 Returns: [moncli.entities.Workspace](#other-entities)
 
-###### Example ######
+*Example*
 ```
 >>> workspace = board.get_workspace('name', 'kind')
 >>> workspace
@@ -824,56 +825,56 @@ This section contains all properties and methods contained within the __Group__ 
             
 #### Methods ####
 
-##### duplicate #####
+**duplicate**  
 Duplicate this group.  
 Returns: [moncli.entities.Group](#group)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |add_to_top (default=False)|bool|Should the new group be added to the top.|
 |group_title (Optional)|str|The group's title.|
 
-###### Example ######
+*Example*
 ```
 >>> duplicate = group.duplicate('id', 'name')
 >>> duplicate
 {'id': 'group_2', 'name': 'New Group (Duplicate)'}
 ```
 
-##### archive #####
+**archive**  
 Archives this group.  
 Returns: [moncli.entities.Group](#group)
 
-###### Example ######
+*Example*
 ```
 >>> archived_group = group.archive('id', 'name', 'archived')
 >>> archived_group
 {'id': 'group_1', 'name': 'New Group', 'archived': True}
 ```
 
-##### delete #####
+**delete**  
 Delete this group.  
 Returns: [moncli.entities.Group](#group)
 
-###### Example ######
+*Example*
 ```
 >>> deleted_group = group.delete('id', 'name', 'deleted')
 >>> archived_group
 {'id': 'group_1', 'name': 'New Group', 'deleted': True}
 ```
 
-##### add_item #####
+**add_item**  
 Add item to this group.  
 Returns: [moncli.entities.Item](#item)
 
-###### Parameters ######
+*Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |item_name|str|The new item's name.|
 |column_values (Optional)|json|The column values of the new item.|
 
-###### Example ######
+*Example*
 ```
 >>> item_name = 'New Item 1'
 >>> item = group.add_item(item_name, 'id', 'name')
@@ -881,7 +882,7 @@ Returns: [moncli.entities.Item](#item)
 {'id': 1234567', 'name': 'New Item 1}
 ```
 
-##### get_items #####
+**get_items**  
 Get items from this group.  
 Returns: [list[moncli.entities.Item]](#item)
 
@@ -906,6 +907,7 @@ This section contains all properties and methods contained within the __Board__ 
 ### Properties ###
 |Name        |Type               |Description                 |
 |------------|:-----------------:|:---------------------------|
+
 
 ### Update ###
 
