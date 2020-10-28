@@ -1318,7 +1318,7 @@ Returns: [moncli.entities.Update](#update)
 ```
 >>> updates = item.get_updates()
 >>> updates 
-
+[{'id': '123456781', 'text_body': 'Hello, World!'}]
 ```
 
 **delete_update**   
@@ -1332,6 +1332,8 @@ Returns: [moncli.entities.Update](#update)
 
 *Example*
 ```
+>>> update_id = '123456781'
+>>> item.delete_update(update_id)
 ```
 
 **clear_updates**  
@@ -1340,6 +1342,9 @@ Returns: [moncli.entities.Item](#item)
 
 *Example*
 ```
+>>> item = item.clear_updates('id', 'updates.id')
+>>> item
+{'id': '123456781', 'updates': []}
 ```
 
 ## Update ##
