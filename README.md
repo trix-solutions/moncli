@@ -213,6 +213,33 @@ More information regarding Updates and Replies can be found in the [Update](#upd
 
 ### Uploading Files ###
 
+Files, or assets, represent files uploaded to items via a file-type column or updates via the *add_file* method on both __Item__ and __Update__ objects. 
+
+When adding files to an item, a file column via the __FileColumn__ object must be identified as the column in which to place the newly uploaded file.  This is demonstrated in the example below.
+```
+>>> # First get the file column.
+>>> file_column = item.get_column_value(id='file_column_1')
+>>> # Then upload the file.
+>>> asset = item.add_file(file_column, '/users/test/monday_files/test.jpg')
+```
+
+Adding files to an update only requires the file path of the file to upload as shown below.
+```
+>>> asset = update.add_file('/users/test/monday_files/test.jpg')
+```
+
+Files are retrieved using the *get_files* method available on any __MondayClient__, __Item__, or __Update__ instance.  It is important to note that all files within the account accessible to the user are retrieved from the __MondayClient__ instance, while only files within the respective item or update are retrieved for __Item__ and __Update__ instances respectively.
+
+Currently, the monday.com API only supports removing all files from a file column within an item.  This is done using the *remove_files* method of the __Item__ instance in the example shown below.
+```
+>>> # First get the file column.
+>>> file_column = item.get_column_value(id='file_column_1')
+>>> # Then clear all files.
+>>> assets = item.remove_files(file_column)
+```
+
+More information regarding the __Asset__ object is found in the [File/Asset](#file) section of the documentation below.
+
 ## Moncli Entities ##
 The moncli client returns entities representing Monday.com objects after executing a successful request to the API.  These entities not only contain properties representing the return fields of the query/mutation, but also contain various methods for retrieving other related entities.   
 
