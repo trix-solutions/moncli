@@ -254,7 +254,7 @@ BOARDS_OPTIONAL_PARAMS = {
         'ids': (ArgumentValueKind.List, ArgumentValueKind.String)
     },
     'groups': {
-        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+        'ids': (ArgumentValueKind.List, ArgumentValueKind.String),
         'items': {
             'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
             'limit': ArgumentValueKind.Int,
