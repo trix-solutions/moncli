@@ -125,4 +125,5 @@ def _process_repsonse(api_key: str, timeout: int, resp, data, **kwargs):
         error_query = json.dumps(data)
         raise MondayApiError(error_query, 400, text['error_code'], [text['error_message']])
 
+    text: dict = resp.json()
     return text['data']
