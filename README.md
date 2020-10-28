@@ -238,6 +238,8 @@ Currently, the monday.com API only supports removing all files from a file colum
 >>> assets = item.remove_files(file_column)
 ```
 
+To remove files from an update, the only option currently available is to delete the update containing the file.  This is done using the *delete_update* method via an __Item__ instance or directly on an __Update__ instance with the *delete* method.
+
 More information regarding the __Asset__ object is found in the [File/Asset](#file) section of the documentation below.
 
 ## Moncli Entities ##
