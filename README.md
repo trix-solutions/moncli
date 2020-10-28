@@ -1080,6 +1080,10 @@ Returns: [moncli.entities.Asset](#file)
 
 *Example*
 ```
+>>> file_path = '/users/test/monday_files/test.jpg'
+>>> asset = item.add_file(file_path, 'id', 'name', 'url')
+>>> asset
+{'id': '1234567890', 'name': 'test.jpg', 'url': 'https://test.monday.com/files/test.jpg'}
 ```
 
 **get_files**  
@@ -1089,10 +1093,13 @@ Returns: [list[moncli.entities.Asset]](#file)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
-|column_ids|list[str]|A list of column IDs from which to retrieve file assets.|
+|column_ids (optional)|list[str]|A list of column IDs from which to retrieve file assets.|
 
 *Example*
 ```
+>>> assets = item.get_files('id', 'name', 'url')
+>>> assets
+[{'id': '1234567890', 'name': 'test.jpg', 'url': 'https://test.monday.com/files/test.jpg'}]
 ```
 
 **remove_files**  
@@ -1106,6 +1113,10 @@ Returns: [list[moncli.entities.Asset]](#file)
 
 *Example*
 ```
+>>> file_column = item.get_column_value(id='file_column_1')
+>>> item = item.remove_files(file_column, 'id', 'name')
+>>> item
+{'id': '1234567', 'name': 'New Item 1'}
 ```
 
 **get_board**  
@@ -1114,6 +1125,9 @@ Returns: [moncli.entities.Board](#board)
 
 *Example*
 ```
+>>> board = item.get_board('id', 'name')
+>>> board
+{'id': '12345', 'name': 'New Public Board'}
 ```
 
 **get_creator**  
@@ -1122,6 +1136,9 @@ Returns: [moncli.entities.User](#user)
 
 *Example*
 ```
+>>> creator = item.get_creator('id', 'name')
+>>> creator
+{'id': '1234', 'name': 'Test User'}
 ```
 
 **get_column_values**  
@@ -1147,6 +1164,16 @@ Returns: [moncli.entities.ColumnValue](#column-values)
 
 *Example*
 ```
+>>> # Get column value by id.
+>>> column_id = 'text_column_1'
+>>> column_value = item.get_column_value(id=column_id)
+>>> column_value
+{'id': 'text_column_1', 'title': 'New Text Column'}
+>>> # Get column value by title.
+>>> column_title = 'New Text Column'
+>>> column_value = item.get_column_value(title=column_title)
+>>> column_value
+{'id': 'text_column_1', 'title': 'New Text Column'}
 ```
 
 **change_column_value**  
@@ -1160,6 +1187,10 @@ Returns: [moncli.entities.Item](#item)
 
 *Example*
 ```
+>>> # Get and update column value before changing it.
+>>> column_value = item.get_column_value(id='text_column_1')
+>>> column_value.text = 'Updated Text'
+>>> item.update_column_value(column_value)
 ```
 
 **change_multiple_column_values**  
@@ -1173,6 +1204,13 @@ Returns: [moncli.entities.Item](#item)
 
 *Example*
 ```
+>>> # Get and update column value before changing it.
+>>> column_value = item.get_column_value(id='text_column_1')
+>>> column_value.text = 'Updated Text'
+>>> # Update column value as ColumnValue list.
+>>> item.update_column_value([column_value])
+>>> # Update column value as dict.
+>>> item.update_column_value({'text': 'Updated Text'})
 ```
 
 **create_subitem**  
@@ -1187,6 +1225,10 @@ Returns: [moncli.entities.Item](#item)
 
 *Example*
 ```
+>>> item_name = 'New Subitem'
+>>> subitem = item.create_subitem(item_name, 'id', 'name', 'board.name')
+>>> subitem
+{'id': '1234568', 'name': 'New Subitem', 'board': {'name': 'Some monday.com-generated Board'}}
 ```
 
 **move_to_group**  
@@ -1200,6 +1242,10 @@ Returns: [moncli.entities.Item](#item)
 
 *Example*
 ```
+>>> group_id = 'group_2'
+>>> item = item.move_to_group(group_id, 'id', 'group.id', 'group.name')
+>>> item
+{'id': '1234567', 'group':{'id': 'group_2', 'name': New Group 2'}}
 ```
 
 **archive**  
@@ -1208,6 +1254,9 @@ Returns: [moncli.entities.Item](#item)
 
 *Example*
 ```
+>>> item = item.archive('id', 'state')
+>>> item
+{'id': '1234567', 'state': 'archived'}
 ```
 
 **delete**  
@@ -1216,6 +1265,9 @@ Returns: [moncli.entities.Item](#item)
 
 *Example*
 ```
+>>> item = item.delete('id', 'state')
+>>> item
+{'id': '1234567', 'state': 'deleted'}
 ```
 
 **duplicate**  
@@ -1229,6 +1281,9 @@ Returns: [moncli.entities.Item](#item)
 
 *Example*
 ```
+>>> duplicate = item.duplicate('id', 'name')
+>>> duplicate
+{'id': '1234568','name': 'New Item 2'}
 ```
 
 **add_update**  
@@ -1243,6 +1298,10 @@ Returns: [moncli.entities.Update](#update)
 
 *Example*
 ```
+>>> body = 'Hello, World!'
+>>> update = item.add_update(body, 'id', 'text_body')
+>>> update
+{'id': '123456781', 'text_body': 'Hello, World!'}
 ```
 
 **get_updates**  
@@ -1257,6 +1316,9 @@ Returns: [moncli.entities.Update](#update)
 
 *Example*
 ```
+>>> updates = item.get_updates()
+>>> updates 
+
 ```
 
 **delete_update**   
@@ -1321,87 +1383,6 @@ Returns: [moncli.entities.Item](#item)
 ### Methods ###
 
 ## Column Values ##
-
-
-## Using the API v2 Client ##
-(Coming soon...)
-
-## Creating Custom GraphQL Queries ##
-(Coming soon...)
-
-
-
-
-
-## Working with Users, Teams, and Accounts ##
-### Get user account ###
-The __Account__ object contains information pertaining to the Monday.com service subscription and can be retrieved from the __User__ object with the following command.
-```
->>> account = user.get_account()
-```
-The __Account__ object also contains the payment plan information via the __Plan__ object and can be retrieved using the following command.
-```
->>> plan = account.get_plan()
-```
-
-### Get user's teams ###
-Any given user can be assigned to multiple different teams, and a list of these __Team__ objects can be retrieved from the __User__ object with the following command.
-```
->>> teams = user.get_teams()
-```
-
-### Sending a notification ###
-Similar to sending notifications from the __MondayClient__ object, the __User__ object can send notifications with the following command.
-```
->>> from moncli import NotificationTargetType
->>>
->>> notification = user.send_notification(text='text', target_id='2345678', target_type=NotificationTargetType.Project)
-```
-Please consult the Monday.com API v2 guide [here](https://monday.com/developers/v2#mutations-section-notifications) regarding additional optional parameters and return fields.
-
-### Getting users on a team ###
-Similar to retrieving __Team__ objects from a __User__ object, __Team__ objects can also retrieve all containing users as __User__ objects with the following command.
-```
->>> team_users = team.get_users()
-```
-
-## Working with Column Values ##
-When adding or changing column values for new and existing items, the __ColumnValue__ object serves to simplify and streamline the process of mapping data to and from items in Monday.com.  Each __ColumnValue__ comes with an _id_ and _title_ that are intrinsic with any column value model.  Each column value type that can be updated corresponds with one of many subclasses of the __ColumnValue__ object containing additional properties that are unique for the given column data type.  
-
-This section provides and overview retrieving, creating, and using available __ColumnValue__ object types.
-
-### Retrieving column values ###
-__ColumnValue__ objects can be retrieved from either __Board__ or __Item__ objects.  
-A __ColumnValue__ with the mapped _id_ and _title_ fields but no value can be retrieved from a __Board__ object using the _get_column_value_ method as shown below.
-```
->>> # Empty column values may be retrieved from boards by column id or title
->>> empty_column_value_by_id = board.get_column_value(id='text_column_1')
->>> empty_column_value_by_title = board.get_column_value(title='Address')
-```
-
-__Item__ objects on the other hand will return the value state of the column in addition to the _id_ and _title_ mapping fields.  However, if the current value of the item column value is empty, then the retrieved __ColumnValue__ object will also be empty.  
-The _get_column_values_ method will return a list of all column values for the item. 
-```
->>> column_values = item.get_column_values()
->>>
->>> # Assume column 1 is a text column with a value
->>> column_values[0].text
-'Hello, world!'
->>>
->>> # Assume column 2 is a numbers column with no value
->>> column_values[1].number
->>>
-```
-
-Much like the __Board__ object, A single column value can be retrieved from __Item__ objects using the _get_column_value_ method using either the column _id_ or _title_ fields.
-```
->>> # Column values may be retrieved from items by column id or title
->>> column_value_by_id = item.get_column_value(id='text_column_1')
->>> column_value_by_title = item.get_column_value(title='Salutation')
-```
-
-
-### Creating column values ###
 A __ColumnValue__ can also be created without the need for __Board__ or __Item__ objects using the universal _create_column_value_ function.  This method creates a __ColumnValue__ object from the input column _id_ and _column_type_ parameter (with an optional _title_ field). The __ColumnType__ enum is used for the _column_type_ parameter, and all values available for column value updating are listed below:
 * name
 * text
@@ -1621,6 +1602,11 @@ ColumnType: rating
 Properties:
 * _rating_ (int) - rating value (0-5)
 
+## Using the API v2 Client ##
+(Coming soon...)
+
+## Creating Custom GraphQL Queries ##
+(Coming soon...)
 
 ## Additional Questions/Feature Requests:
 Please feel free to log an issue or request a new feature by submitting a new issue or reaching out to me at andrew.shatz@trix.solutions. Thank you and happy coding!!!
