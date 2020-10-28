@@ -1352,6 +1352,17 @@ Returns: [moncli.entities.Item](#item)
 ### Properties ###
 |Name        |Type               |Description                 |
 |------------|:-----------------:|:---------------------------|
+|assets|[list[moncli.entities.Asset]](#file)|The update's assets/files.|
+|body|str|The update's html formatted body.|
+|created_at|str|The update's creation date.|
+|creator|moncli.entities.User|The update's creator.|
+|creator_id|str|The unique identifier of the update creator.|
+|id|str|The update's unique identifier.|
+|item_id|str|The update's item ID.|
+|replies|[list[moncli.entities.Reply]](#other-entities)|The update's replies.|
+|text_body|str|The update's text body.|
+|updated_at|str|The update's last edit date.|
+
 
 ### Methods ###
 
@@ -1360,6 +1371,15 @@ Returns: [moncli.entities.Item](#item)
 ### Properties ###
 |Name        |Type               |Description                 |
 |------------|:-----------------:|:---------------------------|
+|id|str|The file's unique identifier.|
+|created_at|str|The file's creation date.|
+|file_extension|str|The file's extension.|
+|file_size|int|The file's size in bytes.|
+|name|str|The file's name.|
+|public_url|str|Public url to the asset, valid for 1 hour.|
+|uploaded_by|moncli.entities.User|The user who uploaded the file.|
+|url|str|The file url.|
+|url_thumbnail|str|Url to view the asset in thumbnail mode. Only available for images.|
 
 ### Methods ###
 
@@ -1368,16 +1388,34 @@ Returns: [moncli.entities.Item](#item)
 ### Properties ###
 |Name        |Type               |Description                 |
 |------------|:-----------------:|:---------------------------|
+|account|moncli.entities.user.Account|The user's account.|
+|birthday|str|The user's birthday.|
+|country_code|str|The user's country code.|
+|created_at|str|The user's creation date.|
+|email|str|The user's email.|
+|enabled|bool|Is the user enabled or not.|
+|id|str|The user's unique identifier.|
+|is_guest|bool|Is the user a guest or not.|
+|is_pending|bool|Is the user a pending user.|
+|is_view_only|bool|Is the user a view only user or not.|
+|join_date|str|The date the user joined the account.|
+|location|str|The user' location.|
+|mobile_phone|str|The user's mobile phone number.|
+|name|str|The user's name.|
+|phone|str|The user's phone number.|
+|photo_original|str|The user's photo in the original size.|
+|photo_small|str|The user's photo in small size (150x150).|
+|photo_thumb|str|The user's photo in thumbnail size (100x100).|
+|photo_thumb_small|str|The user's photo in small thumbnail size (50x50).|
+|photo_tiny|str|The user's photo in tiny size (30x30).|
+|teams|[list[moncli.entities.user.Team]](#other-entities)|The teams the user is a member in.|
+|time_zone_identifier|str|The user's time zone identifier.|
+|title|str|The user's title.|
+|url|str|The user's profile url.|
+|utc_hours_diff|int|The user's UTC hours difference.|
 
 ### Methods ###
 
-## Account ##
-
-### Properties ###
-|Name        |Type               |Description                 |
-|------------|:-----------------:|:---------------------------|
-
-### Methods ###
 
 ## Other Entities ##
 

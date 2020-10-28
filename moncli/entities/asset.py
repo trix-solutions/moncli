@@ -39,9 +39,9 @@ class Asset(_Asset):
         public_url : `str`
             Public url to the asset, valid for 1 hour.
         uploaded_by : `moncli.entities.User`
-            The user who uploaded the file
+            The user who uploaded the file.
         url : `str`
-            The user who uploaded the file
+            The file url.
         url_thumbnail : `str`
             Url to view the asset in thumbnail mode. Only available for images.
 
