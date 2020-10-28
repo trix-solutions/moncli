@@ -6,7 +6,7 @@ A Python Client and CLI tool for Monday.com
 * [Getting Started...](#getting-started)  
    * [Introducing the MondayClient](#introducing-the-mondayclient)
    * [Managing Boards](#managing-boards)
-   * [Working with Columns, Groups, and Items](#working-with-groups-and-items)
+   * [Working with Columns, Groups, and Items](#working-with-columns-groups-and-items)
    * [Changing Column Values](#changing-column-values)
    * [Posting Updates](#posting-updates)
    * [Uploading Files](#uploading-files)
@@ -87,13 +87,110 @@ Finally, boards are archived using the _archive_board_ method on the __MondayCli
 Additional information regarding the __Board__ object can be found in the [Board](#board) section below.  
 
 ### Working with Columns, Groups, and Items ###
-Columns contain metadata that pertains to the data types available to current and future board items. Board columns are represented by the __Column__ object.  A new column is created and returned as a __Column__  
 
-Groups serve as collections of items for a board.  Once created by the __Board__ object using the _get_groups_ method, the __Group__ object gives users various methods for modification and item management as discussed in the following section.
+#### Adding and Getting Columns ####
+
+Columns contain metadata that pertains to the data types available to current and future board items. Board columns are represented by the __Column__ object.  A new column is created from a __Board__ instance using the *add_column* method and returned as a __Column__ object as shown below.
+
+```
+>>> from moncli import ColumnType
+>>>
+>>> new_column = board.add_column(title='New Text Column', column_type=ColumnType.text)
+```
+
+Columns are retrieved from a __Board__ instance using the *get_columns* method as shown below.
+
+```
+>>> columns = board.get_columns('id', 'title', 'type')
+```
+
+#### Managing Groups ####
+
+Groups contain lists of items within a board.  In moncli, these groups are realized as __Group__ objects are are retrieved from a __Board__ in the following way.
+
+```
+>>> groups = board.get_groups('id','name')
+```
+
+Groups are also created via a __Board__ instance, as shown below.
+
+```
+>>> group_name = 'New Group'
+>>> group = board.add_group(group_name, 'id', 'name')
+```
+
+Once created a group may be duplicated, archived or deleted in the following ways.
+
+```
+>>> # Duplicate a group.
+>>> duplicate_group = group.duplicate()
+>>>
+>>> # Archive a group.
+>>> archived_group = group.archive()
+>>>
+>>> # Delete a group.
+>>> deleted_group = group.delete()
+```
+
+#### Using Items ####
+
+Items in monday.com represent individual records containing column value data.  These items exist inside of the various board groups.  Items are created by either a __Board__ or __Group__ instance as shown below.  Please note that when creating items from a __Board__ instance, the item is placed into the topmost group if the *group_id* parameter is not specified.
+
+```
+>>> item_name = 'New Item 1'
+>>>
+>>> # Add item via board.
+>>> group_id = 'group_1'
+>>> item = board.add_item(item_name, group_id=group_id)
+>>>
+>>> # Add item via group.
+>>> item = group.add_item(item_name)
+```
+
+An __Item__ object can be created with column values using the optional *column_values* parameter.  Values for this parameter can be input as a dictionary in which each key represents the ID of the column to update and the value represents the value to add.  
+
+```
+>>> column_values = {'text_column_1': 'New Text Value'}
+>>> new_item_with_values = board.add_item(item_name='New Item With Text Value', column_values=column_values)
+```
+
+Items are also retrieved by either a __Client__, __Board__, or __Group__ instance via the *get_items* methods.  It is important to note that the __Client__ instance has access to all items created within the account that are accessible to the user.  When using a __Board__ or a __Group__ instance, only items accessible to the user within the respective board or group are available to query.
+
+Once an __Item__ instance is retrieved, it can be moved between groups, duplicated, archived, or deleted as shown in the example below.
+
+```
+>>> # Move item to group.
+>>> item.move_to_group('group_2')
+>>>
+>>> # Duplicate item with updates
+>>> item.duplicate(with_updates=True)
+>>>
+>>> # Archive an item.
+>>> item.archive()
+>>> 
+>>> # Delete an item.
+>>> item.delete()
+```
+
 
 ### Changing Column Values ###
 
+The column values of an item may also be retrieved and updated from an __Item__ instance in the following way as shown below.  
+```
+>>> # First get the column value.
+>>> column_value = item.get_column_value(id='text_colunn_1')
+>>> # Update the column text
+>>> column_value.text = 'Update Text'
+>>> # Now update the column value in the item.
+>>> item.change_column_value(column_value)
+```
+
+Multiple column values are retrieved and updated from the __Item__ instance using the *change_multiple_column_values* and *get_column_values* methods respectively.  More information on these methods can be found below in the [Item](#item) section of this document.
+
 ### Posting Updates ###
+Updates represent interactions between users within a monday.com account with respect to a given item and are represented in moncli as an __Update__ object.  __Update__ instances are retrieved using the *get_updates* method from either a __MondayClient__ instance, which can retrieve all updates within the account accessible to the login user, or an __Item__ instance, which only has access to updates within the particular item.  
+
+
 
 ### Uploading Files ###
 
@@ -492,7 +589,7 @@ This section contains all properties and methods contained within the __Board__ 
 |workspace|[moncli.entities.Workspace](#other-entities)|The workspace that contains this board (null for main workspace).|
 |workspace_id|str|The board's workspace unique identifier (null for main workspace).
 
-#### Methods ####
+### Methods ###
 
 **get_activity_logs**  
 Get the board log events.   
@@ -823,7 +920,7 @@ This section contains all properties and methods contained within the __Group__ 
 |position|str|The group's position in the board.|
 |title|str|The group's title.|
             
-#### Methods ####
+### Methods ###
 
 **duplicate**  
 Duplicate this group.  
@@ -945,57 +1042,7 @@ This example will retrieve the 25 most recently created items.  Optional paramet
 Boards are cornerstones for any Monday.com setup, and __Board__ objects are no exception containing functionality for general data management with columns, groups, and items.  The next sections below will provide an overview of the full board functionality available.
 
 
-### Adding a column ###
-To add a column to a board, simply execute the _add_column_ method on the __Board__ object as shown below.  
-```
->>> from moncli import ColumnType
->>>
->>> new_column = board.add_column(title='New Text Column', column_type=ColumnType.text)
-```
-The __Column__ object returned contains the _id_, _name_, and _type_ fields of the newly created column.
 
-
-### Adding a group ###
-A group can be added to a board using the _add_group_ method on the __Board__ object as shown below.
-```
->>> new_group = board.add_group(group_name='New Group')
-```
-The __Group__ object returned contains the _id_ and _title_ fields of the newly created group.
-
-
-### Adding an item ###
-A new item can be added to the default group of a board using the _add_item_ method on the  __Board__ object as shown below.
-```
->>> new_item = board.add_item(item_name='New Item')
-```
-The __Item__ object returned contains the _id_ and _name_ fields of the newly created item. 
-
-An __Item__ object can be created with column values using the optional _column_values_ parameter.  Values for this parameter can be input as a dictionary in which each key represents the ID of the column to update and the value represents the value to add.  
-```
->>> column_values = {'text_column_1': 'New Text Value'}
->>> new_item_with_values = board.add_item(item_name='New Item With Text Value', column_values=column_values)
-```
-
-This method also accepts a list of __ColumnValue__ objects for adding column values to new items.  
-```
->>> from moncli import create_column_value, ColumnType
->>>
->>> column_value = create_column_value(id='text_column_1', column_type=ColumnType.text, text='New Text Value created using TextValue object')
->>>
->>> new_item_with_values_2 = board.add_item(item_name='New Item Using Column Values', column_values=[column_value])
-```
-More information about the __ColumnValue__ object and its various types can be found futher down in the Readme document. Information on how to change values for different field types can be found [here](https://monday.com/developers/v2#column-values-section)
-
-
-### Getting columns, groups, and items ###
-To retrieve all columns, groups, and items associated with a __Board__ object, simply execute the following commands respectively.
-```
->>> columns = board.get_columns()
->>>
->>> groups = board.get_groups()
->>>
->>> items = board.get_items()
-```
 
 ### Getting items by column value ###
 The __Board__ object can also retrieve contained items by column value using the _get_items_by_column_values_ method as shown below.

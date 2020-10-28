@@ -80,6 +80,8 @@ class Item(_Item):
         Archive this item.
     delete : `moncli.entities.Item`
         Delete this item.
+    duplicate : `moncli.entities.Item`
+        Duplicate this item.
     add_update : `moncli.entities.Update`
         Create a new update for this item.
     get_updates : `list[moncli.entities.Update]`
