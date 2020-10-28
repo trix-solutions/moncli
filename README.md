@@ -1392,7 +1392,6 @@ Returns: [moncli.entities.Reply](#other-entities)
 >>> update.add_reply(body)
 ```
 
-
 **get_replies**  
 Add reply to update.  
 Returns: [moncli.entities.Reply](#other-entities)   
@@ -1421,7 +1420,6 @@ Returns: [moncli.entities.Reply](#other-entities)
 {'name': 'test.jpg', 'url': 'https://test.monday.com/files/test.jpg'}
 ```
 
-
 **get_files**  
 Get update's files.    
 Returns: [moncli.entities.Reply](#other-entities)
@@ -1433,7 +1431,6 @@ Returns: [moncli.entities.Reply](#other-entities)
 [{'name': 'test.jpg', 'url': 'https://test.monday.com/files/test.jpg'}]
 ```
 
-
 **delete**
 Delete an update.  
 Returns: [moncli.entities.Reply](#other-entities)  
@@ -1442,7 +1439,6 @@ Returns: [moncli.entities.Reply](#other-entities)
 ```
 >>> update.delete()
 ```
-
 
 ## File ##
 
@@ -1460,6 +1456,17 @@ Returns: [moncli.entities.Reply](#other-entities)
 |url_thumbnail|str|Url to view the asset in thumbnail mode. Only available for images.|
 
 ### Methods ###
+
+**get_uploaded_by_user**  
+Get the user who uploaded the file.  
+Returns: [moncli.entities.User](#user)  
+
+*Example*
+```
+>>> uploaded_by = asset.get_uploaded_by_user('id', 'name')
+>>> uploaded_by
+{'id': '1234', 'name': 'Test User'}
+```
 
 ## User ##
 
@@ -1494,6 +1501,51 @@ Returns: [moncli.entities.Reply](#other-entities)
 
 ### Methods ###
 
+**get_account**  
+Get the user's account.   
+Returns: [moncli.entities.Account](#other-entities)
+
+*Example*
+```
+>>> account = user.get_account('id', 'name')
+>>> account
+{'id': '1', 'name': 'Test Account'}
+```
+
+**get_teams**  
+Get teams the user is a member in.  
+Returns: [list[moncli.entities.Team]](#other-entities)
+
+*Example*
+```
+>>> teams = user.get_teams('id', 'name')
+>>> teams
+[{'id': '12', 'name': 'Test Team'}]
+```
+
+**send_notification**  
+Create a new notification.  
+Returns: [moncli.entities.Notification](#other-entities)
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|text|str|The notification text.|
+|target_id|str|The target's unique identifier.|
+|target_type|moncli.enums.NotificationTargetType|The target's type (Project / Post)|
+|payload (Optional)|json|The notification payload.|
+
+*Example*
+```
+>>> from moncli.enums import NotificationTargetType
+>>>
+>>> text = 'Hello, World!'
+>>> target_id = '1235'
+>>> notification_type = NotificationTargetType.Post
+>>> notification = user.create_notification(text, target_id, notification_type, 'id', 'text')
+>>> notification
+{'id': '123456789', 'text': 'Hello, World!'}
+```
 
 ## Other Entities ##
 

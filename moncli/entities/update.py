@@ -184,6 +184,8 @@ class Update(_Update):
         __________
         Parameters
 
+            body : `str`
+                The text body of the reply.
             args : `tuple`
                 The list of reply fields to return.
 
