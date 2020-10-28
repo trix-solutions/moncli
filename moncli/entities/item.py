@@ -26,7 +26,7 @@ class Item(_Item):
     __________
     Properties
     __________
-    assets : `list[moncli.entities.set.Asset]`
+    assets : `list[moncli.entities.Asset]`
         The item's assets/files.
     board : `moncli.entities.Board`
         The board that contains this item.

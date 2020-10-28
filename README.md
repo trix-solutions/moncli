@@ -1052,21 +1052,65 @@ This section contains all properties and methods contained within the __Board__ 
 ### Properties ###
 |Name        |Type               |Description                 |
 |------------|:-----------------:|:---------------------------|
+|assets|[list[moncli.entities.Asset]](#file)|The item's assets/files.|
+|board|[moncli.entities.Board](#board)|The board that contains this item.|
+|column_values|[list[moncli.entities.ColumnValue]](#column-values)|The item's column values.|
+|created_at|str|The item's create date.|
+|creator|[moncli.entities.User](#user)|The item's creator.|
+|creator_id|str|The item's unique identifier.|
+|group|[moncli.entities.Group](#group)|The group that contains this item.|
+|id|str|The item's unique identifier.|
+|name|str|The item's name.|
+|state|str|The board's state (all / active / archived / deleted)|
+|subscriber|[moncli.entities.User](#user)|The pulse's subscribers.|
+|updated_at|str|The item's last update date.|
+|updates|[moncli.entities.Update](#update)|The item's updates.|
 
 ### Methods ###
 
 
 ## Update ##
 
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+
+### Methods ###
+
 ## File ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+
+### Methods ###
 
 ## User ##
 
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+
+### Methods ###
+
 ## Account ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+
+### Methods ###
 
 ## Other Entities ##
 
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+
+### Methods ###
+
 ## Column Values ##
+
 
 ## Using the API v2 Client ##
 (Coming soon...)
