@@ -1107,7 +1107,7 @@ class Item(_Item):
             limit : `int`
                 Number of updates to get; the default is 25.
             page : `int`
-                Page number to get, starting at 1
+                Page number to get, starting at 1.
         """
         
         args = ['updates.' + arg for arg in client.get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)]
