@@ -190,7 +190,26 @@ Multiple column values are retrieved and updated from the __Item__ instance usin
 ### Posting Updates ###
 Updates represent interactions between users within a monday.com account with respect to a given item and are represented in moncli as an __Update__ object.  __Update__ instances are retrieved using the *get_updates* method from either a __MondayClient__ instance, which can retrieve all updates within the account accessible to the login user, or an __Item__ instance, which only has access to updates within the particular item.  
 
+Updates are added to an item using the *add_update* method from the __Item__ instance as shown below.
+```
+>>> update = item.add_update('Hello, World!')
+```
 
+Once created, replies are also added to an update using the *add_reply* method from the __Update__ instance as shown below.
+```
+>>> reply = update.add_reply('Right back at you!')
+```
+
+Finally updates are removed from the __Item__ instance using either the *delete_update* method for removing a specific update, or the *clear_all_updates* method to remove all updates on the item as shown below.
+```
+>>> # Remove one update
+>>> item.delete_update(update.id)
+>>>
+>>> # Remove all updates
+>>> item.clear_all_updates()
+```
+
+More information regarding Updates and Replies can be found in the [Update](#update) and [Reply](#other-entities) sections in the documentation below.
 
 ### Uploading Files ###
 
@@ -381,7 +400,7 @@ Returns: [list[moncli.entities.Update]](#update)
 ```
 >>> updates = client.get_updates('id', 'text_body')
 >>> updates
-[{'id': '1234567', 'text_body': 'Hello World'}]
+[{'id': '1234567', 'text_body': 'Hello, World!'}]
 ```
 
 **delete_update**  
@@ -398,7 +417,7 @@ Returns: [moncli.entities.Update](#update)
 >>> update_id = '1234567'
 >>> deleted_update = client.delete_update(update_id, 'id','text_body')
 >>> deleted_update
-{'id': '1234567', 'text_body': 'Hello World'}
+{'id': '1234567', 'text_body': 'Hello, World!'}
 ```
 
 **clear_item_updates**  
@@ -435,13 +454,13 @@ Returns: [moncli.entities.Notification](#other-entities)
 ```
 >>> from moncli.enums import NotificationTargetType
 >>>
->>> text = 'Hello World'
+>>> text = 'Hello, World!'
 >>> user_id = '1234'
 >>> target_id = '1235'
 >>> notification_type = NotificationTargetType.Post
 >>> notification = client.create_notification(text, user_id, target_id, notification_type, 'id', 'text')
 >>> notification
-{'id': '123456789', 'text': 'Hello World'}
+{'id': '123456789', 'text': 'Hello, World!'}
 ```
 
 **create_or_get_tag**  
