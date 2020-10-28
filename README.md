@@ -1366,6 +1366,84 @@ Returns: [moncli.entities.Item](#item)
 
 ### Methods ###
 
+**get_creator**  
+Get the update's creator.  
+Returns: [moncli.entities.User](#user)      
+
+*Example*
+```
+>>> creator = update.get_creator('id', 'name')
+>>> creator
+{'id': '1234', 'name': 'Test User'}
+```
+
+**add_reply**  
+Add reply to update.  
+Returns: [moncli.entities.Reply](#other-entities)
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------| 
+|body|str|The text body of the reply.|
+
+*Example*
+```
+>>> body = 'Right back at you!'
+>>> update.add_reply(body)
+```
+
+
+**get_replies**  
+Add reply to update.  
+Returns: [moncli.entities.Reply](#other-entities)   
+
+*Example*
+```
+>>> replies = update.get_replies('text_body')
+>>> replies
+{'text_body': 'Right back at you!'}
+```
+
+**add_file**  
+Add a file to update.  
+Returns: [moncli.entities.Reply](#other-entities)
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|   
+|file_path|str|The path to the file to upload.|  
+
+*Example*
+```
+>>> file_path = '/users/test/monday_files/test.jpg'
+>>> asset = update.add_file(file_path, 'name', 'url')
+>>> asset
+{'name': 'test.jpg', 'url': 'https://test.monday.com/files/test.jpg'}
+```
+
+
+**get_files**  
+Get update's files.    
+Returns: [moncli.entities.Reply](#other-entities)
+    
+*Example*
+```
+>>> assets = update.get_files('name', 'url')
+>>> assets
+[{'name': 'test.jpg', 'url': 'https://test.monday.com/files/test.jpg'}]
+```
+
+
+**delete**
+Delete an update.  
+Returns: [moncli.entities.Reply](#other-entities)  
+
+*Example*
+```
+>>> update.delete()
+```
+
+
 ## File ##
 
 ### Properties ###
