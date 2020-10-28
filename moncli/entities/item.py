@@ -74,6 +74,8 @@ class Item(_Item):
         Change an item's column value.
     change_multiple_column_values : `moncli.entities.Item`
         Change the item's column values.
+    create_subitem : `moncli.entities.Item`
+        Create subitem.
     move_to_group : `moncli.entities.Item`
         Move item to a different group.
     archive : `moncli.entities.Item`

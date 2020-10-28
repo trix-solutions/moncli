@@ -1075,6 +1075,8 @@ Returns: [moncli.entities.Asset](#file)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|file_column|[moncli.entities.FileValue](#column-values)|The file column value to be updated.|
+|file_path|str|The file path.|
 
 *Example*
 ```
@@ -1087,6 +1089,7 @@ Returns: [list[moncli.entities.Asset]](#file)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|column_ids|list[str]|A list of column IDs from which to retrieve file assets.|
 
 *Example*
 ```
@@ -1099,6 +1102,7 @@ Returns: [list[moncli.entities.Asset]](#file)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|file_column|moncli.entities.FileValue|The file column value to be updated.|
 
 *Example*
 ```
@@ -1108,10 +1112,6 @@ Returns: [list[moncli.entities.Asset]](#file)
 Get the board that contains this item.  
 Returns: [moncli.entities.Board](#board)  
 
-*Parameters*
-| Name | Type | Description | 
-|---|:------------:|:----------------|
-
 *Example*
 ```
 ```
@@ -1119,10 +1119,6 @@ Returns: [moncli.entities.Board](#board)
 **get_creator**  
 Get the item's creator.  
 Returns: [moncli.entities.User](#user)  
-
-*Parameters*
-| Name | Type | Description | 
-|---|:------------:|:----------------|
 
 *Example*
 ```
@@ -1132,12 +1128,11 @@ Returns: [moncli.entities.User](#user)
 Get the item's column values.  
 Returns: [list[moncli.entities.ColumnValue]](#column-values)  
 
-*Parameters*
-| Name | Type | Description | 
-|---|:------------:|:----------------|
-
 *Example*
 ```
+>>> column_values = item.get_column_values('id', 'title')
+>>> column_values
+[{'id': 'text_column_1', 'title': 'New Text Column'}]
 ```
 
 **get_column_value**  
@@ -1147,6 +1142,8 @@ Returns: [moncli.entities.ColumnValue](#column-values)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|id|str|The column's unique identifier. NOTE: This parameter is mutually exclusive and cannot be used with 'title'.|
+|title|str|The column's title. NOTE: This parameter is mutually exclusive and cannot be used with 'id'.|
 
 *Example*
 ```
@@ -1159,6 +1156,7 @@ Returns: [moncli.entities.Item](#item)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|column_value|[moncli.entities.ColumnValue](#column-values)|The column value to update.|
 
 *Example*
 ```
@@ -1171,6 +1169,21 @@ Returns: [moncli.entities.Item](#item)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|column_values|[list[moncli.entities.ColumnValue]](#column-values) / dict|The column value to update. NOTE: This value can either be a list of moncli.entities.ColumnValue objects or a formatted dictionary.|
+
+*Example*
+```
+```
+
+**create_subitem**  
+Create subitem.   
+Returns: [moncli.entities.Item](#item)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|item_name|str|The new item's name.|
+|column_values (Optional)|json|The column values of the new item.|
 
 *Example*
 ```
@@ -1183,6 +1196,7 @@ Returns: [moncli.entities.Item](#item)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|group_id|str|The group's unique identifier.|
 
 *Example*
 ```
@@ -1192,10 +1206,6 @@ Returns: [moncli.entities.Item](#item)
 Archive this item.  
 Returns: [moncli.entities.Item](#item)  
 
-*Parameters*
-| Name | Type | Description | 
-|---|:------------:|:----------------|
-
 *Example*
 ```
 ```
@@ -1203,10 +1213,6 @@ Returns: [moncli.entities.Item](#item)
 **delete**  
 Delete this item.  
 Returns: [moncli.entities.Item](#item)  
-
-*Parameters*
-| Name | Type | Description | 
-|---|:------------:|:----------------|
 
 *Example*
 ```
@@ -1219,6 +1225,7 @@ Returns: [moncli.entities.Item](#item)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|with_updates (Optional)|bool|Duplicate with the item's updates.|
 
 *Example*
 ```
@@ -1231,6 +1238,8 @@ Returns: [moncli.entities.Update](#update)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|body|str|The update text.|
+|parent_id (Optional)|str|The parent post identifier.|
 
 *Example*
 ```
@@ -1243,6 +1252,8 @@ Returns: [moncli.entities.Update](#update)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|limit (Optional)|int|Number of updates to get; the default is 25.|
+|page (Optional)|int|Page number to get, starting at 1.|
 
 *Example*
 ```
@@ -1255,6 +1266,7 @@ Returns: [moncli.entities.Update](#update)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|update_id|str|The update's unique identifier.|       
 
 *Example*
 ```
@@ -1263,10 +1275,6 @@ Returns: [moncli.entities.Update](#update)
 **clear_updates**  
 Clear all updates for item.
 Returns: [moncli.entities.Item](#item)  
-
-*Parameters*
-| Name | Type | Description | 
-|---|:------------:|:----------------|
 
 *Example*
 ```
