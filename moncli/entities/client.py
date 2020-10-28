@@ -16,7 +16,7 @@ class MondayClient():
 
         create_board : `moncli.entities.Board`
             Create a new board.
-        get_boards : `list[moncli.entities.Board`
+        get_boards : `list[moncli.entities.Board]`
             Get a collection of boards.
         get_board : `moncli.entities.Board`
             Get a board by unique identifier or name.
@@ -725,7 +725,7 @@ class MondayClient():
         Optional Arguments
 
             limit : `int`
-                Number of items to get; the default is 25.
+                Number of updates to get; the default is 25.
             page : `int`
                 Page number to get, starting at 1.
         """
@@ -854,7 +854,11 @@ class MondayClient():
             target_id : `str`
                 The target's unique identifier.
             target_type : `moncli.enums.NotificationTargetType`
-                The target`s type (Project / Post)
+                The target's type (Project / Post)
+            args : `tuple`
+                The list of notification return fields.
+            kwargs : `dict`
+                The optional keyword arguments for creating notifications.
 
         _______
         Returns

@@ -26,7 +26,7 @@ class Item(_Item):
     __________
     Properties
     __________
-    assets : `list[moncli.entities.set.Asset]`
+    assets : `list[moncli.entities.Asset]`
         The item's assets/files.
     board : `moncli.entities.Board`
         The board that contains this item.
@@ -74,12 +74,16 @@ class Item(_Item):
         Change an item's column value.
     change_multiple_column_values : `moncli.entities.Item`
         Change the item's column values.
+    create_subitem : `moncli.entities.Item`
+        Create subitem.
     move_to_group : `moncli.entities.Item`
         Move item to a different group.
     archive : `moncli.entities.Item`
         Archive this item.
     delete : `moncli.entities.Item`
         Delete this item.
+    duplicate : `moncli.entities.Item`
+        Duplicate this item.
     add_update : `moncli.entities.Update`
         Create a new update for this item.
     get_updates : `list[moncli.entities.Update]`
@@ -1103,7 +1107,7 @@ class Item(_Item):
             limit : `int`
                 Number of updates to get; the default is 25.
             page : `int`
-                Page number to get, starting at 1
+                Page number to get, starting at 1.
         """
         
         args = ['updates.' + arg for arg in client.get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)]

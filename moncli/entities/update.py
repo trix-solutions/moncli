@@ -29,7 +29,7 @@ class Update(_Update):
         created_at: `str`
             The update's creation date.
         creator : `moncli.entities.User`
-            The update's creator
+            The update's creator.
         creator_id : `str`
             The unique identifier of the update creator.
         id : `str`
@@ -184,6 +184,8 @@ class Update(_Update):
         __________
         Parameters
 
+            body : `str`
+                The text body of the reply.
             args : `tuple`
                 The list of reply fields to return.
 

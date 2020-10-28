@@ -26,27 +26,27 @@ class Board(_Board):
     __________
     Properties
     __________
-    activity_logs : `list[moncli.entities.object.ActivityLog]`
+    activity_logs : `list[moncli.entities.ActivityLog]`
         The board log events.
     board_folder_id : `int`
         The board's folder unique identifier.
     board_kind : `str`
         The board's kind (public / private / share).
-    columns : `list[moncli.entities.object.Column]`
+    columns : `list[moncli.entities.Column]`
         The board's visible columns.
     communication : `str`
         Get the board communication value - typically meeting ID.
     description : `str`
         The board's description.
-    groups : `list[moncli.entities.group.Group]`
+    groups : `list[moncli.entities.Group]`
         The board's visible groups.
     id : `str`
         The unique identifier of the board.
-    items : `list[moncli.entities.item.Item]`
+    items : `list[moncli.entities.Item]`
         The board's items (rows).
     name : `str`
         The board's name.
-    owner : `moncli.entities.user.User`
+    owner : `moncli.entities.User`
         The owner of the board.
     permissions : `str`
         The board's permissions.
@@ -54,7 +54,7 @@ class Board(_Board):
         The board's position.
     state : `str`
         The board's state (all / active / archived / deleted).
-    subscribers : `list[moncli.entities.user.User]`
+    subscribers : `list[moncli.entities.User]`
         The board's subscribers.
     tags : `list[moncli.entities.objects.Tag]`
         The board's specific tags.
@@ -82,6 +82,8 @@ class Board(_Board):
         Add subscribers to this board.
     get_subscribers : `list[monlci.entities.User]`
         Get board subscribers.
+    delete_subscribers : `list[monlci.entities.User]`
+        Remove subscribers from the board.
     add_column : `moncli.entities.Column`
         Create a new column in board.
     get_columns : `list[moncli.entities.Column]`
@@ -244,13 +246,13 @@ class Board(_Board):
                 Number of items to get, the default is 25.
             page : `int`
                 Page number to get, starting at 1.
-            user_ids : `list[int]`
+            user_ids : `list[str]`
                 User ids to filter.
             column_ids : `list[str]`
                 Column ids to filter.
             group_ids : `list[str]`
                 Group ids to filter.
-            item_ids : `list[int]`
+            item_ids : `list[str]`
                 Item id to filter
             from : `str`
                 From timespamp (ISO8601).
@@ -499,8 +501,6 @@ class Board(_Board):
                 User ids to unsubscribe from board.
             args : `tuple`
                 The list of user return fields.
-            kwargs : `dict`
-                Additional keyword arguments for deleting subscribers.
 
         _______
         Returns
@@ -571,7 +571,7 @@ class Board(_Board):
         return [en.User(creds=self.__creds, **user) for user in users_data]
 
 
-    def add_column(self, title:str, column_type: enums.ColumnType, *args, **kwargs): 
+    def add_column(self, title: str, column_type: enums.ColumnType, *args, **kwargs):
         """Create a new column in board.
         __________
         Parameters
@@ -971,6 +971,8 @@ class Board(_Board):
         __________
         Parameters
 
+            column_value : `moncli.entites.ColumnValue`
+                The column value to search on.
             args : `tuple`
                 The list of item return fields.
             kwargs : `dict`
@@ -1130,7 +1132,7 @@ class Board(_Board):
             config : `dict`
                 The webhook config.
                 Example: This argument is currenlty only available for the 'change_specific_column_value' event.
-                >>> board.create_webhook('http://test.website.com/webhook/test, WebhookEventType.change_specific_column_value', {'columnId': 'column_1'})
+                >>> board.create_webhook('http://test.website.com/webhook/test', WebhookEventType.change_specific_column_value, {'columnId': 'column_1'})
         """
 
         # Modify kwargs to config if supplied.
