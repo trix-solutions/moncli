@@ -230,7 +230,7 @@ class Workspace(Model):
         id : `int`
             The workspace`s unique identifier.
         kind : `moncli.enums.WorkspaceKind`
-            The workspace's kind (open / closed)
+            The workspace's kind (open / closed).
         name : `str`
             The workspace's name.
     """

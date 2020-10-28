@@ -25,15 +25,15 @@ A Python Client and CLI tool for Monday.com
 * [Creating Custom GraphQL Queries](#creating-custom-graphql-queries)  
   
 
-## Setup ##
+# Setup #
 To add the moncli package to your project, simply execute the following command within your Python 3 environment using pip.  Please note that this package is currently available for Python 3
 ```
 $ pip3 install moncli
 ```
    
-## Getting Started... ##
+# Getting Started... #
 
-### Introducing the MondayClient ###
+## Introducing the MondayClient ##
 Getting started with the moncli Python package is simple.  To begin, create a __MondayClient__ istance using the following code below:
 ```
 >>> from moncli import MondayClient
@@ -45,7 +45,7 @@ The _api_key_v1_ and _api_key_v2_ parameters represent the user/account monday.c
 
 Additional information regarding __MondayClient__ properties/methods can be found in the [MondayClient](#mondayclient) section below.
 
-### Managing Boards ###
+## Managing Boards ##
 Boards are cornerstones for any Monday.com setup, and __Board__ objects are no exception containing functionality for general data management with columns, groups, and items.  The next sections below will provide some general tools regarding __Board__ management.
 
 New boards are created with the __MondayClient__ instance using the _create_board_ method as shown in the example below. 
@@ -86,9 +86,9 @@ Finally, boards are archived using the _archive_board_ method on the __MondayCli
 
 Additional information regarding the __Board__ object can be found in the [Board](#board) section below.  
 
-### Working with Columns, Groups, and Items ###
+## Working with Columns, Groups, and Items ##
 
-#### Adding and Getting Columns ####
+### Adding and Getting Columns ###
 
 Columns contain metadata that pertains to the data types available to current and future board items. Board columns are represented by the __Column__ object.  A new column is created from a __Board__ instance using the *add_column* method and returned as a __Column__ object as shown below.
 
@@ -104,7 +104,7 @@ Columns are retrieved from a __Board__ instance using the *get_columns* method a
 >>> columns = board.get_columns('id', 'title', 'type')
 ```
 
-#### Managing Groups ####
+### Managing Groups ###
 
 Groups contain lists of items within a board.  In moncli, these groups are realized as __Group__ objects are are retrieved from a __Board__ in the following way.
 
@@ -132,7 +132,7 @@ Once created a group may be duplicated, archived or deleted in the following way
 >>> deleted_group = group.delete()
 ```
 
-#### Using Items ####
+### Using Items ###
 
 Items in monday.com represent individual records containing column value data.  These items exist inside of the various board groups.  Items are created by either a __Board__ or __Group__ instance as shown below.  Please note that when creating items from a __Board__ instance, the item is placed into the topmost group if the *group_id* parameter is not specified.
 
@@ -173,7 +173,7 @@ Once an __Item__ instance is retrieved, it can be moved between groups, duplicat
 ```
 
 
-### Changing Column Values ###
+## Changing Column Values ##
 
 The column values of an item may also be retrieved and updated from an __Item__ instance in the following way as shown below.  
 ```
@@ -187,7 +187,7 @@ The column values of an item may also be retrieved and updated from an __Item__ 
 
 Multiple column values are retrieved and updated from the __Item__ instance using the *change_multiple_column_values* and *get_column_values* methods respectively.  More information on these methods can be found below in the [Item](#item) section of this document.
 
-### Posting Updates ###
+## Posting Updates ##
 Updates represent interactions between users within a monday.com account with respect to a given item and are represented in moncli as an __Update__ object.  __Update__ instances are retrieved using the *get_updates* method from either a __MondayClient__ instance, which can retrieve all updates within the account accessible to the login user, or an __Item__ instance, which only has access to updates within the particular item.  
 
 Updates are added to an item using the *add_update* method from the __Item__ instance as shown below.
@@ -211,7 +211,7 @@ Finally updates are removed from the __Item__ instance using either the *delete_
 
 More information regarding Updates and Replies can be found in the [Update](#update) and [Reply](#other-entities) sections in the documentation below.
 
-### Uploading Files ###
+## Uploading Files ##
 
 Files, or assets, represent files uploaded to items via a file-type column or updates via the *add_file* method on both __Item__ and __Update__ objects. 
 
@@ -242,7 +242,7 @@ To remove files from an update, the only option currently available is to delete
 
 More information regarding the __Asset__ object is found in the [File/Asset](#file) section of the documentation below.
 
-## Moncli Entities ##
+# Moncli Entities #
 The moncli client returns entities representing Monday.com objects after executing a successful request to the API.  These entities not only contain properties representing the return fields of the query/mutation, but also contain various methods for retrieving other related entities.   
 
 Aside from required parameters, entity methods also contain an \*args parameter that allows for a collection of custom return field inputs. Simply add the name of the field to return (as defined by the monday.com query) as a string. To return nested fields, simply list out the full path of the field in dot notation (ex. 'items.id' will return items associated with the query with a populated _id_ property.   
@@ -1547,13 +1547,131 @@ Returns: [moncli.entities.Notification](#other-entities)
 {'id': '123456789', 'text': 'Hello, World!'}
 ```
 
-## Other Entities ##
+# Other Entities #
+This section contains property and method information of other entities available using moncli.
+
+## Board View ##
 
 ### Properties ###
 |Name        |Type               |Description                 |
 |------------|:-----------------:|:---------------------------|
+|account_id|str|The user's payment account.|
+|created_at|str|The activity log's created date.|
+|data|str|The item's column values in string form.|
+|entity|str|The monday.com object being updated.|
+|id|str|The activity log's unique identifier.|
+|user_id|str|The user who performed the change.|
+
+## Column ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|archived|bool|Is the column archived or not.|
+|id|str|The column's unique identifier.|
+|pos|str|The column's position in the board.|
+|settings_str|strThe column's settings in a string form.|
+|settings|moncli.entities.Settings|The settings in entity form (status / dropdown)|
+|title|str|The column's title.|
+|type|str|The column's type.|
+|column_type|[moncli.entities.ColumnType](#column-types)|The column's type as an enum.|
+|width|int|The column's width.|
+
+## Notification ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|id|str|The notification`s unique identifier.|
+|text|str|the notification text.|
+
+## Tag ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|color|str|The tag's color.|
+|id|str|The tag's unique identifier.|
+|name|str|The tag's name.|
+
+## Webhook ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|board_id|str|The webhook's board id.|
+|id|str|The webhook's unique identifier.|
+|is_active|bool|If the webhook is still active.|
+
+## Workspace ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|description|str|The workspace's description.|
+|id|int|The workspace`s unique identifier.|
+|kind|moncli.enums.WorkspaceKind|The workspace's kind (open / closed).|
+|name|str|The workspace's name.|
+
+## Account ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|first_day_of_the_week|str|The first day of the week for the account (sunday / monday).|
+|id|int|The account's unique identifier.|
+|logo|str|The account's logo.|
+|name|str|The account's name.|
+|plan|moncli.entities.Plan|The account's payment plan.|
+|show_timeline_weekends|bool`|Show weekends in timeline.|
+|slug|str|The account's slug.|
 
 ### Methods ###
+
+**get_plan**  
+Get the account's payment plan.  
+Returns: [list[moncli.entities.Plan]](#other-entities)  
+
+*Example*
+```
+>>> plan = team.get_plan('version')
+>>> plan
+{'version': '33'}
+```
+
+## Team ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|id|int|The team's unique identifier.|
+|name|str|The team's name.|
+|picture_url|str|The team's picture url.|
+|users|[moncli.entities.User](#user)|The users in the team.|
+
+### Methods ###
+
+**get_users**  
+Get the users in the team.  
+Returns: [list[moncli.entities.User]](#user)  
+
+*Example*
+```
+>>> users = team.get_users('id', 'name')
+>>> users
+[{'id': '1234', 'name': 'Test User}]
+```
+
+## Plan ##
+
+### Properties ###
+|Name        |Type               |Description                 |
+|------------|:-----------------:|:---------------------------|
+|max_users|int|The maximum users allowed in the plan.|
+|period|str|The plan's time period.
+|tier|str|The plan's tier.|
+|version|int|The plan's version.|
+
 
 ## Column Values ##
 A __ColumnValue__ can also be created without the need for __Board__ or __Item__ objects using the universal _create_column_value_ function.  This method creates a __ColumnValue__ object from the input column _id_ and _column_type_ parameter (with an optional _title_ field). The __ColumnType__ enum is used for the _column_type_ parameter, and all values available for column value updating are listed below:
