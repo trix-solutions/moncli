@@ -1068,6 +1068,209 @@ This section contains all properties and methods contained within the __Board__ 
 
 ### Methods ###
 
+**add_file**  
+Add a file to a column value.  
+Returns: [moncli.entities.Asset](#file)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**get_files**  
+Retrieves the file assets for the login user's account.  
+Returns: [list[moncli.entities.Asset]](#file)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**remove_files**  
+Removes files from a column value.  
+Returns: [list[moncli.entities.Asset]](#file)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**get_board**  
+Get the board that contains this item.  
+Returns: [moncli.entities.Board](#board)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**get_creator**  
+Get the item's creator.  
+Returns: [moncli.entities.User](#user)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**get_column_values**  
+Get the item's column values.  
+Returns: [list[moncli.entities.ColumnValue]](#column-values)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**get_column_value**  
+Get an item's column value by ID or title.  
+Returns: [moncli.entities.ColumnValue](#column-values)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**change_column_value**  
+Change an item's column value.  
+Returns: [moncli.entities.Item](#item)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**change_multiple_column_values**  
+Change the item's column values.  
+Returns: [moncli.entities.Item](#item)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**move_to_group**  
+Move item to a different group.  
+Returns: [moncli.entities.Item](#item)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**archive**  
+Archive this item.  
+Returns: [moncli.entities.Item](#item)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**delete**  
+Delete this item.  
+Returns: [moncli.entities.Item](#item)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**duplicate**  
+Duplicate this item.  
+Returns: [moncli.entities.Item](#item)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**add_update**  
+Create a new update for this item.  
+Returns: [moncli.entities.Update](#update)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**get_updates**  
+Get updates for this item.  
+Returns: [moncli.entities.Update](#update)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**delete_update**   
+Delete item update.  
+Returns: [moncli.entities.Update](#update)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
+
+**clear_updates**  
+Clear all updates for item.
+Returns: [moncli.entities.Item](#item)  
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+
+*Example*
+```
+```
 
 ## Update ##
 
