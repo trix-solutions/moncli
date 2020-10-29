@@ -266,6 +266,8 @@ class StatusSettings(Model):
     labels = types.DictType(types.StringType())
     labels_colors = types.DictType(types.DictType(types.StringType()))
     labels_positions_v2 = types.DictType(types.StringType())
+    done_colors = types.ListType(types.IntType())
+    hide_footer = types.BooleanType(default=False)
 
     def __repr__(self):
         return str(self.to_primitive())
