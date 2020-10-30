@@ -327,6 +327,7 @@ class DropdownSettings(Model):
     """
     
     labels = types.ListType(types.ModelType(DropdownLabel))
+    hide_footer = types.BooleanType(default=False)
 
     def __repr__(self):
         o = self.to_primitive()
