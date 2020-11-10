@@ -1053,7 +1053,7 @@ class Board(_Board):
         pass
 
 
-    def get_column_value(self, id: str = None, title: str = None, **kwargs):
+    def get_column_value(self, id: str = None, title: str = None):
         """Create a column value from a board's column.
 
         __________
@@ -1063,20 +1063,12 @@ class Board(_Board):
                 The column's unique identifier.
             title : `str`
                 The column's title.
-            kwargs : `dict`
-                Optional keyword arguments for getting a column value.
 
         _______
         Returns
 
             column_value : `list[moncli.entities.ColumnValue]`
                 A new column_value instance.
-
-        __________________
-        Optional Arguments
-
-            settings : `moncli.entities.objects.StatusSettings`/`moncli.entities.objects.DropdownSettings`
-                Column settings required for retrieving a status or dropdown column.
         """
 
         if id is None and title is None:
@@ -1092,8 +1084,8 @@ class Board(_Board):
             column = [column for column in columns.values() if column.title == title][0]
             column_type = config.COLUMN_TYPE_MAPPINGS[column.type]
 
-        if column_type == enums.ColumnType.status:
-            kwargs['settings'] = column.settings     
+        if column_type == enums.ColumnType.status or column_type == enums.ColumnType.dropdown:
+            return cv.create_column_value(column_type, id=column.id, title=column.title, settings=column.settings)     
         return cv.create_column_value(column_type, id=column.id, title=column.title)
 
 
