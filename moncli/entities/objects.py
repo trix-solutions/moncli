@@ -121,9 +121,9 @@ class Column(Model):
             return None
         settings_obj = json.loads(self.settings_str)
         if self.column_type is ColumnType.status:
-            return StatusSettings(settings_obj)
+            return StatusSettings(settings_obj, strict=False)
         elif self.column_type is ColumnType.dropdown:
-            return DropdownSettings(settings_obj)
+            return DropdownSettings(settings_obj, strict=False)
     
     @property
     def column_type(self):
