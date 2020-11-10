@@ -886,9 +886,8 @@ Returns: [moncli.entities.ColumnValue](#working-with-column-values)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
-|id|str|The column's unique identifier.|
-|title|str|The column's title.|
-|settings (Optional)|moncli.entities.objects.StatusSettings/moncli.entities.objects.DropdownSettings(#other-entities)|Column settings required for retrieving a status or dropdown column.|
+|id|str|The column's unique identifier. NOTE: This parameter is mutually exclusive and cannot be used with 'title'|
+|title|str|The column's title. NOTE: This parameter is mutually exclusive and cannot be used with 'id'|
 
 *Example*
 ```
