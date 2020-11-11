@@ -573,12 +573,25 @@ class Item(_Item):
             raise en.board.TooManyGetColumnValueParameters()
         if id is None and title is None:
             raise en.board.NotEnoughGetColumnValueParameters()
+        
+        if title:
+            for column_value in self.get_column_values(*args):
+                if title and column_value.title == title:
+                    return column_value
 
-        for column_value in self.get_column_values(*args):
-            if title and column_value.title == title:
-                return column_value
-            elif id and column_value.id == id:
-                return column_value
+        elif id:
+            args = ['column_values.' + arg for arg in client.get_field_list(constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS, *args)]
+            column_value_data = client.get_items(
+                self.__creds.api_key_v2,
+                *args,
+                ids=[int(self.id)],
+                column_values={'ids': [id]})[0]['column_values'][0]
+
+            columns_map = { column.id: column for column in self.board.columns }
+            column_type = columns_map[id].column_type
+            if columns_map[id].settings:
+                column_value_data['settings'] = columns_map[id].settings
+            return en.create_column_value(column_type, **column_value_data)
     
 
     def change_column_value(self, column_value = None, *args):
