@@ -34,7 +34,7 @@ def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
         Variables added to the query.
     """
 
-    query = None
+    query: str = None
     variables = None
     for key, value in kwargs.items():
         if query == None and key == 'operation':
@@ -43,6 +43,8 @@ def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
             query = value
         elif variables == None and key == 'variables':
             variables = value
+        elif key == 'include_complexity' and value:
+            query = query.replace('query {', 'query { complexity { before, after }')
 
     headers = { 'Authorization': api_key }
     data = { 'query': query, 'variables': variables }
@@ -50,7 +52,8 @@ def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
     resp = requests.post(
         constants.API_V2_ENDPOINT,
         headers=headers,
-        data=data)
+        data=data,
+        timeout=timeout)
 
     return _process_repsonse(api_key, timeout, resp, data, **kwargs)
 
@@ -122,4 +125,5 @@ def _process_repsonse(api_key: str, timeout: int, resp, data, **kwargs):
         error_query = json.dumps(data)
         raise MondayApiError(error_query, 400, text['error_code'], [text['error_message']])
 
+    text: dict = resp.json()
     return text['data']

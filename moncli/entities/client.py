@@ -673,6 +673,9 @@ class MondayClient():
                 Get the recently created items at the top of the list.
         """
 
+        if kwargs.__contains__('ids'):
+            kwargs['ids'] = [int(id) for id in kwargs['ids']]
+
         items_data = client.get_items(
             self.__creds.api_key_v2, 
             *args,

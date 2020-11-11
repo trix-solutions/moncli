@@ -1079,8 +1079,9 @@ Returns: [moncli.entities.Asset](#file)
 
 *Example*
 ```
+>>> file_column = item.get_column_value(id='file_column_1')
 >>> file_path = '/users/test/monday_files/test.jpg'
->>> asset = item.add_file(file_path, 'id', 'name', 'url')
+>>> asset = item.add_file(file_column, file_path, 'id', 'name', 'url')
 >>> asset
 {'id': '1234567890', 'name': 'test.jpg', 'url': 'https://test.monday.com/files/test.jpg'}
 ```
@@ -1693,6 +1694,7 @@ A __ColumnValue__ can also be created without the need for __Board__ or __Item__
 * week
 * checkbox
 * rating
+* file
 
 An example for creating a new __ColumnValue__ object is shown below. Please note that the board column IDs must be pre-defined and know prior to using this function effectively.
 ```
