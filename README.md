@@ -1190,7 +1190,7 @@ Returns: [moncli.entities.Item](#item)
 >>> # Get and update column value before changing it.
 >>> column_value = item.get_column_value(id='text_column_1')
 >>> column_value.text = 'Updated Text'
->>> item.update_column_value(column_value)
+>>> item.change_column_value(column_value)
 ```
 
 **change_multiple_column_values**  
@@ -1208,9 +1208,9 @@ Returns: [moncli.entities.Item](#item)
 >>> column_value = item.get_column_value(id='text_column_1')
 >>> column_value.text = 'Updated Text'
 >>> # Update column value as ColumnValue list.
->>> item.update_column_value([column_value])
+>>> item.change_multiple_column_values([column_value])
 >>> # Update column value as dict.
->>> item.update_column_value({'text': 'Updated Text'})
+>>> item.change_multiple_column_values({'text': 'Updated Text'})
 ```
 
 **create_subitem**  
@@ -1696,7 +1696,7 @@ A __ColumnValue__ can also be created without the need for __Board__ or __Item__
 * rating
 * file
 
-An example for creating a new __ColumnValue__ object is shown below.  In addition to the _id_ and _column_type_ parameters, column values can be added to the __ColumnValue__ objects when using the type-specific __ColumnValue__ properties as a named argument. Please note that the board column IDs must be pre-defined and know prior to using this function effectively.
+An example for creating a new __ColumnValue__ object is shown below. Please note that the board column IDs must be pre-defined and know prior to using this function effectively.
 ```
 >>> # Empty checkbox column value
 >>> from moncli import create_column_value
@@ -1704,11 +1704,18 @@ An example for creating a new __ColumnValue__ object is shown below.  In additio
 >>> new_empty_checkbox_column_value = create_column_value(id='checkbox_column_1', column_type=ColumnType.checkbox)
 >>> new_empty_checkbox_column.checked
 False
+```
+
+__ColumnValue__ objects are also created from __Board__ objects using the _get_column_value_ method.  This method is especially useful when working with column values for columns with settings, status and dropdown columns in particular.  The method above is used as shown below.
+```
+>>> # Get status column by column id.
+>>> status_column_id = 'status'
+>>> status = board.get_column_value('status')
+>>> 
+>>> # Or get status column by title.
+>>> status = board.get_column_value(title='Status')
 >>>
->>> # Checkbox column value with input value
->>> new_checkbox_column_value = create_column_value(id='checkbox_column_1', column_type=ColumnType.checkbox, checked=True)
->>> new_checkbox_column_value.checked
-True
+>>> status.label = 'Done'
 ```
 
 For more information regarding the __ColumnValue__ object type specific properties, please refer to the __Available column value types__ section below.
