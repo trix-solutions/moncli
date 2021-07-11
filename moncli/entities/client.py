@@ -54,12 +54,34 @@ class MondayClient():
             Create a new workspace.
     """
 
-    def __init__(self, user_name: str, api_key_v1: str, api_key_v2: str):    
-        self.__creds: en.MondayClientCredentials = en.MondayClientCredentials(api_key_v1, api_key_v2)
+    def __init__(self, **kwargs):    
         self.__me = None
+        self.__creds = en.MondayClientCredentials()
 
-        if self.me.email.lower() != user_name.lower():
-            raise AuthorizationError(user_name)
+        try:
+            username = kwargs['user_name']
+        except KeyError:
+            username = None
+
+        try:
+            api_key_v1 = kwargs['api_key_v1']
+        except KeyError:
+            api_key_v1 = None
+
+        try:
+            api_key_v2 = kwargs['api_key_v2']
+        except KeyError:
+            api_key_v2 = None
+
+        if api_key_v1:
+            self.__creds.api_key_v1 = api_key_v1
+
+        if api_key_v2:
+            self.__creds.api_key_v2 = api_key_v2
+        
+        # Only "login" when user_name and API Key v2 are provided.
+        if username and api_key_v2 and self.me.email.lower() != username.lower():
+            raise AuthorizationError(username)
 
     @property
     def me(self):
@@ -67,6 +89,16 @@ class MondayClient():
         if not self.__me:
             self.__me = self.get_me()
         return self.__me
+
+    @property
+    def api_key_v2(self):
+        """Get API Key V2"""
+        return self.__creds.api_key_v2
+
+    @api_key_v2.setter
+    def api_key_v2(self, value):
+        """Set API Key V2"""
+        self.__creds.api_key_v2 = value
 
 
     def create_board(self, board_name: str, board_kind: enums.BoardKind, *args, **kwargs):
@@ -1280,7 +1312,6 @@ class MondayClient():
             *args,
             **kwargs)
         return en.Workspace(workspace_data)
-        
 
 class AuthorizationError(Exception):
     def __init__(self, user_name: str):
