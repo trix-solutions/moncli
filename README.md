@@ -37,7 +37,7 @@ $ pip3 install moncli
 Getting started with the moncli Python package is simple.  To begin, create a __MondayClient__ istance using the following code below:
 ```
 >>> from moncli import MondayClient
->>> client = MondayClient(user_name='user@email.com', api_key_v1='api_key_v1', api_key_v2='api_key_v2')
+>>> client = MondayClient(api_key_v1='api_key_v1', api_key_v2='api_key_v2')
 ```
 The __MondayClient__ object is the entry point for all client activities and includes functionality for board, item, tag, and user management.
 
