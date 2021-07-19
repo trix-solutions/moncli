@@ -134,7 +134,7 @@ class ColumnValueCollection(object):
 
         for i in range(len(self._values)):
             column = self._values[i]
-            if column.id == index or column.name == index:
+            if column.id == index or column.title == index:
                 return i
         
         raise ColumnValueKeyError(index)
