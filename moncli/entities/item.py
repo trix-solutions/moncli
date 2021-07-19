@@ -113,6 +113,7 @@ class Item(_Item):
             self.__creator = en.User(creds=self.__creds, **creator)
         column_values = kwargs.pop('column_values', None)
         if column_values != None:
+            # This is a bug.
             columns_map = { column.id: column for column in self.board.columns }
             self.__column_values = [en.create_column_value(columns_map[data['id']].column_type, **data) for data in column_values]
         updates = kwargs.pop('updates', None)
