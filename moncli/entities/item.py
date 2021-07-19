@@ -6,7 +6,7 @@ from schematics import types
 
 from .. import api_v2 as client, config, entities as en, enums
 from ..api_v2 import constants
-from .column_value import FileValue
+from .column_value import ColumnValueCollection, FileValue
 
 
 class _Item(Model):
@@ -113,8 +113,10 @@ class Item(_Item):
             self.__creator = en.User(creds=self.__creds, **creator)
         column_values = kwargs.pop('column_values', None)
         if column_values != None:
+            # This is a bug.
             columns_map = { column.id: column for column in self.board.columns }
-            self.__column_values = [en.create_column_value(columns_map[data['id']].column_type, **data) for data in column_values]
+            values = [en.create_column_value(columns_map[data['id']].column_type, **data) for data in column_values]
+            self.__column_values = ColumnValueCollection(values)
         updates = kwargs.pop('updates', None)
         if updates != None:
             self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
@@ -528,7 +530,7 @@ class Item(_Item):
             if columns_map[id].settings:
                 data['settings'] = columns_map[id].settings
             values.append(en.create_column_value(column_type, **data))
-        return values
+        return ColumnValueCollection(values)
 
 
     def get_column_value(self, id = None, title = None, *args):

@@ -178,7 +178,8 @@ Once an __Item__ instance is retrieved, it can be moved between groups, duplicat
 The column values of an item may also be retrieved and updated from an __Item__ instance in the following way as shown below.  
 ```
 >>> # First get the column value.
->>> column_value = item.get_column_value(id='text_colunn_1')
+>>> # Index for item.column_values may be the column id, title, or the list index integer.
+>>> column_value = item.column_values['text_colunn_1']
 >>> # Update the column text
 >>> column_value.text = 'Update Text'
 >>> # Now update the column value in the item.

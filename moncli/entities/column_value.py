@@ -5,7 +5,7 @@ from json import dumps, loads
 from pycountry import countries
 from pytz import timezone, exceptions as tzex
 from schematics.models import Model
-from schematics.types import StringType, IntType
+from schematics.types import StringType
 
 from .. import config, enums, entities as en
 
@@ -87,6 +87,57 @@ class ColumnValue(_ColumnValue):
             self.value = dumps(value_obj)
         else:
             self.value = dumps(self.null_value)
+
+
+class ColumnValueCollection(object):
+    
+    def __init__(self, column_values: list):
+        self._values = []
+        for value in column_values:
+            if not isinstance(value, ColumnValue):
+                raise ColumnValueTypeError(value)
+
+            self._values.append(value)
+
+
+    def __getitem__(self, index):
+        try:
+            i = self._get_index(index)
+            return self._values[i]
+        except:
+            raise ColumnValueKeyError(index)
+
+
+    def __setitem__(self, index, value):
+        try:
+            i = self._get_index(index)
+            self._values[i] = value
+        except:
+            raise ColumnValueKeyError(index)
+
+    
+    def insert(self, index, value):
+        i = self._get_index(index)
+        self._values.insert(i, value)
+
+
+    def append(self, value):
+        self.insert(len(self._values), value)
+
+    
+    def _get_index(self, index):
+        if type(index) == int:
+            return index
+        
+        if type(index) != str:
+            raise ColumnValueKeyTypeError(index)
+
+        for i in range(len(self._values)):
+            column = self._values[i]
+            if column.id == index or column.title == index:
+                return i
+        
+        raise ColumnValueKeyError(index)
 
 
 class CheckboxValue(ColumnValue):
@@ -1287,6 +1338,18 @@ def validate_time(time_string: str):
     except ValueError:
         raise TimeFormatError(time_string)
 
+
+class ColumnValueKeyError(Exception):
+    def __init__(self, index):
+        self.message = 'Unable to find column value with index {}.'.format(index)
+
+class ColumnValueKeyTypeError(Exception):
+    def __init__(self, obj):
+        self.message = 'Object of type {} is not a valid key.'.format(type(obj).__name__)
+
+class ColumnValueTypeError(Exception):
+    def __init__(self, obj):
+        self.message = 'Object of type {} is not a ColumnValue.'.format(type(obj).__name__)
 
 class ColumnValueSettingsError(Exception):
     def __init__(self, column_type: str):
