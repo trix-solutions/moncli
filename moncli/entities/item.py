@@ -99,6 +99,7 @@ class Item(_Item):
         self.__creds = kwargs.pop('creds')
         self.__assets = None
         self.__board = None
+        self.__group = None
         self.__creator = None
         self.__column_values = None
         self.__updates = None
@@ -108,6 +109,9 @@ class Item(_Item):
         board = kwargs.pop('board', None)
         if board:
             self.__board = en.Board(creds=self.__creds, **board)
+        group = kwargs.pop('group', None)
+        if group:
+            self.__group = en.Group(creds=self.__creds, **group)
         creator = kwargs.pop('creator', None)
         if creator:
             self.__creator = en.User(creds=self.__creds, **creator)
@@ -148,6 +152,13 @@ class Item(_Item):
         """The board that contains this item."""
         if not self.__board:
             self.__board = self.get_board()
+        return self.__board
+
+    @property
+    def group(self):
+        """The group that contains this item."""
+        if not self.__group:
+            self.__group = self.gert_group()
         return self.__board
 
     @property
@@ -343,7 +354,7 @@ class Item(_Item):
         _______
         Returns
 
-            boards : `moncli.entities.Board`
+            board : `moncli.entities.Board`
                 The board containing this item.
 
         _____________
@@ -402,6 +413,48 @@ class Item(_Item):
             *args,
             ids=[int(self.id)])[0]['board']
         return en.Board(creds=self.__creds, **board_data)
+
+
+    def get_group(self, *args):
+        """Get the board that contains this item.
+
+        __________
+        Parameters
+
+            args : `tuple`
+                Optional board return fields.
+
+        _______
+        Returns
+
+            group : `moncli.entities.Group`
+                The group containing this item.
+
+         _____________
+        Return Fields
+
+            archived : `bool`
+                Is the group archived or not.
+            color : `str`
+                The group's color.
+            deleted : `bool`
+                Is the group deleted or not.
+            id : `str`
+                The group's unique identifier.
+            items : `list[moncli.entities.Item]`
+                The items in the group.
+            position : `str`
+                The group's position in the board.
+            title : `str`
+                The group's title.
+        """
+        args = client.get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
+        args = ['group.' + arg for arg in args]
+        group_data = client.get_items(
+            self.__creds.api_key_v2,
+            *args,
+            ids=[int(self.id)])[0]['group']
+        return en.Board(creds=self.__creds, **group_data)
 
 
     def get_creator(self, *args):
