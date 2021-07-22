@@ -1,11 +1,10 @@
 from nose.tools import ok_, eq_, raises
 
 import moncli.entities.objects as o
-from moncli import columnvalue
-from moncli.columnvalue import create_column_value
+from moncli.entities import column_value as cv
 from moncli.enums import ColumnType, PeopleKind
 
-@raises(columnvalue.ColumnValueIsReadOnly)
+@raises(cv.ColumnValueIsReadOnly)
 def test_should_fail_for_non_writeable_column_type():
 
     # Arrange
@@ -14,7 +13,7 @@ def test_should_fail_for_non_writeable_column_type():
     title = 'should fail'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.format()
 
 
@@ -26,7 +25,7 @@ def test_should_return_an_empty_checkbox_column_value():
     title = 'Checkbox'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -43,7 +42,11 @@ def test_should_return_checked_checkbox_column_value():
     title = 'Checkbox'
 
     # Act
-    column_value = create_column_value(id, column_type, title, checked='true')
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        checked='true')
     format = column_value.format()
 
     # Assert
@@ -60,7 +63,7 @@ def test_should_return_an_empty_country_column_value():
     title = 'Country'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -80,7 +83,12 @@ def test_should_return_country_column_value():
     country_name = 'United States'
 
     # Act
-    column_value = create_column_value(id, column_type, title, country_name=country_name, country_code=country_code)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        country_name=country_name, 
+        country_code=country_code)
     format = column_value.format()
 
     # Assert
@@ -98,7 +106,7 @@ def test_should_return_an_empty_date_column_value():
     title = 'Date'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -117,7 +125,11 @@ def test_should_return_date_column_value_with_default_time():
     date = '1990-08-30'
 
     # Act
-    column_value = create_column_value(id, column_type, title, date=date)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        date=date)
     format = column_value.format()
 
     # Assert
@@ -137,7 +149,7 @@ def test_should_return_date_column_value_with_time():
     time = '04:15'
 
     # Act
-    column_value = create_column_value(id, column_type, title, date=date, time=time)
+    column_value = cv.create_column_value(column_type, id=id, title=title, date=date, time=time)
     format = column_value.format()
 
     # Assert
@@ -155,7 +167,7 @@ def test_should_return_empty_dropdown_column_value():
     title = 'Dropdown One'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -175,7 +187,12 @@ def test_should_return_dropdown_column_value_by_label_with_preference():
     ids = [1,2,3]
 
     # Act
-    column_value = create_column_value(id, column_type, title, text=text, ids=ids)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        text=text, 
+        ids=ids)
     format = column_value.format()
 
     # Assert
@@ -193,7 +210,7 @@ def test_should_return_empty_email_column_value():
     title = 'Email One'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -212,7 +229,11 @@ def test_should_return_email_column_value_with_email():
     email = 'email@test.com'
 
     # Act
-    column_value = create_column_value(id, column_type, title, email=email)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        email=email)
     format = column_value.format()
 
     # Assert
@@ -232,7 +253,12 @@ def test_should_return_email_column_value_with_email_and_text():
     text = 'Test Email'
 
     # Act
-    column_value = create_column_value(id, column_type, title, email=email, text=text)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        email=email, 
+        text=text)
     format = column_value.format()
 
     # Assert
@@ -250,7 +276,7 @@ def test_should_return_empty_hour_column_value():
     title = 'Hour One'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -269,7 +295,11 @@ def test_should_return_hour_column_value_with_hour_and_default_minute():
     hour = '6'
 
     # Act
-    column_value = create_column_value(id, column_type, title, hour=hour)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        hour=hour)
     format = column_value.format()
 
     # Assert
@@ -289,7 +319,12 @@ def test_should_return_hour_column_value_with_hour_and_minute():
     minute = '6'
 
     # Act
-    column_value = create_column_value(id, column_type, title, hour=hour, minute=minute)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        hour=hour, 
+        minute=minute)
     format = column_value.format()
 
     # Assert
@@ -307,7 +342,7 @@ def test_should_return_empty_link_column_value():
     title = 'Link One'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -326,7 +361,11 @@ def test_should_return_link_column_value_with_url():
     url = 'https://link.two'
 
     # Act
-    column_value = create_column_value(id, column_type, title, url=url)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        url=url)
     format = column_value.format()
 
     # Assert
@@ -346,7 +385,12 @@ def test_should_return_link_column_value_with_url_and_text():
     text = 'Link Three'
 
     # Act
-    column_value = create_column_value(id, column_type, title, url=url, text=text)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        url=url, 
+        text=text)
     format = column_value.format()
 
     # Assert
@@ -364,7 +408,7 @@ def test_should_return_an_empty_long_text_column_value():
     title = 'Long Test 0'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -382,7 +426,11 @@ def test_should_return_long_text_column_value_with_text():
     text = 'LOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG'
 
     # Act
-    column_value = create_column_value(id, column_type, title, text=text)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        text=text)
     format = column_value.format()
 
     # Assert
@@ -400,7 +448,11 @@ def test_should_return_name_column_value_with_name():
     name = 'Name'
 
     # Act
-    column_value = create_column_value(id, column_type, title, value=name)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        value=name)
     format = column_value.format()
 
     # Assert
@@ -417,7 +469,7 @@ def test_should_return_an_empty_number_column_value():
     title = 'Number 0'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -435,7 +487,11 @@ def test_should_return_a_number_column_value_with_int():
     number = 8675309
 
     # Act
-    column_value = create_column_value(id, column_type, title, value=number)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        value=number)
     format = column_value.format()
 
     # Assert
@@ -453,7 +509,11 @@ def test_should_return_a_number_column_value_with_float():
     number = 23.333333333
 
     # Act
-    column_value = create_column_value(id, column_type, title, value=number)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        value=number)
     format = column_value.format()
 
     # Assert
@@ -471,7 +531,11 @@ def test_should_return_an_empty_number_column_value_when_input_is_text():
     number = 'x'
 
     # Act
-    column_value = create_column_value(id, column_type, title, value=number)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        value=number)
     format = column_value.format()
 
     # Assert
@@ -488,7 +552,7 @@ def test_should_return_an_empty_people_column_value():
     title = 'People 0'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -506,7 +570,11 @@ def test_should_return_a_people_column_value_with_persons_and_teams():
     persons_and_teams = [{'id': 1, 'kind': PeopleKind.person}]
 
     # Act
-    column_value = create_column_value(id, column_type, title, persons_and_teams=persons_and_teams)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        persons_and_teams=persons_and_teams)
     format = column_value.format()
 
     # Assert
@@ -524,7 +592,11 @@ def test_should_return_an_empty_people_column_value_after_remove():
     persons_and_teams = [{'id': 1, 'kind': PeopleKind.person}]
 
     # Act
-    column_value = create_column_value(id, column_type, title, persons_and_teams=persons_and_teams)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        persons_and_teams=persons_and_teams)
     column_value.remove_people(1)
     format = column_value.format()
 
@@ -543,7 +615,7 @@ def test_should_return_a_people_column_value_with_added_persons_and_teams():
     persons_and_teams = [{'id': 1, 'kind': PeopleKind.person.name}]
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     column_value.add_people(1, PeopleKind.person)
     format = column_value.format()
 
@@ -561,7 +633,7 @@ def test_should_return_an_empty_phone_column_value():
     title = 'Phone Zero'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -581,7 +653,12 @@ def test_should_return_a_phone_column_value_with_data():
     phone = '1234567890'
 
     # Act
-    column_value = create_column_value(id, column_type, title, phone=phone, country_short_name=country_short_name)
+    column_value = cv.create_column_value(
+        column_type, 
+        d=id, 
+        title=title, 
+        phone=phone, 
+        country_short_name=country_short_name)
     format = column_value.format()
 
     # Assert
@@ -599,7 +676,7 @@ def test_should_return_empty_rating_column_value():
     title = 'Rating One'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -617,7 +694,11 @@ def test_should_return_a_rating_column_value_with_rating():
     rating = 5
 
     # Act
-    column_value = create_column_value(id, column_type, title, rating=rating)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        rating=rating)
     format = column_value.format()
 
     # Assert
@@ -634,7 +715,10 @@ def test_should_return_empty_status_column_value():
     title = 'Status One'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title)
     format = column_value.format()
 
     # Assert
@@ -653,7 +737,12 @@ def test_should_return_status_column_value_by_index():
     index = 2
 
     # Act 
-    column_value = create_column_value(id, column_type, title, index=index, settings=o.StatusSettings(**{'labels': {'2': 'Status Two'}}))
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        index=index, 
+        settings=o.StatusSettings(**{'labels': {'2': 'Status Two'}}))
     format = column_value.format()
 
     # Assert
@@ -672,7 +761,13 @@ def test_should_return_status_column_value_by_label():
     text = 'Status 3'
 
     # Act
-    column_value = create_column_value(id, column_type, title, text=text, index=3, settings=o.StatusSettings(**{'labels': {'3': 'Status 3'}}))
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        text=text, 
+        index=3, 
+        settings=o.StatusSettings(**{'labels': {'3': 'Status 3'}}))
     format = column_value.format()
 
     # Assert
@@ -691,7 +786,13 @@ def test_should_return_status_column_value_by_label_with_preference():
     text = 'Status 4'
 
     # Act
-    column_value = create_column_value(id, column_type, title, index=4, text=text, settings=o.StatusSettings(**{'labels': {'4': "Status 4"}}))
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        index=4, 
+        text=text, 
+        settings=o.StatusSettings(**{'labels': {'4': "Status 4"}}))
     format = column_value.format()
 
     # Assert
@@ -709,7 +810,7 @@ def test_should_return_empty_tags_column_value():
     title = 'Tags 1'
     
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -727,7 +828,11 @@ def test_should_return_tags_column_value_with_tag_ids():
     tag_ids = [1,2,3]
     
     # Act
-    column_value = create_column_value(id, column_type, title, tag_ids=tag_ids)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        tag_ids=tag_ids)
     format = column_value.format()
 
     # Assert
@@ -744,7 +849,7 @@ def test_should_return_empty_team_column_value():
     title = 'Team 1'
     
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -762,7 +867,11 @@ def test_should_return_team_column_value_with_team_id():
     team_id = 12345
     
     # Act
-    column_value = create_column_value(id, column_type, title, team_id=team_id)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        team_id=team_id)
     format = column_value.format()
 
     # Assert
@@ -779,7 +888,7 @@ def test_should_return_empty_text_column_value():
     title = 'Text 1'
     
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -797,7 +906,11 @@ def test_should_return_text_column_value_with_text():
     text = 'Hello, Grandma!'
     
     # Act
-    column_value = create_column_value(id, column_type, title, value=text)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        value=text)
     format = column_value.format()
 
     # Assert
@@ -814,7 +927,7 @@ def test_should_return_an_empty_timeline_column_value():
     title = 'Timeline 1'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -834,7 +947,12 @@ def test_should_return_a_timeline_column_value_with_data():
     to_date = '2013-08-23'
 
     # Act
-    column_value = create_column_value(id, column_type, title, from_date=from_date, to_date=to_date)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        from_date=from_date, 
+        to_date=to_date)
     format = column_value.format()
 
     # Assert
@@ -852,7 +970,7 @@ def test_should_return_empty_timezone_column_value():
     title = 'Time zone 1'
     
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -870,7 +988,11 @@ def test_should_return_timezone_column_value_with_text():
     timezone = 'America/Phoenix'
     
     # Act
-    column_value = create_column_value(id, column_type, title, timezone=timezone)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        timezone=timezone)
     format = column_value.format()
 
     # Assert
@@ -887,7 +1009,7 @@ def test_should_return_empty_week_column_value():
     title = 'Week 1'
 
     # Act
-    column_value = create_column_value(id, column_type, title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     format = column_value.format()
 
     # Assert
@@ -907,7 +1029,12 @@ def test_should_return_week_column_value_with_data():
     end_date = '2019-10-27'
 
     # Act
-    column_value = create_column_value(id, column_type, title, start_date=start_date, end_date=end_date)
+    column_value = cv.create_column_value(
+        column_type, 
+        id=id, 
+        title=title, 
+        start_date=start_date, 
+        end_date=end_date)
     format = column_value.format()
 
     # Assert
