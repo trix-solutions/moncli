@@ -104,8 +104,13 @@ def test_item_should_fail_to_retrieve_column_value_from_too_many_parameters(get_
 def test_item_should_get_column_value_by_id(get_items):
 
     # Arrange
-    column_value = cv.create_column_value(ColumnType.text, **{'id': 'text_column_01', 'title': 'Text Column 01', 'text': 'Hello, Grandma', 'value': json.dumps('Hello, Grandma')})
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'column_values': [column_value.to_primitive()]}]
+    column_id = 'text_column_01'
+    column_title = 'Text Column 01'
+    text_value = 'Hello, Grandma!'
+    column_value = cv.create_column_value(ColumnType.text, **{'id': column_id, 'title': column_title, 'text': text_value, 'value': json.dumps(text_value)})
+    column = en.Column({'id': column_id, 'title': column_title, 'type': 'text'})
+    board = en.Board(id='1', name='Test Board 1', columns=[column.to_primitive()])
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': board.to_primitive(), 'column_values': [column_value.to_primitive()]}]
     item = client.get_items()[0]
 
     # Act
@@ -113,8 +118,8 @@ def test_item_should_get_column_value_by_id(get_items):
 
     # Assert 
     ok_(column_value != None)
-    eq_(column_value.title, 'Text Column 01')
-    eq_(column_value.text, 'Hello, Grandma')
+    eq_(column_value.title, column_title)
+    eq_(column_value.text, text_value)
     eq_(type(column_value), cv.TextValue)
 
 
@@ -129,7 +134,6 @@ def test_item_should_get_column_value_by_title(get_items):
     column = en.Column({'id': column_id, 'title': column_title, 'type': 'text'})
     board = en.Board(id='1', name='Test Board 1', columns=[column.to_primitive()])
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': board.to_primitive(), 'column_values': [column_value.to_primitive()]}]
-    print(get_items.return_value)
     item = client.get_items()[0]
 
     # Act
