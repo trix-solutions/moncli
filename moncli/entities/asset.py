@@ -1,7 +1,7 @@
 from schematics import types
 from schematics.models import Model
 
-from .. import api_v2 as client, config
+from .. import api_v2 as client
 from ..api_v2 import constants
 from .user import User
 

@@ -1,4 +1,4 @@
-from .. import api_v2 as client, config, enums, entities as en
+from .. import api_v2 as client, enums, entities as en
 from ..api_v2 import constants
 
 

@@ -7,7 +7,7 @@ from pytz import timezone, exceptions as tzex
 from schematics.models import Model
 from schematics.types import StringType
 
-from .. import config, entities as en, ColumnType, PeopleKind
+from .. import entities as en, ColumnType, PeopleKind
 
 
 SIMPLE_NULL_VALUE = ''
@@ -1332,7 +1332,7 @@ def create_column_value(column_type: ColumnType, **kwargs):
 
     return getattr(
         import_module(__name__), 
-        config.COLUMN_TYPE_VALUE_MAPPINGS.get(column_type, 'ReadonlyValue'))(**kwargs)
+        COLUMN_TYPE_VALUE_MAPPINGS.get(column_type, 'ReadonlyValue'))(**kwargs)
 
 
 def validate_date(date_string: str):

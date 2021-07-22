@@ -1,7 +1,7 @@
 from schematics.models import Model
 from schematics import types
 
-from .. import api_v2 as client, config, enums, entities as en
+from .. import api_v2 as client, enums, entities as en
 from ..api_v2 import constants
 from ..entities import column_value as cv
 
@@ -1079,11 +1079,10 @@ class Board(_Board):
         columns = { column.id: column for column in self.columns }
         if id is not None:
             column = columns[id]
-            column_type = config.COLUMN_TYPE_MAPPINGS[column.type]           
         elif title is not None:
             column = [column for column in columns.values() if column.title == title][0]
-            column_type = config.COLUMN_TYPE_MAPPINGS[column.type]
 
+        column_type = column.column_type  
         if column_type == enums.ColumnType.status or column_type == enums.ColumnType.dropdown:
             return cv.create_column_value(column_type, id=column.id, title=column.title, settings=column.settings)     
         return cv.create_column_value(column_type, id=column.id, title=column.title)

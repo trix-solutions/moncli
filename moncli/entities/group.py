@@ -1,7 +1,7 @@
 from schematics.models import Model
 from schematics import types
 
-from .. import api_v2 as client, config, entities as en
+from .. import api_v2 as client, entities as en
 from ..api_v2 import constants
 
 class _Group(Model):
