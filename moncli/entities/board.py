@@ -145,8 +145,8 @@ class Board(_Board):
 
         super(Board, self).__init__(kwargs)
 
-    def __repr__(self):
-        o = self.to_primitive()
+    def to_primitive(self, role=None, app_data=None, **kwargs):
+        o = super().to_primitive(role, app_data, **kwargs)
         if self.__activity_logs != None:
             o['activity_logs'] = [log.to_primitive() for log in self.__activity_logs]
         if self.__columns:
@@ -154,8 +154,11 @@ class Board(_Board):
         if self.__groups:
             o['groups'] = [group.to_primitive() for group in self.__groups]
         if self.__items:
-            o['items'] = [item.to_primitive() for item in self.__items]       
-        return str(o)
+            o['items'] = [item.to_primitive() for item in self.__items]
+        return o
+
+    def __repr__(self):
+        return str(self.to_primitive())
  
     @property
     def activity_logs(self):
