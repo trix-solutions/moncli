@@ -9,6 +9,24 @@ from moncli.enums import ColumnType
 
 
 @patch('moncli.api_v2.get_items')
+def test_item_should_get_group(get_items):
+
+    # Arrange
+    id = 'group_1'
+    title = 'Test Group 1'
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    item = client.get_items()[0]
+    get_items.return_value = [{'id': '1', 'board': {'id': '1'}, 'group': {'id': id, 'title': title}}]
+
+    # Act
+    group = item.get_group()
+
+    # Assert 
+    ok_(group != None)
+    eq_(group.id, id)
+    eq_(group.title, title)
+
+@patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 @patch.object(en.Board, 'get_columns')
 def test_item_should_get_column_values(get_columns, get_board, get_items):
