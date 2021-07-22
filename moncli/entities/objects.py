@@ -3,8 +3,33 @@ import json
 from schematics.models import Model
 from schematics.types import StringType, BooleanType, IntType, DictType, ListType, ModelType
 
-from .. import config
 from ..enums import ColumnType
+
+## Column type mappings
+COLUMN_TYPE_MAPPINGS = {
+    'boolean': ColumnType.checkbox,
+    'country': ColumnType.country,
+    'date': ColumnType.date,
+    'dropdown': ColumnType.dropdown,
+    'email': ColumnType.email,
+    'hour': ColumnType.hour,
+    'link': ColumnType.link,
+    'long-text': ColumnType.long_text,
+    'name': ColumnType.name,
+    'numeric': ColumnType.numbers,
+    'multiple-person': ColumnType.people,
+    'phone': ColumnType.phone,
+    'rating': ColumnType.rating,
+    'color': ColumnType.status,
+    'tag': ColumnType.tags,
+    'team': ColumnType.team,
+    'text': ColumnType.text,
+    'timerange': ColumnType.timeline,
+    'week': ColumnType.week,
+    'timezone': ColumnType.world_clock,
+    'file': ColumnType.file,
+    'board-relation': ColumnType.board_relation
+}
 
 class MondayClientCredentials():
     """monday.com client credentials.
@@ -128,7 +153,7 @@ class Column(Model):
     @property
     def column_type(self):
         # TODO - Find something else other than auto-number to default to.
-        return config.COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
+        return COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
 
 
 class Notification(Model):
