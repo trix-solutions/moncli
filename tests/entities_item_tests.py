@@ -12,6 +12,25 @@ from moncli.enums import ColumnType
 def test_item_should_get_group(get_items):
 
     # Arrange
+    id = '12345'
+    title = 'Test Board 1'
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    item = client.get_items()[0]
+    get_items.return_value = [{'id': '1', 'board': {'id': '1'}, 'board': {'id': id, 'name': name}}]
+
+    # Act
+    board = item.get_board()
+
+    # Assert 
+    ok_(board != None)
+    eq_(board.id, id)
+    eq_(board.title, title)
+
+
+@patch('moncli.api_v2.get_items')
+def test_item_should_get_group(get_items):
+
+    # Arrange
     id = 'group_1'
     title = 'Test Group 1'
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
