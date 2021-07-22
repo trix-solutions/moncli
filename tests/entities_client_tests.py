@@ -71,13 +71,15 @@ def test_should_retrieve_a_board_by_id(get_boards):
     eq_(board.name, name)
 
 
+@patch.object(en.MondayClient, 'get_board_by_id')
 @patch('moncli.api_v2.get_boards')
-def test_should_retrieve_a_board_by_name(get_board_by_id, get_boards):
+def test_should_retrieve_a_board_by_name(get_boards, get_board_by_id):
 
     # Arrange 
     id = '2'
     name = 'Test Board 2'
     get_boards.return_value = [{'id': '1', 'name': 'Test Board 1'}, {'id': id, 'name': name}]
+    get_board_by_id.return_value = en.Board(id=id, name=name)
     
     # Act 
     board = client.get_board(name=name)
