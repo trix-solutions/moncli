@@ -33,6 +33,29 @@ def test_item_should_get_column_values(get_columns, get_board, get_items):
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 @patch.object(en.Board, 'get_columns')
+def test_item_should_get_column_values_for_default_status_column(get_columns, get_board, get_items):
+
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    item = client.get_items()[0]
+    get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
+    get_columns.return_value = [en.Column({'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})})]
+    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'text': 'Test', 'additional_info': None, 'value': None}]}]
+
+    # Act
+    column_values = item.get_column_values()
+
+    # Assert 
+    ok_(column_values != None)
+    eq_(len(column_values), 1)
+    eq_(column_values[0].title, 'Status Column 01')
+    eq_(column_values[0].index, None)
+    eq_(column_values[0].label, 'Test')
+
+
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@patch.object(en.Board, 'get_columns')
 def test_item_should_get_column_values_for_status_column(get_columns, get_board, get_items):
 
     # Arrange
@@ -40,7 +63,7 @@ def test_item_should_get_column_values_for_status_column(get_columns, get_board,
     item = client.get_items()[0]
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     get_columns.return_value = [en.Column({'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})})]
-    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'value': json.dumps({'index': 1})}]}]
+    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'text': 'Test', 'additional_info': json.dumps({'label': 'Test'}), 'value': json.dumps({'index': 1})}]}]
 
     # Act
     column_values = item.get_column_values()
@@ -50,7 +73,7 @@ def test_item_should_get_column_values_for_status_column(get_columns, get_board,
     eq_(len(column_values), 1)
     eq_(column_values[0].title, 'Status Column 01')
     eq_(column_values[0].index, 1)
-    eq_(column_values[0].text, 'Test')
+    eq_(column_values[0].label, 'Test')
 
 
 @patch('moncli.api_v2.get_items')
@@ -78,12 +101,11 @@ def test_item_should_fail_to_retrieve_column_value_from_too_many_parameters(get_
 
 
 @patch('moncli.api_v2.get_items')
-@patch.object(en.Item, 'get_column_values')
-def test_item_should_get_column_value_by_id(get_column_values, get_items):
+def test_item_should_get_column_value_by_id(get_items):
 
     # Arrange
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    get_column_values.return_value = [cv.TextValue(**{'id': 'text_column_01', 'title': 'Text Column 01', 'text': 'Hello, Grandma', 'value': json.dumps('Hello, Grandma')})] 
+    column_value = cv.create_column_value(ColumnType.text, **{'id': 'text_column_01', 'title': 'Text Column 01', 'text': 'Hello, Grandma', 'value': json.dumps('Hello, Grandma')})
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'column_values': [column_value.to_primitive()]}]
     item = client.get_items()[0]
 
     # Act
@@ -97,12 +119,17 @@ def test_item_should_get_column_value_by_id(get_column_values, get_items):
 
 
 @patch('moncli.api_v2.get_items')
-@patch.object(en.Item, 'get_column_values')
-def test_item_should_get_column_value_by_title(get_column_values, get_items):
+def test_item_should_get_column_value_by_title(get_items):
 
     # Arrange 
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    get_column_values.return_value = [cv.TextValue(**{'id': 'text_column_01', 'title': 'Text Column 01', 'text': 'Hello, Grandma', 'value': json.dumps('Hello, Grandma')})]
+    column_id = 'text_column_01'
+    column_title = 'Text Column_01'
+    text_value = 'Gello, Hrandma!'
+    column_value = cv.create_column_value(ColumnType.text, **{'id': column_id, 'title': column_title, 'text': text_value, 'value': json.dumps(text_value)})
+    column = en.Column({'id': column_id, 'title': column_title, 'type': 'text'})
+    board = en.Board(id='1', name='Test Board 1', columns=[column.to_primitive()])
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': board, 'column_values': [column_value.to_primitive()]}]
+    print(get_items.return_value)
     item = client.get_items()[0]
 
     # Act
@@ -110,7 +137,7 @@ def test_item_should_get_column_value_by_title(get_column_values, get_items):
 
     # Assert 
     ok_(column_value != None)
-    eq_(column_value.title, 'Text Column 01')
+    eq_(column_value.title, column_title)
     eq_(column_value.text, 'Hello, Grandma')
     eq_(type(column_value), cv.TextValue)
 
