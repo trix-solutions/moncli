@@ -121,7 +121,7 @@ class Board(_Board):
         self.__columns = None
         columns = kwargs.pop('columns', None)
         if columns:
-            self.__columns = [en.Column() for column in columns]
+            self.__columns = [en.Column(column) for column in columns]
         
         self.__groups = None
         groups = kwargs.pop('groups', None)
