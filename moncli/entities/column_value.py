@@ -100,6 +100,10 @@ class ColumnValueCollection(object):
             self._values.append(value)
 
 
+    def __len__(self):
+        return len(self._values)
+        
+
     def __getitem__(self, index):
         try:
             i = self._get_index(index)
