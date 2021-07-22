@@ -111,7 +111,7 @@ class Item(_Item):
             self.__board = en.Board(creds=self.__creds, **board)
         group = kwargs.pop('group', None)
         if group:
-            self.__group = en.Group(creds=self.__creds, **group)
+            self.__group = en.Group(creds=self.__creds, board_id=self.board.id, **group)
         creator = kwargs.pop('creator', None)
         if creator:
             self.__creator = en.User(creds=self.__creds, **creator)
@@ -454,7 +454,7 @@ class Item(_Item):
             self.__creds.api_key_v2,
             *args,
             ids=[int(self.id)])[0]['group']
-        return en.Board(creds=self.__creds, **group_data)
+        return en.Group(creds=self.__creds, board_id=self.board.id, **group_data)
 
 
     def get_creator(self, *args):
