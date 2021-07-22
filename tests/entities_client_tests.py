@@ -6,7 +6,7 @@ from moncli.enums import BoardKind, NotificationTargetType, WorkspaceKind
 
 
 @patch('moncli.api_v2.create_board')
-def test_should_create_a_new_board(get_me, create_board):
+def test_should_create_a_new_board(create_board):
 
     # Arrange
     board_name = 'New Board 1'
@@ -23,7 +23,7 @@ def test_should_create_a_new_board(get_me, create_board):
 
 
 @patch('moncli.api_v2.get_boards')
-def test_should_retrieve_a_list_of_boards(get_me, get_boards):
+def test_should_retrieve_a_list_of_boards(get_boards):
 
     # Arrange
     test_boards = [{'id': '1', 'name': 'Board 1'}]
@@ -41,21 +41,21 @@ def test_should_retrieve_a_list_of_boards(get_me, get_boards):
 
 
 @raises(en.client.NotEnoughGetBoardParameters)
-def test_should_fail_to_retrieve_single_board_due_to_too_few_parameters(get_me):
+def test_should_fail_to_retrieve_single_board_due_to_too_few_parameters():
 
     # Act
     client.get_board()
 
 
 @raises(en.client.TooManyGetBoardParameters)
-def test_should_fail_to_retrieve_single_board_due_to_too_many_parameters(get_me):
+def test_should_fail_to_retrieve_single_board_due_to_too_many_parameters():
 
     # Act
     client.get_board(id='1', name='Test Board 1')
 
 
 @patch('moncli.api_v2.get_boards')
-def test_should_retrieve_a_board_by_id(get_me, get_boards):
+def test_should_retrieve_a_board_by_id(get_boards):
 
     # Arrange 
     id = '1'
@@ -72,7 +72,7 @@ def test_should_retrieve_a_board_by_id(get_me, get_boards):
 
 
 @patch('moncli.api_v2.get_boards')
-def test_should_retrieve_a_board_by_name(get_me, get_board_by_id, get_boards):
+def test_should_retrieve_a_board_by_name(get_board_by_id, get_boards):
 
     # Arrange 
     id = '2'
@@ -89,7 +89,7 @@ def test_should_retrieve_a_board_by_name(get_me, get_board_by_id, get_boards):
 
 
 @patch('moncli.api_v2.archive_board')
-def test_should_archive_a_board(get_me, archive_board):
+def test_should_archive_a_board(archive_board):
 
     # Arrange 
     id = '1'
@@ -104,14 +104,14 @@ def test_should_archive_a_board(get_me, archive_board):
 
 
 @raises(en.client.AssetIdsRequired)
-def test_should_fail_to_retrieve_assets_with_no_ids(get_me):
+def test_should_fail_to_retrieve_assets_with_no_ids():
 
     # Act
     client.get_assets([])
 
 
 @patch('moncli.api_v2.get_assets')
-def test_should_retrieve_assets(get_me, get_assets):
+def test_should_retrieve_assets(get_assets):
 
     # Arrange
     asset_id = '12345'
@@ -130,7 +130,7 @@ def test_should_retrieve_assets(get_me, get_assets):
 
 
 @patch('moncli.api_v2.get_items')
-def test_should_get_items(get_me, get_items):
+def test_should_get_items(get_items):
 
     # Arrange 
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
@@ -144,7 +144,7 @@ def test_should_get_items(get_me, get_items):
 
 
 @patch('moncli.api_v2.get_updates')
-def test_should_get_updates(get_me, get_updates):
+def test_should_get_updates(get_updates):
 
     # Arrange 
     id = '1'
@@ -162,7 +162,7 @@ def test_should_get_updates(get_me, get_updates):
 
 
 @patch('moncli.api_v2.clear_item_updates')
-def test_should_clear_item_updates(get_me, clear_item_updates):
+def test_should_clear_item_updates(clear_item_updates):
 
     # Arrange 
     id = '1'
@@ -179,7 +179,7 @@ def test_should_clear_item_updates(get_me, clear_item_updates):
 
 
 @patch('moncli.api_v2.delete_update')
-def test_should_delete_update(get_me, delete_update):
+def test_should_delete_update(delete_update):
 
     # Arrange 
     id = '1'
@@ -198,7 +198,7 @@ def test_should_delete_update(get_me, delete_update):
 
 
 @patch('moncli.api_v2.create_notification')
-def test_should_create_a_notification(get_me, create_notification):
+def test_should_create_a_notification(create_notification):
 
     # Arrange 
     text = 'Text 1'
@@ -213,7 +213,7 @@ def test_should_create_a_notification(get_me, create_notification):
 
 
 @patch('moncli.api_v2.create_or_get_tag')
-def test_should_create_or_get_a_tag(get_me, create_or_get_tag):
+def test_should_create_or_get_a_tag(create_or_get_tag):
 
     # Arrange 
     name = 'Tag 1'
@@ -229,7 +229,7 @@ def test_should_create_or_get_a_tag(get_me, create_or_get_tag):
 
 @patch('moncli.api_v2.get_tags')
 
-def test_should_retrieve_list_of_tags(get_me, get_tags):
+def test_should_retrieve_list_of_tags(get_tags):
 
     # Arrange 
     name = 'Tag 1'
@@ -245,7 +245,7 @@ def test_should_retrieve_list_of_tags(get_me, get_tags):
 
 @patch('moncli.api_v2.create_workspace')
 
-def test_should_create_workspace(get_me, create_workspace):
+def test_should_create_workspace(create_workspace):
 
     # Arrange
     id = '12345'
@@ -267,7 +267,7 @@ def test_should_create_workspace(get_me, create_workspace):
 
 @patch('moncli.api_v2.get_users')
 
-def test_should_retrieve_list_of_users(get_me, get_users):
+def test_should_retrieve_list_of_users(get_users):
 
     # Arrange 
     name = 'User 1'
@@ -285,7 +285,7 @@ def test_should_retrieve_list_of_users(get_me, get_users):
 
 
 @patch('moncli.api_v2.get_teams')
-def test_should_retrieve_list_of_teams(get_me, get_teams):
+def test_should_retrieve_list_of_teams(get_teams):
 
     # Arrange 
     name = 'User 1'
@@ -302,12 +302,12 @@ def test_should_retrieve_list_of_teams(get_me, get_teams):
 
 @patch('moncli.api_v2.get_me')
 
-def test_should_retrieve_me(get_me, get_me_client):
+def test_should_retrieve_me(get_me):
 
     # Arrange 
     name = 'User 2'
     username = "test@foo.bar"
-    get_me_client.return_value = {'id': '1', 'name': name, 'email': username}
+    get_me.return_value = {'id': '1', 'name': name, 'email': username}
     
     # Act 
     user = client.get_me()
