@@ -1,10 +1,35 @@
 import json
 
 from schematics.models import Model
-from schematics import types
+from schematics.types import StringType, BooleanType, IntType, DictType, ListType, ModelType
 
-from .. import config
 from ..enums import ColumnType
+
+## Column type mappings
+COLUMN_TYPE_MAPPINGS = {
+    'boolean': ColumnType.checkbox,
+    'country': ColumnType.country,
+    'date': ColumnType.date,
+    'dropdown': ColumnType.dropdown,
+    'email': ColumnType.email,
+    'hour': ColumnType.hour,
+    'link': ColumnType.link,
+    'long-text': ColumnType.long_text,
+    'name': ColumnType.name,
+    'numeric': ColumnType.numbers,
+    'multiple-person': ColumnType.people,
+    'phone': ColumnType.phone,
+    'rating': ColumnType.rating,
+    'color': ColumnType.status,
+    'tag': ColumnType.tags,
+    'team': ColumnType.team,
+    'text': ColumnType.text,
+    'timerange': ColumnType.timeline,
+    'week': ColumnType.week,
+    'timezone': ColumnType.world_clock,
+    'file': ColumnType.file,
+    'board-relation': ColumnType.board_relation
+}
 
 class MondayClientCredentials():
     """monday.com client credentials.
@@ -43,13 +68,13 @@ class ActivityLog(Model):
             The user who performed the change.
     """
 
-    id = types.StringType(required=True)
-    account_id = types.StringType()
-    created_at = types.StringType()
-    data = types.StringType()
-    entity = types.StringType()
-    event = types.StringType()
-    user_id = types.StringType()
+    id = StringType(required=True)
+    account_id = StringType()
+    created_at = StringType()
+    data = StringType()
+    entity = StringType()
+    event = StringType()
+    user_id = StringType()
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -70,10 +95,10 @@ class BoardView(Model):
             The view's type.
     """
 
-    id = types.StringType(required=True)
-    name = types.StringType()
-    settings_str = types.StringType()
-    type = types.StringType()
+    id = StringType(required=True)
+    name = StringType()
+    settings_str = StringType()
+    type = StringType()
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -105,12 +130,12 @@ class Column(Model):
             The column's width.
     """
 
-    id = types.StringType(required=True)
-    title = types.StringType()
-    archived = types.BooleanType()
-    settings_str = types.StringType()
-    type = types.StringType()
-    width = types.IntType()
+    id = StringType(required=True)
+    title = StringType()
+    archived = BooleanType()
+    settings_str = StringType()
+    type = StringType()
+    width = IntType()
     
     def __repr__(self):
         return str(self.to_primitive())
@@ -128,7 +153,7 @@ class Column(Model):
     @property
     def column_type(self):
         # TODO - Find something else other than auto-number to default to.
-        return config.COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
+        return COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
 
 
 class Notification(Model):
@@ -143,8 +168,8 @@ class Notification(Model):
             the notification text.
     """
 
-    id = types.StringType(required=True)
-    text = types.StringType()
+    id = StringType(required=True)
+    text = StringType()
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -164,9 +189,9 @@ class Tag(Model):
             The tag's name.
     """
 
-    id = types.StringType(required=True)
-    name = types.StringType()
-    color = types.StringType()
+    id = StringType(required=True)
+    name = StringType()
+    color = StringType()
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -188,10 +213,10 @@ class Plan(Model):
             The plan's version.
     """
 
-    max_users = types.IntType()
-    period = types.StringType()
-    tier = types.StringType()
-    version = types.IntType()
+    max_users = IntType()
+    period = StringType()
+    tier = StringType()
+    version = IntType()
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -211,9 +236,9 @@ class Webhook(Model):
             If the webhook is still active.
     """
 
-    id = types.StringType(required=True)
-    board_id = types.StringType()
-    is_active = types.BooleanType(default=False)
+    id = StringType(required=True)
+    board_id = StringType()
+    is_active = BooleanType(default=False)
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -234,10 +259,10 @@ class Workspace(Model):
         name : `str`
             The workspace's name.
     """
-    id = types.StringType(required=True)
-    name = types.StringType()
-    kind = types.StringType()
-    description = types.StringType()
+    id = StringType(required=True)
+    name = StringType()
+    kind = StringType()
+    description = StringType()
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -263,11 +288,11 @@ class StatusSettings(Model):
             Get the label ID from the label value.
     """
 
-    labels = types.DictType(types.StringType())
-    labels_colors = types.DictType(types.DictType(types.StringType()))
-    labels_positions_v2 = types.DictType(types.StringType())
-    done_colors = types.ListType(types.IntType())
-    hide_footer = types.BooleanType(default=False)
+    labels = DictType(StringType())
+    labels_colors = DictType(DictType(StringType()))
+    labels_positions_v2 = DictType(StringType())
+    done_colors = ListType(IntType())
+    hide_footer = BooleanType(default=False)
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -309,8 +334,8 @@ class DropdownLabel(Model):
             The label name.
     """
 
-    id = types.IntType(required=True)
-    name = types.StringType(required=True)
+    id = IntType(required=True)
+    name = StringType(required=True)
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -326,8 +351,8 @@ class DropdownSettings(Model):
             The dropdown column's list of labels. 
     """
     
-    labels = types.ListType(types.ModelType(DropdownLabel))
-    hide_footer = types.BooleanType(default=False)
+    labels = ListType(ModelType(DropdownLabel))
+    hide_footer = BooleanType(default=False)
 
     def __repr__(self):
         o = self.to_primitive()

@@ -4,7 +4,7 @@ from typing import List
 from schematics.models import Model
 from schematics import types
 
-from .. import api_v2 as client, config, entities as en, enums
+from .. import api_v2 as client, entities as en
 from ..api_v2 import constants
 from .column_value import ColumnValueCollection, FileValue
 
@@ -99,6 +99,7 @@ class Item(_Item):
         self.__creds = kwargs.pop('creds')
         self.__assets = None
         self.__board = None
+        self.__group = None
         self.__creator = None
         self.__column_values = None
         self.__updates = None
@@ -108,6 +109,9 @@ class Item(_Item):
         board = kwargs.pop('board', None)
         if board:
             self.__board = en.Board(creds=self.__creds, **board)
+        group = kwargs.pop('group', None)
+        if group:
+            self.__group = en.Group(creds=self.__creds, board_id=self.board.id, **group)
         creator = kwargs.pop('creator', None)
         if creator:
             self.__creator = en.User(creds=self.__creds, **creator)
@@ -148,6 +152,13 @@ class Item(_Item):
         """The board that contains this item."""
         if not self.__board:
             self.__board = self.get_board()
+        return self.__board
+
+    @property
+    def group(self):
+        """The group that contains this item."""
+        if not self.__group:
+            self.__group = self.gert_group()
         return self.__board
 
     @property
@@ -343,7 +354,7 @@ class Item(_Item):
         _______
         Returns
 
-            boards : `moncli.entities.Board`
+            board : `moncli.entities.Board`
                 The board containing this item.
 
         _____________
@@ -402,6 +413,48 @@ class Item(_Item):
             *args,
             ids=[int(self.id)])[0]['board']
         return en.Board(creds=self.__creds, **board_data)
+
+
+    def get_group(self, *args):
+        """Get the board that contains this item.
+
+        __________
+        Parameters
+
+            args : `tuple`
+                Optional board return fields.
+
+        _______
+        Returns
+
+            group : `moncli.entities.Group`
+                The group containing this item.
+
+         _____________
+        Return Fields
+
+            archived : `bool`
+                Is the group archived or not.
+            color : `str`
+                The group's color.
+            deleted : `bool`
+                Is the group deleted or not.
+            id : `str`
+                The group's unique identifier.
+            items : `list[moncli.entities.Item]`
+                The items in the group.
+            position : `str`
+                The group's position in the board.
+            title : `str`
+                The group's title.
+        """
+        args = client.get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
+        args = ['group.' + arg for arg in args]
+        group_data = client.get_items(
+            self.__creds.api_key_v2,
+            *args,
+            ids=[int(self.id)])[0]['group']
+        return en.Group(creds=self.__creds, board_id=self.board.id, **group_data)
 
 
     def get_creator(self, *args):
@@ -577,23 +630,9 @@ class Item(_Item):
             raise en.board.NotEnoughGetColumnValueParameters()
         
         if title:
-            for column_value in self.get_column_values(*args):
-                if title and column_value.title == title:
-                    return column_value
+            return self.column_values[title]
 
-        elif id:
-            args = ['column_values.' + arg for arg in client.get_field_list(constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS, *args)]
-            column_value_data = client.get_items(
-                self.__creds.api_key_v2,
-                *args,
-                ids=[int(self.id)],
-                column_values={'ids': [id]})[0]['column_values'][0]
-
-            columns_map = { column.id: column for column in self.board.columns }
-            column_type = columns_map[id].column_type
-            if columns_map[id].settings:
-                column_value_data['settings'] = columns_map[id].settings
-            return en.create_column_value(column_type, **column_value_data)
+        return self.column_values[id]
     
 
     def change_column_value(self, column_value = None, *args):

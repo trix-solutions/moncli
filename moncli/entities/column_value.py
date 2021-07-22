@@ -7,11 +7,35 @@ from pytz import timezone, exceptions as tzex
 from schematics.models import Model
 from schematics.types import StringType
 
-from .. import config, enums, entities as en
+from .. import entities as en, ColumnType, PeopleKind
 
 
 SIMPLE_NULL_VALUE = ''
 COMPLEX_NULL_VALUE = {}
+COLUMN_TYPE_VALUE_MAPPINGS = {
+    ColumnType.checkbox: 'CheckboxValue',
+    ColumnType.country: 'CountryValue',
+    ColumnType.date: 'DateValue',
+    ColumnType.dropdown: 'DropdownValue',
+    ColumnType.email: 'EmailValue',
+    ColumnType.hour: 'HourValue',
+    ColumnType.link: 'LinkValue',
+    ColumnType.long_text: 'LongTextValue',
+    ColumnType.name: 'NameValue',
+    ColumnType.numbers: 'NumberValue',
+    ColumnType.people: 'PeopleValue',
+    ColumnType.phone: 'PhoneValue',
+    ColumnType.rating: 'RatingValue',
+    ColumnType.status: 'StatusValue',
+    ColumnType.tags: 'TagsValue',
+    ColumnType.team: 'TeamValue',
+    ColumnType.text: 'TextValue',
+    ColumnType.timeline: 'TimelineValue',
+    ColumnType.world_clock: 'TimezoneValue',
+    ColumnType.week: 'WeekValue',
+    ColumnType.file: 'FileValue',
+    ColumnType.board_relation : 'ItemLinkValue'
+}
 
 class _ColumnValue(Model):
     """Base column value model"""
@@ -99,6 +123,10 @@ class ColumnValueCollection(object):
 
             self._values.append(value)
 
+
+    def __len__(self):
+        return len(self._values)
+        
 
     def __getitem__(self, index):
         try:
@@ -721,9 +749,9 @@ class PeopleValue(ColumnValue):
                 The person/team added to the column value.
         """
 
-        kind = enums.PeopleKind.person
+        kind = PeopleKind.person
         if type(person_or_team) == en.Team:
-            kind = enums.PeopleKind.team
+            kind = PeopleKind.team
         value = {'id': int(person_or_team.id), 'kind': kind.name}
         if value not in self.persons_and_teams:
             persons_and_teams = self.persons_and_teams
@@ -874,12 +902,12 @@ class StatusValue(ColumnValue):
     def label(self):
         """Display text of the status label"""
         try:
-            return loads(self.value)['label']
-        except KeyError:
-            try:
+            if self.additional_info:
                 return loads(self.additional_info)['label']
-            except KeyError:
-                return None
+        except:
+            pass
+
+        return self.text
 
     @label.setter
     def label(self, label: str): 
@@ -1290,13 +1318,13 @@ class ReadonlyValue(ColumnValue):
         raise ColumnValueIsReadOnly(self.id, self.title)
             
 
-def create_column_value(column_type: enums.ColumnType, **kwargs):
+def create_column_value(column_type: ColumnType, **kwargs):
     """Create column value instance
 
     __________
     Parameters
 
-        column_type : `moncli.enums.ColumnType`
+        column_type : `moncli.ColumnType`
             The column type to create.
         kwargs : `dict`
             The raw column value data.
@@ -1304,7 +1332,7 @@ def create_column_value(column_type: enums.ColumnType, **kwargs):
 
     return getattr(
         import_module(__name__), 
-        config.COLUMN_TYPE_VALUE_MAPPINGS.get(column_type, 'ReadonlyValue'))(**kwargs)
+        COLUMN_TYPE_VALUE_MAPPINGS.get(column_type, 'ReadonlyValue'))(**kwargs)
 
 
 def validate_date(date_string: str):

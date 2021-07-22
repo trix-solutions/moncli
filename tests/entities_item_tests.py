@@ -3,25 +3,56 @@ import json
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
-from moncli import MondayClient, entities as en
+from moncli import client, entities as en
 from moncli.entities import column_value as cv
-from moncli.enums import ColumnType, BoardKind
+from moncli.enums import ColumnType
 
-USERNAME = 'test.user@foobar.org' 
-GET_ME_RETURN_VALUE = en.User(**{'creds': None, 'id': '1', 'email': USERNAME})
 
-@patch.object(MondayClient, 'get_me')
+@patch('moncli.api_v2.get_items')
+def test_item_should_get_group(get_items):
+
+    # Arrange
+    id = '12345'
+    title = 'Test Board 1'
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    item = client.get_items()[0]
+    get_items.return_value = [{'id': '1', 'board': {'id': '1'}, 'board': {'id': id, 'name': name}}]
+
+    # Act
+    board = item.get_board()
+
+    # Assert 
+    ok_(board != None)
+    eq_(board.id, id)
+    eq_(board.title, title)
+
+
+@patch('moncli.api_v2.get_items')
+def test_item_should_get_group(get_items):
+
+    # Arrange
+    id = 'group_1'
+    title = 'Test Group 1'
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    item = client.get_items()[0]
+    get_items.return_value = [{'id': '1', 'board': {'id': '1'}, 'group': {'id': id, 'title': title}}]
+
+    # Act
+    group = item.get_group()
+
+    # Assert 
+    ok_(group != None)
+    eq_(group.id, id)
+    eq_(group.title, title)
+
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 @patch.object(en.Board, 'get_columns')
-def test_item_should_get_column_values(get_columns, get_board, get_items, get_me):
+def test_item_should_get_column_values(get_columns, get_board, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
-
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     get_columns.return_value = [en.Column({'id': 'text_column_01', 'type': 'text'})]
     get_items.return_value = [{'id': '1', 'column_values': [{'id': 'text_column_01', 'title': 'Text Column 01', 'value': json.dumps('Hello, Grandma')}]}]
@@ -36,21 +67,40 @@ def test_item_should_get_column_values(get_columns, get_board, get_items, get_me
     eq_(column_values[0].text_value, 'Hello, Grandma')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 @patch.object(en.Board, 'get_columns')
-def test_item_should_get_column_values_for_status_column(get_columns, get_board, get_items, get_me):
+def test_item_should_get_column_values_for_default_status_column(get_columns, get_board, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
-
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     get_columns.return_value = [en.Column({'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})})]
-    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'value': json.dumps({'index': 1})}]}]
+    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'text': 'Test', 'additional_info': None, 'value': None}]}]
+
+    # Act
+    column_values = item.get_column_values()
+
+    # Assert 
+    ok_(column_values != None)
+    eq_(len(column_values), 1)
+    eq_(column_values[0].title, 'Status Column 01')
+    eq_(column_values[0].index, None)
+    eq_(column_values[0].label, 'Test')
+
+
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@patch.object(en.Board, 'get_columns')
+def test_item_should_get_column_values_for_status_column(get_columns, get_board, get_items):
+
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    item = client.get_items()[0]
+    get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
+    get_columns.return_value = [en.Column({'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})})]
+    get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'text': 'Test', 'additional_info': json.dumps({'label': 'Test'}), 'value': json.dumps({'index': 1})}]}]
 
     # Act
     column_values = item.get_column_values()
@@ -60,49 +110,44 @@ def test_item_should_get_column_values_for_status_column(get_columns, get_board,
     eq_(len(column_values), 1)
     eq_(column_values[0].title, 'Status Column 01')
     eq_(column_values[0].index, 1)
-    eq_(column_values[0].text, 'Test')
+    eq_(column_values[0].label, 'Test')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @raises(en.board.NotEnoughGetColumnValueParameters)
-def test_item_should_fail_to_retrieve_column_value_from_too_few_parameters(get_items, get_me):
+def test_item_should_fail_to_retrieve_column_value_from_too_few_parameters(get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
     item.get_column_value()
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @raises(en.board.TooManyGetColumnValueParameters)
-def test_item_should_fail_to_retrieve_column_value_from_too_many_parameters(get_items, get_me):
+def test_item_should_fail_to_retrieve_column_value_from_too_many_parameters(get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
     item.get_column_value(id='text_column_01', title='Text Column 01')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@patch.object(en.Item, 'get_column_values')
-def test_item_should_get_column_value_by_id(get_column_values, get_items, get_me):
+def test_item_should_get_column_value_by_id(get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    get_column_values.return_value = [cv.TextValue(**{'id': 'text_column_01', 'title': 'Text Column 01', 'text': 'Hello, Grandma', 'value': json.dumps('Hello, Grandma')})]
-    client = MondayClient(USERNAME, '', '')
+    column_id = 'text_column_01'
+    column_title = 'Text Column 01'
+    text_value = 'Hello, Grandma!'
+    column_value = cv.create_column_value(ColumnType.text, **{'id': column_id, 'title': column_title, 'text': text_value, 'value': json.dumps(text_value)})
+    column = en.Column({'id': column_id, 'title': column_title, 'type': 'text'})
+    board = en.Board(id='1', name='Test Board 1', columns=[column.to_primitive()])
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': board.to_primitive(), 'column_values': [column_value.to_primitive()]}]
     item = client.get_items()[0]
 
     # Act
@@ -110,50 +155,47 @@ def test_item_should_get_column_value_by_id(get_column_values, get_items, get_me
 
     # Assert 
     ok_(column_value != None)
-    eq_(column_value.title, 'Text Column 01')
-    eq_(column_value.text, 'Hello, Grandma')
+    eq_(column_value.title, column_title)
+    eq_(column_value.text, text_value)
     eq_(type(column_value), cv.TextValue)
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-@patch.object(en.Item, 'get_column_values')
-def test_item_should_get_column_value_by_title(get_column_values, get_items, get_me):
+def test_item_should_get_column_value_by_title(get_items):
 
-    # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    get_column_values.return_value = [cv.TextValue(**{'id': 'text_column_01', 'title': 'Text Column 01', 'text': 'Hello, Grandma', 'value': json.dumps('Hello, Grandma')})]
-    client = MondayClient(USERNAME, '', '')
+    # Arrange 
+    column_id = 'text_column_01'
+    column_title = 'Text Column 01'
+    text_value = 'Gello, Hrandma!'
+    column_value = cv.create_column_value(ColumnType.text, **{'id': column_id, 'title': column_title, 'text': text_value, 'value': json.dumps(text_value)})
+    column = en.Column({'id': column_id, 'title': column_title, 'type': 'text'})
+    board = en.Board(id='1', name='Test Board 1', columns=[column.to_primitive()])
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': board.to_primitive(), 'column_values': [column_value.to_primitive()]}]
     item = client.get_items()[0]
 
     # Act
-    column_value = item.get_column_value(title='Text Column 01')
+    column_value = item.get_column_value(title=column_title)
 
     # Assert 
     ok_(column_value != None)
-    eq_(column_value.title, 'Text Column 01')
-    eq_(column_value.text, 'Hello, Grandma')
+    eq_(column_value.title, column_title)
+    eq_(column_value.text, text_value)
     eq_(type(column_value), cv.TextValue)
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_column_values')
-def test_item_should_get_column_value_with_extra_id(get_column_values, get_items, get_me):
+def test_item_should_get_column_value_with_extra_id(get_column_values, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
-
-    get_column_values.return_value = [cv.LongTextValue(**{
+    get_column_values.return_value = cv.ColumnValueCollection([cv.LongTextValue(**{
         'id': 'text_column_01', 
         'title': 'Text Column 01', 
         'text': 'Hello, Grandma', 
         'value': json.dumps({'id': '1', 'text': 'Hello, Grandma'})})
-    ]
+    ])
 
     # Act
     column_value = item.get_column_value(title='Text Column 01')
@@ -165,50 +207,43 @@ def test_item_should_get_column_value_with_extra_id(get_column_values, get_items
     eq_(type(column_value), cv.LongTextValue)
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 @raises(en.InvalidColumnValue)
-def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_board, get_items, get_me):
+def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_board, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
     get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
     item.change_column_value(column_value='5')
 
 
-@patch.object(MondayClient, 'get_me')
+
 @patch('moncli.api_v2.get_items')
 @raises(en.InvalidColumnValue)
-def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_id(get_items, get_me):
+def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_id(get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
     item.change_column_value(column_value=[1,2,3,4,5])
 
 
-@patch.object(MondayClient, 'get_me')
+
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 @patch('moncli.api_v2.change_multiple_column_value')
-def test_item_should_change_multiple_column_values_with_dictionary(change_multiple_column_value, get_board, get_items, get_me):
+def test_item_should_change_multiple_column_values_with_dictionary(change_multiple_column_value, get_board, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     change_multiple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
@@ -219,18 +254,15 @@ def test_item_should_change_multiple_column_values_with_dictionary(change_multip
     eq_(item.name, 'Test Item 01')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 @patch('moncli.api_v2.change_multiple_column_value')
-def test_item_should_change_multiple_column_values_with_column_value_list(change_multiple_column_value, get_board, get_items, get_me):
+def test_item_should_change_multiple_column_values_with_column_value_list(change_multiple_column_value, get_board, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     get_board.return_value = en.Board(id='1', name='Test Board 01')
     change_multiple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
@@ -242,18 +274,15 @@ def test_item_should_change_multiple_column_values_with_column_value_list(change
     eq_(item.name, 'Test Item 01')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.create_subitem')
-def test_item_should_add_a_subitem(create_subitem, get_items, get_me):
+def test_item_should_add_a_subitem(create_subitem, get_items):
 
     # Arrange
     id = '2'
     name = 'Test Subitem 01'
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     create_subitem.return_value = {'id': id, 'name': name}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
@@ -265,16 +294,13 @@ def test_item_should_add_a_subitem(create_subitem, get_items, get_me):
     eq_(subitem.name, name)
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.move_item_to_group')
-def test_item_should_move_item_to_group(move_item_to_group, get_items, get_me):
+def test_item_should_move_item_to_group(move_item_to_group, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     move_item_to_group.return_value = {'id': '1', 'name': 'Test Item 01'}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
@@ -285,16 +311,13 @@ def test_item_should_move_item_to_group(move_item_to_group, get_items, get_me):
     eq_(item.name, 'Test Item 01')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.archive_item')
-def test_item_should_archive_item(archive_item, get_items, get_me):
+def test_item_should_archive_item(archive_item, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     archive_item.return_value = {'id': '1', 'name': 'Test Item 01'}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
@@ -305,16 +328,13 @@ def test_item_should_archive_item(archive_item, get_items, get_me):
     eq_(item.name, 'Test Item 01')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.delete_item')
-def test_item_should_delete_item(delete_item, get_items, get_me):
+def test_item_should_delete_item(delete_item, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     delete_item.return_value = {'id': '1', 'name': 'Test Item 01'}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
@@ -325,18 +345,15 @@ def test_item_should_delete_item(delete_item, get_items, get_me):
     eq_(item.name, 'Test Item 01')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.duplicate_item')
-def test_item_should_duplicate_itself(duplicate_item, get_items, get_me):
+def test_item_should_duplicate_itself(duplicate_item, get_items):
 
     # Arrange
     id = '2'
-    name = 'Test Item 01 Dupe'
-    get_me.return_value = GET_ME_RETURN_VALUE
+    name = 'Test Item 01 Dupe'   
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board':{'id': '1', 'name': 'Test Board'}}]
     duplicate_item.return_value = {'id': id, 'name': name}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
@@ -348,16 +365,13 @@ def test_item_should_duplicate_itself(duplicate_item, get_items, get_me):
     eq_(duplicate.name, name)
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.create_update')
-def test_item_should_add_update(create_update, get_items, get_me):
+def test_item_should_add_update(create_update, get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     create_update.return_value = {'id': '1', 'body': 'This is a text body'}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
@@ -368,14 +382,11 @@ def test_item_should_add_update(create_update, get_items, get_me):
     eq_(update.body, 'This is a text body')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-def test_item_should_get_list_of_item_updates(get_items, get_me):
+def test_item_should_get_list_of_item_updates(get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
     get_items.return_value = [{'id': '1', 'updates':[{'id': '2', 'item_id': '1', 'creator_id': '1', 'replies': [{'id': '3', 'creator_id': '1'}]}]}]
 
@@ -389,18 +400,15 @@ def test_item_should_get_list_of_item_updates(get_items, get_me):
     eq_(len(updates[0].replies), 1)
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.delete_update')
-def test_item_should_delete_update(delete_update, get_items, get_me):
+def test_item_should_delete_update(delete_update, get_items):
 
     # Arrange
     id = '2'
     item_id = '1'
     creator_id = '1'
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
     get_items.return_value = [{'id': '1', 'updates':[{'id': id, 'item_id': item_id, 'creator_id': creator_id, 'replies': [{'id': '3', 'creator_id': '1'}]}]}]
     delete_update.return_value = {'id': id, 'item_id': item_id, 'creator_id': creator_id}
@@ -415,15 +423,12 @@ def test_item_should_delete_update(delete_update, get_items, get_me):
     eq_(update.creator_id, creator_id)
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @raises(en.UpdateNotFound)
-def test_item_should_fail_to_delete_update(get_items, get_me):
+def test_item_should_fail_to_delete_update(get_items):
 
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
     get_items.return_value = [{'id': '1', 'updates':[{'id': '2', 'item_id': '1', 'creator_id': '1', 'replies': [{'id': '3', 'creator_id': '1'}]}]}]
 
@@ -431,17 +436,14 @@ def test_item_should_fail_to_delete_update(get_items, get_me):
     item.delete_update(5)
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.clear_item_updates')
-def test_item_should_clear_item_updates(clear_item_updates, get_items, get_me):
+def test_item_should_clear_item_updates(clear_item_updates, get_items):
 
     # Arrange
     id = '1'
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': id, 'updates':[{'id': '2', 'item_id': '1', 'creator_id': '1', 'replies': [{'id': '3', 'creator_id': '1'}]}]}]
     clear_item_updates.return_value = {'id': id, 'updates':[]}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
 
     # Act
@@ -453,16 +455,14 @@ def test_item_should_clear_item_updates(clear_item_updates, get_items, get_me):
     eq_(len(updated_item.updates), 0)
 
 
-@patch.object(MondayClient, 'get_me')
+
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.add_file_to_column')
-def test_item_should_add_file(add_file_to_column, get_items, get_me):
+def test_item_should_add_file(add_file_to_column, get_items):
     
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
     add_file_to_column.return_value = {'id': '12345', 'name': '33.jpg', 'url': 'https://test.monday.com/12345/33.jpg'}
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
     file_column = cv.create_column_value(ColumnType.file, id='files', title='Files')
 
@@ -476,20 +476,15 @@ def test_item_should_add_file(add_file_to_column, get_items, get_me):
     eq_(asset.url, 'https://test.monday.com/12345/33.jpg')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
-def test_item_should_get_files(get_items, get_me):
+def test_item_should_get_files(get_items):
     
     # Arrange
     asset_id = '12345'
     name = '33.jpg'
     url = 'https://test.monday.com/12345/33.jpg'
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
-    
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
-
     get_items.return_value = [{'id': '1','assets': [{'id': asset_id, 'name': name, 'url': url}]}]
 
     # Act
@@ -502,16 +497,13 @@ def test_item_should_get_files(get_items, get_me):
     eq_(assets[0].url, 'https://test.monday.com/12345/33.jpg')
 
 
-@patch.object(MondayClient, 'get_me')
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.change_column_value')
-def test_item_should_remove_files(change_column_value, get_items, get_me):
+def test_item_should_remove_files(change_column_value, get_items):
     
     # Arrange
-    get_me.return_value = GET_ME_RETURN_VALUE
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
     change_column_value.return_value = get_items.return_value[0]
-    client = MondayClient(USERNAME, '', '')
     item = client.get_items()[0]
     file_column = cv.create_column_value(ColumnType.file, id='files', title='Files')
 

@@ -6,3 +6,4 @@ from .column_value import ColumnValue, create_column_value
 from .board import Board, InvalidColumnValue
 from .update import Update, Reply
 from .objects import MondayClientCredentials, ActivityLog, BoardView, Column, Notification, Tag, Plan, Webhook, Workspace
+from .client import MondayClient

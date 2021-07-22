@@ -1,4 +1,4 @@
-from .. import api_v2 as client, config, enums, entities as en
+from .. import api_v2 as client, enums, entities as en
 from ..api_v2 import constants
 
 
@@ -512,11 +512,10 @@ class MondayClient():
             try:
                 target_board = [board for board in boards_data if board['name'].lower() == name.lower()][0]
                 return self.get_board_by_id(target_board['id'], *args)
-            except KeyError:
-                if len(target_board) == 0:
-                    page += 1
-                    record_count = len(boards_data)
-                    continue
+            except IndexError:
+                page += 1
+                record_count = len(boards_data)
+                continue
         raise BoardNotFound('name', name)   
 
 

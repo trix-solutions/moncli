@@ -1,7 +1,7 @@
 from schematics.models import Model
 from schematics import types
 
-from .. import api_v2 as client, config, enums, entities as en
+from .. import api_v2 as client, enums, entities as en
 from ..api_v2 import constants
 from ..entities import column_value as cv
 
@@ -121,7 +121,7 @@ class Board(_Board):
         self.__columns = None
         columns = kwargs.pop('columns', None)
         if columns:
-            self.__columns = [en.Column() for column in columns]
+            self.__columns = [en.Column(column) for column in columns]
         
         self.__groups = None
         groups = kwargs.pop('groups', None)
@@ -145,8 +145,8 @@ class Board(_Board):
 
         super(Board, self).__init__(kwargs)
 
-    def __repr__(self):
-        o = self.to_primitive()
+    def to_primitive(self, role=None, app_data=None, **kwargs):
+        o = super().to_primitive(role, app_data, **kwargs)
         if self.__activity_logs != None:
             o['activity_logs'] = [log.to_primitive() for log in self.__activity_logs]
         if self.__columns:
@@ -154,8 +154,11 @@ class Board(_Board):
         if self.__groups:
             o['groups'] = [group.to_primitive() for group in self.__groups]
         if self.__items:
-            o['items'] = [item.to_primitive() for item in self.__items]       
-        return str(o)
+            o['items'] = [item.to_primitive() for item in self.__items]
+        return o
+
+    def __repr__(self):
+        return str(self.to_primitive())
  
     @property
     def activity_logs(self):
@@ -1079,11 +1082,10 @@ class Board(_Board):
         columns = { column.id: column for column in self.columns }
         if id is not None:
             column = columns[id]
-            column_type = config.COLUMN_TYPE_MAPPINGS[column.type]           
         elif title is not None:
             column = [column for column in columns.values() if column.title == title][0]
-            column_type = config.COLUMN_TYPE_MAPPINGS[column.type]
 
+        column_type = column.column_type  
         if column_type == enums.ColumnType.status or column_type == enums.ColumnType.dropdown:
             return cv.create_column_value(column_type, id=column.id, title=column.title, settings=column.settings)     
         return cv.create_column_value(column_type, id=column.id, title=column.title)
