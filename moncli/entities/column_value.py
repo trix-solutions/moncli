@@ -901,13 +901,10 @@ class StatusValue(ColumnValue):
     @property
     def label(self):
         """Display text of the status label"""
-        try:
-            return loads(self.value)['label']
-        except KeyError:
-            try:
-                return loads(self.additional_info)['label']
-            except KeyError:
-                return None
+        if self.additional_info:
+            return loads(self.additional_info)['label']
+
+        return self.text
 
     @label.setter
     def label(self, label: str): 
