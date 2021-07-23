@@ -1,6 +1,5 @@
 from schematics.models import Model
-from schematics import types
-
+from schematics.types import StringType, IntType
 from .. import api_v2 as client, enums, entities as en
 from ..api_v2 import constants
 from ..entities import column_value as cv
@@ -9,16 +8,17 @@ from ..entities import column_value as cv
 class _Board(Model):
     """The base data model for a board"""
 
-    id = types.StringType(required=True)
-    name = types.StringType()
-    board_folder_id = types.IntType()
-    board_kind = types.StringType()
-    communication = types.StringType()
-    description = types.StringType()
-    permissions = types.StringType()
-    pos = types.StringType()
-    state = types.StringType()
-    workspace_id = types.StringType()
+    id = StringType(required=True)
+    name = StringType()
+    board_folder_id = IntType()
+    board_kind = StringType()
+    communication = StringType()
+    description = StringType()
+    permissions = StringType()
+    pos = StringType()
+    state = StringType()
+    workspace_id = StringType()
+    updated_at = StringType()
 
 
 class Board(_Board):
@@ -278,7 +278,6 @@ class Board(_Board):
     def get_views(self, *args, **kwargs):
         """Get the board's views.
 
-        __________
         Parameters
 
             args : `tuple`
@@ -286,13 +285,11 @@ class Board(_Board):
             kwargs : `dict`
                 Optional keyword arguments for querying board views.
 
-        _______
         Returns
 
             views : `list[moncli.entities.BoardView]`
                 The board's collection of board views.
 
-        _____________
         Return Fields
 
             id : `str`
@@ -304,7 +301,6 @@ class Board(_Board):
             type : `str`
                 The view's type.
 
-        __________________
         Optional Arguments
 
             ids : `str`
@@ -829,19 +825,17 @@ class Board(_Board):
 
     def add_item(self, item_name: str, *args, **kwargs):
         """Create a new item in the board.
-        __________
+
         Parameters
 
             item_name : `str`
                 The new item's name.
 
-        _______
         Returns
 
             item : `moncli.entities.Item`
                 The created item.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.Asset]`
@@ -871,7 +865,6 @@ class Board(_Board):
             updates : `moncli.entities.Update`
                 The item's updates.
 
-        __________________
         Optional Arguments
 
             group_id : `str`
