@@ -1348,6 +1348,29 @@ Returns: [moncli.entities.Item](#item)
 {'id': '123456781', 'updates': []}
 ```
 
+**get_activity_logs**  
+Get the items event logs.   
+Returns: [list[moncli.entities.ActivityLog]](#other-entities)
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|limit|int|Number of items to get, the default is 25.|
+|page|int|Page number to get, starting at 1.|
+|user_ids|list[str]|User ids to filter.|
+|column_ids|list[str]|Column ids to filter.|
+|group_ids|list[str]|Group ids to filter.|
+|item_ids|list[str]|Item id to filter|
+|from|str|From timespamp (ISO8601).|
+|to|str|To timespamp (ISO8601).|
+
+*Example*
+```
+>>> activity_logs = item.get_activity_logs('id','data')
+>>> activity_logs
+[{'id': '12345678901', 'data': 'INSERT_COLIMN_DATA_HERE'}]
+```
+
 ## Update ##
 
 ### Properties ###
