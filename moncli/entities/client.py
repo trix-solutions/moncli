@@ -183,7 +183,8 @@ class MondayClient():
             self.__creds.api_key_v2, 
             board_name, 
             board_kind, 
-            *args)
+            *args,
+            **kwargs)
         return en.Board(creds=self.__creds, **board_data)
 
 

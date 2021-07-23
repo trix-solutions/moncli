@@ -56,7 +56,6 @@ class _ColumnValue(Model):
 class ColumnValue(_ColumnValue):
     """The value of an items column.
 
-    __________
     Properties
  
         additional_info : `json`
@@ -72,8 +71,6 @@ class ColumnValue(_ColumnValue):
         value : `json`
             The column's value in json format.
 
-    
-    _______
     Methods
 
         format : `dict`
@@ -93,7 +90,6 @@ class ColumnValue(_ColumnValue):
     def set_value(self, *args, **kwargs): 
         """Sets the value of the column.
 
-        __________
         Parameters
 
             args : `tuple`
@@ -171,7 +167,6 @@ class ColumnValueCollection(object):
 class CheckboxValue(ColumnValue):
     """A checkbox column value.
     
-    __________
     Properties
 
         checked : `bool`
@@ -206,8 +201,7 @@ class CheckboxValue(ColumnValue):
 
 class CountryValue(ColumnValue):
     """A checkbox column value.
-    
-    __________
+
     Properties
 
         country_code : `str`
@@ -268,7 +262,6 @@ class CountryValue(ColumnValue):
 class DateValue(ColumnValue):
     """A date column value.
 
-    __________
     Properties
 
         date : `str`
@@ -321,13 +314,11 @@ class DateValue(ColumnValue):
 class DropdownValue(ColumnValue):
     """A dropdown column value.
     
-    __________
     Properties
 
         labels : `list[moncli.entities.DropdownLabel]`
             Labels currently assigned to the column value.
 
-    _______
     Methods
 
         add_label : `void`
@@ -365,7 +356,7 @@ class DropdownValue(ColumnValue):
     def add_label(self, id: int):
         """Add a label to the column value by id.
 
-        __________
+    
         Parameters
 
             id : `int`
@@ -389,7 +380,6 @@ class DropdownValue(ColumnValue):
     def remove_label(self, id: int):
         """Remove a label from the column value by id.
 
-        __________
         Parameters
 
             id : `int`
@@ -411,7 +401,6 @@ class DropdownValue(ColumnValue):
 class EmailValue(ColumnValue):
     """An email column value.
     
-    __________
     Properties
 
         email : `str`
@@ -456,8 +445,7 @@ class EmailValue(ColumnValue):
 
 class FileValue(ColumnValue):
     """A file column value.
-    
-    __________
+
     Properties
 
         files : `list[dict]`
@@ -483,7 +471,6 @@ class FileValue(ColumnValue):
 class HourValue(ColumnValue):
     """An hour column value.
     
-    __________
     Properties
 
         hour : `int`
@@ -531,8 +518,7 @@ class HourValue(ColumnValue):
 
 class LinkValue(ColumnValue):
     """A link column value.
-    
-    __________
+
     Properties
 
         url : `str`
@@ -578,7 +564,6 @@ class LinkValue(ColumnValue):
 class LongTextValue(ColumnValue):
     """A long text column value.
     
-    __________
     Properties
 
         long_text : `str`
@@ -612,7 +597,6 @@ class LongTextValue(ColumnValue):
 class NameValue(ColumnValue):
     """A name column value.
     
-    __________
     Properties
 
         name : `str`
@@ -647,7 +631,6 @@ class NameValue(ColumnValue):
 class NumberValue(ColumnValue):
     """A number column value.
     
-    __________
     Properties
 
         number : `int/float`
@@ -706,13 +689,11 @@ class NumberValue(ColumnValue):
 class PeopleValue(ColumnValue):
     """A people column value.
     
-    __________
     Properties
 
         persons_and_teams : `list[dict]`
             The persons and teams assigned to the column value.
 
-    _______
     Methods
 
         add_people : `void`
@@ -742,7 +723,6 @@ class PeopleValue(ColumnValue):
     def add_people(self, person_or_team):
         """Add user or team to column value.
     
-        __________
         Parameters
 
             person_or_team : `moncli.entities.User/moncli.entities.Team`
@@ -762,7 +742,6 @@ class PeopleValue(ColumnValue):
     def remove_people(self, id: int):
         """Remove user or team from column value.
     
-        __________
         Parameters
 
             id : `int`
@@ -779,7 +758,6 @@ class PeopleValue(ColumnValue):
 class PhoneValue(ColumnValue):
     """A phone column value.
     
-    __________
     Properties
 
         phone : `str`
@@ -828,7 +806,6 @@ class PhoneValue(ColumnValue):
 class RatingValue(ColumnValue):
     """A rating column value.
     
-    __________
     Properties
 
         rating : `int`
@@ -863,7 +840,6 @@ class RatingValue(ColumnValue):
 class StatusValue(ColumnValue):
     """A status column value.
     
-    __________
     Properties
 
         index : `int`
@@ -930,13 +906,11 @@ class StatusValue(ColumnValue):
 class TagsValue(ColumnValue):
     """A tags column value.
     
-    __________
     Properties
 
         tag_ids : `list[int]`
             The list of tag ids assigned to column value. 
 
-    _______
     Methods
 
         add : `void`
@@ -963,7 +937,6 @@ class TagsValue(ColumnValue):
     def add(self, tag_id: int):
         """Add tag to column value.
 
-        __________
         Parameters
 
             tag_id : `int`
@@ -979,7 +952,6 @@ class TagsValue(ColumnValue):
     def remove(self, tag_id: int):
         """Remove tag from column value.
 
-        __________
         Parameters
 
             tag_id : `int`
@@ -995,7 +967,6 @@ class TagsValue(ColumnValue):
 class TeamValue(ColumnValue):
     """A team column value.
     
-    __________
     Properties
 
         team_id : `int`
@@ -1030,7 +1001,6 @@ class TeamValue(ColumnValue):
 class TextValue(ColumnValue):
     """A text column value.
     
-    __________
     Properties
 
         text_value : `str`
@@ -1066,7 +1036,6 @@ class TextValue(ColumnValue):
 class TimelineValue(ColumnValue):
     """A timeline column value.
     
-    __________
     Properties
 
         from_date : `str`
@@ -1120,7 +1089,6 @@ class TimelineValue(ColumnValue):
 class TimezoneValue(ColumnValue):
     """A timezone column value.
     
-    __________
     Properties
 
         timezone : `str`
@@ -1158,7 +1126,6 @@ class TimezoneValue(ColumnValue):
 class WeekValue(ColumnValue):
     """A week column value.
     
-    __________
     Properties
 
         start_date : `str`
@@ -1166,7 +1133,7 @@ class WeekValue(ColumnValue):
         end_date : `str`
             The end date of the week.
 
-    _______
+
     Methods
 
         set_value : `void`
@@ -1223,7 +1190,6 @@ class WeekValue(ColumnValue):
     def set_value(self, *args, **kwargs):
         """Set week column value.
         
-        __________
         Parameters
 
             args : `tuple`
@@ -1245,13 +1211,11 @@ class WeekValue(ColumnValue):
 class ItemLinkValue(ColumnValue):
     """An item link column value.
     
-    __________
     Properties
 
         item_ids : `list[str]`
             The list of linked items unique identifiers.
 
-    _______
     Methods
 
         add_item : `void`
@@ -1267,14 +1231,14 @@ class ItemLinkValue(ColumnValue):
     def item_ids(self):
         """List of linked items unique identifiers."""
         try:
-            return [str(id) for id in loads(self.value)['item_ids']]
+            return [str(id['linkedPulseId']) for id in loads(self.value)['linkedPulseIds']]
         except:
             return []
 
     def add_item(self, item_id: str):
         """Add item to link list.
 
-        __________
+    
         Parameters
 
             item_id : `str`
@@ -1289,7 +1253,6 @@ class ItemLinkValue(ColumnValue):
     def remove_item(self, item_id: str):
         """Remove item from link list.
 
-        __________
         Parameters
 
             item_id : `str`
@@ -1321,7 +1284,6 @@ class ReadonlyValue(ColumnValue):
 def create_column_value(column_type: ColumnType, **kwargs):
     """Create column value instance
 
-    __________
     Parameters
 
         column_type : `moncli.ColumnType`
@@ -1338,7 +1300,6 @@ def create_column_value(column_type: ColumnType, **kwargs):
 def validate_date(date_string: str):
     """Validate date string
 
-    __________
     Parameters
 
         date_string : `str`
@@ -1354,7 +1315,6 @@ def validate_date(date_string: str):
 def validate_time(time_string: str):
     """Validate time string
 
-    __________
     Parameters
 
         time_string : `str`

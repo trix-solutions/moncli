@@ -1,8 +1,7 @@
-import json
 from typing import List
 
 from schematics.models import Model
-from schematics import types
+from schematics.types import StringType
 
 from .. import api_v2 as client, entities as en
 from ..api_v2 import constants
@@ -12,20 +11,20 @@ from .column_value import ColumnValueCollection, FileValue
 class _Item(Model):
     """Item Base Model"""
 
-    id = types.StringType(required=True)
-    name = types.StringType()
-    created_at = types.StringType()
-    creator_id = types.StringType()
-    state = types.StringType()
-    updated_at = types.StringType()
+    id = StringType(required=True)
+    name = StringType()
+    created_at = StringType()
+    creator_id = StringType()
+    state = StringType()
+    updated_at = StringType()
 
 
 class Item(_Item):
     """An item (table row)
     
-    __________
+    _
     Properties
-    __________
+    _
     assets : `list[moncli.entities.Asset]`
         The item's assets/files.
     board : `moncli.entities.Board`
@@ -53,9 +52,9 @@ class Item(_Item):
     updates : `moncli.entities.Update`
         The item's updates.
 
-    _______
+    _
     Methods
-    _______
+    _
     add_file : `moncli.entities.Asset`
         Add a file to a column value.
     get_files : `list[moncli.entities.Asset]`
@@ -186,7 +185,6 @@ class Item(_Item):
     def add_file(self, file_column: FileValue, file_path: str, *args):
         """Add a file to a column value.
 
-        __________
         Parameters
 
             file_column : moncli.entities.FileValue
@@ -196,13 +194,11 @@ class Item(_Item):
             args : `tuple`
                 Optional file return fields.
 
-        _______
         Returns
 
             assets : `moncli.entities.Asset`
                 The newly created file asset.
 
-        _____________
         Return Fields
 
             created_at : `str`
@@ -237,7 +233,6 @@ class Item(_Item):
     def get_files(self, column_ids: list = None, *args):
         """Retrieves the file assets for the login user's account.
 
-        __________
         Parameters
 
             args : `str`
@@ -245,13 +240,11 @@ class Item(_Item):
             kwargs : `dict`
                 Optional keyword arguments for retrieving file assets from an item.
             
-        _______
         Returns
 
             assets : `list[moncli.entities.asset.Asset]`
                 A list of file assets uploaded to the account.
 
-        _____________
         Return Fields
 
             created_at : `str`
@@ -273,7 +266,6 @@ class Item(_Item):
             url_thumbnail : `str`
                 Url to view the asset in thumbnail mode. Only available for images.   
 
-        __________________
         Optional Arguments
 
             column_ids : `list[str]`
@@ -295,7 +287,6 @@ class Item(_Item):
     def remove_files(self, file_column: FileValue, *args):
         """Add a file to a column value.
 
-        __________
         Parameters
 
             file_column : moncli.entities.FileValue
@@ -303,13 +294,11 @@ class Item(_Item):
             args : `tuple`
                 Optional file return fields.
 
-        _______
         Returns
 
             assets : `moncli.entities.Asset`
                 The deleted file asset.
 
-        _____________
         Return Fields
 
             created_at : `str`
@@ -345,19 +334,16 @@ class Item(_Item):
     def get_board(self, *args):
         """Get the board that contains this item.
 
-        __________
         Parameters
 
             args : `tuple`
                 Optional board return fields.
 
-        _______
         Returns
 
             board : `moncli.entities.Board`
                 The board containing this item.
 
-        _____________
         Return Fields
 
             activity_logs : `list[moncli.entities.object.ActivityLog]`
@@ -418,19 +404,17 @@ class Item(_Item):
     def get_group(self, *args):
         """Get the board that contains this item.
 
-        __________
         Parameters
 
             args : `tuple`
                 Optional board return fields.
 
-        _______
         Returns
 
             group : `moncli.entities.Group`
                 The group containing this item.
 
-         _____________
+
         Return Fields
 
             archived : `bool`
@@ -448,6 +432,7 @@ class Item(_Item):
             title : `str`
                 The group's title.
         """
+
         args = client.get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
         args = ['group.' + arg for arg in args]
         group_data = client.get_items(
@@ -460,19 +445,16 @@ class Item(_Item):
     def get_creator(self, *args):
         """Get the item's creator.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of user return fields.
 
-        _______
         Returns
 
             user : `moncli.entities.User`
                 The item's creator.
 
-        _____________
         Return Fields
 
             account : `moncli.entities.Account`
@@ -538,19 +520,16 @@ class Item(_Item):
     def get_column_values(self, *args):
         """Get the item's column values.
 
-        __________
         Parameters
 
             args : `tuple`
                 Optional column value return fields.
 
-        _______
         Returns
 
             column_value : `list[moncli.entities.ColumnValue]`
                 The item's column values.
 
-        _____________
         Return Fields
 
             additional_info : `json`
@@ -589,7 +568,6 @@ class Item(_Item):
     def get_column_value(self, id = None, title = None, *args):
         """Get an item's column value by ID or title.
 
-        __________
         Parameters
 
             id : `str`
@@ -601,13 +579,11 @@ class Item(_Item):
             args : `tuple`
                 Optional column value return fields.
 
-        _______
         Returns
 
             column_value : `moncli.entities.ColumnValue`
                 The item's column value.
 
-        _____________
         Return Fields
 
             additional_info : `json`
@@ -638,7 +614,6 @@ class Item(_Item):
     def change_column_value(self, column_value = None, *args):
         """Get an item's column value by ID or title.
 
-        __________
         Parameters
 
             column_value : `moncli.entities.ColumnValue`
@@ -646,13 +621,11 @@ class Item(_Item):
             args : `tuple`
                 Optional item return fields.
 
-        _______
         Returns
 
             item : `moncli.entities.Item`
                 The updated item.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.asset.Asset]`
@@ -704,7 +677,6 @@ class Item(_Item):
     def change_multiple_column_values(self, column_values, *args):
         """Change the item's column values.
 
-        __________
         Parameters
 
             column_values : `list[moncli.entities.ColumnValue] / dict`
@@ -713,13 +685,11 @@ class Item(_Item):
             args : `tuple`
                 Optional item return fields.
 
-        _______
         Returns
 
             item : `moncli.entities.Item`
                 The updated item.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.asset.Asset]`
@@ -768,7 +738,6 @@ class Item(_Item):
     def create_subitem(self, item_name: str, *args, **kwargs):
         """Create subitem.
 
-        __________
         Parameters
         
             item_name : `str`
@@ -778,13 +747,11 @@ class Item(_Item):
             kwargs : `dict`
                 Optional arguments for creating subitems.
 
-        _______
         Returns
                     
             subitem : `moncli.entities.Item`
                 The created subitem.
 
-        _____________
         Return Fields
         
             assets : `list[moncli.entities.Asset]`
@@ -813,8 +780,7 @@ class Item(_Item):
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
-
-        __________________
+        
         Optional Arguments
         
             column_values : `json`
@@ -833,7 +799,6 @@ class Item(_Item):
     def move_to_group(self, group_id: str, *args):
         """Move item to a different group.
 
-        __________
         Parameters
 
             group_id : `str`
@@ -841,13 +806,11 @@ class Item(_Item):
             args : `tuple`
                 Optional item return fields.
 
-        _______
         Returns
 
             item : `moncli.entities.Item`
                 The updated item.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.asset.Asset]`
@@ -889,19 +852,16 @@ class Item(_Item):
     def archive(self, *args):
         """Archive this item.
 
-        __________
         Parameters
 
             args : `tuple`
                 Optional item return fields.
 
-        _______
         Returns
 
             item : `moncli.entities.Item`
                 The updated item.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.asset.Asset]`
@@ -942,19 +902,16 @@ class Item(_Item):
     def delete(self, *args):
         """Delete this item.
 
-        __________
         Parameters
 
             args : `tuple`
                 Optional item return fields.
 
-        _______
         Returns
 
             item : `moncli.entities.Item`
                 The updated item.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.asset.Asset]`
@@ -995,7 +952,6 @@ class Item(_Item):
     def duplicate(self, *args, **kwargs):
         """Duplicate this item.
 
-        __________
         Parameters
 
             args : `tuple`
@@ -1003,13 +959,11 @@ class Item(_Item):
             kwargs : `dict`
                 Optional keyword arguments for duplicating item.
 
-        _______
         Returns
             
             item : `moncli.entities.Item`
                 The duplicated item.
 
-        _____________
         Return Fields
         
             assets : `list[moncli.entities.Asset]`
@@ -1038,8 +992,7 @@ class Item(_Item):
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
-
-        __________________
+        
         Optional Arguments
 
             with_updates : `bool`
@@ -1058,7 +1011,6 @@ class Item(_Item):
     def add_update(self, body: str, *args, **kwargs):
         """Change the item's column values.
 
-        __________
         Parameters
 
             body : `str`
@@ -1068,13 +1020,11 @@ class Item(_Item):
             kwargs : `dict`
                 Optional keyword arguments for adding an update.
 
-        _______
         Returns
 
             update : `moncli.entities.Update`
                 The created update.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.Asset]`
@@ -1098,7 +1048,6 @@ class Item(_Item):
             updated_at : `str`
                 The update's last edit date.
 
-        __________________
         Optional Arguments
 
             parent_id : `str`
@@ -1117,7 +1066,6 @@ class Item(_Item):
     def get_updates(self, *args, **kwargs):
         """Get updates for this item.
  
-        __________
         Parameters
  
             args : `tuple`
@@ -1125,13 +1073,11 @@ class Item(_Item):
             kwargs : `dict`
                 Optional keyword arguments for getting item updates.
 
-        _______
         Returns
 
             update : `list[moncli.entities.Update]`
                 The item's updates.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.Asset]`
@@ -1155,7 +1101,6 @@ class Item(_Item):
             updated_at : `str`
                 The update's last edit date.
 
-        __________________
         Optional Arguments
 
             limit : `int`
@@ -1178,7 +1123,7 @@ class Item(_Item):
 
     def delete_update(self, update_id: str, *args):
         """Delete an item's update
-        __________
+
         Parameters
 
             update_id : `str`
@@ -1186,13 +1131,11 @@ class Item(_Item):
             args : `tuple`
                 The list of optional fields to return.
 
-        _______
         Returns
 
             update : `moncli.entities.Update`
                 The item's deleted update.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.Asset]`
@@ -1227,19 +1170,16 @@ class Item(_Item):
     def clear_updates(self, *args):
         """Clear item's updates.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of optional fields to return.
 
-        _______
         Returns
 
             item : `moncli.entities.Item`
                 The updated item.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.asset.Asset]`
@@ -1276,6 +1216,63 @@ class Item(_Item):
             self.id,
             *args)
         return en.Item(creds=self.__creds, **item_data)
+
+    
+    def get_activity_logs(self, *args, **kwargs):
+        """Retrieves an item's activity logs.
+
+        Parameters
+        
+            args : `tuple`
+                The list of activity log return fields.
+            kwargs : `dict`
+                Optional keyword arguments for retrieving activity logs.
+
+        Returns
+
+            activity_logs : `list[moncli.entities.ActivityLog]`
+                The board's activity logs.
+
+        Return Fields
+
+            account_id : `str`
+                The unique identifier of the user's account.
+            created_at : `str`
+                The create date
+            data : `str`
+                The item's column values in string form.
+            entity : `str`
+                The activity log's entity.
+            event : `str`
+                The activity log's event.
+            id : `str`
+                The activity log's unique identifier.
+            user_id : `str`
+                The user's unique identifier.
+
+        Optional Arguments
+
+            limit : `int`
+                Number of items to get, the default is 25.
+            page : `int`
+                Page number to get, starting at 1.
+            user_ids : `list[str]`
+                User ids to filter.
+            column_ids : `list[str]`
+                Column ids to filter.
+            group_ids : `list[str]`
+                Group ids to filter.
+            from : `str`
+                From timespamp (ISO8601).
+            to : `str`
+                To timespamp (ISO8601).
+        """
+        
+        args = client.get_field_list(constants.DEFAULT_ACTIVITY_LOG_QUERY_FIELDS, *args)
+        kwargs['item_ids'] = [int(self.id)]
+        
+        return self.board.get_activity_logs(*args, **kwargs)
+
 
 
 class ColumnValueRequired(Exception):
