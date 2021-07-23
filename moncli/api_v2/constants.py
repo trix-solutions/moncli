@@ -82,7 +82,9 @@ DEFAULT_BOARD_QUERY_FIELDS = [
     'description', 
     'permissions',
     'pos',
-    'state'
+    'state',
+    'workspace_id',
+    'updated_at'
 ]
 
 DEFAULT_ACTIVITY_LOG_QUERY_FIELDS = [
