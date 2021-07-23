@@ -1,8 +1,7 @@
-import json
 from typing import List
 
 from schematics.models import Model
-from schematics import types
+from schematics.types import StringType
 
 from .. import api_v2 as client, entities as en
 from ..api_v2 import constants
@@ -12,12 +11,12 @@ from .column_value import ColumnValueCollection, FileValue
 class _Item(Model):
     """Item Base Model"""
 
-    id = types.StringType(required=True)
-    name = types.StringType()
-    created_at = types.StringType()
-    creator_id = types.StringType()
-    state = types.StringType()
-    updated_at = types.StringType()
+    id = StringType(required=True)
+    name = StringType()
+    created_at = StringType()
+    creator_id = StringType()
+    state = StringType()
+    updated_at = StringType()
 
 
 class Item(_Item):
@@ -1276,6 +1275,11 @@ class Item(_Item):
             self.id,
             *args)
         return en.Item(creds=self.__creds, **item_data)
+
+    
+    def get_activity_logs(*args, **kwargs):
+        pass
+
 
 
 class ColumnValueRequired(Exception):
