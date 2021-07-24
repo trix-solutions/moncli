@@ -1039,7 +1039,7 @@ class Board(_Board):
         pass
 
 
-    def get_column_value(self, id: str = None, title: str = None):
+    def get_column_value(self, id: str = None, title: str = None, **kwargs):
         """Create a column value from a board's column.
 
             Parameters
@@ -1048,6 +1048,8 @@ class Board(_Board):
                     The column's unique identifier.
                 title : `str`
                     The column's title.
+                kwargs : `dict`
+                    The raw column value data to add.
         
             Returns
 
@@ -1069,8 +1071,8 @@ class Board(_Board):
 
         column_type = column.column_type  
         if column_type == enums.ColumnType.status or column_type == enums.ColumnType.dropdown:
-            return cv.create_column_value(column_type, id=column.id, title=column.title, settings=column.settings)     
-        return cv.create_column_value(column_type, id=column.id, title=column.title)
+            return cv.create_column_value(column_type, id=column.id, title=column.title, settings=column.settings, **kwargs)     
+        return cv.create_column_value(column_type, id=column.id, title=column.title, **kwargs)
 
 
     def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):
