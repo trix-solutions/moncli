@@ -344,13 +344,13 @@ class Group(_Group):
 
         args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
         args = ['groups.items.' + field for field in args]
+        group_kwargs = {'groups': {'ids': [self.id]}}
         if kwargs:
-            kwargs = {'groups': {'items': kwargs}}
+            group_kwargs['groups']['items'] = kwargs
         items_data = client.get_boards(
             self.__creds.api_key_v2, 
             *args,
             ids=[int(self.__board_id)],
             limit=1,
-            groups={'ids': [self.id]},
-            **kwargs)[0]['groups'][0]['items']
+            **group_kwargs)[0]['groups'][0]['items']
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data]
