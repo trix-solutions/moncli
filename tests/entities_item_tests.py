@@ -515,3 +515,23 @@ def test_item_should_remove_files(change_column_value, get_items):
     eq_(item.id, '1')
     eq_(item.name, 'Test Item 01')
     eq_(item.board.id, '1')
+
+
+@patch('moncli.api_v2.get_boards')
+@patch('moncli.api_v2.get_items')
+def test_should_get_activity_logs(get_items, get_boards):
+
+    # Arrange
+    id = '12345'
+    account_id = '123456'
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
+    item = client.get_items(ids=['1'])[0]
+    get_boards.return_value = [{'id': '1', 'name': 'Test Board 1', 'activity_logs': [{'id': id, 'account_id': account_id}]}]
+
+    # Act 
+    activity_logs = item.get_activity_logs()
+
+    # Assert
+    ok_(activity_logs)
+    eq_(activity_logs[0].id, id)
+    eq_(activity_logs[0].account_id, account_id)
