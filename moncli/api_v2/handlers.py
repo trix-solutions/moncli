@@ -673,7 +673,7 @@ def get_assets(api_key: str, ids: list, *args, **kwargs):
     kwargs = get_method_arguments(constants.ASSETS_OPTIONAL_PARAMS, **kwargs)
     ids = [util.IntValue(id).value for id in ids]
     kwargs['ids'] = util.ListValue(ids)
-    return execute_query(api_key, constants.ASSETS, *args, **kwargs)
+    return execute_query(api_key, constants.ASSETS, *args, timeout=300, **kwargs)
 
 
 def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):

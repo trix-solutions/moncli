@@ -4,7 +4,7 @@ from .. import constants
 from . import MondayApiError
 
 
-def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
+def execute_query(api_key: str, timeout=10, **kwargs):
     """Executes a graphql query via Rest.
     
     __________
@@ -58,7 +58,7 @@ def execute_query(api_key: str, timeout=constants.TIMEOUT, **kwargs):
     return _process_repsonse(api_key, timeout, resp, data, **kwargs)
 
 
-def upload_file(api_key: str, file_path: str, timeout = constants.TIMEOUT, **kwargs):
+def upload_file(api_key: str, file_path: str, timeout = 300, **kwargs):
     """Executes a graphql query to upload a file via Rest.
     
     __________
