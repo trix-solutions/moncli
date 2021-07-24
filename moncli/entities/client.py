@@ -5,13 +5,11 @@ from ..api_v2 import constants
 class MondayClient():
     """monday.com client for login and board/item management
 
-    __________
     Properties
 
         me : `moncli.entities.User`
             The client login user.
 
-    _______
     Methods
 
         create_board : `moncli.entities.Board`
@@ -104,7 +102,6 @@ class MondayClient():
     def create_board(self, board_name: str, board_kind: enums.BoardKind, *args, **kwargs):
         """Create a new board.
 
-        __________
         Parameters
 
             board_name : `str`
@@ -116,13 +113,11 @@ class MondayClient():
             kwargs : `dict`
                 Optional keyword arguments for creating a board.
 
-        _______
         Returns
 
             board : `moncli.entities.Board`
                 The newly created board.
 
-        _____________
         Return Fields
 
             activity_logs : `list[moncli.entities.ActivityLog]`
@@ -170,7 +165,6 @@ class MondayClient():
             workspace_id : `str`
                 The board's workspace unique identifier (null for main workspace).
 
-        __________________
         Optional Arguments
 
             workspace_id : `str`
@@ -191,7 +185,7 @@ class MondayClient():
     def get_boards(self, *args, **kwargs):
         """Get a collection of boards.
 
-        __________
+    
         Parameters
 
             args : `tuple`
@@ -199,13 +193,13 @@ class MondayClient():
             kwargs : `dict`
                 Optional keyword arguments for getting boards.
 
-        _______
+    
         Returns
 
             boards : `list[moncli.entities.Board]`
                 The collection of boards.
 
-        _____________
+    
         Return Fields
 
             activity_logs : `list[moncli.entities.ActivityLog]`
@@ -253,7 +247,7 @@ class MondayClient():
             workspace_id : `str`
                 The board's workspace unique identifier (null for main workspace).
 
-        __________________
+        
         Optional Arguments
 
             limit : `int`
@@ -278,7 +272,6 @@ class MondayClient():
     def get_board(self, id: str = None, name: str = None, *args):
         """Get a board by unique identifier or name.
 
-        __________
         Parameters
 
             id : `str`
@@ -290,13 +283,11 @@ class MondayClient():
             args : `tuple`
                 The list of board return fields.
 
-        _______
         Returns
 
             board : `moncli.entities.Board`
                 The board requested by ID or name
 
-        _____________
         Return Fields
 
             activity_logs : `list[moncli.entities.ActivityLog]`
@@ -358,7 +349,6 @@ class MondayClient():
     def get_board_by_id(self, id: str, *args):
         """Get a board by unique identifier.
 
-        __________
         Parameters
 
             id : `str`
@@ -366,13 +356,11 @@ class MondayClient():
             args : `tuple`
                 The list of board return fields.
 
-        _______
         Returns
 
             board : `moncli.entities.Board`
                 The board retrieved by ID.
 
-        _____________
         Return Fields
 
             activity_logs : `list[moncli.entities.ActivityLog]`
@@ -435,7 +423,6 @@ class MondayClient():
     def get_board_by_name(self, name: str, *args):
         """Get a board by name.
 
-        __________
         Parameters
 
             name : `str`
@@ -443,13 +430,11 @@ class MondayClient():
             args : `tuple`
                 The list of board return fields.
 
-        _______
         Returns
 
             board : `moncli.entities.Board`
                 The board retrieved by name.
 
-        _____________
         Return Fields
 
             activity_logs : `list[moncli.entities.ActivityLog]`
@@ -523,7 +508,6 @@ class MondayClient():
     def archive_board(self, board_id: str, *args):
         """Archive a board.
 
-        __________
         Parameters
 
             board_id : `str`
@@ -531,13 +515,11 @@ class MondayClient():
             args : `tuple`
                 The list of board return fields.
         
-        _______
         Returns
 
             board : `moncli.entities.Board`
                 The archived board.
 
-        _____________
         Return Fields
 
             activity_logs : `list[moncli.entities.ActivityLog]`
@@ -596,7 +578,6 @@ class MondayClient():
     def get_assets(self, ids: list, *args):
         """Get a collection of assets by IDs.
 
-        __________
         Parameters
 
             ids : `list[int/str]`
@@ -606,13 +587,11 @@ class MondayClient():
             args : `tuple`
                 The list asset return fields.
 
-        _______
         Returns
 
             assets : `list[moncli.entities.asset.Asset]`
                 A list of file assets uploaded to the account.
 
-        _____________
         Return Fields
 
             created_at : `str`
@@ -648,7 +627,6 @@ class MondayClient():
     def get_items(self, *args, **kwargs):
         """Get a collection of items.
 
-        __________
         Parameters
 
             args : `tuple`
@@ -656,13 +634,11 @@ class MondayClient():
             kwargs : `dict`
                 Optional keyword arguments for querying items.
 
-        _______
         Returns
 
             items : `list[moncli.entities.Item]`
                 The collection of items.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.set.Asset]`
@@ -692,7 +668,6 @@ class MondayClient():
             updates : `moncli.entities.Update`
                 The item's updates.
 
-        __________________
         Optional Arguments
 
             limit : `int`
@@ -718,7 +693,6 @@ class MondayClient():
     def get_updates(self, *args, **kwargs):
         """Get a collection of updates.
 
-        __________
         Parameters
 
             args : `tuple`
@@ -726,13 +700,11 @@ class MondayClient():
             kwargs : `dict`
                 The optional keyword arguments for querying updates.
 
-        _______
         Returns
 
             updates : `list[moncli.entities.Update]`
                 A collection of updates.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.asset.Asset]`
@@ -756,7 +728,6 @@ class MondayClient():
             updated_at : `str`
                 The update's last edit date.
 
-        __________________
         Optional Arguments
 
             limit : `int`
@@ -775,7 +746,6 @@ class MondayClient():
     def delete_update(self, id: str, *args):
         """Delete an update.
 
-        __________
         Parameters
 
             id : `str`
@@ -783,13 +753,11 @@ class MondayClient():
             args : `tuple`
                 The list of update fields to return.
 
-        _______
         Returns
 
             update : `moncli.entities.Update`
                 The deleted update.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.Asset]`
@@ -824,7 +792,6 @@ class MondayClient():
     def clear_item_updates(self, item_id: str, *args):
         """Clear an item's updates.
 
-        __________
         Parameters
 
             item_id : `str`
@@ -832,13 +799,11 @@ class MondayClient():
             args : `tuple`
                 The list of optional fields to return.
 
-        _______
         Returns
 
             update : `moncli.entities.Item`
                 The updated item.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.asset.Asset]`
@@ -879,7 +844,6 @@ class MondayClient():
     def create_notification(self, text: str, user_id: str, target_id: str, target_type: enums.NotificationTargetType, *args, **kwargs):
         """Create a new notification.
 
-        __________
         Parameters
 
             text : `str`
@@ -895,13 +859,11 @@ class MondayClient():
             kwargs : `dict`
                 The optional keyword arguments for creating notifications.
 
-        _______
         Returns
 
             notification : `moncli.entities.Notification`
                 A new notification.
 
-        _____________
         Return Fields
 
             id : `str`
@@ -909,7 +871,6 @@ class MondayClient():
             text : `str`
                 The notification text.
 
-        __________________
         Optional Arguments
 
             payload : `json`
@@ -930,7 +891,6 @@ class MondayClient():
     def create_or_get_tag(self, tag_name: str, *args, **kwargs):
         """Create a new tag or get it if it already exists.
 
-        __________
         Parameters
 
             tag_name : `str`
@@ -940,13 +900,11 @@ class MondayClient():
             kwargs : `dict`
                 Optional keyword arguments for creating/getting a tag.
 
-        _______
         Returns
 
             tag : `moncli.entities.Tag`
                 The created or retrieved tag.
 
-        _____________
         Return Fields
 
             color : `str`
@@ -956,7 +914,6 @@ class MondayClient():
             name : `str`
                 The tag's name.
 
-        __________________
         Optional Arguments
 
             board_id : `str`
@@ -974,7 +931,6 @@ class MondayClient():
     def get_tags(self, *args, **kwargs):
         """Get a collection of tags.
 
-        __________
         Parameters
 
             args : `tuple`
@@ -982,13 +938,11 @@ class MondayClient():
             kwargs : `dict`
                 Optional keyword arguments for querying tags.
 
-        _______
         Returns
 
             tags : `list[moncli.entities.Tag]`
                 A collection of tags.
 
-        _____________
         Return Fields
 
             color : `str`
@@ -998,7 +952,6 @@ class MondayClient():
             name : `str`
                 The tag's name.
 
-        __________________
         Optional Arguments
 
             ids : `list[str]`
@@ -1015,7 +968,6 @@ class MondayClient():
     def get_users(self, *args, **kwargs):
         """Get a collection of users.
 
-        __________
         Parameters
 
             args : `tuple`
@@ -1023,13 +975,11 @@ class MondayClient():
             kwargs : `dict`
                 Optional keyword arguments for querying users.
 
-        _______
         Returns
 
             users : `list[moncli.entities.User]`
                 A collection of users.
 
-        _____________
         Return Fields
 
             account : `moncli.entities.Account`
@@ -1083,7 +1033,6 @@ class MondayClient():
             utc_hours_diff : `int`
                 The user's UTC hours difference.
 
-        __________________
         Optional Arguments
 
             ids : `list[str]`
@@ -1106,7 +1055,6 @@ class MondayClient():
     def get_teams(self, *args, **kwargs):
         """Get a collection of teams.
 
-        __________
         Parameters
 
             args : `tuple`
@@ -1114,13 +1062,11 @@ class MondayClient():
             kwargs : `dict`
                 Optional keyword arguments for querying teams.
         
-        _______
         Returns
 
             teams : `list[moncli.entities.Team]`
                 A collection of teams.
 
-        _____________
         Return Fields
 
             id : `int`
@@ -1132,7 +1078,7 @@ class MondayClient():
             users : `moncli.entities.user.User`
                 The users in the team.
 
-        __________________
+        
         Optional Arguments
 
             ids : `list[str]`
@@ -1150,19 +1096,16 @@ class MondayClient():
     def get_me(self, *args):
         """Get the connected user's information.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of user return fields.
         
-        _______
         Returns
 
             user : `moncli.entities.User`
                 The connected user.
 
-        _____________
         Return Fields
 
             account : `moncli.entities.Account`
@@ -1227,19 +1170,16 @@ class MondayClient():
     def get_account(self, *args):
         """Get the connected user's account.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of account return fields.
         
-        _______
         Returns
 
             account : `moncli.entities.Account`
                 The connected user's account.
 
-        _____________
         Return Fields
 
             first_day_of_the_week : `str`
@@ -1268,7 +1208,6 @@ class MondayClient():
     def create_workspace(self, name: str, kind: enums.WorkspaceKind, *args, **kwargs):
         """Creates a new workspace
 
-        __________
         Parameters
 
             name : `str`
@@ -1280,13 +1219,11 @@ class MondayClient():
             kwargs : `dict`
                 Optional keyword arguments listed below.
         
-        _______
         Returns
 
             workspace : `moncli.entities.Workspace`
                 The newly created workspace
 
-        _____________
         Return Fields
 
             id : `str`
@@ -1298,7 +1235,6 @@ class MondayClient():
             description : `str`
                 The workspace's description
 
-        __________________
         Optional Arguments
 
             description : `str`

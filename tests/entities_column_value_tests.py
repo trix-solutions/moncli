@@ -1888,7 +1888,7 @@ def test_should_raise_error_when_removing_id_from_item_link_column():
 
     # Arrange
     column_type = ColumnType.board_relation
-    column_value = cv.create_column_value(column_type, value=json.dumps({'item_ids': [12345]}))
+    column_value = cv.create_column_value(column_type, value=json.dumps({'linkedPulseIds': [{'linkedPulseId': 12345}]}))
 
     # Act
     column_value.remove_item('1234')
@@ -1898,7 +1898,7 @@ def test_should_remove_id_from_item_link_column():
 
     # Arrange
     column_type = ColumnType.board_relation
-    column_value = cv.create_column_value(column_type, value=json.dumps({'item_ids': [12345]}))
+    column_value = cv.create_column_value(column_type, value=json.dumps({'linkedPulseIds': [{'linkedPulseId': 12345}]}))
 
     # Act
     column_value.remove_item('12345')

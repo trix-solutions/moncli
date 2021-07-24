@@ -1247,7 +1247,7 @@ class ItemLinkValue(ColumnValue):
 
         ids = self.item_ids
         ids.append(str(item_id))
-        self.value = dumps({'item_ids': [int(id) for id in ids]})
+        self.value = dumps({'linkedPulseIds': [{'linkedPulseId': int(id)} for id in ids]})
 
 
     def remove_item(self, item_id: str):
@@ -1263,7 +1263,7 @@ class ItemLinkValue(ColumnValue):
             raise ItemIdNotFound(item_id)
 
         ids = [id for id in self.item_ids if id != item_id]
-        self.value = dumps({'item_ids': [int(id) for id in ids]})
+        self.value = dumps({'linkedPulseIds': [{'linkedPulseId': int(id)} for id in ids]})
 
     
     def format(self):

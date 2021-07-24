@@ -23,7 +23,6 @@ class _Asset(Model):
 class Asset(_Asset):
     """A file uploaded to monday.com.
   
-    __________
     Properties
 
         id : `str`
@@ -45,7 +44,6 @@ class Asset(_Asset):
         url_thumbnail : `str`
             Url to view the asset in thumbnail mode. Only available for images.
 
-    _______
     Methods
 
         get_uploaded_by_user : `moncli.entities.User`
@@ -71,19 +69,16 @@ class Asset(_Asset):
     def get_uploaded_by_user(self, *args):
         """Get the user who uploaded the file.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of user return fields.
   
-        _______
         Returns
 
             user : `moncli.entities.User`
                 The user who uploaded the file.
         
-        _____________
         Return Fields
 
             account : `moncli.entities.Account`

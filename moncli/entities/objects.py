@@ -34,7 +34,6 @@ COLUMN_TYPE_MAPPINGS = {
 class MondayClientCredentials():
     """monday.com client credentials.
     
-    __________
     Properties
 
         api_key_v1 : `str`
@@ -51,7 +50,6 @@ class MondayClientCredentials():
 class ActivityLog(Model):
     """monday.com client credentials.
     
-    __________
     Properties
 
         account_id : `str`
@@ -82,7 +80,6 @@ class ActivityLog(Model):
 class BoardView(Model):
     """A board's view.
 
-    __________
     Properties
 
         id : `str`
@@ -107,7 +104,6 @@ class BoardView(Model):
 class Column(Model):
     """A board's column.
     
-    __________
     Properties
 
         archived : `bool`
@@ -159,7 +155,6 @@ class Column(Model):
 class Notification(Model):
     """A notification.
 
-    __________
     Properties
 
         id : `str`
@@ -178,7 +173,6 @@ class Notification(Model):
 class Tag(Model):
     """A tag.
 
-    __________
     Properties
 
         color : `str`
@@ -200,7 +194,6 @@ class Tag(Model):
 class Plan(Model):
     """ A payment plan.
     
-    __________
     Properties
 
         max_users : `int`
@@ -225,7 +218,6 @@ class Plan(Model):
 class Webhook(Model):
     """ Monday webhooks
 
-    __________
     Properties
 
         board_id : `str`
@@ -247,7 +239,6 @@ class Webhook(Model):
 class Workspace(Model):
     """ A monday.com workspace
 
-    __________
     Properties
 
         description : `str`
@@ -271,7 +262,6 @@ class Workspace(Model):
 class StatusSettings(Model):
     """The settings of a status column
 
-    __________
     Properties
 
         labels : `str`
@@ -281,7 +271,6 @@ class StatusSettings(Model):
         labels_positions_v2 : `dict`
             The position of each label by ID.
 
-    _______
     Methods
 
         get_index : `str`
@@ -300,13 +289,11 @@ class StatusSettings(Model):
     def get_index(self, label: str):
         """Get the label ID from the label value.
 
-        __________
         Parameters
 
             label : `str`
                 The status column option label value.
 
-        _______
         Returns
 
             index : `int`
@@ -325,7 +312,6 @@ class StatusSettings(Model):
 class DropdownLabel(Model):
     """Label options for a dropdown column
 
-    __________
     Properties
 
         id : `int`
@@ -344,7 +330,6 @@ class DropdownLabel(Model):
 class DropdownSettings(Model):
     """Settings for a dropdown column
     
-    __________
     Properties
 
         labels : `list[moncli.entities.DropdownLabel]`
