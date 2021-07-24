@@ -19,7 +19,6 @@ class _Update(Model):
 class Update(_Update):
     """An update
     
-    __________
     Properties
 
         assets : `list[moncli.entities.Asset]`
@@ -43,7 +42,6 @@ class Update(_Update):
         updated_at : `str`
             The update's last edit date.
     
-    _______
     Methods
 
         get_creator : `moncli.entities.User`
@@ -103,19 +101,17 @@ class Update(_Update):
 
     def get_creator(self, *args):
         """Get the update's creator.
-        __________
+    
         Parameters
 
             args : `tuple`
                 The list of user fields to return.
 
-        _______
         Returns
 
             user : `moncli.entities.User`
                 The update's creator.
 
-        _____________
         Return Fields
 
             account : `moncli.entities.Account`
@@ -181,7 +177,6 @@ class Update(_Update):
     def add_reply(self, body: str, *args):
         """Add reply to update.
 
-        __________
         Parameters
 
             body : `str`
@@ -189,13 +184,11 @@ class Update(_Update):
             args : `tuple`
                 The list of reply fields to return.
 
-        _______
         Returns
 
             update : `moncli.entities.Update`
                 The updated update.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.Asset]`
@@ -231,19 +224,17 @@ class Update(_Update):
 
     def get_replies(self, *args):
         """Get update replies.
-        __________
+    
         Parameters
 
             args : `tuple`
                 The list of update fields to return.
 
-        _______
         Returns
 
             replies : `list[moncli.entities.Reply]`
                 The update's replies.
 
-        _____________
         Return Fields
 
             body : `str`
@@ -289,7 +280,7 @@ class Update(_Update):
 
     def add_file(self, file_path: str, *args):
         """Add a file to update.
-        __________
+    
         Parameters
 
             file_path : `str`
@@ -297,13 +288,11 @@ class Update(_Update):
             args : `tuple`
                 The list of update fields to return.
 
-        _______
         Returns
 
             asset : `moncli.entities.Asset`
                 The newly created asset.
 
-        _____________
         Return Fields
 
             created_at : `str`
@@ -337,19 +326,16 @@ class Update(_Update):
     def get_files(self, *args):
         """Get update's files.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of asset fields to return.
 
-        _______
         Returns
 
             assets : `list[moncli.entities.Asset]`
                 The update's files.
 
-        _____________
         Return Fields
 
             created_at : `str`
@@ -399,20 +385,17 @@ class Update(_Update):
 
     def delete(self, *args):
         """Delete the selected update.
-
-        __________
+    
         Parameters
 
             args : `tuple`
                 The list of update fields to return.
-
-        _______
+    
         Returns
 
             update : `moncli.entities.Update`
                 The deleted update.
-
-        _____________
+    
         Return Fields
 
             assets : `list[moncli.entities.asset.Asset]`
@@ -456,8 +439,7 @@ class _Reply(Model):
 
 class Reply(_Reply):
     """A reply for an update
-    
-    __________
+
     Properties
 
         body : `str`
@@ -475,7 +457,6 @@ class Reply(_Reply):
         updated_at : `str`
             The reply's last edit date.
 
-    _______
     Methods
 
         get_creator : `moncli.entities.User`
@@ -501,19 +482,16 @@ class Reply(_Reply):
     def get_creator(self, *args):
         """Get the reply's creator.
 
-        __________
         Parameters
 
             args : `tuple`
                 List of user return fields.
 
-        _______
         Returns
         
             creator : `moncli.entities.User`
                 The creator of this update.
 
-        _____________
         Return Fields
 
             account : `moncli.entities.Account`

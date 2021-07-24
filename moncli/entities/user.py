@@ -33,7 +33,6 @@ class _User(Model):
 class User(_User):
     """A monday.com user
     
-    __________
     Properties
     
         account : `moncli.entities.user.Account`
@@ -87,7 +86,6 @@ class User(_User):
         utc_hours_diff : `int`
             The user's UTC hours difference.
 
-    _______
     Methods
 
         get_account : `moncli.entities.Account`
@@ -138,19 +136,16 @@ class User(_User):
     def get_account(self, *args):
         """Get the user's account.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of account return fields.
         
-        _______
         Returns
 
             account : `moncli.entities.Account`
                 The user's account.
 
-        _____________
         Return Fields
 
             first_day_of_the_week : `str`
@@ -182,19 +177,17 @@ class User(_User):
     def get_teams(self, *args):
         """Get teams the user is a member in.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of team return fields.
 
-        _______
+    
         Returns
 
             teams : `list[moncli.entities.Team]`
                 Teams the user is a member in.
 
-        _____________
         Return Fields
 
             id : `int`
@@ -218,7 +211,6 @@ class User(_User):
     def send_notification(self, text: str, target_id: str, target_type: enums.NotificationTargetType, *args, **kwargs):
         """Create a new notification.
 
-        __________
         Parameters
 
             text : `str`
@@ -234,13 +226,11 @@ class User(_User):
             kwargs : `dict`
                 Optional keyword arguments.
 
-        _______
         Returns
 
             notification : `moncli.entities.ActivityLog`
                 The new notification.
 
-        _____________
         Return Fields
 
             id : `str`
@@ -248,7 +238,6 @@ class User(_User):
             text : `str`
                 The notification text.
         
-        __________________
         Optional Arguments
 
             payload : `json`
@@ -277,7 +266,6 @@ class _Team(Model):
 class Team(_Team):
     """A team of users.
     
-    __________
     Properties
 
         id : `int`
@@ -289,7 +277,6 @@ class Team(_Team):
         users : `moncli.entities.User`
             The users in the team.
 
-    _______
     Methods
 
         get_users : `list[moncli.entities.User]`
@@ -321,7 +308,6 @@ class Team(_Team):
     def get_users(self, *args, **kwargs):
         """Get the users in the team.
         
-        __________
         Parameters
 
             args : `tuple`
@@ -329,13 +315,11 @@ class Team(_Team):
             kwargs : `dict`
                 Optional keyword arguments for querying the team's users.
 
-        _______
         Returns
 
             users : `list[moncli.entities.User]`
                 The users in the team.
 
-        _____________
         Return Fields
 
             account : `moncli.entities.Account`
@@ -389,7 +373,6 @@ class Team(_Team):
             utc_hours_diff : `int`
                 The user's UTC hours difference.
         
-        __________________
         Optional Arguments
 
             ids : `list[int]`
@@ -427,7 +410,6 @@ class _Account(Model):
 class Account(_Account):
     """Your monday.com account.
 
-    __________
     Properties
 
         first_day_of_the_week : `str`
@@ -445,7 +427,6 @@ class Account(_Account):
         slug : `str`
             The account's slug.
 
-    _______
     Methods
 
         get_plan : `moncli.entities.Plan`
@@ -483,19 +464,16 @@ class Account(_Account):
     def get_plan(self, *args):
         """Get the account's payment plan.
         
-        __________
         Parameters
 
             args : `tuple`
                 The list of plan optional return fields.
         
-        _______
         Returns
 
             plan : `moncli.entities.Plan`
                 The account's payment plan.
         
-        _____________
         Return Fields
 
             max_users : `int`
