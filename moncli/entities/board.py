@@ -111,38 +111,35 @@ class Board(_Board):
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
-        
-        self.__activity_logs = None
-        activity_logs = kwargs.pop('activity_logs', None)
-        if activity_logs != None:
-            self.__activity_logs = [en.ActivityLog(log) for log in activity_logs]
-        
-        self.__columns = None
-        columns = kwargs.pop('columns', None)
-        if columns:
-            self.__columns = [en.Column(column) for column in columns]
-        
-        self.__groups = None
-        groups = kwargs.pop('groups', None)
-        if groups:
-            self.__groups = [en.Group(creds=self.__creds, **groups) for group in groups]
-        
-        self.__items = None
-        items = kwargs.pop('items', None)
-        if items:
-            self.__items = [en.Item(creds=self.__creds, **item) for item in items]
-        
-        self.__views = None
-        views = kwargs.pop('views', None)
-        if views:
-            self.__views = [en.BoardView(view) for view in views]
+        self.__activity_logs = kwargs.pop('__activity_logs', None)
+        self.__columns = kwargs.pop('__columns', None)
+        self.__groups = kwargs.pop('__groups', None)
+        self.__items = kwargs.pop('__items', None)
+        self.__views = kwargs.pop('__views', None)
+        self.__workspace = kwargs.pop('__workspace', None)
 
-        self.__workspace = None
+        activity_logs = kwargs.pop('activity_logs', None)
+        columns = kwargs.pop('columns', None)
+        groups = kwargs.pop('groups', None)
+        items = kwargs.pop('items', None)
+        views = kwargs.pop('views', None)
         workspace = kwargs.pop('workspace', None)
-        if workspace:
-            self.__workspace = en.Workspace(workspace)
 
         super(Board, self).__init__(kwargs)
+        
+        if activity_logs and not self.__activity_logs:
+            self.__activity_logs = [en.ActivityLog(log) for log in activity_logs]
+        if columns and not self.__columns:
+            self.__columns = [en.Column(column) for column in columns]
+        if groups and not self.__groups:
+            self.__groups = [en.Group(creds=self.__creds, **groups) for group in groups]
+        if items and not self.__items:
+            self.__items = [en.Item(creds=self.__creds, __board=self, **item) for item in items]
+        if views and not self.__views:
+            self.__views = [en.BoardView(view) for view in views]
+        if workspace and not self.__workspace:
+            self.__workspace = en.Workspace(workspace)
+        
 
     def to_primitive(self, role=None, app_data=None, **kwargs):
         o = super().to_primitive(role, app_data, **kwargs)

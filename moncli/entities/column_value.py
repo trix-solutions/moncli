@@ -111,7 +111,7 @@ class ColumnValue(_ColumnValue):
 
 class ColumnValueCollection(object):
     
-    def __init__(self, column_values: list):
+    def __init__(self, column_values: list = []):
         self._values = []
         for value in column_values:
             if not isinstance(value, ColumnValue):
@@ -138,6 +138,15 @@ class ColumnValueCollection(object):
             self._values[i] = value
         except:
             raise ColumnValueKeyError(index)
+
+
+    def __iter__(self):
+        for value in self._values:
+            yield value
+
+
+    def __repr__(self):
+        return str([value.to_primitive() for value in self._values])
 
     
     def insert(self, index, value):
@@ -1215,6 +1224,8 @@ class ItemLinkValue(ColumnValue):
 
         item_ids : `list[str]`
             The list of linked items unique identifiers.
+        settings: `dict`
+            The link value settings as a dictionary.
 
     Methods
 
@@ -1225,6 +1236,7 @@ class ItemLinkValue(ColumnValue):
     """
 
     def __init__(self, **kwargs):
+        self.__settings = kwargs.pop('settings', None)
         super(ItemLinkValue, self).__init__(**kwargs)
 
     @property
@@ -1235,10 +1247,13 @@ class ItemLinkValue(ColumnValue):
         except:
             return []
 
+    @property
+    def settings(self):
+        return loads(self.__settings)
+
     def add_item(self, item_id: str):
         """Add item to link list.
 
-    
         Parameters
 
             item_id : `str`
