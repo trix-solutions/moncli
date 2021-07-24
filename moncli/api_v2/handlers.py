@@ -2350,6 +2350,9 @@ def get_field_list(fields: list, *args):
     
     if not args:
         return fields
+    if 'id' not in args:
+        args = [arg for arg in args]
+        args.append('id')
     return args
 
 

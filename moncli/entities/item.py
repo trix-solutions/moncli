@@ -1,3 +1,4 @@
+from moncli.enums import ColumnType
 from schematics.models import Model
 from schematics.types import StringType
 
@@ -91,34 +92,40 @@ class Item(_Item):
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds')
-        self.__assets = None
-        self.__board = None
-        self.__group = None
-        self.__creator = None
-        self.__column_values = None
-        self.__updates = None
+        self.__assets = kwargs.pop('__assets', None)
+        self.__board = kwargs.pop('__board', None)
+        self.__group = kwargs.pop('__group', None)
+        self.__creator = kwargs.pop('__creator', None)
+        self.__column_values = ColumnValueCollection()
+        self.__updates = kwargs.pop('__updates', None)
+
         assets = kwargs.pop('assets', None)
-        if assets != None:
-            self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
         board = kwargs.pop('board', None)
-        if board:
-            self.__board = en.Board(creds=self.__creds, **board)
         group = kwargs.pop('group', None)
-        if group:
-            self.__group = en.Group(creds=self.__creds, board_id=self.board.id, **group)
         creator = kwargs.pop('creator', None)
-        if creator:
-            self.__creator = en.User(creds=self.__creds, **creator)
         column_values = kwargs.pop('column_values', None)
-        if column_values != None:
-            # This is a bug.
-            columns_map = { column.id: column for column in self.board.columns }
-            values = [en.create_column_value(columns_map[data['id']].column_type, **data) for data in column_values]
-            self.__column_values = ColumnValueCollection(values)
         updates = kwargs.pop('updates', None)
-        if updates != None:
-            self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
+
         super(Item, self).__init__(kwargs)
+
+        if assets and not self.__assets:
+            self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
+        if board and not self.__board:
+            self.__board = en.Board(creds=self.__creds, **board)
+        if group and not self.__group:
+            self.__group = en.Group(creds=self.__creds, board_id=self.board.id, **group)
+        if creator and not self.__creator:
+            self.__creator = en.User(creds=self.__creds, **creator)
+        if column_values and len(self.__column_values) == 0:
+            #Column values are a process around here...
+            columns_map = { column.id: column for column in self.board.columns }
+            for data in column_values:
+                column = columns_map[data['id']]
+                if column.settings_str != '{}':
+                    data['settings'] = column.settings
+                self.__column_values.append(en.create_column_value(column.column_type, **data))
+        if updates and not self.__updates:
+            self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
 
     def __repr__(self):
         o = self.to_primitive()
@@ -129,7 +136,9 @@ class Item(_Item):
         if self.__creator:
             o['creator'] = self.__creator.to_primitive()
         if self.__column_values:
-            o['column_values'] = [value.to_primitive() for value in self.__column_values]
+            o['column_values'] = []
+            for value in self.__column_values:
+                o['column_values'].append(value.to_primitive())
         if self.__updates:
             o['updates'] = [value.to_primitive() for value in self.__updates]
         return str(o)
