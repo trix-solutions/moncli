@@ -18,7 +18,6 @@ class _Group(Model):
 class Group(_Group):
     """ A group of items in a board.
 
-    __________
     Properties
 
         archived : `bool`
@@ -36,7 +35,6 @@ class Group(_Group):
         title : `str`
             The group's title.
 
-    _______
     Methods
 
         duplicate : `moncli.entities.Group`
@@ -77,19 +75,16 @@ class Group(_Group):
     def duplicate(self, add_to_top: bool = False, *args, **kwargs):
         """Duplicate this group.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of group fields to return.
 
-        _______
         Returns
 
             group : `moncli.entities.Group`
                 The duplicated group.
 
-        _____________
         Return Fields
 
             archived : `bool`
@@ -106,8 +101,7 @@ class Group(_Group):
                 The group's position in the board.
             title : `str`
                 The group's title.
-        
-        __________________
+          
         Optional Arguments
 
             add_to_top : `bool`
@@ -131,19 +125,16 @@ class Group(_Group):
     def archive(self, *args):
         """Archives this group.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of group fields to return.
 
-        _______
         Returns
 
             group : `moncli.entities.Group`
                 The archived group.
 
-        _____________
         Return Fields
 
             archived : `bool`
@@ -176,19 +167,16 @@ class Group(_Group):
     def delete(self, *args):
         """Delete this group.
 
-        __________
         Parameters
 
             args : `tuple`
                 The list of group fields to return.
 
-        _______
         Returns
 
             item : `moncli.entities.Item`
                 The deleted item.
 
-        _____________
         Return Fields
 
             archived : `bool`
@@ -221,7 +209,6 @@ class Group(_Group):
     def add_item(self, item_name: str, *args, **kwargs):
         """Add item to this group.
 
-        __________
         Parameters
 
             item_name : `str`
@@ -231,13 +218,11 @@ class Group(_Group):
             kwargs : `dict`
                 Optional keyword arguments for adding an item to this group.
 
-        _______
         Returns
 
             item : `moncli.entities.Item`
                 The newly added item to the group.
 
-        _____________
         Return Fields
 
             assets : `list[moncli.entities.set.Asset]`
@@ -266,8 +251,7 @@ class Group(_Group):
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
-
-        __________________
+        
         Optional Arguments
 
             column_values : `json`
@@ -286,20 +270,17 @@ class Group(_Group):
 
     def get_items(self, *args, **kwargs):
         """Get items from this group.
-
-        __________
+    
         Parameters
 
             args : `tuple`
                 The list of item fields to return.
-
-        _______
+    
         Returns
 
             items : `list[moncli.entities.Item]`
                 The collection of items belonging to the group.
-
-        _____________
+    
         Return Fields
 
             assets : `list[moncli.entities.set.Asset]`
@@ -328,8 +309,7 @@ class Group(_Group):
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
-
-        __________________
+        
         Optional Arguments
 
             limit : `int`
