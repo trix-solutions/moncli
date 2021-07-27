@@ -115,13 +115,19 @@ class Board(_Board):
         self.__columns = kwargs.pop('__columns', None)
         self.__groups = kwargs.pop('__groups', None)
         self.__items = kwargs.pop('__items', None)
+        self.__subscribers = kwargs.pop('__subscribers', None)
         self.__views = kwargs.pop('__views', None)
+        self.__tags = kwargs.pop('__tags', None)
+        self.__updates = kwargs.pop('_updates', None)
         self.__workspace = kwargs.pop('__workspace', None)
 
         activity_logs = kwargs.pop('activity_logs', None)
         columns = kwargs.pop('columns', None)
         groups = kwargs.pop('groups', None)
         items = kwargs.pop('items', None)
+        subscribers = kwargs.pop('subscribers', None)
+        tags = kwargs.pop('tags', None)
+        updates = kwargs.pop('updates', None)
         views = kwargs.pop('views', None)
         workspace = kwargs.pop('workspace', None)
 
@@ -135,8 +141,14 @@ class Board(_Board):
             self.__groups = [en.Group(creds=self.__creds, **groups) for group in groups]
         if items and not self.__items:
             self.__items = [en.Item(creds=self.__creds, __board=self, **item) for item in items]
+        if subscribers and not self.__subscribers:
+            self.__items = [en.User(creds=self.__creds, **subscriber) for subscriber in subscribers]
+        if tags and not self.__tags:
+            self.__tags = [en.Tag(tag) for tag in tags]
         if views and not self.__views:
             self.__views = [en.BoardView(view) for view in views]
+        if updates and not self.__updates:
+            self.__updates = [en.Update(update) for update in updates]
         if workspace and not self.__workspace:
             self.__workspace = en.Workspace(workspace)
         
@@ -151,6 +163,14 @@ class Board(_Board):
             o['groups'] = [group.to_primitive() for group in self.__groups]
         if self.__items:
             o['items'] = [item.to_primitive() for item in self.__items]
+        if self.__items:
+            o['subscribers'] = [item.to_primitive() for item in self.__subscribers]
+        if self.__tags:
+            o['tags'] = [item.to_primitive() for item in self.__tags]
+        if self.__updates:
+            o['updates'] = [item.to_primitive() for item in self.__updates]
+        if self.__items:
+            o['views'] = [item.to_primitive() for item in self.__views]
         return o
 
     def __repr__(self):
@@ -189,7 +209,30 @@ class Board(_Board):
         return self.__items
 
     @property
+    def subscribers(self):
+        """Retrieve board subscribing users"""
+
+        if not self.__subscribers:
+            self.__subscribers = self.get_subscribers()
+        return self.__subscribers
+
+    @property
+    def tags(self):
+        """Retrieve board tags."""
+        if self.__tags == None: 
+            self.__tags = self.get_tags()
+        return self.__tags
+
+    @property
+    def updates(self):
+        """Retrieve board updates."""
+        if self.__updates == None: 
+            self.__updates = self.get_updates()
+        return self.__updates
+
+    @property
     def views(self):
+        """Retrieve board updates."""
         if self.__views == None:
             self.__views = self.get_views()
         return self.__views
@@ -202,7 +245,7 @@ class Board(_Board):
             self.__workspace = self.get_workspace()
         return self.__workspace
 
-    
+
     def get_activity_logs(self, *args, **kwargs):
         """Get board log events.
         
@@ -1190,6 +1233,106 @@ class Board(_Board):
             ids=[self.id])[0]['workspace']
 
         return en.Workspace(workspace_data)
+
+    
+    def get_updates(self, *args, **kwargs):
+        """Retrieves the board's updates
+ 
+            Parameters
+    
+                args : `tuple`
+                    Optional update return fields.
+                kwargs : `dict`
+                    Optional keyword arguments for getting item updates.
+
+            Returns
+
+                update : `list[moncli.entities.Update]`
+                    The item's updates.
+
+            Return Fields
+
+                assets : `list[moncli.entities.Asset]`
+                    The update's assets/files.
+                body: `str`
+                    The update's html formatted body.
+                created_at: `str`
+                    The update's creation date.
+                creator : `moncli.entities.User`
+                    The update's creator
+                creator_id : `str`
+                    The unique identifier of the update creator.
+                id : `str`
+                    The update's unique identifier.
+                item_id : `str`
+                    The update's item ID.
+                replies : `list[moncli.entities.Reply]`
+                    The update's replies.
+                text_body : `str`
+                    The update's text body.
+                updated_at : `str`
+                    The update's last edit date.
+
+            Optional Arguments
+
+                limit : `int`
+                    Number of updates to get; the default is 25.
+                page : `int`
+                    Page number to get, starting at 1.
+        """
+
+        args = ['updates.'+ arg for arg in client.get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)]
+        updates_kwargs = {}
+        if kwargs:
+            updates_kwargs = {'updates': kwargs}
+
+        updates_data = client.get_boards(
+            self.__creds.api_key_v2,
+            *args,
+            ids=[self.id],
+            **updates_kwargs)[0]['updates']
+
+        return [en.Update(creds=self.__creds, **data) for data in updates_data]
+
+    
+    def get_tags(self, *args):
+        """Retrieves the board's tags
+
+            Parameters
+
+                args : `tuple`
+                    The list of tag return fields.
+                kwargs : `dict`
+                    Optional keyword arguments for querying tags.
+
+            Returns
+
+                tags : `list[moncli.entities.Tag]`
+                    A collection of tags.
+
+            Return Fields
+
+                color : `str`
+                    The tag's color.
+                id : `str`
+                    The tag's unique identifier.
+                name : `str`
+                    The tag's name.
+
+            Optional Arguments
+
+                ids : `list[str]`
+                    The list of tags unique identifiers.
+        """
+
+        args = ['tags.'+ arg for arg in client.get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)]
+
+        tags_data = client.get_boards(
+            self.__creds.api_key_v2,
+            *args,
+            ids=[self.id])[0]['tags']
+
+        return [en.Tag(data) for data in tags_data]
 
         
 class TooManyGetGroupParameters(Exception):
