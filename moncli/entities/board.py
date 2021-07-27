@@ -1292,7 +1292,7 @@ class Board(_Board):
             ids=[self.id],
             **updates_kwargs)[0]['updates']
 
-        return [en.Update(data) for data in updates_data]
+        return [en.Update(creds=self.__creds, **data) for data in updates_data]
 
     
     def get_tags(self, *args):
@@ -1325,7 +1325,7 @@ class Board(_Board):
                     The list of tags unique identifiers.
         """
 
-        args = ['updates.'+ arg for arg in client.get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)]
+        args = ['tags.'+ arg for arg in client.get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)]
 
         tags_data = client.get_boards(
             self.__creds.api_key_v2,

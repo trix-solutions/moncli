@@ -76,7 +76,7 @@ class Update(_Update):
 
     def __repr__(self):
         o = self.to_primitive()
-        if len(self.__replies) > 0:
+        if self.__replies and len(self.__replies) > 0:
             o['replies'] = self.__replies
         return str(o)
 
