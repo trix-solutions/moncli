@@ -161,8 +161,8 @@ class Item(_Item):
     def group(self):
         """The group that contains this item."""
         if not self.__group:
-            self.__group = self.gert_group()
-        return self.__board
+            self.__group = self.get_group()
+        return self.__group
 
     @property
     def creator(self):
@@ -174,7 +174,7 @@ class Item(_Item):
     @property
     def column_values(self):
         """The item's column_values."""
-        if self.__column_values == None:
+        if len(self.__column_values) == 0:
             self.__column_values = self.get_column_values()
         return self.__column_values
 
