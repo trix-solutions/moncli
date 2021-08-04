@@ -42,6 +42,18 @@ class CheckboxType(MondayType):
         return {'checked': value}
 
 
+class ItemLinkValue(MondayType):
+
+    def to_native(self, value, context = None):
+        new_value = super().to_native(value, context=context)
+        self.metadata['settings'] = json.loads(value.settings_str)
+        return [str(id['linkedPulseId']) for id in new_value['linkedPulseIds']]
+
+    def to_primitive(self, value, context = None):
+        value = [{'linkedPulseId': int(id)} for id in value]
+        return {'linkedPulseIds': value}
+        
+
 class NumberType(MondayType):
 
     def to_native(self, value, context):
@@ -97,6 +109,7 @@ class TimelineType(MondayType):
             'from': value.from_date,
             'to': value.to_date
         }
+
 
 class Timeline():
 
