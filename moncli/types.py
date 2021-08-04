@@ -6,6 +6,10 @@ from moncli.entities import column_value as cv
 
 SIMPLE_NULL_VALUE = ''
 COMPLEX_NULL_VALUE = {}
+DATE_FORMAT = '%Y-%m-%d'
+TIME_FORMAT = '%H-%M-%S'
+LAST_UPDATED_FORMAT = '{}T{}.%fZ'.format(DATE_FORMAT, TIME_FORMAT)
+
 
 class MondayType(BaseType):
 
@@ -52,7 +56,7 @@ class ItemLinkValue(MondayType):
     def to_primitive(self, value, context = None):
         value = [{'linkedPulseId': int(id)} for id in value]
         return {'linkedPulseIds': value}
-        
+
 
 class NumberType(MondayType):
 
