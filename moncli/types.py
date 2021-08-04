@@ -68,6 +68,12 @@ class CheckboxType(MondayType):
     def to_primitive(self, value, context = None):
         return {'checked': value}
 
+    def validate_checkbox(self, value):
+        if not self.value_changed(value):
+            return
+        if type(value) is not bool:
+            raise ValidationError('Value is not a valid checkbox type: ({}).'.format(value))
+
 
 class ItemLinkType(MondayType):
 
@@ -106,7 +112,9 @@ class ItemLinkType(MondayType):
 
     def value_changed(self, value):
         if not self._allow_multiple_values():
-            return value == self.original_value
+            return value != self.original_value
+        if type(value) != type(self.original_value):
+            return True
         if len(value) != len(self.original_value):
             return False
         for v in value:
@@ -185,9 +193,10 @@ class TextType(MondayType):
 class TimelineType(MondayType):
 
     def to_native(self, value, context):
-        if not isinstance(value, cv.ColumnValue):
+        if isinstance(value, Timeline):
             return value
-        value = super().to_native(value, context=context)
+        if isinstance(value, cv.ColumnValue):
+            value = super().to_native(value, context=context)
         return Timeline(value['from'], value['to'])
 
     def to_primitive(self, value, context=None):
