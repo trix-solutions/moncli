@@ -46,7 +46,7 @@ class CheckboxType(MondayType):
         return {'checked': value}
 
 
-class ItemLinkValue(MondayType):
+class ItemLinkType(MondayType):
 
     def to_native(self, value, context = None):
         new_value = super().to_native(value, context=context)
