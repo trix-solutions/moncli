@@ -1,4 +1,4 @@
-import json
+import json, warnings
 
 from schematics.models import Model
 from schematics.types import StringType, BooleanType, IntType, DictType, ListType, ModelType
@@ -138,6 +138,7 @@ class Column(Model):
 
     @property
     def settings(self):
+        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
         if not self.settings_str:
             return None
         settings_obj = json.loads(self.settings_str)
@@ -145,6 +146,8 @@ class Column(Model):
             return StatusSettings(settings_obj, strict=False)
         elif self.column_type is ColumnType.dropdown:
             return DropdownSettings(settings_obj, strict=False)
+        else:
+            return settings_obj
     
     @property
     def column_type(self):
@@ -277,6 +280,10 @@ class StatusSettings(Model):
             Get the label ID from the label value.
     """
 
+    def __init__(self, raw_data, trusted_data, deserialize_mapping, init, partial, strict, validate, app_data, lazy, **kwargs):
+        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
+        super(StatusSettings, self).__init__(raw_data=raw_data, trusted_data=trusted_data, deserialize_mapping=deserialize_mapping, init=init, partial=partial, strict=strict, validate=validate, app_data=app_data, lazy=lazy, **kwargs)
+
     labels = DictType(StringType())
     labels_colors = DictType(DictType(StringType()))
     labels_positions_v2 = DictType(StringType())
@@ -320,6 +327,11 @@ class DropdownLabel(Model):
             The label name.
     """
 
+    def __init__(self, raw_data, trusted_data, deserialize_mapping, init, partial, strict, validate, app_data, lazy, **kwargs):
+        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
+        super(StatusSettings, self).__init__(raw_data=raw_data, trusted_data=trusted_data, deserialize_mapping=deserialize_mapping, init=init, partial=partial, strict=strict, validate=validate, app_data=app_data, lazy=lazy, **kwargs)
+
+
     id = IntType(required=True)
     name = StringType(required=True)
 
@@ -335,6 +347,11 @@ class DropdownSettings(Model):
         labels : `list[moncli.entities.DropdownLabel]`
             The dropdown column's list of labels. 
     """
+
+    def __init__(self, raw_data, trusted_data, deserialize_mapping, init, partial, strict, validate, app_data, lazy, **kwargs):
+        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
+        super(StatusSettings, self).__init__(raw_data=raw_data, trusted_data=trusted_data, deserialize_mapping=deserialize_mapping, init=init, partial=partial, strict=strict, validate=validate, app_data=app_data, lazy=lazy, **kwargs)
+
     
     labels = ListType(ModelType(DropdownLabel))
     hide_footer = BooleanType(default=False)

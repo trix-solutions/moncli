@@ -45,6 +45,7 @@ class _ColumnValue(Model):
     text = StringType()
     value = StringType()
     additional_info = StringType()
+    settings_str = StringType()
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -70,6 +71,8 @@ class ColumnValue(_ColumnValue):
             The column's type.
         value : `json`
             The column's value in json format.
+        settings_str: `str`
+            The column's unique settings.
 
     Methods
 
@@ -338,7 +341,7 @@ class DropdownValue(ColumnValue):
 
     def __init__(self, **kwargs):
         try:
-            self.__settings = kwargs.pop('settings')
+            self.__settings = self.__settings = en.DropdownSettings(kwargs.pop('settings_str'), strict=False)
         except KeyError:
             raise ColumnValueSettingsError('dropdown')
         super(DropdownValue, self).__init__(**kwargs)
@@ -858,11 +861,11 @@ class StatusValue(ColumnValue):
     """
 
     def __init__(self, **kwargs):
+        super(StatusValue, self).__init__(**kwargs)
         try:
-            self.__settings = kwargs.pop('settings')
+            self.__settings = en.StatusSettings(loads(self.settings_str), strict=False)
         except KeyError:
             raise ColumnValueSettingsError('status')
-        super(StatusValue, self).__init__(**kwargs)
 
     @property
     def index(self):
@@ -1236,7 +1239,6 @@ class ItemLinkValue(ColumnValue):
     """
 
     def __init__(self, **kwargs):
-        self.__settings = kwargs.pop('settings', None)
         super(ItemLinkValue, self).__init__(**kwargs)
 
     @property

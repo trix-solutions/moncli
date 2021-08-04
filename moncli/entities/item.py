@@ -562,9 +562,10 @@ class Item(_Item):
         values = []
         for data in column_values_data:
             id = data['id']
-            column_type = columns_map[id].column_type
-            if columns_map[id].settings:
-                data['settings'] = columns_map[id].settings
+            column = columns_map[id]
+            column_type = column.column_type
+            if column.settings_str:
+                data['settings_str'] = column.settings_str
             values.append(en.create_column_value(column_type, **data))
         return ColumnValueCollection(values)
 
