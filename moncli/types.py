@@ -84,6 +84,26 @@ class TextType(MondayType):
         return value
 
 
+class TimelineType(MondayType):
+
+    def to_native(self, value, context):
+        value = super().to_native(value, context=context)
+        return Timeline(value['from'], value['to'])
+
+    def to_primitive(self, value, context=None):
+        if not value:
+            return COMPLEX_NULL_VALUE
+        return {
+            'from': value.from_date,
+            'to': value.to_date
+        }
+
+class Timeline():
+
+        def __init__(self, from_date = None, to_date = None):
+            self.from_date = from_date
+            self.to_date = to_date
+
 class MondayTypeError(Exception):
     def __init__(self, message: str, error_code: str):
         self.error_code = error_code
