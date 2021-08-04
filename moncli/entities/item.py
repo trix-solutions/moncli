@@ -564,8 +564,7 @@ class Item(_Item):
             id = data['id']
             column = columns_map[id]
             column_type = column.column_type
-            if column.settings_str:
-                data['settings_str'] = column.settings_str
+            data['settings_str'] = column.settings_str
             values.append(en.create_column_value(column_type, **data))
         return ColumnValueCollection(values)
 
