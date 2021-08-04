@@ -4,6 +4,9 @@ from schematics.types import BaseType
 
 from moncli.entities import column_value as cv
 
+SIMPLE_NULL_VALUE = ''
+COMPLEX_NULL_VALUE = {}
+
 class MondayType(BaseType):
 
     def __init__(self, id: str = None, title: str = None, *args, **kwargs):
@@ -37,6 +40,40 @@ class CheckboxType(MondayType):
 
     def to_primitive(self, value, context = None):
         return {'checked': value}
+
+
+class NumberType(MondayType):
+
+    def to_native(self, value, context):
+        value = super().to_native(value, context=context)
+        if value == SIMPLE_NULL_VALUE:
+            return None
+        if self._isint(value):
+            return int(value)
+        if self._isfloat(value):
+            return float(value)
+
+    def to_primitive(self, value, context=None):
+        if not value:
+            return SIMPLE_NULL_VALUE
+        return str(value)
+
+    def _isfloat(self, value):
+        """Is the value a float."""
+        try:
+            float(value)
+        except ValueError:
+            return False
+        return True
+  
+    def _isint(self, value):
+        """Is the value an int."""
+        try:
+            a = float(value)
+            b = int(a)
+        except ValueError:
+            return False
+        return a == b
 
 
 class TextType(MondayType):
