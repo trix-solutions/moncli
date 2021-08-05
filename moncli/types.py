@@ -197,14 +197,19 @@ class TimelineType(MondayType):
             return value
         if isinstance(value, cv.ColumnValue):
             value = super().to_native(value, context=context)
-        return Timeline(value['from'], value['to'])
+        try:
+            return Timeline(
+                datetime.strptime(value['from'], DATE_FORMAT),
+                datetime.strptime(value['to'], DATE_FORMAT))
+        except:
+            raise MondayTypeError(message='Invalid data for timeline type: ({}).'.format(value))
 
     def to_primitive(self, value, context=None):
         if not value:
             return COMPLEX_NULL_VALUE
         return {
-            'from': value.from_date,
-            'to': value.to_date
+            'from': datetime.strftime(value.from_date, DATE_FORMAT),
+            'to': datetime.strftime(value.to_date, DATE_FORMAT)
         }
 
 
@@ -213,6 +218,12 @@ class Timeline():
     def __init__(self, from_date = None, to_date = None):
         self.from_date = from_date
         self.to_date = to_date
+
+    def __repr__(self):
+        return str({
+            'from': datetime.strftime(self.from_date, DATE_FORMAT),
+            'to': datetime.strftime(self.to_date, DATE_FORMAT)
+        })
 
 class MondayTypeError(Exception):
     def __init__(self, message: str = None, messages: dict = None, error_code: str = None):
