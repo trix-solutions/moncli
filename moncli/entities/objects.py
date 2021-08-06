@@ -365,6 +365,6 @@ class DropdownSettings(Model):
 
     def __getitem__(self, id):
         for label in list(self.labels):
-            if label.id is id:
+            if label.id == id or label.name == id:
                 return label
         raise KeyError
