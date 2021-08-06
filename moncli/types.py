@@ -299,6 +299,8 @@ class WeekType(MondayType):
     def to_native(self, value, context):
         if isinstance(value, Week):
             return value
+        if type(value) is dict:
+            return Week(value['start'], value['end'])
         value = super(WeekType, self).to_native(value, context=context)
         try:
             week_value = value['week']
