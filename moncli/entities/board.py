@@ -926,13 +926,15 @@ class Board(_Board):
         return en.Item(creds=self.__creds, **item_data)
 
 
-    def get_items(self, *args, **kwargs):
+    def get_items(self, get_column_values: bool = False, *args, **kwargs):
         """Get the board's items (rows).
 
             Parameters
 
                 args : `tuple`
                     The list of item return fields.
+                get_column_values: `bool`
+                    Flag used to include column values with the returned items.
                 kwargs : `dict`
                     The optional keyword arguments for getting items.
 
@@ -980,7 +982,16 @@ class Board(_Board):
                     Page number to get, starting at 1.
         """
         
-        args = ['items.' + arg for arg in client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)]
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['items.column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['items.id', 'items.name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
+        else:
+            args = ['items.' + arg for arg in client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)]
+
         item_kwargs = {}
         if kwargs:
             item_kwargs['items'] = kwargs
