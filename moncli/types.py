@@ -354,6 +354,7 @@ class Week():
     def __init__(self, start = None, end = None):
         self._start = start
         self._end = end
+        self._calculate_dates(start)
 
     @property
     def start(self):
