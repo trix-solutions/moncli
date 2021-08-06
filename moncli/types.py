@@ -1,5 +1,5 @@
 import json, pytz
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 from schematics.exceptions import ValidationError
 from schematics.types import BaseType
@@ -267,8 +267,7 @@ class TimelineType(MondayType):
     def to_native(self, value, context):
         if isinstance(value, Timeline):
             return value
-        if isinstance(value, cv.ColumnValue):
-            value = super().to_native(value, context=context)
+        value = super().to_native(value, context=context)
         try:
             return Timeline(
                 datetime.strptime(value['from'], DATE_FORMAT),
@@ -284,6 +283,58 @@ class TimelineType(MondayType):
             'to': datetime.strftime(value.to_date, DATE_FORMAT)
         }
 
+    def validate_timeline(self, value):
+        if type(value) is not Timeline:
+            raise ValidationError('Value is not a valid timeline type: ({}).'.format(value))
+
+    def value_changed(self, value):
+        for k in value.keys():
+            if value[k] != self.original_value[k]:
+                return True
+        return False
+
+    
+class WeekType(MondayType):
+
+    def to_native(self, value, context):
+        if isinstance(value, Week):
+            return value
+        value = super(WeekType, self).to_native(value, context=context)
+        try:
+            week_value = value['week']
+            return Week(datetime.strptime(
+                week_value['startDate'], DATE_FORMAT), 
+                datetime.strptime(week_value['startDate'], DATE_FORMAT))
+        except:
+            raise MondayTypeError(message='Invalid data for week type: ({})'.format(value))
+
+    def to_primitive(self, value, context=None):
+        if not value:
+            return COMPLEX_NULL_VALUE
+        
+        return { 
+            'week': {
+                'startDate': datetime.strftime(value.start_date, DATE_FORMAT),
+                'endDate': datetime.strftime(value.end_date, DATE_FORMAT)
+            }
+        }
+
+    def validate_week(self, value):
+        if type(value) is not Week:
+            raise ValidationError('Value is not a valid week type: ({}).'.format(value))
+        if not value.start_date:
+            raise ValidationError('Value is mssing a start date: ({}).'.format(value))
+        if not value.end_date:
+            raise ValidationError('Value is mssing an end date: ({}).'.format(value))
+            
+    def value_changed(self, value):
+        orig_week = self.original_value['week']
+        new_week = value['week']
+        for k in new_week.keys():
+            if new_week[k] != orig_week[k]:
+                return True
+        return False
+
 
 class Timeline():
 
@@ -295,6 +346,41 @@ class Timeline():
         return str({
             'from': datetime.strftime(self.from_date, DATE_FORMAT),
             'to': datetime.strftime(self.to_date, DATE_FORMAT)
+        })
+
+
+class Week():
+
+    def __init__(self, start_date = None, end_date = None):
+        self._start_date = start_date
+        self._end_date = end_date
+
+    @property
+    def start_date(self):
+        return self._start_date
+
+    @start_date.setter
+    def start_date(self, value):
+        self._calculate_dates(value)
+
+    @property
+    def end_date(self):
+        return self._end_date
+
+    @end_date.setter
+    def end_date(self, value):
+        return self._calculate_dates(value)
+
+    def _calculate_dates(self, value):
+        if not value:
+            return value   
+        self._start_date = value - timedelta(days=value.weekday())
+        self._end_date = self._start_date + timedelta(days=6)
+
+    def __repr__(self):
+        return str({
+            'startDate': self.start_date,
+            'endDate': self.end_date
         })
 
 class MondayTypeError(Exception):
