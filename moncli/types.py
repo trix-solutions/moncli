@@ -1,5 +1,5 @@
 import json, pytz
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 
 from schematics.exceptions import ValidationError
 from schematics.types import BaseType
