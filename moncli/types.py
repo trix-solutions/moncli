@@ -314,17 +314,17 @@ class WeekType(MondayType):
         
         return { 
             'week': {
-                'startDate': datetime.strftime(value.start_date, DATE_FORMAT),
-                'endDate': datetime.strftime(value.end_date, DATE_FORMAT)
+                'startDate': datetime.strftime(value.start, DATE_FORMAT),
+                'endDate': datetime.strftime(value.end, DATE_FORMAT)
             }
         }
 
     def validate_week(self, value):
         if type(value) is not Week:
             raise ValidationError('Value is not a valid week type: ({}).'.format(value))
-        if not value.start_date:
+        if not value.start:
             raise ValidationError('Value is mssing a start date: ({}).'.format(value))
-        if not value.end_date:
+        if not value.end:
             raise ValidationError('Value is mssing an end date: ({}).'.format(value))
             
     def value_changed(self, value):
