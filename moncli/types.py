@@ -351,36 +351,36 @@ class Timeline():
 
 class Week():
 
-    def __init__(self, start_date = None, end_date = None):
-        self._start_date = start_date
-        self._end_date = end_date
+    def __init__(self, start = None, end = None):
+        self._start = start
+        self._end = end
 
     @property
-    def start_date(self):
-        return self._start_date
+    def start(self):
+        return self._start
 
-    @start_date.setter
-    def start_date(self, value):
+    @start.setter
+    def start(self, value):
         self._calculate_dates(value)
 
     @property
-    def end_date(self):
-        return self._end_date
+    def end(self):
+        return self._end
 
-    @end_date.setter
-    def end_date(self, value):
+    @end.setter
+    def end(self, value):
         return self._calculate_dates(value)
 
     def _calculate_dates(self, value):
         if not value:
             return value   
-        self._start_date = value - timedelta(days=value.weekday())
-        self._end_date = self._start_date + timedelta(days=6)
+        self._start = value - timedelta(days=value.weekday())
+        self._end = self._start + timedelta(days=6)
 
     def __repr__(self):
         return str({
-            'startDate': self.start_date,
-            'endDate': self.end_date
+            'startDate': self._start,
+            'endDate': self._end
         })
 
 class MondayTypeError(Exception):
