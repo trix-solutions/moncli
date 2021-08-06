@@ -1,5 +1,5 @@
 import json, pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from schematics.exceptions import ValidationError
 from schematics.types import BaseType
@@ -72,6 +72,52 @@ class CheckboxType(MondayType):
         if type(value) is not bool:
             raise ValidationError('Value is not a valid checkbox type: ({}).'.format(value))
 
+
+class DateType(MondayType):
+
+    def to_native(self, value, context):
+        value = super().to_native(value, context=context)
+        try:
+            self.metadata['changed_at'] = self._get_local_changed_at(value['changed_at'])
+        except:
+            pass
+
+        try:
+            date = datetime.strptime(value['date'], DATE_FORMAT)
+            utc = pytz.timezone('UTC')
+            date = utc.localize(date)
+        except:
+            return None
+
+        try:
+            time = datetime.strptime(value['time'], TIME_FORMAT)
+            date = date + timedelta(hours=time.hour, minutes=time.minute, seconds=time.second)
+        except:
+            time = None
+        
+        return date.astimezone(datetime.now().astimezone().tzinfo)
+
+    def to_primitive(self, value, context=None):
+        value = value.astimezone(pytz.timezone('UTC'))
+        date = datetime.strftime(value, DATE_FORMAT)
+        time = datetime.strftime(value, TIME_FORMAT)
+        if time == '00:00:00':
+            time = None
+
+        return {
+            'date': date,
+            'time': time
+        }
+
+    def validate_date(self, value):
+        if not isinstance(value, datetime):
+            raise ValidationError('Invalid datetime type.')
+
+    def value_changed(self, value):
+        for k, v in value.items():
+            if self.original_value[k] != v:
+                return True
+        return False
 
 class ItemLinkType(MondayType):
 
