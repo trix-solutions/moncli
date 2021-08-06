@@ -648,6 +648,8 @@ class MondayClient():
 
                 args : `tuple`
                     The list of item return fields.
+                get_column_values: `bool`
+                    Flag used to include column values with the returned items.
                 kwargs : `dict`
                     Optional keyword arguments for querying items.
 
