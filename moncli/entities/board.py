@@ -1109,10 +1109,8 @@ class Board(_Board):
         elif title is not None:
             column = [column for column in columns.values() if column.title == title][0]
 
-        column_type = column.column_type  
-        if column_type == enums.ColumnType.status or column_type == enums.ColumnType.dropdown:
-            return cv.create_column_value(column_type, id=column.id, title=column.title, settings=column.settings, **kwargs)     
-        return cv.create_column_value(column_type, id=column.id, title=column.title, **kwargs)
+        column_type = column.column_type      
+        return cv.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
 
 
     def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):
