@@ -80,9 +80,14 @@ class ItemLinkType(MondayType):
     def to_native(self, value, context = None):
         if not isinstance(value, cv.ColumnValue):
             return value
+
         value = super().to_native(value, context=context)
-        self.metadata['changed_at'] = self._get_local_changed_at(value['changed_at'])
+        try:
+            self.metadata['changed_at'] = self._get_local_changed_at(value['changed_at'])
+        except:
+            pass
         self.original_value = [str(id['linkedPulseId']) for id in value['linkedPulseIds']]
+        
         if not self._allow_multiple_values():
             try:
                 return self.original_value[0]
