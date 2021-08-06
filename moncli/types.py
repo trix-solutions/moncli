@@ -84,20 +84,13 @@ class DateType(MondayType):
         except:
             pass
 
-        try:
-            date = datetime.strptime(value['date'], DATE_FORMAT)
-            utc = pytz.timezone('UTC')
-            date = utc.localize(date)
-        except:
-            return None
-
-        try:
+        date = datetime.strptime(value['date'], DATE_FORMAT) 
+        if value['time'] != None:
+            date = pytz.timezone('UTC').localize(date)
             time = datetime.strptime(value['time'], TIME_FORMAT)
             date = date + timedelta(hours=time.hour, minutes=time.minute, seconds=time.second)
-        except:
-            time = None
-        
-        return date.astimezone(datetime.now().astimezone().tzinfo)
+            return date.astimezone(datetime.now().astimezone().tzinfo)
+        return date
 
     def to_primitive(self, value, context=None):
         pre_time = datetime.strftime(value, TIME_FORMAT)
@@ -213,6 +206,35 @@ class NumberType(MondayType):
         except ValueError:
             return False
         return a == b
+
+
+class StatusType(MondayType):
+
+    def __init__(self, id: str = None, title: str = None, data_mapping: dict = None, *args, **kwargs):
+        self._data_mapping = data_mapping
+        super(StatusType, self).__init__(id=id, title=title, *args, **kwargs)
+
+    def to_native(self, value, context = None):
+        if not isinstance(value, cv.ColumnValue):
+            return value
+        super(StatusType, self).to_native(value, context)
+        if not self._data_mapping:
+            return value.text
+
+    def to_primitive(self, value, context = None):
+        if not self._data_mapping:
+            for k, v in self.metadata['labels'].items():
+                if value == v:
+                    return {'index': int(k)}
+
+    def validate_status(self, value):
+        if not self._data_mapping:
+            if value not in self.metadata['labels'].values():
+                raise ValidationError('Unable to find index for status label: ({}).'.format(value))
+
+    def value_changed(self, value):
+        if not self._data_mapping:
+            return self.original_value['index'] != value['index']
 
 
 class TextType(MondayType):
