@@ -892,6 +892,8 @@ class StatusValue(ColumnValue):
         try:
             if self.additional_info:
                 return loads(self.additional_info)['label']
+            else:
+                return self.text
         except:
             pass
 
@@ -903,6 +905,7 @@ class StatusValue(ColumnValue):
             index=self.__settings.get_index(label)
             if index or index == 0:
                 self.set_value(index=index, label=label)
+                self.text = label
             else:
                 raise StatusLabelError(label)
         else:
