@@ -28,7 +28,8 @@ COLUMN_TYPE_MAPPINGS = {
     'week': ColumnType.week,
     'timezone': ColumnType.world_clock,
     'file': ColumnType.file,
-    'board-relation': ColumnType.board_relation
+    'board-relation': ColumnType.board_relation,
+    'subtasks': ColumnType.subitems
 }
 
 class MondayClientCredentials():

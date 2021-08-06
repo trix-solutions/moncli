@@ -34,7 +34,8 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.world_clock: 'TimezoneValue',
     ColumnType.week: 'WeekValue',
     ColumnType.file: 'FileValue',
-    ColumnType.board_relation : 'ItemLinkValue'
+    ColumnType.board_relation : 'ItemLinkValue',
+    ColumnType.subitems : 'SubitemsValue'
 }
 
 class _ColumnValue(Model):
@@ -1201,7 +1202,6 @@ class WeekValue(ColumnValue):
             return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
         return self.null_value
 
-
     def set_value(self, *args, **kwargs):
         """Set week column value.
         
@@ -1269,7 +1269,6 @@ class ItemLinkValue(ColumnValue):
         ids.append(str(item_id))
         self.value = dumps({'linkedPulseIds': [{'linkedPulseId': int(id)} for id in ids]})
 
-
     def remove_item(self, item_id: str):
         """Remove item from link list.
 
@@ -1285,10 +1284,37 @@ class ItemLinkValue(ColumnValue):
         ids = [id for id in self.item_ids if id != item_id]
         self.value = dumps({'linkedPulseIds': [{'linkedPulseId': int(id)} for id in ids]})
 
-    
     def format(self):
         """Format for column value update."""
         return {'item_ids': [int(id) for id in self.item_ids]}
+
+
+class SubitemsValue(ColumnValue):
+    """An item link column value.
+    
+    Properties
+
+        item_ids : `list[str]`
+            The list of linked items unique identifiers.
+        settings: `dict`
+            The link value settings as a dictionary.
+    """
+
+    @property
+    def item_ids(self):
+        """List of linked items unique identifiers."""
+        try:
+            return [str(id['linkedPulseId']) for id in loads(self.value)['linkedPulseIds']]
+        except:
+            return []
+
+    @property
+    def settings(self):
+        return loads(self.__settings)
+
+    def format(self):
+        """Format for column value update."""
+        raise ColumnValueIsReadOnly(self.id, self.title)
         
 
 class ReadonlyValue(ColumnValue):
