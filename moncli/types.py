@@ -220,21 +220,29 @@ class StatusType(MondayType):
         super(StatusType, self).to_native(value, context)
         if not self._data_mapping:
             return value.text
+        try:
+            return self._data_mapping[value.text]
+        except:
+            return None
 
     def to_primitive(self, value, context = None):
-        if not self._data_mapping:
-            for k, v in self.metadata['labels'].items():
-                if value == v:
-                    return {'index': int(k)}
+        if self._data_mapping:
+            reverse = {v: k for k, v in self._data_mapping.items()}
+            value = reverse[value]
+        for k, v in self.metadata['labels'].items():
+            if value == v:
+                return {'index': int(k)}
+        return self.original_value
 
     def validate_status(self, value):
-        if not self._data_mapping:
-            if value not in self.metadata['labels'].values():
-                raise ValidationError('Unable to find index for status label: ({}).'.format(value))
+        if self._data_mapping:
+            reverse = {v: k for k, v in self._data_mapping.items()}
+            value = reverse[value]
+        if value not in self.metadata['labels'].values():
+            raise ValidationError('Unable to find index for status label: ({}).'.format(value))
 
     def value_changed(self, value):
-        if not self._data_mapping:
-            return self.original_value['index'] != value['index']
+        return self.original_value['index'] != value['index']
 
 
 class TextType(MondayType):
