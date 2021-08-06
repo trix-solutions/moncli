@@ -994,13 +994,15 @@ class Board(_Board):
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
 
 
-    def get_items_by_column_values(self, column_value: en.ColumnValue, *args, **kwargs):
+    def get_items_by_column_values(self, column_value: en.ColumnValue, get_column_values: bool = False, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters
 
                 column_value : `moncli.entites.ColumnValue`
                     The column value to search on.
+                get_column_values: `bool`
+                    Flag used to include column values with the returned items.
                 args : `tuple`
                     The list of item return fields.
                 kwargs : `dict`
@@ -1055,6 +1057,13 @@ class Board(_Board):
                 state : `moncli.enumns.State`
                     The state of the item (all / active / archived / deleted), the default is active.
         """
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['id', 'name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
 
         if type(column_value) == cv.DateValue:
             value = column_value.date
@@ -1071,7 +1080,7 @@ class Board(_Board):
             *args,
             **kwargs)
 
-        return [en.Item(creds=self.__creds, **item_data) for item_data in items_data]
+        return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data]
 
 
     def get_column_values(self):
