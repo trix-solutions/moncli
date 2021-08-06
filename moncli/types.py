@@ -76,6 +76,8 @@ class CheckboxType(MondayType):
 class DateType(MondayType):
 
     def to_native(self, value, context):
+        if not isinstance(value, cv.ColumnValue):
+            return value
         value = super().to_native(value, context=context)
         try:
             self.metadata['changed_at'] = self._get_local_changed_at(value['changed_at'])
@@ -98,11 +100,13 @@ class DateType(MondayType):
         return date.astimezone(datetime.now().astimezone().tzinfo)
 
     def to_primitive(self, value, context=None):
-        value = value.astimezone(pytz.timezone('UTC'))
-        date = datetime.strftime(value, DATE_FORMAT)
-        time = datetime.strftime(value, TIME_FORMAT)
-        if time == '00:00:00':
+        pre_time = datetime.strftime(value, TIME_FORMAT)
+        if pre_time == '00:00:00':
             time = None
+        value = value.astimezone(pytz.timezone('UTC'))
+        date = datetime.strftime(value, DATE_FORMAT)   
+        if time:
+            time = datetime.strftime(value, TIME_FORMAT)
 
         return {
             'date': date,
