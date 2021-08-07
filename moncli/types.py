@@ -374,11 +374,16 @@ class Week():
     def end(self, value):
         return self._calculate_dates(value)
 
+    @property
+    def week_number(self):
+        return self._week_number
+
     def _calculate_dates(self, value):
         if not value:
             return value   
         self._start = value - timedelta(days=value.weekday())
         self._end = self._start + timedelta(days=6)
+        self._week_number = self._start.isocalendar()[1]
 
     def __repr__(self):
         return str({
