@@ -1,4 +1,4 @@
-import json
+import json, warnings
 
 from schematics.models import Model
 from schematics.types import StringType, BooleanType, IntType, DictType, ListType, ModelType
@@ -28,7 +28,8 @@ COLUMN_TYPE_MAPPINGS = {
     'week': ColumnType.week,
     'timezone': ColumnType.world_clock,
     'file': ColumnType.file,
-    'board-relation': ColumnType.board_relation
+    'board-relation': ColumnType.board_relation,
+    'subtasks': ColumnType.subitems
 }
 
 class MondayClientCredentials():
@@ -138,6 +139,7 @@ class Column(Model):
 
     @property
     def settings(self):
+        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
         if not self.settings_str:
             return None
         settings_obj = json.loads(self.settings_str)
@@ -145,6 +147,8 @@ class Column(Model):
             return StatusSettings(settings_obj, strict=False)
         elif self.column_type is ColumnType.dropdown:
             return DropdownSettings(settings_obj, strict=False)
+        else:
+            return settings_obj
     
     @property
     def column_type(self):
@@ -277,6 +281,10 @@ class StatusSettings(Model):
             Get the label ID from the label value.
     """
 
+    def __init__(self, raw_data, **kwargs):
+        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
+        super(StatusSettings, self).__init__(raw_data=raw_data, **kwargs)
+
     labels = DictType(StringType())
     labels_colors = DictType(DictType(StringType()))
     labels_positions_v2 = DictType(StringType())
@@ -320,6 +328,10 @@ class DropdownLabel(Model):
             The label name.
     """
 
+    def __init__(self, raw_data, **kwargs):
+        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
+        super(DropdownLabel, self).__init__(raw_data=raw_data, **kwargs)
+
     id = IntType(required=True)
     name = StringType(required=True)
 
@@ -335,6 +347,10 @@ class DropdownSettings(Model):
         labels : `list[moncli.entities.DropdownLabel]`
             The dropdown column's list of labels. 
     """
+
+    def __init__(self, raw_data, **kwargs):
+        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
+        super(DropdownSettings, self).__init__(raw_data=raw_data, **kwargs)
     
     labels = ListType(ModelType(DropdownLabel))
     hide_footer = BooleanType(default=False)
@@ -349,6 +365,6 @@ class DropdownSettings(Model):
 
     def __getitem__(self, id):
         for label in list(self.labels):
-            if label.id is id:
+            if label.id == id or label.name == id:
                 return label
         raise KeyError

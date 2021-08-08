@@ -5,6 +5,7 @@ from json import dumps, loads
 from pycountry import countries
 from pytz import timezone, exceptions as tzex
 from schematics.models import Model
+from schematics.transforms import blacklist
 from schematics.types import StringType
 
 from .. import entities as en, ColumnType, PeopleKind
@@ -34,7 +35,8 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.world_clock: 'TimezoneValue',
     ColumnType.week: 'WeekValue',
     ColumnType.file: 'FileValue',
-    ColumnType.board_relation : 'ItemLinkValue'
+    ColumnType.board_relation : 'ItemLinkValue',
+    ColumnType.subitems : 'SubitemsValue'
 }
 
 class _ColumnValue(Model):
@@ -45,6 +47,10 @@ class _ColumnValue(Model):
     text = StringType()
     value = StringType()
     additional_info = StringType()
+    settings_str = StringType()
+
+    class Options:
+        roles = {'default': blacklist('settings_str')}
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -70,6 +76,8 @@ class ColumnValue(_ColumnValue):
             The column's type.
         value : `json`
             The column's value in json format.
+        settings_str: `str`
+            The column's unique settings.
 
     Methods
 
@@ -337,11 +345,11 @@ class DropdownValue(ColumnValue):
     """
 
     def __init__(self, **kwargs):
-        try:
-            self.__settings = kwargs.pop('settings')
-        except KeyError:
-            raise ColumnValueSettingsError('dropdown')
         super(DropdownValue, self).__init__(**kwargs)
+        try:
+            self.__settings = en.DropdownSettings(loads(self.settings_str), strict=False)
+        except TypeError:
+            raise ColumnValueSettingsError('dropdown')
 
     @property
     def labels(self):
@@ -858,11 +866,11 @@ class StatusValue(ColumnValue):
     """
 
     def __init__(self, **kwargs):
-        try:
-            self.__settings = kwargs.pop('settings')
-        except KeyError:
-            raise ColumnValueSettingsError('status')
         super(StatusValue, self).__init__(**kwargs)
+        try:
+            self.__settings = en.StatusSettings(loads(self.settings_str), strict=False)
+        except TypeError:
+            raise ColumnValueSettingsError('status')
 
     @property
     def index(self):
@@ -889,6 +897,8 @@ class StatusValue(ColumnValue):
         try:
             if self.additional_info:
                 return loads(self.additional_info)['label']
+            else:
+                return self.text
         except:
             pass
 
@@ -900,6 +910,7 @@ class StatusValue(ColumnValue):
             index=self.__settings.get_index(label)
             if index or index == 0:
                 self.set_value(index=index, label=label)
+                self.text = label
             else:
                 raise StatusLabelError(label)
         else:
@@ -1195,7 +1206,6 @@ class WeekValue(ColumnValue):
             return { 'week': { 'startDate': self.start_date, 'endDate': self.end_date }}
         return self.null_value
 
-
     def set_value(self, *args, **kwargs):
         """Set week column value.
         
@@ -1236,7 +1246,6 @@ class ItemLinkValue(ColumnValue):
     """
 
     def __init__(self, **kwargs):
-        self.__settings = kwargs.pop('settings', None)
         super(ItemLinkValue, self).__init__(**kwargs)
 
     @property
@@ -1264,7 +1273,6 @@ class ItemLinkValue(ColumnValue):
         ids.append(str(item_id))
         self.value = dumps({'linkedPulseIds': [{'linkedPulseId': int(id)} for id in ids]})
 
-
     def remove_item(self, item_id: str):
         """Remove item from link list.
 
@@ -1280,10 +1288,37 @@ class ItemLinkValue(ColumnValue):
         ids = [id for id in self.item_ids if id != item_id]
         self.value = dumps({'linkedPulseIds': [{'linkedPulseId': int(id)} for id in ids]})
 
-    
     def format(self):
         """Format for column value update."""
         return {'item_ids': [int(id) for id in self.item_ids]}
+
+
+class SubitemsValue(ColumnValue):
+    """An item link column value.
+    
+    Properties
+
+        item_ids : `list[str]`
+            The list of linked items unique identifiers.
+        settings: `dict`
+            The link value settings as a dictionary.
+    """
+
+    @property
+    def item_ids(self):
+        """List of linked items unique identifiers."""
+        try:
+            return [str(id['linkedPulseId']) for id in loads(self.value)['linkedPulseIds']]
+        except:
+            return []
+
+    @property
+    def settings(self):
+        return loads(self.__settings)
+
+    def format(self):
+        """Format for column value update."""
+        raise ColumnValueIsReadOnly(self.id, self.title)
         
 
 class ReadonlyValue(ColumnValue):

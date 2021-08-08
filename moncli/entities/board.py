@@ -751,7 +751,7 @@ class Board(_Board):
 
         return en.Group(
             creds=self.__creds,
-            board_id=self.id,
+            __board=self,
             **group_data)
 
 
@@ -804,7 +804,7 @@ class Board(_Board):
             ids=[int(self.id)],
             **group_kwargs)[0]['groups']
 
-        return [en.Group(creds=self.__creds, board_id=self.id, **data) for data in groups_data]
+        return [en.Group(creds=self.__creds, __board=self, **data) for data in groups_data]
   
 
     def get_group(self, id: str = None, title: str = None, *args):
@@ -923,16 +923,18 @@ class Board(_Board):
             *args, 
             **kwargs)
 
-        return en.Item(creds=self.__creds, **item_data)
+        return en.Item(creds=self.__creds, __board=self, **item_data)
 
 
-    def get_items(self, *args, **kwargs):
+    def get_items(self, get_column_values: bool = False, *args, **kwargs):
         """Get the board's items (rows).
 
             Parameters
 
                 args : `tuple`
                     The list of item return fields.
+                get_column_values: `bool`
+                    Flag used to include column values with the returned items.
                 kwargs : `dict`
                     The optional keyword arguments for getting items.
 
@@ -980,7 +982,16 @@ class Board(_Board):
                     Page number to get, starting at 1.
         """
         
-        args = ['items.' + arg for arg in client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)]
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['items.column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['items.id', 'items.name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
+        else:
+            args = ['items.' + arg for arg in client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)]
+
         item_kwargs = {}
         if kwargs:
             item_kwargs['items'] = kwargs
@@ -991,16 +1002,18 @@ class Board(_Board):
             ids=[int(self.id)],
             **item_kwargs)[0]['items']
 
-        return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
+        return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data] 
 
 
-    def get_items_by_column_values(self, column_value: en.ColumnValue, *args, **kwargs):
+    def get_items_by_column_values(self, column_value: en.ColumnValue, get_column_values: bool = False, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters
 
                 column_value : `moncli.entites.ColumnValue`
                     The column value to search on.
+                get_column_values: `bool`
+                    Flag used to include column values with the returned items.
                 args : `tuple`
                     The list of item return fields.
                 kwargs : `dict`
@@ -1056,6 +1069,14 @@ class Board(_Board):
                     The state of the item (all / active / archived / deleted), the default is active.
         """
 
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['id', 'name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
+
         if type(column_value) == cv.DateValue:
             value = column_value.date
         elif type(column_value) == cv.StatusValue:
@@ -1071,7 +1092,7 @@ class Board(_Board):
             *args,
             **kwargs)
 
-        return [en.Item(creds=self.__creds, **item_data) for item_data in items_data]
+        return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data]
 
 
     def get_column_values(self):
@@ -1109,10 +1130,8 @@ class Board(_Board):
         elif title is not None:
             column = [column for column in columns.values() if column.title == title][0]
 
-        column_type = column.column_type  
-        if column_type == enums.ColumnType.status or column_type == enums.ColumnType.dropdown:
-            return cv.create_column_value(column_type, id=column.id, title=column.title, settings=column.settings, **kwargs)     
-        return cv.create_column_value(column_type, id=column.id, title=column.title, **kwargs)
+        column_type = column.column_type      
+        return cv.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
 
 
     def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):

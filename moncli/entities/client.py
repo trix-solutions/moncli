@@ -1,3 +1,4 @@
+from types import new_class
 from .. import api_v2 as client, enums, entities as en
 from ..api_v2 import constants
 
@@ -640,13 +641,15 @@ class MondayClient():
         return [en.asset.Asset(**data) for data in assets_data]
 
 
-    def get_items(self, *args, **kwargs):
+    def get_items(self, get_column_values = None, *args, **kwargs):
         """Get a collection of items.
 
             Parameters
 
                 args : `tuple`
                     The list of item return fields.
+                get_column_values: `bool`
+                    Flag used to include column values with the returned items.
                 kwargs : `dict`
                     Optional keyword arguments for querying items.
 
@@ -695,6 +698,14 @@ class MondayClient():
                 newest_first : `bool`
                     Get the recently created items at the top of the list.
         """
+
+        if get_column_values:
+            new_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            new_args.extend(['id', 'name'])
+            args = list(args)
+            for arg in new_args:
+                if arg not in args:
+                    args.append(arg)
 
         if kwargs.__contains__('ids'):
             kwargs['ids'] = [int(id) for id in kwargs['ids']]
