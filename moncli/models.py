@@ -1,3 +1,6 @@
+import importlib
+
+from schematics.exceptions import DataError
 from schematics.models import Model
 
 from .entities import Item, ColumnValue
@@ -6,6 +9,10 @@ class MondayModel(Model):
 
     def __init__(self, item: Item = None, raw_data: dict = None, *args, **kwargs):
         
+        self._item = item
+        self._module = self.__module__
+        self._class = self.__class__.__name__
+
         if item:
             self.id = item.id
             self.name = item.name
@@ -46,6 +53,19 @@ class MondayModel(Model):
                 result[field] = value
 
         return result
+
+    def save(self):
+        if not self._item:
+            raise MondayModelError('Unable to save model without monday.com item information.')
+        
+        try:
+            self.validate()
+        except DataError as ex:
+            raise MondayModelError(ex.messages)
+
+        column_values = self.to_primitive(diff_only=True)
+        self._item = self._item.change_multiple_column_values(column_values, get_column_values=True)
+        return getattr(importlib.import_module(self._module), self._class)(self._item)
 
 
 class MondayModelError(Exception):
