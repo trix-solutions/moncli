@@ -1068,6 +1068,7 @@ class Board(_Board):
                 state : `moncli.enumns.State`
                     The state of the item (all / active / archived / deleted), the default is active.
         """
+
         if get_column_values:
             args = list(args)
             column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
