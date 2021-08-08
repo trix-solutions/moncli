@@ -341,11 +341,11 @@ class DropdownValue(ColumnValue):
     """
 
     def __init__(self, **kwargs):
+        super(DropdownValue, self).__init__(**kwargs)
         try:
-            self.__settings = self.__settings = en.DropdownSettings(kwargs.pop('settings_str'), strict=False)
+            self.__settings = en.DropdownSettings(loads(self.settings_str), strict=False)
         except KeyError:
             raise ColumnValueSettingsError('dropdown')
-        super(DropdownValue, self).__init__(**kwargs)
 
     @property
     def labels(self):
