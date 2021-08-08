@@ -127,7 +127,10 @@ class ItemLinkType(MondayType):
             self.metadata['changed_at'] = self._get_local_changed_at(value['changed_at'])
         except:
             pass
-        self.original_value = [id['linkedPulseId'] for id in value['linkedPulseIds']]
+        try:
+            self.original_value = [id['linkedPulseId'] for id in value['linkedPulseIds']]
+        except:
+            self.original_value = []
         
         if not self._allow_multiple_values():
             try:
