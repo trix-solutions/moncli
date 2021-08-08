@@ -3,7 +3,7 @@ import importlib
 from schematics.exceptions import DataError
 from schematics.models import Model
 
-from .entities import Item, ColumnValue
+from .entities import Item
 
 class MondayModel(Model):
 
