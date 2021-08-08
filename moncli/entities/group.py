@@ -50,12 +50,14 @@ class Group(_Group):
     """
 
     def __init__(self, **kwargs):
-        self.__creds = kwargs.pop('creds')
-        self.__board_id = kwargs.pop('board_id')
-        self.__items = None
+        self.__creds = kwargs.pop('creds', None)
+        self.__board = kwargs.pop('__board', None)
+        self.__items = kwargs.pop('__items', None)
+
         items = kwargs.pop('items', None)
-        if items:
+        if items != None and not self.__items:
             self.__items = [en.Item(creds=self.__creds, **items)]
+
         super(Group, self).__init__(kwargs)
     
     def __repr__(self):
@@ -112,13 +114,13 @@ class Group(_Group):
 
         group_data = client.duplicate_group(
             self.__creds.api_key_v2, 
-            self.__board_id, 
+            self.__board.id, 
             self.id, 
             *args,
             **kwargs)
         return Group(
             creds=self.__creds,
-            board_id=self.__board_id,
+            __board=self.__board.id,
             **group_data)
 
 
@@ -155,12 +157,12 @@ class Group(_Group):
 
         group_data = client.archive_group(
             self.__creds.api_key_v2,
-            self.__board_id,
+            self.__board.id,
             self.id, 
             *args)
         return Group(
             creds=self.__creds,
-            board_id=self.__board_id,
+            __board=self.__board,
             **group_data)
 
 
@@ -197,12 +199,12 @@ class Group(_Group):
 
         group_data = client.delete_group(
             self.__creds.api_key_v2,
-            self.__board_id,
+            self.__board,
             self.id, 
             *args)
         return Group(
             creds=self.__creds,
-            board_id=self.__board_id,
+            __board=self.__board,
             **group_data)
 
 
@@ -261,7 +263,7 @@ class Group(_Group):
         item_data = client.create_item(
             self.__creds.api_key_v2,
             item_name,
-            self.__board_id, 
+            self.__board.id, 
             *args,
             group_id=self.id,
             **kwargs)
@@ -341,7 +343,7 @@ class Group(_Group):
         items_data = client.get_boards(
             self.__creds.api_key_v2, 
             *args,
-            ids=[int(self.__board_id)],
+            ids=[int(self.__board.id)],
             limit=1,
             **group_kwargs)[0]['groups'][0]['items']
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data]

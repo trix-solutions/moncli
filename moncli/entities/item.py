@@ -440,7 +440,7 @@ class Item(_Item):
             self.__creds.api_key_v2,
             *args,
             ids=[int(self.id)])[0]['group']
-        return en.Group(creds=self.__creds, board_id=self.board.id, **group_data)
+        return en.Group(creds=self.__creds, __board=self, **group_data)
 
 
     def get_creator(self, *args):

@@ -751,7 +751,7 @@ class Board(_Board):
 
         return en.Group(
             creds=self.__creds,
-            board_id=self.id,
+            __board=self,
             **group_data)
 
 
@@ -804,7 +804,7 @@ class Board(_Board):
             ids=[int(self.id)],
             **group_kwargs)[0]['groups']
 
-        return [en.Group(creds=self.__creds, board_id=self.id, **data) for data in groups_data]
+        return [en.Group(creds=self.__creds, __board=self, **data) for data in groups_data]
   
 
     def get_group(self, id: str = None, title: str = None, *args):
@@ -923,7 +923,7 @@ class Board(_Board):
             *args, 
             **kwargs)
 
-        return en.Item(creds=self.__creds, **item_data)
+        return en.Item(creds=self.__creds, __board=self, **item_data)
 
 
     def get_items(self, get_column_values: bool = False, *args, **kwargs):
@@ -1002,7 +1002,7 @@ class Board(_Board):
             ids=[int(self.id)],
             **item_kwargs)[0]['items']
 
-        return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
+        return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data] 
 
 
     def get_items_by_column_values(self, column_value: en.ColumnValue, get_column_values: bool = False, *args, **kwargs):
