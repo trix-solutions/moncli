@@ -108,7 +108,7 @@ class Item(_Item):
 
         super(Item, self).__init__(kwargs)
 
-        if assets and not self.__assets:
+        if assets != None and not self.__assets:
             self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
         if board and not self.__board:
             self.__board = en.Board(creds=self.__creds, **board)
@@ -116,13 +116,13 @@ class Item(_Item):
             self.__group = en.Group(creds=self.__creds, board_id=self.board.id, **group)
         if creator and not self.__creator:
             self.__creator = en.User(creds=self.__creds, **creator)
-        if column_values and len(self.__column_values) == 0:
+        if column_values != None and len(self.__column_values) == 0:
             #Column values are a process around here...
             columns_map = { column.id: column for column in self.board.columns }
             for data in column_values:
                 column = columns_map[data['id']]
                 self.__column_values.append(en.create_column_value(column.column_type, settings_str=column.settings_str, **data))
-        if updates and not self.__updates:
+        if updates != None and not self.__updates:
             self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
 
     def __repr__(self):
