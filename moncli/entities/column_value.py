@@ -5,6 +5,7 @@ from json import dumps, loads
 from pycountry import countries
 from pytz import timezone, exceptions as tzex
 from schematics.models import Model
+from schematics.transforms import blacklist
 from schematics.types import StringType
 
 from .. import entities as en, ColumnType, PeopleKind
@@ -47,6 +48,9 @@ class _ColumnValue(Model):
     value = StringType()
     additional_info = StringType()
     settings_str = StringType()
+
+    class Options:
+        roles = {'default': blacklist('settings_str')}
 
     def __repr__(self):
         return str(self.to_primitive())
@@ -344,7 +348,7 @@ class DropdownValue(ColumnValue):
         super(DropdownValue, self).__init__(**kwargs)
         try:
             self.__settings = en.DropdownSettings(loads(self.settings_str), strict=False)
-        except KeyError:
+        except TypeError:
             raise ColumnValueSettingsError('dropdown')
 
     @property
@@ -865,7 +869,7 @@ class StatusValue(ColumnValue):
         super(StatusValue, self).__init__(**kwargs)
         try:
             self.__settings = en.StatusSettings(loads(self.settings_str), strict=False)
-        except KeyError:
+        except TypeError:
             raise ColumnValueSettingsError('status')
 
     @property

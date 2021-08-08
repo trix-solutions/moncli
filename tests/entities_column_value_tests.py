@@ -346,7 +346,7 @@ def test_should_return_empty_dropdown_column_value():
     id = 'dropdown_2'
     column_type = ColumnType.dropdown
     title = 'Dropdown Two'
-    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({'labels': []}))
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings_str=json.dumps({'labels': []}))
 
     # Act
     format = column_value.format()
@@ -364,7 +364,7 @@ def test_should_raise_dropdown_label_error_when_adding_label():
     id = 'dropdown_3'
     column_type = ColumnType.dropdown
     title = 'Dropdown Three'
-    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings_str=json.dumps({
         'labels': [
             {'id': 1, 'name': 'Label 1'}
         ]
@@ -382,7 +382,7 @@ def test_should_raise_dropdown_label_set_error():
     column_type = ColumnType.dropdown
     title = 'Dropdown Four'
     ids = {'ids': [1]}
-    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(ids), settings=en.objects.DropdownSettings({
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(ids), settings_str=json.dumps({
         'labels': [
             {'id': 1, 'name': 'Label 1'}
         ]
@@ -398,7 +398,7 @@ def test_should_add_label_to_dropdown_column_value():
     id = 'dropdown_5'
     column_type = ColumnType.dropdown
     title = 'Dropdown Five'
-    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings_str=json.dumps({
         'labels': [
             {'id': 1, 'name': 'Label 1'}
         ]
@@ -421,7 +421,7 @@ def test_should_raise_dropdown_label_error_when_removing_label():
     id = 'dropdown_6'
     column_type = ColumnType.dropdown
     title = 'Dropdown Six'
-    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings_str=json.dumps({
         'labels': [
             {'id': 1, 'name': 'Label 1'}
         ]
@@ -438,7 +438,7 @@ def test_should_raise_dropdown_label_not_set_error():
     id = 'dropdown_7'
     column_type = ColumnType.dropdown
     title = 'Dropdown Seven'
-    column_value = cv.create_column_value(column_type, id=id, title=title, settings=en.objects.DropdownSettings({
+    column_value = cv.create_column_value(column_type, id=id, title=title, settings_str=json.dumps({
         'labels': [
             {'id': 1, 'name': 'Label 1'}
         ]
@@ -455,7 +455,7 @@ def test_should_remove_label_to_dropdown_column_value():
     column_type = ColumnType.dropdown
     title = 'Dropdown Eight'
     ids = {'ids': [1]}
-    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(ids), settings=en.objects.DropdownSettings({
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=json.dumps(ids), settings_str=json.dumps({
         'labels': [
             {'id': 1, 'name': 'Label 1'}
         ]
@@ -1241,7 +1241,7 @@ def test_should_return_empty_status_column_value():
     id = 'status_1'
     column_type = ColumnType.status
     title = 'Status One'
-    column_value = cv.create_column_value(column_type, id=id, title=title, additional_info=json.dumps({}), settings=None)
+    column_value = cv.create_column_value(column_type, id=id, title=title, additional_info=json.dumps({}), settings_str='{}')
 
     # Act
     format = column_value.format()
@@ -1266,7 +1266,7 @@ def test_should_raise_status_index_error_when_setting_index():
         id=id, 
         title=title, 
         additional_info=json.dumps({'label': label}), 
-        settings=en.objects.StatusSettings({'labels': {'2': label}}))
+        settings_str=json.dumps({'labels': {'2': label}}))
 
     # Act 
     column_value.index = 1
@@ -1285,7 +1285,7 @@ def test_should_return_status_column_value_when_setting_index():
         id=id, 
         title=title, 
         additional_info=json.dumps({'label': label}), 
-        settings=en.objects.StatusSettings({'labels': {'2': label}}))
+        settings_str=json.dumps({'labels': {'2': label}}))
 
     # Act 
     column_value.index = index
@@ -1311,7 +1311,7 @@ def test_should_raise_status_label_error_when_setting_label():
         id=id, 
         title=title, 
         additional_info=json.dumps({'label': label}), 
-        settings=en.objects.StatusSettings({'labels': {'2': label}}))
+        settings_str=json.dumps({'labels': {'2': label}}))
 
     # Act 
     column_value.label = 'Status Foobar'
@@ -1330,7 +1330,7 @@ def test_should_return_status_column_value_when_setting_label():
         id=id, 
         title=title, 
         additional_info=json.dumps({'label': label}), 
-        settings=en.objects.StatusSettings({'labels': {'2': label}}))
+        settings_str=json.dumps({'labels': {'2': label}}))
 
     # Act 
     column_value.label = label
