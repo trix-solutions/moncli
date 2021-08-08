@@ -676,7 +676,7 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
     
 
-    def change_multiple_column_values(self, column_values, *args):
+    def change_multiple_column_values(self, column_values, get_column_values: bool = False, *args):
         """Change the item's column values.
 
             Parameters
@@ -684,6 +684,8 @@ class Item(_Item):
                 column_values : `list[moncli.entities.ColumnValue] / dict`
                     The column value to update. 
                     NOTE: This value can either be a list of moncli.entities.ColumnValue objects or a formatted dictionary.
+                get_column_values: `bool`:
+                    Retrieves item column values if set to `True`
                 args : `tuple`
                     Optional item return fields.
 
@@ -721,6 +723,14 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
+
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['id', 'name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
 
         if type(column_values) == dict:
             values = column_values
