@@ -344,7 +344,7 @@ def test_board_should_create_an_item_with_list_column_values(create_item, create
     create_board.return_value = {'id': board_id, 'name': 'Test Board 1'}
     create_item.return_value = {'id': '4', 'name': name}
     board = client.create_board('Test Board 1', BoardKind.public)
-    status_column = cv.create_column_value(ColumnType.status, id='status', title='Status', value=json.dumps({'index': 0}), settings=en.objects.StatusSettings({'labels': {'0':'Test'}}))
+    status_column = cv.create_column_value(ColumnType.status, id='status', title='Status', value=json.dumps({'index': 0}), settings_str=json.dumps({'labels': {'0':'Test'}}))
 
     # Act 
     item = board.add_item(name, group_id=group_id, column_values=[status_column])

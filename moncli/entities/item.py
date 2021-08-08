@@ -1,4 +1,3 @@
-from moncli.enums import ColumnType
 from schematics.models import Model
 from schematics.types import StringType
 
@@ -108,7 +107,7 @@ class Item(_Item):
 
         super(Item, self).__init__(kwargs)
 
-        if assets and not self.__assets:
+        if assets != None and not self.__assets:
             self.__assets = [en.Asset(creds=self.__creds, **asset) for asset in assets]
         if board and not self.__board:
             self.__board = en.Board(creds=self.__creds, **board)
@@ -116,13 +115,13 @@ class Item(_Item):
             self.__group = en.Group(creds=self.__creds, board_id=self.board.id, **group)
         if creator and not self.__creator:
             self.__creator = en.User(creds=self.__creds, **creator)
-        if column_values and len(self.__column_values) == 0:
+        if column_values != None and len(self.__column_values) == 0:
             #Column values are a process around here...
             columns_map = { column.id: column for column in self.board.columns }
             for data in column_values:
                 column = columns_map[data['id']]
                 self.__column_values.append(en.create_column_value(column.column_type, settings_str=column.settings_str, **data))
-        if updates and not self.__updates:
+        if updates != None and not self.__updates:
             self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
 
     def __repr__(self):
@@ -441,7 +440,7 @@ class Item(_Item):
             self.__creds.api_key_v2,
             *args,
             ids=[int(self.id)])[0]['group']
-        return en.Group(creds=self.__creds, board_id=self.board.id, **group_data)
+        return en.Group(creds=self.__creds, __board=self, **group_data)
 
 
     def get_creator(self, *args):
@@ -613,13 +612,15 @@ class Item(_Item):
         return self.column_values[id]
     
 
-    def change_column_value(self, column_value = None, *args):
+    def change_column_value(self, column_value = None, get_column_values: bool = None, *args):
         """Get an item's column value by ID or title.
 
             Parameters
 
                 column_value : `moncli.entities.ColumnValue`
                     The column value to update.
+                get_column_values: `bool`:
+                    Retrieves item column values if set to `True`.
                 args : `tuple`
                     Optional item return fields.
 
@@ -658,6 +659,14 @@ class Item(_Item):
                     The item's updates.
         """
 
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['id', 'name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
+
         if column_value is None:
             raise ColumnValueRequired()
         if not isinstance(column_value, en.ColumnValue):
@@ -685,7 +694,7 @@ class Item(_Item):
                     The column value to update. 
                     NOTE: This value can either be a list of moncli.entities.ColumnValue objects or a formatted dictionary.
                 get_column_values: `bool`:
-                    Retrieves item column values if set to `True`
+                    Retrieves item column values if set to `True`.
                 args : `tuple`
                     Optional item return fields.
 
