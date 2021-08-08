@@ -612,13 +612,15 @@ class Item(_Item):
         return self.column_values[id]
     
 
-    def change_column_value(self, column_value = None, *args):
+    def change_column_value(self, column_value = None, get_column_values: bool = None, *args):
         """Get an item's column value by ID or title.
 
             Parameters
 
                 column_value : `moncli.entities.ColumnValue`
                     The column value to update.
+                get_column_values: `bool`:
+                    Retrieves item column values if set to `True`.
                 args : `tuple`
                     Optional item return fields.
 
@@ -657,6 +659,14 @@ class Item(_Item):
                     The item's updates.
         """
 
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['id', 'name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
+
         if column_value is None:
             raise ColumnValueRequired()
         if not isinstance(column_value, en.ColumnValue):
@@ -684,7 +694,7 @@ class Item(_Item):
                     The column value to update. 
                     NOTE: This value can either be a list of moncli.entities.ColumnValue objects or a formatted dictionary.
                 get_column_values: `bool`:
-                    Retrieves item column values if set to `True`
+                    Retrieves item column values if set to `True`.
                 args : `tuple`
                     Optional item return fields.
 
