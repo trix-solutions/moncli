@@ -1,9 +1,11 @@
-import json, pytz
+import json, pytz, importlib
+from moncli.models import MondayModel
 from datetime import datetime, timedelta
 
 from schematics.exceptions import ValidationError
 from schematics.types import BaseType
 
+from moncli import client
 from moncli.entities import column_value as cv
 
 SIMPLE_NULL_VALUE = ''
@@ -97,11 +99,15 @@ class DateType(MondayType):
             pass
 
         date = datetime.strptime(value['date'], DATE_FORMAT) 
-        if value['time'] != None:
-            date = pytz.timezone('UTC').localize(date)
-            time = datetime.strptime(value['time'], TIME_FORMAT)
-            date = date + timedelta(hours=time.hour, minutes=time.minute, seconds=time.second)
-            return date.astimezone(datetime.now().astimezone().tzinfo)
+        try:
+            if value['time'] != None:
+                date = pytz.timezone('UTC').localize(date)
+                time = datetime.strptime(value['time'], TIME_FORMAT)
+                date = date + timedelta(hours=time.hour, minutes=time.minute, seconds=time.second)
+                return date.astimezone(datetime.now().astimezone().tzinfo)
+        except:
+            pass
+
         return date
 
     def to_primitive(self, value, context=None):
@@ -285,6 +291,42 @@ class StatusType(MondayType):
 
     def value_changed(self, value):
         return self.original_value['index'] != value['index']
+
+
+class SubitemsType(MondayType):
+
+    def __init__(self, _type: MondayModel, id: str = None, title: str = None, *args, **kwargs):
+        if not issubclass(_type, MondayModel):
+            raise MondayTypeError('The input class type is not a Monday Model: ({})'.format(_type.__name__))
+        self.type = _type
+        super(SubitemsType, self).__init__(id, title, *args, **kwargs)
+
+    def to_native(self, value, context = None):
+        if not isinstance(value, cv.ColumnValue):
+            return value
+        item_ids = [item['linkedPulseId'] for item in json.loads(value.value)['linkedPulseIds']]
+        self.original_value = {'item_ids': item_ids}
+        items = client.get_items(ids=item_ids, get_column_values=True)
+        
+        value = []
+        module = importlib.import_module(self.type.__module__)
+        for item in items:
+            value.append(getattr(module, self.type.__name__)(item))
+
+        return value
+
+    def validate_subitems(self, value):
+        if type(value) is not list:
+            raise ValidationError('Value is not a valid subitems list: ({}).'.format(value))
+        for val in value:
+            if not isinstance(val, self.type):
+                raise ValidationError('Value is not a valid instance of subitem type: ({}).'.format(value.__class__.__name__))
+
+    def to_primitive(self, value, context = None):
+        return value
+
+    def value_changed(self, value):
+        return False
 
 
 class TextType(MondayType):
