@@ -171,6 +171,33 @@ class ItemLinkType(MondayType):
             return True
 
 
+class LongTextType(MondayType):
+
+    def to_native(self, value, context):
+        if not isinstance(value, cv.ColumnValue):
+            return value
+        value = super().to_native(value, context=context)
+        if value == COMPLEX_NULL_VALUE:
+            return None
+        try:
+            self.metadata['changed_at'] = self._get_local_changed_at(value['changed_at'])
+        except:
+            pass
+        return value['text']
+
+    def to_primitive(self, value, context = None):
+        if not value: 
+            return COMPLEX_NULL_VALUE
+        return {'text': value}
+
+    def validate_text(self, value):
+        if type(value) is not str:
+            raise ValidationError('Value is not a valid long text type: ({}).'.format(value))
+
+    def value_changed(self, value):
+        return self.original_value['text'] != value['text']
+
+
 class NumberType(MondayType):
 
     def to_native(self, value, context):
@@ -184,7 +211,7 @@ class NumberType(MondayType):
         if self._isfloat(value):
             return float(value)
 
-    def to_primitive(self, value, context=None):
+    def to_primitive(self, value, context = None):
         if not value:
             return SIMPLE_NULL_VALUE
         return str(value)
@@ -255,7 +282,7 @@ class TextType(MondayType):
             return value
         return super(TextType, self).to_native(value, context)
 
-    def to_primitive(self, value, context=None):
+    def to_primitive(self, value, context = None):
         if not value:
             return ''
         return value
@@ -278,7 +305,7 @@ class TimelineType(MondayType):
         except:
             raise MondayTypeError(message='Invalid data for timeline type: ({}).'.format(value))
 
-    def to_primitive(self, value, context=None):
+    def to_primitive(self, value, context = None):
         if not value:
             return COMPLEX_NULL_VALUE
         return {
@@ -313,7 +340,7 @@ class WeekType(MondayType):
         except:
             raise MondayTypeError(message='Invalid data for week type: ({})'.format(value))
 
-    def to_primitive(self, value, context=None):
+    def to_primitive(self, value, context = None):
         if not value:
             return COMPLEX_NULL_VALUE
         
