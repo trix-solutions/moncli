@@ -67,6 +67,9 @@ class MondayModel(Model):
         self._item = self._item.change_multiple_column_values(column_values, get_column_values=True)
         return getattr(importlib.import_module(self._module), self._class)(self._item)
 
+    def __repr__(self):
+        return str(self.to_primitive())
+
 
 class MondayModelError(Exception):
     def __init__(self, message):
