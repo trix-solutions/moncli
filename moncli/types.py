@@ -66,11 +66,23 @@ class CheckboxType(MondayType):
             return False
 
     def to_primitive(self, value, context = None):
-        return {'checked': value}
+        if not value: return {}
+        return {'checked': 'true'}
 
     def validate_checkbox(self, value):
         if type(value) is not bool:
             raise ValidationError('Value is not a valid checkbox type: ({}).'.format(value))
+
+    def value_changed(self, value):
+        try:
+            orig = bool(self.original_value['checked'])
+        except: 
+            orig = False
+        try:
+            new = bool(value['checked'])
+        except:
+            new = False
+        return orig != new
 
 
 class DateType(MondayType):
