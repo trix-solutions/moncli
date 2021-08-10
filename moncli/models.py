@@ -58,6 +58,17 @@ class MondayModel(Model):
 
         return result
 
+    def get_metadata(self, field: str, key: str):
+        try:
+            field_obj = self._fields[field]
+        except KeyError:
+            raise MondayModelError('Model does not contain field: ({}).'.format(field))
+        try:
+            return field_obj.metadata[key]
+        except KeyError:
+            raise MondayModelError('Model field does not contain metadata key: ({}).'.format(key))
+        
+
     def save(self):
         if not self._item:
             raise MondayModelError('Unable to save model without monday.com item information.')
