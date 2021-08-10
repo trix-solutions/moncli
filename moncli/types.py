@@ -98,7 +98,11 @@ class DateType(MondayType):
         except:
             pass
 
-        date = datetime.strptime(value['date'], DATE_FORMAT) 
+        try:
+            date = datetime.strptime(value['date'], DATE_FORMAT) 
+        except:
+            return None
+
         try:
             if value['time'] != None:
                 date = pytz.timezone('UTC').localize(date)
@@ -129,6 +133,8 @@ class DateType(MondayType):
             raise ValidationError('Invalid datetime type.')
 
     def value_changed(self, value):
+        if self.original_value == COMPLEX_NULL_VALUE:
+            return value != None
         for k, v in value.items():
             if self.original_value[k] != v:
                 return True
@@ -226,9 +232,9 @@ class ItemLinkType(MondayType):
     def value_changed(self, value):
         if not self._allow_multiple_values():
             return value['item_ids'] != self.original_value
-        if len(value) != len(self.original_value):
+        if len(value['item_ids']) != len(self.original_value):
             return False
-        for v in value:
+        for v in value['item_ids']:
             if v not in self.original_value:
                 return False
         return True
@@ -264,6 +270,8 @@ class LongTextType(MondayType):
             raise ValidationError('Value is not a valid long text type: ({}).'.format(value))
 
     def value_changed(self, value):
+        if self.original_value == COMPLEX_NULL_VALUE:
+            return value != None
         return self.original_value['text'] != value['text']
 
 
@@ -341,6 +349,8 @@ class StatusType(MondayType):
             raise ValidationError('Unable to find index for status label: ({}).'.format(value))
 
     def value_changed(self, value):
+        if self.original_value == COMPLEX_NULL_VALUE:
+            return value != COMPLEX_NULL_VALUE
         return self.original_value['index'] != value['index']
 
 
