@@ -817,13 +817,15 @@ class Item(_Item):
         return en.Item(creds=self.__creds, **subitem_data)
 
 
-    def move_to_group(self, group_id: str, *args):
+    def move_to_group(self, group_id: str, get_column_values = False, *args):
         """Move item to a different group.
 
             Parameters
 
                 group_id : `str`
                     The group's unique identifier.
+                get_column_values: `bool`:
+                    Retrieves item column values if set to `True`.
                 args : `tuple`
                     Optional item return fields.
 
@@ -861,6 +863,13 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['id', 'name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
 
         item_data = client.move_item_to_group(
             self.__creds.api_key_v2,
