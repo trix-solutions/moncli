@@ -1,5 +1,4 @@
 import json, pytz, importlib
-from moncli.models import MondayModel
 from datetime import datetime, timedelta
 
 from schematics.exceptions import ValidationError
@@ -7,6 +6,8 @@ from schematics.types import BaseType
 
 from moncli import client
 from moncli.entities import column_value as cv
+from moncli.enums import PeopleKind
+from moncli.models import MondayModel
 
 SIMPLE_NULL_VALUE = ''
 COMPLEX_NULL_VALUE = {}
@@ -44,11 +45,12 @@ class MondayType(BaseType):
         return self.original_value
 
     def value_changed(self, value):
+        if self._null_value_change(value, COMPLEX_NULL_VALUE):
+            return True
         return value != self.original_value
 
     def _is_column_value(self, value):
-        if not isinstance(value, cv.ColumnValue):
-            return value
+        return isinstance(value, cv.ColumnValue)
 
     def _get_local_changed_at(self, changed_at_str: str):
         try:
@@ -59,11 +61,17 @@ class MondayType(BaseType):
         except:
             return None
 
+    def _null_value_change(self, value, null_value: str):
+        if self.original_value == COMPLEX_NULL_VALUE:
+            return value != COMPLEX_NULL_VALUE
+        elif value == COMPLEX_NULL_VALUE:
+            return self.original_value != COMPLEX_NULL_VALUE
+
 
 class CheckboxType(MondayType):
 
     def to_native(self, value, context = None):
-        if not isinstance(value, cv.ColumnValue):
+        if not self._is_column_value(value):
             return value
         value = super().to_native(value, context=context)
         try:
@@ -80,6 +88,8 @@ class CheckboxType(MondayType):
             raise ValidationError('Value is not a valid checkbox type: ({}).'.format(value))
 
     def value_changed(self, value):
+        if self._null_value_change(value, COMPLEX_NULL_VALUE):
+            return True
         try:
             orig = bool(self.original_value['checked'])
         except: 
@@ -94,7 +104,7 @@ class CheckboxType(MondayType):
 class DateType(MondayType):
 
     def to_native(self, value, context):
-        if not isinstance(value, cv.ColumnValue):
+        if not self._is_column_value(value):
             return value
         value = super().to_native(value, context=context)
 
@@ -134,8 +144,8 @@ class DateType(MondayType):
             raise ValidationError('Invalid datetime type.')
 
     def value_changed(self, value):
-        if self.original_value == COMPLEX_NULL_VALUE:
-            return value != None
+        if self._null_value_change(value, COMPLEX_NULL_VALUE):
+            return True
         for k, v in value.items():
             if self.original_value[k] != v:
                 return True
@@ -151,7 +161,7 @@ class DropdownType(MondayType):
     def to_native(self, value, context = None):
         if type(value) is str:
             value = [value]
-        if not isinstance(value, cv.ColumnValue):
+        if not self._is_column_value(value):
             return value
 
         super(DropdownType, self).to_native(value, context)
@@ -183,21 +193,22 @@ class DropdownType(MondayType):
                 raise ValidationError('Unable to find index for status label: ({}).'.format(value))
 
     def value_changed(self, value):
+        if self._null_value_change(value, COMPLEX_NULL_VALUE):
+            return True
         if len(value) != len(self.original_value):
-            return False
+            return True
         for v in value:
             if v not in self.original_value:
-                return False
-        return True
+                return True
+        return False
         
 
 
 class ItemLinkType(MondayType):
 
     def to_native(self, value, context = None):
-        if not isinstance(value, cv.ColumnValue):
+        if not self._is_column_value(value):
             return value
-
         value = super().to_native(value, context=context)
         try:
             self.original_value = [id['linkedPulseId'] for id in value['linkedPulseIds']]
@@ -227,6 +238,8 @@ class ItemLinkType(MondayType):
                 raise ValidationError('Item link property requires a list value for multiple items.')
 
     def value_changed(self, value):
+        if self._null_value_change(value, COMPLEX_NULL_VALUE):
+            return True
         if not self._allow_multiple_values():
             return value['item_ids'] != self.original_value
         if len(value['item_ids']) != len(self.original_value):
@@ -246,7 +259,7 @@ class ItemLinkType(MondayType):
 class LongTextType(MondayType):
 
     def to_native(self, value, context):
-        if not isinstance(value, cv.ColumnValue):
+        if not self._is_column_value(value):
             return value
         value = super().to_native(value, context=context)
         if value == COMPLEX_NULL_VALUE:
@@ -263,15 +276,15 @@ class LongTextType(MondayType):
             raise ValidationError('Value is not a valid long text type: ({}).'.format(value))
 
     def value_changed(self, value):
-        if self.original_value == COMPLEX_NULL_VALUE:
-            return value != None
+        if self._null_value_change(value, COMPLEX_NULL_VALUE):
+            return True
         return self.original_value['text'] != value['text']
 
 
 class NumberType(MondayType):
 
     def to_native(self, value, context):
-        if not isinstance(value, cv.ColumnValue):
+        if not self._is_column_value(value):
             return value
         value = super().to_native(value, context=context)
         if value == SIMPLE_NULL_VALUE:
@@ -289,6 +302,11 @@ class NumberType(MondayType):
     def validate_number(self, value):
         if type(value) not in [int, float]:
             raise ValidationError('Value is not a valid number type: ({}).'.format(value))
+
+    def value_changed(self, value):
+        if self._null_value_change(value, SIMPLE_NULL_VALUE):
+            return True
+        return value != self.original_value
 
     def _isfloat(self, value):
         """Is the value a float."""
@@ -308,6 +326,65 @@ class NumberType(MondayType):
         return a == b
 
 
+
+class PeopleType(MondayType):
+
+    def to_native(self, value, context):
+        result = []
+        if not self._is_column_value(value):
+            return value
+        value = super(PeopleType, self).to_native(value, context=context)
+        # Custom rules for max people allowed setting.
+        try:
+            max_people_allowed = int(self.metadata['max_people_allowed'])
+        except:
+            max_people_allowed = 0
+        self.metadata['max_people_allowed'] = max_people_allowed
+        if value == COMPLEX_NULL_VALUE:
+            return result
+
+        for v in value['personsAndTeams']:
+            kind = PeopleKind[v['kind']]
+            result.append(PersonOrTeam(v['id'], kind))
+        if max_people_allowed == 1:
+            return result[0]
+        return result
+
+    def to_primitive(self, value, context = None):
+        if not value:
+            return COMPLEX_NULL_VALUE
+        if type(value) is not list:
+            value = [value]
+        return {'personsAndTeams': [{'id': v.id, 'kind': v.kind.name} for v in value]}
+
+    def validate_people(self, value, context):
+        max_people_allowed = self.metadata['max_people_allowed']
+        if max_people_allowed == 1 and type(value) != list:
+            value = [value]
+        if type(value) != list:
+            raise ValidationError('Value is not a valid list type: ({}).'.format(value))
+        if max_people_allowed > 0 and len(value) > max_people_allowed:
+            raise ValidationError('Value exceeds the maximum number of allowed people: ({}).'.format(len(value)))
+        for v in value:
+            if not self._is_person_or_team(value):
+                raise ValidationError('Value contains a record with an invalid type: ({})'.format(v.__class__.__name__))
+
+    def value_changed(self, value):
+        if self._null_value_change(value, COMPLEX_NULL_VALUE):
+            return True
+        old = self.original_value['personsAndTeams']
+        new = value['perosnsAndTeams']
+        if len(old) != len(new):
+            return True
+        for i in range(len(old)):
+            if old[i]['id'] != new[i]['id']:
+                return True
+        return False
+
+    def _is_person_or_team(self, value):
+        return isinstance(value, PersonOrTeam) or issubclass(type(value), PersonOrTeam)
+
+
 class StatusType(MondayType):
 
     def __init__(self, id: str = None, title: str = None, data_mapping: dict = None, *args, **kwargs):
@@ -315,7 +392,7 @@ class StatusType(MondayType):
         super(StatusType, self).__init__(id=id, title=title, *args, **kwargs)
 
     def to_native(self, value, context = None):
-        if not isinstance(value, cv.ColumnValue):
+        if not self._is_column_value(value):
             return value
         super(StatusType, self).to_native(value, context)
         if not self._data_mapping:
@@ -356,7 +433,7 @@ class SubitemsType(MondayType):
         super(SubitemsType, self).__init__(id, title, *args, **kwargs)
 
     def to_native(self, value, context = None):
-        if not isinstance(value, cv.ColumnValue):
+        if not self._is_column_value(value):
             return value
         item_ids = [item['linkedPulseId'] for item in json.loads(value.value)['linkedPulseIds']]
         self.original_value = {'item_ids': item_ids}
@@ -386,7 +463,7 @@ class SubitemsType(MondayType):
 class TextType(MondayType):
 
     def to_native(self, value, context = None):
-        if not isinstance(value, cv.ColumnValue):
+        if not self._is_column_value(value):
             return value
         return super(TextType, self).to_native(value, context)
 
@@ -528,6 +605,33 @@ class Week():
             'startDate': self._start,
             'endDate': self._end
         })
+
+
+class PersonOrTeam():
+
+    def __init__(self, id: str, kind: PeopleKind):
+        self._id = id
+        self._kind = kind
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def kind(self):
+        return self._kind
+
+
+class Person(PersonOrTeam):
+
+    def __init__(self, id: str):
+        super(Person, self).__init__(id, PeopleKind.person)
+
+
+class Team(PersonOrTeam):
+
+    def __init__(self, id: str):
+        super(Team, self).__init__(id, PeopleKind.team)
 
 class MondayTypeError(Exception):
     def __init__(self, message: str = None, messages: dict = None, error_code: str = None):
