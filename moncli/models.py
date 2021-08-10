@@ -54,6 +54,7 @@ class MondayModel(Model):
 
         return result
 
+
     def save(self):
         if not self._item:
             raise MondayModelError('Unable to save model without monday.com item information.')

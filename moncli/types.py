@@ -134,6 +134,57 @@ class DateType(MondayType):
                 return True
         return False
 
+
+class DropdownType(MondayType):
+
+    def __init__(self, id: str = None, title: str = None, data_mapping: dict = None, *args, **kwargs):
+        self._data_mapping = data_mapping
+        super(DropdownType, self).__init__(id=id, title=title, *args, **kwargs)
+
+    def to_native(self, value, context = None):
+        if type(value) is str:
+            value = [value]
+        if not isinstance(value, cv.ColumnValue):
+            return value
+
+        super(DropdownType, self).to_native(value, context)
+        labels = value.text.split(', ')
+        if not self._data_mapping:
+            return labels
+        try:
+            return [self._data_mapping[text] for text in labels]
+        except:
+            return None
+
+    def to_primitive(self, value, context = None):
+        if self._data_mapping:
+            reverse = {v: k for k, v in self._data_mapping.items()}
+            value = [reverse[label] for label in value]
+        ids = []
+        for label in self.metadata['labels']:
+            if value == label['name'] or label['name'] in value:
+                ids.append(label['id'])
+        return {'ids': ids}
+        
+    def validate_dropdown(self, value):
+        if self._data_mapping:
+            reverse = {v: k for k, v in self._data_mapping.items()}
+            value = [reverse[label] for label in value]
+        labels = [label['name'] for label in self.metadata['labels']]
+        for label in value:
+            if label not in labels:
+                raise ValidationError('Unable to find index for status label: ({}).'.format(value))
+
+    def value_changed(self, value):
+        if len(value) != len(self.original_value):
+            return False
+        for v in value:
+            if v not in self.original_value:
+                return False
+        return True
+        
+
+
 class ItemLinkType(MondayType):
 
     def to_native(self, value, context = None):
