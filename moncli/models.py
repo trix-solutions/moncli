@@ -39,6 +39,10 @@ class MondayModel(Model):
                 
         super(MondayModel, self).__init__(raw_data=raw_data)
 
+    @property
+    def item(self):
+        return self._item
+
     def to_primitive(self, diff_only = False, role = None, app_data = None, **kwargs):        
         base_dict = super().to_primitive(role=role, app_data=app_data, **kwargs)
         result = {}
@@ -53,7 +57,6 @@ class MondayModel(Model):
                 result[field] = value
 
         return result
-
 
     def save(self):
         if not self._item:
