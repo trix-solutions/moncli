@@ -37,6 +37,10 @@ class MondayType(BaseType):
         for k, v in settings.items():
             self.metadata[k] = v
         self.original_value = json.loads(value.value)
+        try:
+            self.metadata['changed_at'] = self._get_local_changed_at(self.original_value['changed_at'])
+        except:
+            pass
         return self.original_value
 
     def value_changed(self, value):
@@ -93,10 +97,6 @@ class DateType(MondayType):
         if not isinstance(value, cv.ColumnValue):
             return value
         value = super().to_native(value, context=context)
-        try:
-            self.metadata['changed_at'] = self._get_local_changed_at(value['changed_at'])
-        except:
-            pass
 
         try:
             date = datetime.strptime(value['date'], DATE_FORMAT) 
@@ -199,10 +199,6 @@ class ItemLinkType(MondayType):
 
         value = super().to_native(value, context=context)
         try:
-            self.metadata['changed_at'] = self._get_local_changed_at(value['changed_at'])
-        except:
-            pass
-        try:
             self.original_value = [id['linkedPulseId'] for id in value['linkedPulseIds']]
         except:
             self.original_value = []
@@ -254,10 +250,6 @@ class LongTextType(MondayType):
         value = super().to_native(value, context=context)
         if value == COMPLEX_NULL_VALUE:
             return None
-        try:
-            self.metadata['changed_at'] = self._get_local_changed_at(value['changed_at'])
-        except:
-            pass
         return value['text']
 
     def to_primitive(self, value, context = None):
