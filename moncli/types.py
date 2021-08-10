@@ -116,11 +116,9 @@ class DateType(MondayType):
 
     def to_primitive(self, value, context=None):
         # Verify if time value exists before utc conversion.
-        pre_time = datetime.strftime(value, TIME_FORMAT)
-        if pre_time == '00:00:00':
+        time = datetime.strftime(value, TIME_FORMAT)
+        if time == '00:00:00':
             time = None
-        else:
-            time = pre_time
         value = value.astimezone(pytz.timezone('UTC'))
         date = datetime.strftime(value, DATE_FORMAT)   
         if time:
