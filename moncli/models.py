@@ -1,15 +1,16 @@
-import importlib
+import importlib, json
 
 from schematics.exceptions import DataError
 from schematics.models import Model
 
-from .entities import Item
+from .entities import Item, Board, Group
 
 class MondayModel(Model):
 
-    def __init__(self, item: Item = None, raw_data: dict = None, *args, **kwargs):
+    def __init__(self, item: Item = None, raw_data: dict = None, board: Board = None, *args, **kwargs):
         
         self._item = item
+        self._board = board
         self._module = self.__module__
         self._class = self.__class__.__name__
 
@@ -38,6 +39,23 @@ class MondayModel(Model):
             raise MondayModelError('Input item or raw data is required.')
                 
         super(MondayModel, self).__init__(raw_data=raw_data)
+        
+        if board:
+            columns = board.columns
+            for field, field_type in self._fields.items():
+                try:
+                    column = columns[field_type.metadata['title']]
+                except:
+                    try:
+                        column = columns[field_type.metadata['id']]
+                    except:
+                        continue
+                field_type.metadata['id'] = column.id
+                field_type.metadata['title'] = column.title
+                settings = json.loads(column.settings_str)
+                for k, v in settings.items():
+                    field_type.metadata[k] = v
+
 
     @property
     def item(self):
@@ -69,9 +87,12 @@ class MondayModel(Model):
             raise MondayModelError('Model field does not contain metadata key: ({}).'.format(key))
         
 
-    def save(self):
-        if not self._item:
-            raise MondayModelError('Unable to save model without monday.com item information.')
+    def save(self, group: Group = None):
+        if not self._item and not self._board:
+            raise MondayModelError('Unable to save model without monday.com item/board information.')
+
+        if self._board and not self.name:
+            raise MondayModelError('Unable to save new model as item without a name.')
         
         try:
             self.validate()
@@ -79,8 +100,17 @@ class MondayModel(Model):
             raise MondayModelError(ex.messages)
 
         column_values = self.to_primitive(diff_only=True)
-        self._item = self._item.change_multiple_column_values(column_values, get_column_values=True)
+        if self._item:
+            self._item = self._item.change_multiple_column_values(column_values, get_column_values=True)
+            if group:
+                self._item = self._item.move_to_group(group.id, get_column_values=True)
+        elif self._board:
+            if group:
+                self._item = self._board.add_item(self.name, get_column_values=True, group_id=group.id, column_values=column_values)
+            else:
+                self._item = self._board.add_item(self.name, get_column_values=True, column_values=column_values)
         return getattr(importlib.import_module(self._module), self._class)(self._item)
+
 
     def __repr__(self):
         return str(self.to_primitive())
