@@ -1,3 +1,4 @@
+from moncli.entities.objects import ColumnCollection
 from schematics.models import Model
 from schematics.types import StringType, IntType
 from .. import api_v2 as client, enums, entities as en
@@ -32,7 +33,7 @@ class Board(_Board):
                 The board's folder unique identifier.
             board_kind : `str`
                 The board's kind (public / private / share).
-            columns : `list[moncli.entities.Column]`
+            columns : `moncli.entities.objects.ColumnCollection`
                 The board's visible columns.
             communication : `str`
                 Get the board communication value - typically meeting ID.
@@ -112,7 +113,7 @@ class Board(_Board):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
         self.__activity_logs = kwargs.pop('__activity_logs', None)
-        self.__columns = kwargs.pop('__columns', None)
+        self.__columns = ColumnCollection()
         self.__groups = kwargs.pop('__groups', None)
         self.__items = kwargs.pop('__items', None)
         self.__subscribers = kwargs.pop('__subscribers', None)
@@ -136,9 +137,9 @@ class Board(_Board):
         if activity_logs and not self.__activity_logs:
             self.__activity_logs = [en.ActivityLog(log) for log in activity_logs]
         if columns and not self.__columns:
-            self.__columns = [en.Column(column) for column in columns]
+            self.__columns = ColumnCollection([en.Column(column) for column in columns])
         if groups and not self.__groups:
-            self.__groups = [en.Group(creds=self.__creds, **groups) for group in groups]
+            self.__groups = [en.Group(creds=self.__creds, **group) for group in groups]
         if items and not self.__items:
             self.__items = [en.Item(creds=self.__creds, __board=self, **item) for item in items]
         if subscribers and not self.__subscribers:
@@ -653,7 +654,9 @@ class Board(_Board):
             *args,
             **kwargs)
 
-        return en.Column(column_data)
+        column = en.Column(column_data)
+        self.__columns.append(column)
+        return column
 
    
     def get_columns(self, *args, **kwargs):
@@ -707,7 +710,7 @@ class Board(_Board):
             limit=1,
             **column_kwargs)[0]['columns']
 
-        return [en.Column(data) for data in column_data]
+        return ColumnCollection([en.Column(data) for data in column_data])
 
 
     def add_group(self, group_name: str, *args):
@@ -857,13 +860,16 @@ class Board(_Board):
             return [group for group in self.get_groups(*args) if group.title == title][0]
 
 
-    def add_item(self, item_name: str, *args, **kwargs):
+    def add_item(self, item_name: str, get_column_values = False, *args, **kwargs):
         """Create a new item in the board.
 
             Parameters
 
                 item_name : `str`
                     The new item's name.
+                get_column_values: `bool`
+                    Returns column values with created item if set to `True`.
+
 
             Returns
 
@@ -907,6 +913,14 @@ class Board(_Board):
                     The column values of the new item.
         """
 
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['id', 'name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
+
         column_values = kwargs.pop('column_values', None)
         if column_values:
             if type(column_values) == dict:
@@ -934,7 +948,7 @@ class Board(_Board):
                 args : `tuple`
                     The list of item return fields.
                 get_column_values: `bool`
-                    Flag used to include column values with the returned items.
+                    Returns column values with items if set to `True`.
                 kwargs : `dict`
                     The optional keyword arguments for getting items.
 
