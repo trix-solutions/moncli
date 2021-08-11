@@ -419,8 +419,8 @@ class StatusType(MondayType):
             raise ValidationError('Unable to find index for status label: ({}).'.format(value))
 
     def value_changed(self, value):
-        if self.original_value == COMPLEX_NULL_VALUE:
-            return value != COMPLEX_NULL_VALUE
+        if self._null_value_change(value, COMPLEX_NULL_VALUE):
+            return True
         return self.original_value['index'] != value['index']
 
 
