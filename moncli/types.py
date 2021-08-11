@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 from schematics.exceptions import ValidationError
 from schematics.types import BaseType
 
-from moncli import client
-from moncli.entities import column_value as cv
-from moncli.enums import PeopleKind
-from moncli.models import MondayModel
+from . import client
+from .entities import column_value as cv
+from .enums import PeopleKind
+from .models import MondayModel
 
 SIMPLE_NULL_VALUE = ''
 COMPLEX_NULL_VALUE = {}
@@ -62,7 +62,7 @@ class MondayType(BaseType):
             return None
 
     def _null_value_change(self, value, null_value: str):
-        if self.original_value == COMPLEX_NULL_VALUE:
+        if self.original_value in [None, COMPLEX_NULL_VALUE]:
             return value != COMPLEX_NULL_VALUE
         elif value == COMPLEX_NULL_VALUE:
             return self.original_value != COMPLEX_NULL_VALUE
@@ -281,6 +281,24 @@ class LongTextType(MondayType):
         return self.original_value['text'] != value['text']
 
 
+class MirrorType(MondayType):
+    
+    def __init__(self, _type: MondayType, id: str = None, title: str = None, *args, **kwargs):
+        self._type = _type
+        super().__init__(id=id, title=title, *args, **kwargs)
+
+    def to_native(self, value, context):
+        mirrored_type = hasattr(importlib.import_module(self._type.__module__), self._type.__name__)
+        return mirrored_type.to_native(value, context)
+
+    def to_primitive(self, value, context):
+        mirrored_type = hasattr(importlib.import_module(self._type.__module__), self._type.__name__)
+        return mirrored_type.to_primitive(value, context)
+
+    def value_changed(self, value):
+        return False
+
+
 class NumberType(MondayType):
 
     def to_native(self, value, context):
@@ -435,7 +453,11 @@ class SubitemsType(MondayType):
     def to_native(self, value, context = None):
         if not self._is_column_value(value):
             return value
-        item_ids = [item['linkedPulseId'] for item in json.loads(value.value)['linkedPulseIds']]
+        value = super().to_native(value, context)
+        if value == COMPLEX_NULL_VALUE:
+            return []
+        
+        item_ids = [item['linkedPulseId'] for item in value['linkedPulseIds']]
         self.original_value = {'item_ids': item_ids}
         items = client.get_items(ids=item_ids, get_column_values=True)
         
@@ -545,8 +567,12 @@ class WeekType(MondayType):
             raise ValidationError('Value is mssing an end date: ({}).'.format(value))
             
     def value_changed(self, value):
+        if self._null_value_change(value, COMPLEX_NULL_VALUE):
+            return True
         orig_week = self.original_value['week']
         new_week = value['week']
+        if orig_week == '' and new_week != orig_week:
+            return True
         for k in new_week.keys():
             if new_week[k] != orig_week[k]:
                 return True
