@@ -288,15 +288,17 @@ class MirrorType(MondayType):
         super().__init__(id=id, title=title, *args, **kwargs)
 
     def to_native(self, value, context):
-        mirrored_type = hasattr(importlib.import_module(self._type.__module__), self._type.__name__)
-        return mirrored_type.to_native(value, context)
+        self._get_monday_type.to_native(value, context)
 
     def to_primitive(self, value, context):
-        mirrored_type = hasattr(importlib.import_module(self._type.__module__), self._type.__name__)
-        return mirrored_type.to_primitive(value, context)
+       self._get_monday_type.to_primitive(value, context)
 
     def value_changed(self, value):
         return False
+
+    def _get_monday_type(self):
+        mirrored_type = getattr(importlib.import_module(self._type.__module__), self._type.__name__)
+        return mirrored_type(id=self.id, title=self.title)
 
 
 class NumberType(MondayType):
