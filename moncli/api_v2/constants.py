@@ -23,6 +23,7 @@ DELETE_GROUP = 'delete_group'
 # Items
 ITEMS = 'items'
 ITEMS_BY_COLUMN_VALUES = 'items_by_column_values'
+ITEMS_BY_MULTIPLE_COLUMN_VALUES = 'items_by_multiple_column_values'
 CREATE_ITEM = 'create_item'
 CREATE_SUBITEM = 'create_subitem'
 CLEAR_ITEM_UPDATES = 'clear_item_updates'
@@ -353,6 +354,13 @@ ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS = {
         'limit': ArgumentValueKind.Int,
         'page': ArgumentValueKind.Int
     }
+}
+
+ITEMS_BY_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS = {
+    'limit': ArgumentValueKind.Int,
+    'page': ArgumentValueKind.Int,
+    'column_type': ArgumentValueKind.String,
+    'state': ArgumentValueKind.Enum
 }
 
 CREATE_ITEM_OPTIONAL_PARAMS = {
