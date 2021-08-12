@@ -1118,7 +1118,7 @@ class Board(_Board):
                 values : `list[str]`
                     The list of values to search on.
                 get_column_values: `bool`
-                    Flag used to include column values with the returned items.
+                    Retrieves all item column values if set to `True`.
                 args : `tuple`
                     The list of item return fields.
                 kwargs : `dict`
