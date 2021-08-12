@@ -1108,7 +1108,7 @@ class Board(_Board):
 
                 column : `moncli.entites.objects.Column`
                     The column to search on.
-                values : `list[str]`
+                column_values : `list[str]`
                     The list of values to search on.
                 get_column_values: `bool`
                     Retrieves all item column values if set to `True`.
