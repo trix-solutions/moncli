@@ -1028,7 +1028,7 @@ def get_items(api_key: str, *args, **kwargs):
 
 
 def get_items_by_column_values(api_key: str, board_id: str, column_id: str, column_value: str, *args, **kwargs):
-    """Search items by their column values.
+    """Search items by a value for a single column.
 
         Parameters
         
@@ -1100,6 +1100,69 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
 
 
 def get_items_by_multiple_column_values(api_key: str, board_id: str, column_id: str, column_value: list, *args, **kwargs):
+    """Search items by multiple values for a single column.
+
+        Parameters
+        
+            api_key : `str`
+                The monday.com v2 API user key.
+            board_id : `str`
+                The board's unique identifier.
+            column_id : `str`
+                The column's unique identifier.
+            column_values `list`
+                The column value to search items by.
+            args : `tuple`
+                The list of item return fields.
+            kwargs : `dict`
+                Optional arguments for querying items by column value.
+
+        Returns
+            
+            data : `dict`
+                A monday.com column in item form.
+
+        Return Fields
+        
+            assets : `list[moncli.entities.Asset]`
+                The item's assets/files.
+            board : `moncli.entities.Board`
+                The board that contains this item.
+            column_values : `list[moncli.entities.ColumnValue]`
+                The item's column values.
+            created_at : `str`
+                The item's create date.
+            creator : `moncli.entities.User`
+                The item's creator.
+            creator_id : `str`
+                The item's unique identifier.
+            group : `moncli.entities.Group`
+                The group that contains this item.
+            id : `str`
+                The item's unique identifier.
+            name : `str`
+                The item's name.
+            state : `str`
+                The board's state (all / active / archived / deleted)
+            subscriber : `moncli.entities.User`
+                The pulse's subscribers.
+            updated_at : `str`
+                The item's last update date.
+            updates : `moncli.entities.Update`
+                The item's updates.
+
+        Optional Arguments
+        
+            limit : `int`
+                Number of items to get.
+            page : `int`
+                Page number to get, starting at 1.
+            column_type : `str`
+                The column type.
+            state : `moncli.enums.State`
+                The state of the item (all / active / archived / deleted); the default is active.
+    """
+    
     args = get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
     kwargs = get_method_arguments(constants.ITEMS_BY_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS, **kwargs)
     kwargs['board_id'] = util.IntValue(board_id)
