@@ -1083,14 +1083,6 @@ class Board(_Board):
                     The state of the item (all / active / archived / deleted), the default is active.
         """
 
-        if get_column_values:
-            args = list(args)
-            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
-            column_value_args.extend(['id', 'name'])
-            for arg in column_value_args:
-                if arg not in args:
-                    args.append(arg)
-
         if type(column_value) == cv.DateValue:
             value = column_value.date
         elif type(column_value) == cv.StatusValue:
@@ -1102,6 +1094,95 @@ class Board(_Board):
             self.__creds.api_key_v2, 
             self.id, 
             column_value.id, 
+            value, 
+            *args,
+            **kwargs)
+
+        return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data]
+
+    
+    def get_items_by_multiple_column_values(self, column: en.Column, column_values: list, get_column_values: bool = False, *args, **kwargs):
+        """Search items in this board by their column values.
+    
+            Parameters
+
+                column : `moncli.entites.objects.Column`
+                    The column to search on.
+                column_values : `list[str]`
+                    The list of values to search on.
+                get_column_values: `bool`
+                    Retrieves all item column values if set to `True`.
+                args : `tuple`
+                    The list of item return fields.
+                kwargs : `dict`
+                    The optional keyword arguments for searching items.
+        
+            Returns
+
+                items : `list[moncli.entities.Item]`
+                    The board's queried items.
+        
+            Return Fields
+
+                assets : `list[moncli.entities.Asset]`
+                    The item's assets/files.
+                board : `moncli.entities.Board`
+                    The board that contains this item.
+                column_values : `list[moncli.entities.ColumnValue]`
+                    The item's column values.
+                created_at : `str`
+                    The item's create date.
+                creator : `moncli.entities.User`
+                    The item's creator.
+                creator_id : `str`
+                    The item's unique identifier.
+                group : `moncli.entities.Group`
+                    The group that contains this item.
+                id : `str`
+                    The item's unique identifier.
+                name : `str`
+                    The item's name.
+                state : `str`
+                    The board's state (all / active / archived / deleted)
+                subscriber : `moncli.entities.User`
+                    The pulse's subscribers.
+                updated_at : `str`
+                    The item's last update date.
+                updates : `moncli.entities.Update`
+                    The item's updates.
+            
+            Optional Arguments
+
+                limit : `int`
+                    Number of items to get.
+                page : `int`
+                    Page number to get, starting at 1.
+                column_id : `str`
+                    The column's unique identifier.
+                column_value : `str`
+                    The column value to search items by.
+                column_type : `str`
+                    The column type.
+                state : `moncli.enumns.State`
+                    The state of the item (all / active / archived / deleted), the default is active.
+        """
+        if get_column_values:
+            args = list(args)
+            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
+            column_value_args.extend(['id', 'name'])
+            for arg in column_value_args:
+                if arg not in args:
+                    args.append(arg)
+
+        if column.column_type == enums.ColumnType.numbers:
+            value = [str(value) for value in column_values]
+        else:
+            value = column_values
+
+        items_data = client.get_items_by_multiple_column_values(
+            self.__creds.api_key_v2, 
+            self.id, 
+            column.id, 
             value, 
             *args,
             **kwargs)

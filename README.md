@@ -403,6 +403,7 @@ Returns: [list[moncli.entities.Item]](#item)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|get_column_values (Optional)|bool|Retrieves all item column values if set to `True`.|
 |limit (Optional)|int|Number of items to get; the default is 25.|
 |page (Optional)|int|Page number to get, starting at 1.|
 |ids (Optional)|list[str]|A list of items unique identifiers.|
@@ -826,6 +827,7 @@ Returns: [moncli.entities.Item](#item)
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |item_name|str|The new item's name.|
+|get_column_values (Optional)|bool|Retrieves all item column values if set to `True`.|
 |group_id (Optional)|str|The group's unique identifier.|
 |column_values (Optional)|json|The column values of the new item.|
                 
@@ -844,10 +846,10 @@ Returns: [list[moncli.entities.Item]](#item)
 *Parameters*
 | Name | Type | Description | 
 |---|:------------:|:----------------|
+|get_column_values (Optional)|bool|Retrieves all item column values if set to `True`.|
 |ids (Optional)|list[str]|The list of items unique identifiers.|
 |limit (Optional)|int|Number of items to get.|
 |page (Optional)|int|Page number to get, starting at 1.|
-
 *Example*
 ```
 >>> items = board.get_items('id', 'name')
@@ -863,6 +865,7 @@ Returns: [list[moncli.entities.Item]](#item)
 | Name | Type | Description | 
 |---|:------------:|:----------------|
 |column_value|moncli.entites.ColumnValue|The column value to search on.|
+|get_column_values (Optional)|bool|Retrieves all item column values if set to `True`.|
 |limit (Optional)|int|Number of items to get.|
 |page (Optional)|int|Page number to get, starting at 1.|
 |column_id (Optional)|str|The column's unique identifier.|
@@ -878,6 +881,32 @@ Returns: [list[moncli.entities.Item]](#item)
 >>> items = board.get_items_by_column_values(column_value, 'id', 'name')
 >>> items
 [{'id': '1234567', 'name': 'New Item'}]
+```
+
+**get_items_by_multiple_column_values**  
+Search items in this board by multiple values for a single column.   
+Returns: [list[moncli.entities.Item]](#item)
+
+*Parameters*
+| Name | Type | Description | 
+|---|:------------:|:----------------|
+|column|moncli.entites.Column|The column to search on.|
+|column_values|list[str]|The list of `str` column values upon which to search.|
+|get_column_values (Optional)|bool|Retrieves all item column values if set to `True`.|
+|limit (Optional)|int|Number of items to get.|
+|page (Optional)|int|Page number to get, starting at 1.|
+|column_id (Optional)|str|The column's unique identifier.|
+|column_value (Optional)|str|The column value to search items by.|
+|column_type (Optional)|str|The column type.|
+|state (Optional)|moncli.enumns.State|The state of the item (all / active / archived / deleted), the default is active.|
+
+*Example*
+```
+>>> column_name = 'Users'
+>>> column = board.columns[column_name]
+>>> items = board.get_items_by_multiple_column_values(column, ['User 1', 'User 2'], 'id', 'name')
+>>> items
+[{'id': '1234567', 'name': 'User 1'}, {'id': '1234568', 'name': 'User 2'}]
 ```
 
 **get_column_value**  
