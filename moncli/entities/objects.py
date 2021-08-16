@@ -1,36 +1,10 @@
 import json, warnings
+from moncli.entities.base import BaseCollection
 
 from schematics.models import Model
 from schematics.types import StringType, BooleanType, IntType, DictType, ListType, ModelType
 
 from ..enums import ColumnType
-
-## Column type mappings
-COLUMN_TYPE_MAPPINGS = {
-    'boolean': ColumnType.checkbox,
-    'country': ColumnType.country,
-    'date': ColumnType.date,
-    'dropdown': ColumnType.dropdown,
-    'email': ColumnType.email,
-    'hour': ColumnType.hour,
-    'link': ColumnType.link,
-    'long-text': ColumnType.long_text,
-    'name': ColumnType.name,
-    'numeric': ColumnType.numbers,
-    'multiple-person': ColumnType.people,
-    'phone': ColumnType.phone,
-    'rating': ColumnType.rating,
-    'color': ColumnType.status,
-    'tag': ColumnType.tags,
-    'team': ColumnType.team,
-    'text': ColumnType.text,
-    'timerange': ColumnType.timeline,
-    'week': ColumnType.week,
-    'timezone': ColumnType.world_clock,
-    'file': ColumnType.file,
-    'board-relation': ColumnType.board_relation,
-    'subtasks': ColumnType.subitems
-}
 
 class MondayClientCredentials():
     """monday.com client credentials.
@@ -100,124 +74,6 @@ class BoardView(Model):
 
     def __repr__(self):
         return str(self.to_primitive())
-    
-
-class Column(Model):
-    """A board's column.
-    
-    Properties
-
-        archived : `bool`
-            Is the column archived or not.
-        id : `str`
-            The column's unique identifier.
-        pos : `str`
-            The column's position in the board. 
-        settings_str : `str`
-            The column's settings in a string form.
-        settings : `moncli.entities.Settings`
-            The settings in entity form (status / dropdown)
-        title : `str`
-            The column's title.
-        type : `str`
-            The column's type.
-        column_type : `moncli.entities.ColumnType`
-            The column's type as an enum.
-        width : `int`
-            The column's width.
-    """
-
-    id = StringType(required=True)
-    title = StringType()
-    archived = BooleanType()
-    settings_str = StringType()
-    type = StringType()
-    width = IntType()
-    
-    def __repr__(self):
-        return str(self.to_primitive())
-
-    @property
-    def settings(self):
-        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
-        if not self.settings_str:
-            return None
-        settings_obj = json.loads(self.settings_str)
-        if self.column_type is ColumnType.status:
-            return StatusSettings(settings_obj, strict=False)
-        elif self.column_type is ColumnType.dropdown:
-            return DropdownSettings(settings_obj, strict=False)
-        else:
-            return settings_obj
-    
-    @property
-    def column_type(self):
-        # TODO - Find something else other than auto-number to default to.
-        return COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
-
-
-class ColumnCollection(object):
-    
-    def __init__(self, columns: list = []):
-        self._values = []
-        for column in columns:
-            if not isinstance(column, Column):
-                raise ColumnTypeError(column)
-
-            self._values.append(column)
-
-
-    def __len__(self):
-        return len(self._values)
-        
-
-    def __getitem__(self, index):
-        try:
-            i = self._get_index(index)
-            return self._values[i]
-        except:
-            raise ColumnKeyError(index)
-
-
-    def __setitem__(self, index, value):
-        try:
-            i = self._get_index(index)
-            self._values[i] = value
-        except:
-            raise ColumnKeyError(index)
-
-
-    def __iter__(self):
-        for value in self._values:
-            yield value
-
-
-    def __repr__(self):
-        return str([value.to_primitive() for value in self._values])
-
-    
-    def insert(self, index, value):
-        i = self._get_index(index)
-        self._values.insert(i, value)
-
-
-    def append(self, value):
-        self.insert(len(self._values), value)
-
-    
-    def _get_index(self, index):
-        if type(index) == int:
-            return index
-        
-        if type(index) != str:
-            raise ColumnKeyTypeError(index)
-
-        for i in range(len(self._values)):
-            column = self._values[i]
-            if column.id == index or column.title == index:
-                return i
-        
-        raise ColumnKeyError(index)
 
 
 class Notification(Model):
@@ -432,15 +288,3 @@ class DropdownSettings(Model):
             if label.id == id or label.name == id:
                 return label
         raise KeyError
-
-class ColumnKeyError(Exception):
-    def __init__(self, index):
-        self.message = 'Unable to find column with index {}.'.format(index)
-
-class ColumnKeyTypeError(Exception):
-    def __init__(self, obj):
-        self.message = 'Object of type {} is not a valid key.'.format(type(obj).__name__)
-
-class ColumnTypeError(Exception):
-    def __init__(self, obj):
-        self.message = 'Object of type {} is not a Column.'.format(type(obj).__name__)

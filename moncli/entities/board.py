@@ -1,9 +1,8 @@
-from moncli.entities.objects import ColumnCollection
 from schematics.models import Model
 from schematics.types import StringType, IntType
 from .. import api_v2 as client, enums, entities as en
 from ..api_v2 import constants
-from ..entities import column_value as cv
+from ..entities import create_column_value, BaseColumnCollection, DateValue, StatusValue
 
 
 class _Board(Model):
@@ -113,7 +112,7 @@ class Board(_Board):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
         self.__activity_logs = kwargs.pop('__activity_logs', None)
-        self.__columns = ColumnCollection()
+        self.__columns = BaseColumnCollection()
         self.__groups = kwargs.pop('__groups', None)
         self.__items = kwargs.pop('__items', None)
         self.__subscribers = kwargs.pop('__subscribers', None)
@@ -137,7 +136,7 @@ class Board(_Board):
         if activity_logs and not self.__activity_logs:
             self.__activity_logs = [en.ActivityLog(log) for log in activity_logs]
         if columns and not self.__columns:
-            self.__columns = ColumnCollection([en.Column(column) for column in columns])
+            self.__columns = BaseColumnCollection([en.Column(column) for column in columns])
         if groups and not self.__groups:
             self.__groups = [en.Group(creds=self.__creds, **group) for group in groups]
         if items and not self.__items:
@@ -710,7 +709,7 @@ class Board(_Board):
             limit=1,
             **column_kwargs)[0]['columns']
 
-        return ColumnCollection([en.Column(data) for data in column_data])
+        return BaseColumnCollection([en.Column(data) for data in column_data])
 
 
     def add_group(self, group_name: str, *args):
@@ -1083,9 +1082,9 @@ class Board(_Board):
                     The state of the item (all / active / archived / deleted), the default is active.
         """
 
-        if type(column_value) == cv.DateValue:
+        if isinstance(column_value, DateValue):
             value = column_value.date
-        elif type(column_value) == cv.StatusValue:
+        elif isinstance(column_value, StatusValue):
             value = column_value.label
         else:
             value = column_value.format()
@@ -1226,7 +1225,7 @@ class Board(_Board):
             column = [column for column in columns.values() if column.title == title][0]
 
         column_type = column.column_type      
-        return cv.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
+        return create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
 
 
     def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):

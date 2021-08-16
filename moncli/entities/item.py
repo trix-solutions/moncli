@@ -3,7 +3,7 @@ from schematics.types import StringType
 
 from .. import api_v2 as client, entities as en
 from ..api_v2 import constants
-from .column_value import ColumnValueCollection, FileValue
+from ..entities import BaseColumnCollection, FileValue
 
 
 class _Item(Model):
@@ -95,7 +95,7 @@ class Item(_Item):
         self.__board = kwargs.pop('__board', None)
         self.__group = kwargs.pop('__group', None)
         self.__creator = kwargs.pop('__creator', None)
-        self.__column_values = ColumnValueCollection()
+        self.__column_values = BaseColumnCollection()
         self.__updates = kwargs.pop('__updates', None)
 
         assets = kwargs.pop('assets', None)
@@ -563,7 +563,7 @@ class Item(_Item):
             column_type = column.column_type
             data['settings_str'] = column.settings_str
             values.append(en.create_column_value(column_type, **data))
-        return ColumnValueCollection(values)
+        return BaseColumnCollection(values)
 
 
     def get_column_value(self, id = None, title = None, *args):
