@@ -1,7 +1,7 @@
 from .base import BaseCollection
 from .objects import *
 from .user import User, Team, Account
-from .column import Column, BaseColumnCollection
+from .column import BaseColumn, BaseColumnCollection
 from .column_value import *
 from .asset import Asset
 from .item import Item, UpdateNotFound
