@@ -387,52 +387,6 @@ def create_field(field_name: str, *args, **kwargs):
     return GraphQLField(field_name, *args, **kwargs)
 
 
-def create_query(query_name: str, *args, **kwargs):
-    """Create a GraphQL query operation.
-
-    __________
-    Parameters
-    __________
-    query_name : `str`
-        The name of the query to be run.
-    args : `tuple`
-        A collection of child return fields to add.
-    kwargs : `dict`
-        A field argument value map for queried return fields.
-
-    _______
-    Returns
-    _______
-    field : `moncli.api_v2.graphql.GraphQLOperation`
-        A graphql query operation node.
-    """
-    
-    return GraphQLOperation(OperationType.QUERY, query_name, *args, **kwargs)
-
-
-def create_mutation(query_name: str, *args, **kwargs):
-    """Create a GraphQL mutation operation.
-
-    __________
-    Parameters
-    __________
-    query_name : `str`
-        The name of the mutation to be run.
-    args : `tuple`
-        A collection of child return fields to add.
-    kwargs : `dict`
-        A field argument value map for queried return fields.
-
-    _______
-    Returns
-    _______
-    field : `moncli.api_v2.graphql.GraphQLOperation`
-        A graphql mutation operation node.
-    """
-    
-    return GraphQLOperation(OperationType.MUTATION, query_name, *args, **kwargs)
-
-
 def create_value(value, value_type: ArgumentValueKind):
     """Transform value into ArgumentValue
     
