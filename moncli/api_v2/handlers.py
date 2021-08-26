@@ -87,13 +87,11 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind, *args, **
     return execute_query(api_key, query_name=CREATE_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def get_boards(api_key: str, *args, **kwargs) -> List[Dict[str, Any]]:
+def get_boards(*args, **kwargs) -> List[Dict[str, Any]]:
     """Retrieves a list of boards.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             args : `tuple`
                 The list of board return fields.
             kwargs : `dict`
@@ -167,7 +165,7 @@ def get_boards(api_key: str, *args, **kwargs) -> List[Dict[str, Any]]:
                 Get the recently created boards at the top of the list.        
     """
     
-    return execute_query(api_key, query_name=BOARDS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)  
+    return execute_query(query_name=BOARDS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)  
 
 
 def archive_board(api_key: str, board_id: str, *args, **kwargs):
