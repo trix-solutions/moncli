@@ -4,7 +4,7 @@ from . import MondayApiError
 from .graphql import *
 from .constants import *
 
-def execute_query(api_key: str, timeout: int = None, **kwargs):
+def execute_query(api_key: str = None, timeout: int = None, **kwargs):
     """Executes a graphql query via Rest.
     
     __________
@@ -128,7 +128,7 @@ def upload_file(api_key: str, file_path: str, timeout = 300, **kwargs):
         files=files,
         timeout=timeout)
 
-    return _process_repsonse(api_key, timeout, resp, data, **kwargs)   
+    return _process_repsonse(api_key, timeout, resp, data, **kwargs)[query_name]
 
 
 def get_field_list(fields: list, prefix: str = None, *args):
