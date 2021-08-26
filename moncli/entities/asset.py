@@ -1,9 +1,7 @@
 from schematics import types
 from schematics.models import Model
 
-from .. import api_v2 as client
-from ..api_v2 import constants
-from .user import User
+from .. import api, entities as en
 
 class _Asset(Model):
     """Asset base model."""
@@ -23,38 +21,38 @@ class _Asset(Model):
 class Asset(_Asset):
     """A file uploaded to monday.com.
   
-    Properties
+        Properties
 
-        id : `str`
-            The file's unique identifier.
-        created_at : `str`
-            The file's creation date.
-        file_extension : `str`
-            The file's extension.
-        file_size : `int`
-            The file's size in bytes.
-        name : `str`
-            The file's name.
-        public_url : `str`
-            Public url to the asset, valid for 1 hour.
-        uploaded_by : `moncli.entities.User`
-            The user who uploaded the file.
-        url : `str`
-            The file url.
-        url_thumbnail : `str`
-            Url to view the asset in thumbnail mode. Only available for images.
+            id : `str`
+                The file's unique identifier.
+            created_at : `str`
+                The file's creation date.
+            file_extension : `str`
+                The file's extension.
+            file_size : `int`
+                The file's size in bytes.
+            name : `str`
+                The file's name.
+            public_url : `str`
+                Public url to the asset, valid for 1 hour.
+            uploaded_by : `moncli.entities.User`
+                The user who uploaded the file.
+            url : `str`
+                The file url.
+            url_thumbnail : `str`
+                Url to view the asset in thumbnail mode. Only available for images.
 
-    Methods
+        Methods
 
-        get_uploaded_by_user : `moncli.entities.User`
-            Get the user who uploaded the file.
+            get_uploaded_by_user : `moncli.entities.User`
+                Get the user who uploaded the file.
     """
 
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
         uploaded_by = kwargs.pop('uploaded_by', None)
         if uploaded_by:
-            self.__uploaded_by = User(**uploaded_by)
+            self.__uploaded_by = en.User(**uploaded_by)
         super(Asset, self).__init__(kwargs)
 
     @property
@@ -69,73 +67,72 @@ class Asset(_Asset):
     def get_uploaded_by_user(self, *args):
         """Get the user who uploaded the file.
 
-        Parameters
+            Parameters
 
-            args : `tuple`
-                The list of user return fields.
-  
-        Returns
+                args : `tuple`
+                    The list of user return fields.
+    
+            Returns
 
-            user : `moncli.entities.User`
-                The user who uploaded the file.
-        
-        Return Fields
+                user : `moncli.entities.User`
+                    The user who uploaded the file.
+            
+            Return Fields
 
-            account : `moncli.entities.Account`
-                The user's account.
-            birthday : `str`
-                The user's birthday.
-            country_code : `str`
-                The user's country code.
-            created_at : `str`
-                The user's creation date.
-            email : `str`
-                The user's email.
-            enabled : `bool`
-                Is the user enabled or not.
-            id : `str`
-                The user's unique identifier.
-            is_guest : `bool`
-                Is the user a guest or not.
-            is_pending : `bool`
-                Is the user a pending user.
-            is_view_only : `bool`
-                Is the user a view only user or not.
-            join_date : `str`
-                The date the user joined the account.
-            location : `str`
-                The user' location.
-            mobile_phone : `str`
-                The user's mobile phone number.
-            name : `str`
-                The user's name.
-            phone : `str`
-                The user's phone number.
-            photo_original : `str`
-                The user's photo in the original size.
-            photo_small : `str`
-                The user's photo in small size (150x150).
-            photo_thumb : `str`
-                The user's photo in thumbnail size (100x100).
-            photo_thumb_small : `str`
-                The user's photo in small thumbnail size (50x50).
-            photo_tiny : `str`
-                The user's photo in tiny size (30x30).
-            teams : `list[moncli.entities.Team]`
-                The teams the user is a member in.
-            time_zone_identifier : `str`
-                The user's time zone identifier.
-            title : `str`
-                The user's title.
-            url : `str`
-                The user's profile url.
-            utc_hours_diff : `int`
-                The user's UTC hours difference.
+                account : `moncli.entities.Account`
+                    The user's account.
+                birthday : `str`
+                    The user's birthday.
+                country_code : `str`
+                    The user's country code.
+                created_at : `str`
+                    The user's creation date.
+                email : `str`
+                    The user's email.
+                enabled : `bool`
+                    Is the user enabled or not.
+                id : `str`
+                    The user's unique identifier.
+                is_guest : `bool`
+                    Is the user a guest or not.
+                is_pending : `bool`
+                    Is the user a pending user.
+                is_view_only : `bool`
+                    Is the user a view only user or not.
+                join_date : `str`
+                    The date the user joined the account.
+                location : `str`
+                    The user' location.
+                mobile_phone : `str`
+                    The user's mobile phone number.
+                name : `str`
+                    The user's name.
+                phone : `str`
+                    The user's phone number.
+                photo_original : `str`
+                    The user's photo in the original size.
+                photo_small : `str`
+                    The user's photo in small size (150x150).
+                photo_thumb : `str`
+                    The user's photo in thumbnail size (100x100).
+                photo_thumb_small : `str`
+                    The user's photo in small thumbnail size (50x50).
+                photo_tiny : `str`
+                    The user's photo in tiny size (30x30).
+                teams : `list[moncli.entities.Team]`
+                    The teams the user is a member in.
+                time_zone_identifier : `str`
+                    The user's time zone identifier.
+                title : `str`
+                    The user's title.
+                url : `str`
+                    The user's profile url.
+                utc_hours_diff : `int`
+                    The user's UTC hours difference.
         """
         
-        args = ['uploaded_by.' + arg for arg in client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)]
-        user_data = client.get_assets(
+        user_data = api.get_assets(
             self.__creds.api_key_v2
-            *args,
+            *api.get_field_list(api.DEFAULT_USER_QUERY_FIELDS, 'uploaded_by', *args),
             ids=[self.id])[0]['uploaded_by']
-        return User(**user_data)
+        return en.User(**user_data)

@@ -7,7 +7,8 @@ from pytz import timezone, exceptions as tzex
 from schematics.transforms import blacklist
 from schematics.types import StringType
 
-from .. import entities as en, ColumnType, PeopleKind
+from .. import entities as en
+from ..enums import *
 
 
 SIMPLE_NULL_VALUE = ''

@@ -4,7 +4,6 @@ from moncli.entities.base import BaseCollection
 from schematics.models import Model
 from schematics.types import StringType, BooleanType, IntType, DictType, ListType, ModelType
 
-from ..enums import ColumnType
 
 class MondayClientCredentials():
     """monday.com client credentials.
