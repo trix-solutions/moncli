@@ -75,7 +75,7 @@ class MondayClient():
             self.__creds.api_key_v1 = api_key_v1
 
         if api_key_v2:
-            self.__creds.api_key_v2 = api_key_v2
+            self.api_key_v2 = api_key_v2
         
         # Only "login" when user_name and API Key v2 are provided.
         if username and api_key_v2 and self.me.email.lower() != username.lower():
@@ -97,6 +97,7 @@ class MondayClient():
     def api_key_v2(self, value):
         """Set API Key V2"""
         self.__creds.api_key_v2 = value
+        api.api_key = value
 
 
     def create_board(self, board_name: str, board_kind: BoardKind, *args, **kwargs):
@@ -268,7 +269,6 @@ class MondayClient():
                 break
         
         boards_data = api.get_boards(
-            self.__creds.api_key_v2, 
             *args, 
             **kwargs)
 

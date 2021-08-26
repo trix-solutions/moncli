@@ -304,7 +304,7 @@ class Board(_Board):
         activity_logs_data = api.get_boards(
             self.__creds.api_key_v2,
             'id', 'name',
-            *api.get_field_list(api.DEFAULT_ACTIVITY_LOG_QUERY_FIELDS, 'activity_logs' *args),
+            *api.get_field_list(api.DEFAULT_ACTIVITY_LOG_QUERY_FIELDS, 'activity_logs', *args),
             ids=[self.id],
             **kwargs)[0]['activity_logs']
 

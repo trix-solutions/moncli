@@ -387,7 +387,7 @@ class Team(_Team):
             kwargs = {'users': kwargs}
         users_data = api.get_teams(
             self.__creds.api_key_v2, 
-            *api.get_field_list(api.DEFAULT_USER_QUERY_FIELDS, 'users' *args),
+            *api.get_field_list(api.DEFAULT_USER_QUERY_FIELDS, 'users', *args),
             ids=[int(self.id)],
             **kwargs)[0]['users']
         return [User(creds=self.__creds, **user_data) for user_data in users_data]
