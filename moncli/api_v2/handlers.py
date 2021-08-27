@@ -6,7 +6,7 @@ from .constants import *
 from .requests import execute_query, upload_file
 
 
-def create_board(api_key: str, board_name: str, board_kind: BoardKind, *args, **kwargs):
+def create_board(board_name: str, board_kind: BoardKind, *args, **kwargs):
     """Create a new board.
 
         Parameters
@@ -84,7 +84,7 @@ def create_board(api_key: str, board_name: str, board_kind: BoardKind, *args, **
 
     kwargs['board_name'] = gql.StringValue(board_name)
     kwargs['board_kind'] = gql.EnumValue(board_kind)
-    return execute_query(api_key, query_name=CREATE_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(kwargs.pop('api_key', None), query_name=CREATE_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
 def get_boards(*args, **kwargs) -> List[Dict[str, Any]]:
@@ -150,7 +150,9 @@ def get_boards(*args, **kwargs) -> List[Dict[str, Any]]:
                 The board's workspace unique identifier (null for main workspace).
 
         Optional Arguments
-
+            
+            api_key : `str`
+                The monday.com v2 API user key.
             limit : `int`
                 Number of boards to get; the default is 25.
             page : `int`
@@ -165,7 +167,7 @@ def get_boards(*args, **kwargs) -> List[Dict[str, Any]]:
                 Get the recently created boards at the top of the list.        
     """
     
-    return execute_query(query_name=BOARDS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)  
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=BOARDS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)  
 
 
 def archive_board(api_key: str, board_id: str, *args, **kwargs):
@@ -933,13 +935,11 @@ def create_subitem(api_key: str, parent_item_id: str, item_name: str, *args, **k
     return execute_query(api_key, query_name=CREATE_SUBITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def get_items(api_key: str, *args, **kwargs):
+def get_items(*args, **kwargs):
     """Get a collection of items.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             args : `tuple`
                 The list of item return fields.
             kwargs : `dict`
@@ -981,6 +981,8 @@ def get_items(api_key: str, *args, **kwargs):
 
         Optional Arguments
         
+            api_key : `str`
+                The monday.com v2 API user key.
             limit : `int`
                 Number of items to get; the default is 25.
             page : `int`
@@ -991,7 +993,7 @@ def get_items(api_key: str, *args, **kwargs):
                 Get the recently created items at the top of the list.
     """
     
-    return execute_query(api_key, query_name=ITEMS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ITEMS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
 def get_items_by_column_values(api_key: str, board_id: str, column_id: str, column_value: str, *args, **kwargs):
