@@ -3,8 +3,8 @@ import json, warnings
 from schematics.models import Model
 from schematics.types import StringType, BooleanType, IntType
 
-from .. import ColumnType
-from ..entities import StatusSettings, DropdownSettings, BaseCollection
+from .. import entities as en
+from ..enums import *
 
 ## Column type mappings
 COLUMN_TYPE_MAPPINGS = {
@@ -79,9 +79,9 @@ class Column(BaseColumn):
             return None
         settings_obj = json.loads(self.settings_str)
         if self.column_type is ColumnType.status:
-            return StatusSettings(settings_obj, strict=False)
+            return en.StatusSettings(settings_obj, strict=False)
         elif self.column_type is ColumnType.dropdown:
-            return DropdownSettings(settings_obj, strict=False)
+            return en.DropdownSettings(settings_obj, strict=False)
         else:
             return settings_obj
     
@@ -91,7 +91,7 @@ class Column(BaseColumn):
         return COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
 
 
-class BaseColumnCollection(BaseCollection):
+class BaseColumnCollection(en.BaseCollection):
     
     def __init__(self, column_values: list = []):
 
