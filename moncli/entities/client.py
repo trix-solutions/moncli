@@ -175,10 +175,10 @@ class MondayClient():
         """
         
         board_data = api.create_board(
-            self.__creds.api_key_v2, 
             board_name, 
             board_kind, 
             *args,
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return en.Board(creds=self.__creds, **board_data)
 
@@ -700,17 +700,16 @@ class MondayClient():
 
         if get_column_values:
             args = list(args)
-            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
+            for arg in ['id', 'name', 'column_values.[*]', 'board.id', 'board.columns.[*]']:
                 if arg not in args:
                     args.append(arg)
-            args.extend(['id', 'name'])
 
         if kwargs.__contains__('ids'):
             kwargs['ids'] = [int(id) for id in kwargs['ids']]
 
         items_data = api.get_items(
-            self.__creds.api_key_v2, 
             *args,
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
         

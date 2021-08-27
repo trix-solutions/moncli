@@ -275,8 +275,8 @@ class Item(_Item):
         if column_ids:
             kwargs['assets'] = {'column_ids': column_ids}
         assets_data = api.get_items(
-            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_ASSET_QUERY_FIELDS, 'assets', *args),
+            api_key=self.__creds.api_key_v2,
             **kwargs)[0]['assets']
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
@@ -390,8 +390,8 @@ class Item(_Item):
         """
 
         board_data = api.get_items(
-            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_BOARD_QUERY_FIELDS, 'board', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['board']
         return en.Board(creds=self.__creds, **board_data)
 
@@ -429,8 +429,8 @@ class Item(_Item):
         """
 
         group_data = api.get_items(
-            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_GROUP_QUERY_FIELDS, 'group', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['group']
         return en.Group(creds=self.__creds, __board=self, **group_data)
 
@@ -503,8 +503,8 @@ class Item(_Item):
         """
 
         user_data = api.get_items(
-            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_USER_QUERY_FIELDS, 'creator', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['creator']
         return en.User(creds=self.__creds, **user_data)
    
@@ -542,8 +542,8 @@ class Item(_Item):
         # column ID to type.
         columns_map = { column.id: column for column in self.board.columns }
         column_values_data = api.get_items(
-            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS, 'column_values', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['column_values']
 
         values = []
@@ -1130,8 +1130,8 @@ class Item(_Item):
         limit = kwargs.pop('limit', 25)
         page = kwargs.pop('page', 1)
         updates_data = api.get_items(
-            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_UPDATE_QUERY_FIELDS, 'updates', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)],
             limit=1,
             updates={'limit': limit, 'page': page})[0]['updates']

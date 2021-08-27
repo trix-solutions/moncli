@@ -698,8 +698,8 @@ class Board(_Board):
             column_kwargs['columns'] = kwargs
 
         column_data = api.get_boards(
-            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_COLUMN_QUERY_FIELDS, 'columns', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)],
             limit=1,
             **column_kwargs)[0]['columns']
