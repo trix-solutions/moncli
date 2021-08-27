@@ -4,46 +4,45 @@ from . import MondayApiError
 from .graphql import *
 from .constants import *
 
-def execute_query(api_key: str = None, timeout: int = None, **kwargs):
+def execute_query(timeout: int = None, **kwargs):
     """Executes a graphql query via Rest.
     
-    __________
-    Parameters
-    __________
-    api_key : `str`
-        The monday.com API v2 user key.
-    timeout : `int`
-        The default timeout for Rest requests.
-    kwargs : `dict`
-        Optional keyword arguments
+        Parameters
 
-    _______
-    Returns
-    _______
-    data : `dict`
-        Response data in dictionary form.
+            timeout : `int`
+                The default timeout for Rest requests.
+            kwargs : `dict`
+                Optional keyword arguments
 
-    __________________
-    Optional Arguments
-    __________________
-    operation : `moncli.api_v2.graphql.GraphQLOperation`
-        Perform request with input graphql operation.
-    query_name: `str`:
-        The name of the query to execute.
-    operation_type: `moncli.api_v2.graphql.OperationType`:
-        The type of graphql operation to perform (QUERY or MUTATION).
-    fields: `list[str]`:
-        List of fields to return.
-    arguments: `dict`:
-        Additional graphql arguments.
-    query : `str`
-        Perform request with raw graphql query string.
-    variables : `dict`
-        Variables added to the query.
+        Returns
+        
+            data : `dict`
+                Response data in dictionary form.
+
+        Optional Arguments
+
+            api_key : `str`
+                The monday.com API v2 user key.
+            operation : `moncli.api_v2.graphql.GraphQLOperation`
+                Perform request with input graphql operation.
+            query_name: `str`:
+                The name of the query to execute.
+            operation_type: `moncli.api_v2.graphql.OperationType`:
+                The type of graphql operation to perform (QUERY or MUTATION).
+            fields: `list[str]`:
+                List of fields to return.
+            arguments: `dict`:
+                Additional graphql arguments.
+            query : `str`
+                Perform request with raw graphql query string.
+            variables : `dict`
+                Variables added to the query.
     """
 
+    api_key = kwargs.pop('api_key', None)
     if not api_key:
         from . import api_key
+
     if not timeout:
         from . import connection_timeout
         timeout = connection_timeout
@@ -60,7 +59,7 @@ def execute_query(api_key: str = None, timeout: int = None, **kwargs):
         default_fields, default_arguments = QUERY_MAP.get(query_name, ([],{}))
         fields = get_field_list(default_fields, None, *fields)
         arguments = get_method_arguments(default_arguments, **arguments)
-        query = GraphQLOperation(operation_type, query_name, *fields, **arguments).format_body()
+        query = GraphQLOperation(operation_type, query_name, FIELD_MAP, *fields, **arguments).format_body()
 
     if include_complexity:
         if 'mutation' in query:
@@ -79,37 +78,38 @@ def execute_query(api_key: str = None, timeout: int = None, **kwargs):
     return _process_repsonse(api_key, timeout, resp, data, **kwargs)[query_name]
 
 
-def upload_file(api_key: str, file_path: str, timeout = 300, **kwargs):
+def upload_file(file_path: str, timeout = 300, **kwargs):
     """Executes a graphql query to upload a file via Rest.
     
-    __________
-    Parameters
-    __________
-    api_key : `str`
-        The monday.com API v2 user key.
-    timeout : `int`
-        The default timeout for Rest requests.
-    kwargs : `dict`
-        Optional keyword arguments
+        Parameters
 
-    _______
-    Returns
-    _______
-    data : `dict`
-        Response data in dictionary form.
+            timeout : `int`
+                The default timeout for Rest requests.
+            kwargs : `dict`
+                Optional keyword arguments
 
-    __________________
-    Optional Arguments
-    __________________
-    query_name: `str`:
-        The name of the query to execute.
-    operation_type: `moncli.api_v2.graphql.OperationType`:
-        The type of graphql operation to perform (QUERY or MUTATION).
-    fields: `list[str]`:
-        List of fields to return.
-    arguments: `dict`:
-        Additional graphql arguments.
+        Returns
+
+            data : `dict`
+                Response data in dictionary form.
+
+        Optional Arguments
+
+            api_key : `str`
+                The monday.com API v2 user key.
+            query_name: `str`:
+                The name of the query to execute.
+            operation_type: `moncli.api_v2.graphql.OperationType`:
+                The type of graphql operation to perform (QUERY or MUTATION).
+            fields: `list[str]`:
+                List of fields to return.
+            arguments: `dict`:
+                Additional graphql arguments.
     """
+
+    api_key = kwargs.pop('api_key', None)
+    if not api_key:
+        from . import api_key
 
     query_name = kwargs.pop('query_name')
     fields = kwargs.pop('fields', None)
@@ -169,7 +169,6 @@ def get_method_arguments(mappings: dict, **kwargs):
                 A predefined set of default mappings.
             kwargs : `dict`
                 Argument parameters passed into the request.
-
 
         Returns
             
