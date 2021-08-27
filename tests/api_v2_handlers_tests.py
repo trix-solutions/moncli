@@ -21,7 +21,7 @@ def test_create_board(execute_query):
     execute_query.return_value = {'id': '1', 'name': 'Test', 'board_kind': 'public'}
 
     # Act
-    board = handlers.create_board('', 'Test', BoardKind.public, 'id', 'name', 'board_kind')
+    board = handlers.create_board('Test', BoardKind.public, 'id', 'name', 'board_kind')
     
     # Assert
     ok_(board != None)
@@ -37,7 +37,7 @@ def test_get_board(execute_query):
     execute_query.return_value = [{'id': '1'}, {'id': '2'}, {'id': '3'}, {'id': '4'}, {'id': '5'}]
 
     # Act
-    boards = handlers.get_boards('', 'id', limit=5)
+    boards = handlers.get_boards('id', limit=5)
     
     # Assert
     ok_(boards != None)
