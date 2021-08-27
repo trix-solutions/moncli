@@ -217,6 +217,10 @@ DEFAULT_PLAN_QUERY_FIELDS = [
 ]
 
 
+FIELD_MAP = {
+    'column_values': DEFAULT_COLUMN_VALUE_QUERY_FIELDS
+}
+
 ## Field list and default arguments map
 QUERY_MAP = {
     BOARDS: (
