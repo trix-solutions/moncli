@@ -91,9 +91,10 @@ class GraphQLField(GraphQLNode):
         Format child fields into query string.
     """
 
-    def __init__(self, field_name: str, *args, **kwargs):
+    def __init__(self, field_name: str, field_map: dict, *args, **kwargs):
         super(GraphQLField, self).__init__(field_name)
         self.__children: dict = {}
+        self._field_map = field_map
         
         self.add_fields(*args)
         self.add_arguments(**kwargs)
@@ -117,14 +118,15 @@ class GraphQLField(GraphQLNode):
             if type(field) is str:
                 field_split = field.split('.')
                 existing_field = self.get_field(field_split[0])
+                fields_to_add = field_split[1:]
 
                 # Add the new fields to the existing field
                 if existing_field:
-                    existing_field.add_fields('.'.join(field_split[1:]))
+                    existing_field.add_fields('.'.join(fields_to_add))
                     continue
-
+                
                 new_field = GraphQLField(field_split[0])
-                new_field.add_fields('.'.join(field_split[1:]))
+                new_field.add_fields('.'.join(fields_to_add))
                 self.__children.__setitem__(new_field.name, new_field)
 
             elif type(field) is GraphQLField:
@@ -244,10 +246,10 @@ class GraphQLOperation(GraphQLField):
         Add a query variable to the query.
     """
 
-    def __init__(self, action_type: OperationType, query_name: str, *args, **kwargs):
+    def __init__(self, action_type: OperationType, query_name: str, field_map: dict, *args, **kwargs):
 
         self.action_type = action_type.name.lower()
-        super(GraphQLOperation, self).__init__(query_name, *args, **kwargs)
+        super(GraphQLOperation, self).__init__(query_name, field_map, *args, **kwargs)
         self.query_variables: dict = {}
 
 
