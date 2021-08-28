@@ -124,7 +124,7 @@ class GraphQLField(GraphQLNode):
                     if list_fields == '*':
                         field_group = [[f] for f in self._field_map[parent_field]]
                     else:
-                        field_group = [[f.trim()] for f in list_fields.split(',')]
+                        field_group = [[f.strip()] for f in list_fields.split(',')]
                 else:
                     field_group = [child_fields]
                 
