@@ -3,9 +3,10 @@ A Python Client and CLI tool for Monday.com
 
 ### Table of Contents ###
 * [Getting Started](#getting-started). 
-   * [Getting Started...](#getting-started)  
-   * [Introducing the MondayClient](#introducing-the-mondayclient)
+   * [Setup](#setup)  
+   * [Configuring the Client](#configuring-the-client)
 * [Using Moncli](#using-moncli)
+   * [Functions, Return Fields, and Arguments](#functions-return-fields-and-arguments)
    * [Managing Boards](#managing-boards)
    * [Working with Columns, Groups, and Items](#working-with-columns-groups-and-items)
    * [Changing Column Values](#changing-column-values)
