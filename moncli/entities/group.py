@@ -1,8 +1,7 @@
 from schematics.models import Model
 from schematics import types
 
-from .. import api_v2 as client, entities as en
-from ..api_v2 import constants
+from .. import api, entities as en
 
 class _Group(Model):
     """Group base model"""
@@ -112,7 +111,7 @@ class Group(_Group):
                     The group's title.
         """
 
-        group_data = client.duplicate_group(
+        group_data = api.duplicate_group(
             self.__creds.api_key_v2, 
             self.__board.id, 
             self.id, 
@@ -155,7 +154,7 @@ class Group(_Group):
                     The group's title.
         """
 
-        group_data = client.archive_group(
+        group_data = api.archive_group(
             self.__creds.api_key_v2,
             self.__board.id,
             self.id, 
@@ -197,7 +196,7 @@ class Group(_Group):
                     The group's title.
         """
 
-        group_data = client.delete_group(
+        group_data = api.delete_group(
             self.__creds.api_key_v2,
             self.__board,
             self.id, 
@@ -260,7 +259,7 @@ class Group(_Group):
                     The column values of the new item.
         """
 
-        item_data = client.create_item(
+        item_data = api.create_item(
             self.__creds.api_key_v2,
             item_name,
             self.__board.id, 
@@ -328,21 +327,17 @@ class Group(_Group):
 
         if get_column_values:
             args = list(args)
-            column_value_args = ['groups.items.column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
-            column_value_args.extend(['groups.items.id', 'groups.items.name'])
-            for arg in column_value_args:
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
-        else:
-            args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
-            args = ['groups.items.' + field for field in args]
+            args.extend(['id', 'name'])
             
         group_kwargs = {'groups': {'ids': [self.id]}}
         if kwargs:
             group_kwargs['groups']['items'] = kwargs
-        items_data = client.get_boards(
+        items_data = api.get_boards(
             self.__creds.api_key_v2, 
-            *args,
+            *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'groups.items', *args),
             ids=[int(self.__board.id)],
             limit=1,
             **group_kwargs)[0]['groups'][0]['items']

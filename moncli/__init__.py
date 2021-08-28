@@ -1,6 +1,7 @@
 
 from .enums import *
-from .constants import *
-from .entities import MondayClient
+from .config import *
+from . import api_v2 as api
+from . import entities
 
-client = MondayClient()
+client = entities.MondayClient()

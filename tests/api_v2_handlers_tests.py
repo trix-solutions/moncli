@@ -4,8 +4,8 @@ from nose.tools import ok_, eq_
 from moncli.api_v2 import handlers, constants
 from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType, WebhookEventType, WorkspaceKind
 
-EXECUTE_QUERY_PATCH = 'moncli.api_v2.requests.execute_query'
-UPLOAD_FILE_PATCH = 'moncli.api_v2.requests.upload_file'
+EXECUTE_QUERY_PATCH = 'moncli.api_v2.handlers.execute_query'
+UPLOAD_FILE_PATCH = 'moncli.api_v2.handlers.upload_file'
 
 def setup():
     print('SETUP')
@@ -18,10 +18,10 @@ def teardown():
 def test_create_board(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.CREATE_BOARD: {'id': '1', 'name': 'Test', 'board_kind': 'public'}}
+    execute_query.return_value = {'id': '1', 'name': 'Test', 'board_kind': 'public'}
 
     # Act
-    board = handlers.create_board('', 'Test', BoardKind.public, 'id', 'name', 'board_kind')
+    board = handlers.create_board('Test', BoardKind.public, 'id', 'name', 'board_kind')
     
     # Assert
     ok_(board != None)
@@ -34,10 +34,10 @@ def test_create_board(execute_query):
 def test_get_board(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.BOARDS: [{'id': '1'}, {'id': '2'}, {'id': '3'}, {'id': '4'}, {'id': '5'}]}
+    execute_query.return_value = [{'id': '1'}, {'id': '2'}, {'id': '3'}, {'id': '4'}, {'id': '5'}]
 
     # Act
-    boards = handlers.get_boards('', 'id', limit=5)
+    boards = handlers.get_boards('id', limit=5)
     
     # Assert
     ok_(boards != None)
@@ -49,7 +49,7 @@ def test_get_board(execute_query):
 def test_archive_board(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.ARCHIVE_BOARD: {'id': '1', 'state': 'archived'}}
+    execute_query.return_value = {'id': '1', 'state': 'archived'}
 
     # Act
     archived_board = handlers.archive_board('', '1', 'id', 'state')
@@ -66,7 +66,7 @@ def test_add_subscribers_to_board(execute_query):
     # Arrange
     user_id = '1'
     name = 'name'
-    execute_query.return_value = {constants.ADD_SUBSCRIBERS_TO_BOARD: {'id': user_id, 'name': name}}
+    execute_query.return_value = {'id': user_id, 'name': name}
 
     # Act
     subscriber = handlers.add_subscribers_to_board('', '1', ['1'])
@@ -83,8 +83,9 @@ def test_remove_subscribers_from_board(execute_query):
     # Arrange
     user_id = '1'
     name = 'name'
-    execute_query.return_value = {constants.DELETE_SUBSCRIBERS_FROM_BOARD: [{'id': user_id, 'name': name}]}
+    execute_query.return_value = [{'id': user_id, 'name': name}]
 
+    print(execute_query)
     # Act
     subscribers = handlers.delete_subscribers_from_board('', '1', ['1'])
 
@@ -99,7 +100,7 @@ def test_create_column(execute_query):
 
     # Arrange
     title = 'Text Column One'
-    execute_query.return_value = {constants.CREATE_COLUMN: {'id': 'text_column_1', 'title': title, 'type': 'text'}}
+    execute_query.return_value = {'id': 'text_column_1', 'title': title, 'type': 'text'}
 
     # Act
     new_column = handlers.create_column('', '1', title, ColumnType.text, 'id', 'title', 'type')
@@ -115,7 +116,7 @@ def test_create_column(execute_query):
 def test_change_column_value(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.CHANGE_COLUMN_VALUE: {'id': '1'}}
+    execute_query.return_value = {'id': '1'}
 
     # Act
     updated_item = handlers.change_column_value('', '1', 'text_column_1', '1', 'Hello, world!', 'id')
@@ -131,7 +132,7 @@ def test_change_multiple_column_value(execute_query):
 
     # Arrange
     column_values = {'text_column_1': 'Let\'s eat, Grandma!', 'numbers_column_1': 8675309}
-    execute_query.return_value = {constants.CHANGE_MULTIPLE_COLUMN_VALUES: {'id': '1'}}
+    execute_query.return_value = {'id': '1'}
 
     # Act
     updated_item = handlers.change_multiple_column_value('', '1', '1', column_values, 'id')
@@ -147,7 +148,7 @@ def test_duplicate_group(execute_query):
 
     # Arrange
     group_id = 'group_2'
-    execute_query.return_value = {constants.DUPLICATE_GROUP: {'id': group_id}}
+    execute_query.return_value = {'id': group_id}
 
     # Act
     duplicated_group = handlers.duplicate_group('', '1', 'group_1', 'id')
@@ -163,7 +164,7 @@ def test_create_group(execute_query):
     # Arrange
     group_id = 'group_1'
     group_name = 'New Group One'
-    execute_query.return_value = {constants.CREATE_GROUP: {'id': group_id, 'title': group_name}}
+    execute_query.return_value = {'id': group_id, 'title': group_name}
 
     # Act
     new_group = handlers.create_group('', '1', group_name, 'id', 'title')
@@ -179,7 +180,7 @@ def test_create_group(execute_query):
 def test_archive_group(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.ARCHIVE_GROUP: {'id': 'group_1', 'archived': True}}
+    execute_query.return_value = {'id': 'group_1', 'archived': True}
 
     # Act
     archived_group = handlers.archive_group('', '1', 'group_1', 'archived')
@@ -195,7 +196,7 @@ def test_archive_group(execute_query):
 def test_delete_group(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.DELETE_GROUP: {'id': 'group_1', 'deleted': True}}
+    execute_query.return_value = {'id': 'group_1', 'deleted': True}
 
     # Act
     deleted_group = handlers.delete_group('', '1', 'group_1', 'deleted')
@@ -212,7 +213,7 @@ def test_create_item(execute_query):
 
     # Arrange
     item_name = 'Item One'
-    execute_query.return_value = {constants.CREATE_ITEM: {'id': '1', 'name': item_name}}
+    execute_query.return_value = {'id': '1', 'name': item_name}
 
     # Act
     new_item = handlers.create_item('', item_name, '1', 'id', 'name')
@@ -230,7 +231,7 @@ def test_create_subitem(execute_query):
     # Arrange
     id = '2'
     item_name = 'Item One'
-    execute_query.return_value = {constants.CREATE_SUBITEM: {'id': id, 'name': item_name}}
+    execute_query.return_value = {'id': id, 'name': item_name}
 
     # Act
     subitem = handlers.create_subitem('', '1', item_name)
@@ -248,7 +249,7 @@ def test_clear_item_updates(execute_query):
     # Arrange
     id = '1'
     item_name = 'Item One'
-    execute_query.return_value = {constants.CLEAR_ITEM_UPDATES: {'id': id, 'name': item_name}}
+    execute_query.return_value = {'id': id, 'name': item_name}
 
     # Act
     item = handlers.clear_item_updates('', id)
@@ -264,7 +265,7 @@ def test_clear_item_updates(execute_query):
 def test_get_items(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.ITEMS: [{'id': '1', 'name': 'Item One'}, {'id': '2', 'name': 'Item Two'}]}
+    execute_query.return_value = [{'id': '1', 'name': 'Item One'}, {'id': '2', 'name': 'Item Two'}]
 
     # Act
     items = handlers.get_items('', page=1, limit=2)
@@ -279,7 +280,7 @@ def test_get_items(execute_query):
 def test_get_items_by_column_values(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.ITEMS_BY_COLUMN_VALUES: [{'id': '1', 'name': 'Item One'}]}
+    execute_query.return_value = [{'id': '1', 'name': 'Item One'}]
 
     # Act
     items = handlers.get_items_by_column_values('', '1', 'name', 'Item One', 'id', 'name')
@@ -294,7 +295,7 @@ def test_get_items_by_column_values(execute_query):
 def test_archive_item(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.ARCHIVE_ITEM: {'id': '1', 'state': 'archived'}}
+    execute_query.return_value = {'id': '1', 'state': 'archived'}
 
     # Act
     archived_item = handlers.archive_item('', '1', 'id', 'state')
@@ -309,7 +310,7 @@ def test_archive_item(execute_query):
 def test_delete_item(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.DELETE_ITEM: {'id': '1', 'state': 'deleted'}}
+    execute_query.return_value = {'id': '1', 'state': 'deleted'}
 
     # Act
     deleted_item = handlers.delete_item('', '1', 'id', 'state')
@@ -326,7 +327,7 @@ def test_duplicate_item(execute_query):
     # Arrange
     id = '1'
     name = 'dupe'
-    execute_query.return_value = {constants.DUPLICATE_ITEM: {'id': id, 'name': name}}
+    execute_query.return_value = {'id': id, 'name': name}
 
     # Act
     duplicate_item = handlers.duplicate_item('', '1', '1')
@@ -343,7 +344,7 @@ def test_create_update(execute_query):
     # Arrange
     body = 'Hello, world! Let\'s eat, Grandma!'
     item_id = '1'
-    execute_query.return_value = {constants.CREATE_UPDATE: {'id': '1', 'body': body, 'item_id': item_id}}
+    execute_query.return_value = {'id': '1', 'body': body, 'item_id': item_id}
 
     # Act
     new_update = handlers.create_update('', body, item_id, 'id', 'body', 'item_id')
@@ -359,7 +360,7 @@ def test_create_update(execute_query):
 def test_get_updates(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.UPDATES: [{'id': '1'}, {'id': '2'}, {'id': '3'}, {'id': '4'}, {'id': '5'}]}
+    execute_query.return_value = [{'id': '1'}, {'id': '2'}, {'id': '3'}, {'id': '4'}, {'id': '5'}]
 
     # Act
     updates = handlers.get_updates('', 'id', limit=5)
@@ -377,7 +378,7 @@ def test_delete_update(execute_query):
     id = '1'
     item_id = '1'
     creator_id = '1'
-    execute_query.return_value = {constants.DELETE_UPDATE: {'id': id, 'item_id': item_id, 'creator_id': creator_id}}
+    execute_query.return_value = {'id': id, 'item_id': item_id, 'creator_id': creator_id}
 
     # Act
     update = handlers.delete_update('', '1')
@@ -395,7 +396,7 @@ def test_create_notification(execute_query):
 
     # Arrange
     text = 'Did you eat, Grandma?'
-    execute_query.return_value = {constants.CREATE_NOTIFICATION : {'text': text}}
+    execute_query.return_value = {'text': text}
     
     # Act
     notification = handlers.create_notification('', text, '1', '2', NotificationTargetType.Project, 'text')
@@ -411,7 +412,7 @@ def test_create_or_get_tag(execute_query):
 
     # Arrange
     name = 'Tag One'
-    execute_query.return_value = {constants.CREATE_OR_GET_TAG : {'id': '1', 'name': 'Tag One'}}
+    execute_query.return_value = {'id': '1', 'name': 'Tag One'}
     
     # Act
     tag = handlers.create_or_get_tag('', name, 'id', 'name')
@@ -426,7 +427,7 @@ def test_create_or_get_tag(execute_query):
 def test_get_tags(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.TAGS: [{'id': '1'}, {'id': '2'}, {'id': '3'}]}
+    execute_query.return_value = [{'id': '1'}, {'id': '2'}, {'id': '3'}]
 
     # Act
     tags = handlers.get_tags('', 'id')
@@ -441,7 +442,7 @@ def test_get_tags(execute_query):
 def test_get_users(execute_query):
 
     # Arrange
-    execute_query.return_value = {constants.USERS: [{'id': '1', 'name': 'Grandma'}, {'id': '2', 'name': 'Osamu Dazai'}]}
+    execute_query.return_value = [{'id': '1', 'name': 'Grandma'}, {'id': '2', 'name': 'Osamu Dazai'}]
 
     # Act
     users = handlers.get_users('', 'id', 'name')
@@ -457,7 +458,7 @@ def test_get_teams(execute_query):
 
     # Arrange
     team_name = 'Grandma\'s House'
-    execute_query.return_value = {constants.TEAMS: [{'id': '1', 'name': team_name}]}
+    execute_query.return_value = [{'id': '1', 'name': team_name}]
 
     # Act
     teams = handlers.get_teams('', 'id', 'name')
@@ -473,7 +474,7 @@ def test_get_me(execute_query):
 
     # Arrange
     name = 'Meeeeeeeeee!'
-    execute_query.return_value = {constants.ME: {'id': '1', 'name': name}}
+    execute_query.return_value = {'id': '1', 'name': name}
 
     # Act
     me = handlers.get_me('')
@@ -492,7 +493,7 @@ def test_create_webhook(execute_query):
     url = 'http://test.webhook.com/webhook/test'
     event = WebhookEventType.create_item
     webhook_id = '12345678'
-    execute_query.return_value = {constants.CREATE_WEBHOOK: {'id': webhook_id, 'board_id': int(board_id)}}
+    execute_query.return_value = {'id': webhook_id, 'board_id': int(board_id)}
 
     # Act
     webhook = handlers.create_webhook('', board_id, url, event)
@@ -510,7 +511,7 @@ def test_delete_webhook(execute_query):
     # Arrange
     board_id = '12345'
     webhook_id = '12345678'
-    execute_query.return_value = {constants.DELETE_WEBHOOK: {'id': webhook_id, 'board_id': int(board_id)}}
+    execute_query.return_value = {'id': webhook_id, 'board_id': int(board_id)}
 
     # Act
     webhook = handlers.delete_webhook('', webhook_id)
@@ -528,7 +529,7 @@ def test_add_file_to_update(upload_file):
     # Arrange
     name = '33.jpg'
     url = 'https://test.monday.com/12345/{}'.format(name)
-    upload_file.return_value = {constants.ADD_FILE_TO_UPDATE: {'id': '12345', 'name': name, 'url': url}}
+    upload_file.return_value = {'id': '12345', 'name': name, 'url': url}
 
     # Act
     asset = handlers.add_file_to_update('', '12345', '/Users/test/{}'.format(name))
@@ -546,7 +547,7 @@ def test_add_file_to_column(upload_file):
     # Arrange
     name = '33.jpg'
     url = 'https://test.monday.com/12345/{}'.format(name)
-    upload_file.return_value = {constants.ADD_FILE_TO_COLUMN: {'id': '12345', 'name': name, 'url': url}}
+    upload_file.return_value = {'id': '12345', 'name': name, 'url': url}
 
     # Act
     asset = handlers.add_file_to_column('', '12345', 'files', '/Users/test/{}'.format(name))
@@ -566,7 +567,7 @@ def test_create_workspace(execute_query):
     name = 'Workspace'
     kind = WorkspaceKind.open
     description = 'This is a test workspace'
-    execute_query.return_value = {constants.CREATE_WORKSPACE: {'id': id, 'name': name, 'kind': kind.name, 'description': description}}
+    execute_query.return_value = {'id': id, 'name': name, 'kind': kind.name, 'description': description}
 
     # Act
     workspace = handlers.create_workspace('', name, kind, description=description)

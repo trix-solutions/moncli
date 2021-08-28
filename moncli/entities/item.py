@@ -1,9 +1,7 @@
 from schematics.models import Model
 from schematics.types import StringType
 
-from .. import api_v2 as client, entities as en
-from ..api_v2 import constants
-from ..entities import BaseColumnCollection, FileValue
+from .. import api, entities as en
 
 
 class _Item(Model):
@@ -95,7 +93,7 @@ class Item(_Item):
         self.__board = kwargs.pop('__board', None)
         self.__group = kwargs.pop('__group', None)
         self.__creator = kwargs.pop('__creator', None)
-        self.__column_values = BaseColumnCollection()
+        self.__column_values = en.BaseColumnCollection()
         self.__updates = kwargs.pop('__updates', None)
 
         assets = kwargs.pop('assets', None)
@@ -183,7 +181,7 @@ class Item(_Item):
         return self.__updates
 
 
-    def add_file(self, file_column: FileValue, file_path: str, *args):
+    def add_file(self, file_column: en.FileValue, file_path: str, *args):
         """Add a file to a column value.
 
             Parameters
@@ -222,7 +220,7 @@ class Item(_Item):
                     Url to view the asset in thumbnail mode. Only available for images.
         """
 
-        asset_data = client.add_file_to_column(
+        asset_data = api.add_file_to_column(
             self.__creds.api_key_v2,
             self.id,
             file_column.id,
@@ -273,19 +271,17 @@ class Item(_Item):
                     A list of column IDs from which to retrieve file assets.     
         """
         
-        args = client.get_field_list(constants.DEFAULT_ASSET_QUERY_FIELDS, *args)
-        args = ['assets.' + arg for arg in args]
         kwargs = {'ids': [int(self.id)]}
         if column_ids:
             kwargs['assets'] = {'column_ids': column_ids}
-        assets_data = client.get_items(
-            self.__creds.api_key_v2,
-            *args,
+        assets_data = api.get_items(
+            *api.get_field_list(api.DEFAULT_ASSET_QUERY_FIELDS, 'assets', *args),
+            api_key=self.__creds.api_key_v2,
             **kwargs)[0]['assets']
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, file_column: FileValue, *args):
+    def remove_files(self, file_column: en.FileValue, *args):
         """Add a file to a column value.
 
             Parameters
@@ -322,7 +318,7 @@ class Item(_Item):
                     Url to view the asset in thumbnail mode. Only available for images.
         """
 
-        item_data = client.change_column_value(
+        item_data = api.change_column_value(
             self.__creds.api_key_v2,
             self.id,
             file_column.id,
@@ -393,11 +389,9 @@ class Item(_Item):
                     The board's workspace unique identifier (null for main workspace).
         """
 
-        args = client.get_field_list(constants.DEFAULT_BOARD_QUERY_FIELDS, *args)
-        args = ['board.' + arg for arg in args]
-        board_data = client.get_items(
-            self.__creds.api_key_v2,
-            *args,
+        board_data = api.get_items(
+            *api.get_field_list(api.DEFAULT_BOARD_QUERY_FIELDS, 'board', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['board']
         return en.Board(creds=self.__creds, **board_data)
 
@@ -434,11 +428,9 @@ class Item(_Item):
                     The group's title.
         """
 
-        args = client.get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)
-        args = ['group.' + arg for arg in args]
-        group_data = client.get_items(
-            self.__creds.api_key_v2,
-            *args,
+        group_data = api.get_items(
+            *api.get_field_list(api.DEFAULT_GROUP_QUERY_FIELDS, 'group', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['group']
         return en.Group(creds=self.__creds, __board=self, **group_data)
 
@@ -510,10 +502,9 @@ class Item(_Item):
                     The user's UTC hours difference.
         """
 
-        args = ['creator.' + arg for arg in client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)]
-        user_data = client.get_items(
-            self.__creds.api_key_v2,
-            *args,
+        user_data = api.get_items(
+            *api.get_field_list(api.DEFAULT_USER_QUERY_FIELDS, 'creator', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['creator']
         return en.User(creds=self.__creds, **user_data)
    
@@ -550,10 +541,9 @@ class Item(_Item):
         # Pulls the columns from the board containing the item and maps 
         # column ID to type.
         columns_map = { column.id: column for column in self.board.columns }
-        args = ['column_values.' + arg for arg in client.get_field_list(constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS, *args)]
-        column_values_data = client.get_items(
-            self.__creds.api_key_v2,
-            *args,
+        column_values_data = api.get_items(
+            *api.get_field_list(api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS, 'column_values', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['column_values']
 
         values = []
@@ -563,7 +553,7 @@ class Item(_Item):
             column_type = column.column_type
             data['settings_str'] = column.settings_str
             values.append(en.create_column_value(column_type, **data))
-        return BaseColumnCollection(values)
+        return en.BaseColumnCollection(values)
 
 
     def get_column_value(self, id = None, title = None, *args):
@@ -661,11 +651,10 @@ class Item(_Item):
 
         if get_column_values:
             args = list(args)
-            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
-            column_value_args.extend(['id', 'name'])
-            for arg in column_value_args:
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
+            args.extend(['id', 'name'])
 
         if column_value is None:
             raise ColumnValueRequired()
@@ -675,7 +664,7 @@ class Item(_Item):
             column_id = column_value.id
             value = column_value.format()
 
-        item_data = client.change_column_value(
+        item_data = api.change_column_value(
             self.__creds.api_key_v2,
             self.id,
             column_id,
@@ -735,11 +724,10 @@ class Item(_Item):
 
         if get_column_values:
             args = list(args)
-            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
-            column_value_args.extend(['id', 'name'])
-            for arg in column_value_args:
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
+            args.extend(['id', 'name'])
 
         if type(column_values) == dict:
             values = column_values
@@ -747,7 +735,7 @@ class Item(_Item):
             values = { value.id: value.format() for value in column_values }
         else:
             raise en.InvalidColumnValue(type(column_values).__name__)
-        item_data = client.change_multiple_column_value(
+        item_data = api.change_multiple_column_value(
             self.__creds.api_key_v2,
             self.id,
             self.board.id,
@@ -808,13 +796,13 @@ class Item(_Item):
                     The column values of the new item.
         """
         
-        subitem_data = client.create_subitem(
+        subitem_data = api.create_subitem(
             self.__creds.api_key_v2,
             self.id,
             item_name,
             *args,
             **kwargs)
-        return en.Item(creds=self.__creds, **subitem_data)
+        return Item(creds=self.__creds, **subitem_data)
 
 
     def move_to_group(self, group_id: str, get_column_values = False, *args):
@@ -863,15 +851,15 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
+
         if get_column_values:
             args = list(args)
-            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
-            column_value_args.extend(['id', 'name'])
-            for arg in column_value_args:
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
+            args.extend(['id', 'name'])
 
-        item_data = client.move_item_to_group(
+        item_data = api.move_item_to_group(
             self.__creds.api_key_v2,
             self.id,
             group_id,
@@ -922,7 +910,7 @@ class Item(_Item):
                     The item's updates.
         """
 
-        item_data = client.archive_item(
+        item_data = api.archive_item(
             self.__creds.api_key_v2,
             self.id,
             *args)
@@ -972,7 +960,7 @@ class Item(_Item):
                     The item's updates.
         """
 
-        item_data = client.delete_item(
+        item_data = api.delete_item(
             self.__creds.api_key_v2,
             self.id,
             *args)
@@ -1029,13 +1017,13 @@ class Item(_Item):
                     Duplicate with the item's updates.
         """
 
-        item_data = client.duplicate_item(
+        item_data = api.duplicate_item(
             self.__creds.api_key_v2,
             self.board.id,
             self.id,
             *args,
             *kwargs)
-        return en.Item(creds=self.__creds, **item_data)
+        return Item(creds=self.__creds, **item_data)
 
 
     def add_update(self, body: str, *args, **kwargs):
@@ -1084,7 +1072,7 @@ class Item(_Item):
                     The parent post identifier.
         """
 
-        update_data = client.create_update(
+        update_data = api.create_update(
             self.__creds.api_key_v2, 
             body, 
             self.id,
@@ -1139,12 +1127,11 @@ class Item(_Item):
                     Page number to get, starting at 1.
         """
         
-        args = ['updates.' + arg for arg in client.get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)]
         limit = kwargs.pop('limit', 25)
         page = kwargs.pop('page', 1)
-        updates_data = client.get_items(
-            self.__creds.api_key_v2,
-            *args,
+        updates_data = api.get_items(
+            *api.get_field_list(api.DEFAULT_UPDATE_QUERY_FIELDS, 'updates', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)],
             limit=1,
             updates={'limit': limit, 'page': page})[0]['updates']
@@ -1240,12 +1227,11 @@ class Item(_Item):
                     The item's updates.
         """
 
-        args = client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)
-        item_data = client.clear_item_updates(
+        item_data = api.clear_item_updates(
             self.__creds.api_key_v2,
             self.id,
             *args)
-        return en.Item(creds=self.__creds, **item_data)
+        return Item(creds=self.__creds, **item_data)
 
     
     def get_activity_logs(self, *args, **kwargs):
@@ -1298,9 +1284,7 @@ class Item(_Item):
                     To timespamp (ISO8601).
         """
         
-        args = client.get_field_list(constants.DEFAULT_ACTIVITY_LOG_QUERY_FIELDS, *args)
         kwargs['item_ids'] = [int(self.id)]
-        
         return self.board.get_activity_logs(*args, **kwargs)
 
 

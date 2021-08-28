@@ -1,8 +1,8 @@
 from schematics.models import Model
 from schematics.types import StringType, IntType
-from .. import api_v2 as client, enums, entities as en
-from ..api_v2 import constants
-from ..entities import create_column_value, BaseColumnCollection, DateValue, StatusValue
+
+from .. import api, entities as en
+from ..enums import *
 
 
 class _Board(Model):
@@ -112,7 +112,7 @@ class Board(_Board):
     def __init__(self, **kwargs):
         self.__creds = kwargs.pop('creds', None)
         self.__activity_logs = kwargs.pop('__activity_logs', None)
-        self.__columns = BaseColumnCollection()
+        self.__columns = en.BaseColumnCollection()
         self.__groups = kwargs.pop('__groups', None)
         self.__items = kwargs.pop('__items', None)
         self.__subscribers = kwargs.pop('__subscribers', None)
@@ -136,7 +136,7 @@ class Board(_Board):
         if activity_logs and not self.__activity_logs:
             self.__activity_logs = [en.ActivityLog(log) for log in activity_logs]
         if columns and not self.__columns:
-            self.__columns = BaseColumnCollection([en.Column(column) for column in columns])
+            self.__columns = en.BaseColumnCollection([en.Column(column) for column in columns])
         if groups and not self.__groups:
             self.__groups = [en.Group(creds=self.__creds, **group) for group in groups]
         if items and not self.__items:
@@ -298,14 +298,13 @@ class Board(_Board):
                     To timespamp (ISO8601).
         """
 
-        args = ['activity_logs.{}'.format(arg) for arg in client.get_field_list(constants.DEFAULT_ACTIVITY_LOG_QUERY_FIELDS, *args)]
         if kwargs:
             kwargs = {'activity_logs': kwargs}
 
-        activity_logs_data = client.get_boards(
+        activity_logs_data = api.get_boards(
             self.__creds.api_key_v2,
             'id', 'name',
-            *args,
+            *api.get_field_list(api.DEFAULT_ACTIVITY_LOG_QUERY_FIELDS, 'activity_logs', *args),
             ids=[self.id],
             **kwargs)[0]['activity_logs']
 
@@ -346,13 +345,12 @@ class Board(_Board):
                     The view's type.
         """
 
-        args = ['views.{}'.format(arg) for arg in client.get_field_list(constants.DEFAULT_BOARD_VIEW_QUERY_FIELDS)]
         if kwargs:
             kwargs = {'views': kwargs}
 
-        views_data = client.get_boards(
+        views_data = api.get_boards(
             self.__creds.api_key_v2,
-            *args,
+            *api.get_field_list(api.DEFAULT_BOARD_VIEW_QUERY_FIELDS, 'views', *args),
             ids=[self.id],
             **kwargs)[0]['views']
 
@@ -435,7 +433,7 @@ class Board(_Board):
                     Subscribers kind (subscriber / owner).
         """
 
-        subscribers_data = client.add_subscribers_to_board(
+        subscribers_data = api.add_subscribers_to_board(
             self.__creds.api_key_v2,
             self.id,
             user_ids,
@@ -512,14 +510,13 @@ class Board(_Board):
                     The user's UTC hours difference.
         """
 
-        args = ['subscribers.{}'.format(arg) for arg in client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS, *args)]
         kwargs = {
             'ids': [self.id]
         }
 
-        users_data = client.get_boards(
+        users_data = api.get_boards(
             self.__creds.api_key_v2,
-            *args,
+            *api.get_field_list(api.DEFAULT_USER_QUERY_FIELDS, 'subscribers', *args),
             **kwargs)[0]['subscribers']
 
         return [en.User(creds=self.__creds, **user) for user in users_data]
@@ -594,7 +591,7 @@ class Board(_Board):
                     The user's UTC hours difference.
         """
         
-        users_data = client.delete_subscribers_from_board(
+        users_data = api.delete_subscribers_from_board(
             self.__creds.api_key_v2,
             self.id,
             user_ids,
@@ -603,7 +600,7 @@ class Board(_Board):
         return [en.User(creds=self.__creds, **user) for user in users_data]
 
 
-    def add_column(self, title: str, column_type: enums.ColumnType, *args, **kwargs):
+    def add_column(self, title: str, column_type: ColumnType, *args, **kwargs):
         """Create a new column in board.
     
             Parameters
@@ -645,7 +642,7 @@ class Board(_Board):
                     The new column's defaults.
         """
 
-        column_data = client.create_column(
+        column_data = api.create_column(
             self.__creds.api_key_v2, 
             self.id, 
             title, 
@@ -696,20 +693,18 @@ class Board(_Board):
                     A list of column unique identifiers.
         """
 
-        args = client.get_field_list(constants.DEFAULT_COLUMN_QUERY_FIELDS, *args)
-        args = ['columns.' + arg for arg in args]
         column_kwargs = {}
         if kwargs:
             column_kwargs['columns'] = kwargs
 
-        column_data = client.get_boards(
-            self.__creds.api_key_v2,
-            *args,
+        column_data = api.get_boards(
+            *api.get_field_list(api.DEFAULT_COLUMN_QUERY_FIELDS, 'columns', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)],
             limit=1,
             **column_kwargs)[0]['columns']
 
-        return BaseColumnCollection([en.Column(data) for data in column_data])
+        return en.BaseColumnCollection([en.Column(data) for data in column_data])
 
 
     def add_group(self, group_name: str, *args):
@@ -745,7 +740,7 @@ class Board(_Board):
                     The group's title.
         """
 
-        group_data = client.create_group(
+        group_data = api.create_group(
             self.__creds.api_key_v2,
             self.id,
             group_name,
@@ -795,14 +790,13 @@ class Board(_Board):
                     A list of group unique identifiers.
         """
 
-        args = ['groups.' + arg for arg in client.get_field_list(constants.DEFAULT_GROUP_QUERY_FIELDS, *args)]
         group_kwargs = {}
         if kwargs:
             group_kwargs['groups'] = kwargs
 
-        groups_data = client.get_boards(
+        groups_data = api.get_boards(
             self.__creds.api_key_v2,
-            *args,
+            *api.get_field_list(api.DEFAULT_GROUP_QUERY_FIELDS, 'groups', *args),
             ids=[int(self.id)],
             **group_kwargs)[0]['groups']
 
@@ -914,11 +908,10 @@ class Board(_Board):
 
         if get_column_values:
             args = list(args)
-            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
-            column_value_args.extend(['id', 'name'])
-            for arg in column_value_args:
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
+            args.extend(['id', 'name'])
 
         column_values = kwargs.pop('column_values', None)
         if column_values:
@@ -929,7 +922,7 @@ class Board(_Board):
             else:
                 raise InvalidColumnValue(type(column_values).__name__)
 
-        item_data = client.create_item(
+        item_data = api.create_item(
             self.__creds.api_key_v2, 
             item_name, 
             self.id, 
@@ -997,19 +990,18 @@ class Board(_Board):
         
         if get_column_values:
             args = list(args)
-            column_value_args = ['items.column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
-            column_value_args.extend(['items.id', 'items.name'])
-            for arg in column_value_args:
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
+            args.extend(['id', 'name'])
         else:
-            args = ['items.' + arg for arg in client.get_field_list(constants.DEFAULT_ITEM_QUERY_FIELDS, *args)]
+            args = api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'items', *args)
 
         item_kwargs = {}
         if kwargs:
             item_kwargs['items'] = kwargs
 
-        items_data = client.get_boards(
+        items_data = api.get_boards(
             self.__creds.api_key_v2,
             *args, 
             ids=[int(self.id)],
@@ -1081,15 +1073,21 @@ class Board(_Board):
                 state : `moncli.enumns.State`
                     The state of the item (all / active / archived / deleted), the default is active.
         """
+        if get_column_values:
+            args = list(args)
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
+                if arg not in args:
+                    args.append(arg)
+            args.extend(['id', 'name'])
 
-        if isinstance(column_value, DateValue):
+        if isinstance(column_value, en.DateValue):
             value = column_value.date
-        elif isinstance(column_value, StatusValue):
+        elif isinstance(column_value, en.StatusValue):
             value = column_value.label
         else:
             value = column_value.format()
 
-        items_data = client.get_items_by_column_values(
+        items_data = api.get_items_by_column_values(
             self.__creds.api_key_v2, 
             self.id, 
             column_value.id, 
@@ -1167,18 +1165,17 @@ class Board(_Board):
         """
         if get_column_values:
             args = list(args)
-            column_value_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
-            column_value_args.extend(['id', 'name'])
-            for arg in column_value_args:
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
+            args.extend(['id', 'name'])
 
-        if column.column_type == enums.ColumnType.numbers:
+        if column.column_type == ColumnType.numbers:
             value = [str(value) for value in column_values]
         else:
             value = column_values
 
-        items_data = client.get_items_by_multiple_column_values(
+        items_data = api.get_items_by_multiple_column_values(
             self.__creds.api_key_v2, 
             self.id, 
             column.id, 
@@ -1225,10 +1222,10 @@ class Board(_Board):
             column = [column for column in columns.values() if column.title == title][0]
 
         column_type = column.column_type      
-        return create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
+        return en.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
 
 
-    def create_webhook(self, url: str, event: enums.WebhookEventType, *args, **kwargs):
+    def create_webhook(self, url: str, event: WebhookEventType, *args, **kwargs):
         """Create a new webhook.
     
             Parameters
@@ -1264,11 +1261,11 @@ class Board(_Board):
 
         # Modify kwargs to config if supplied.
         if kwargs:
-            if event != enums.WebhookEventType.change_specific_column_value:
+            if event != WebhookEventType.change_specific_column_value:
                 raise WebhookConfigurationError(event)
             kwargs = {'config': kwargs}
 
-        webhook_data = client.create_webhook(
+        webhook_data = api.create_webhook(
             self.__creds.api_key_v2, 
             self.id, 
             url, 
@@ -1303,7 +1300,7 @@ class Board(_Board):
                     The webhook's unique identifier.
         """
 
-        webhook_data = client.delete_webhook(
+        webhook_data = api.delete_webhook(
             self.__creds.api_key_v2, 
             webhook_id,
             *args)
@@ -1336,13 +1333,10 @@ class Board(_Board):
                 description : `str`
                     The workspace's description
         """
-        
-        args = client.get_field_list(constants.DEFAULT_WORKSPACE_QUERY_FIELDS, *args)
-        args = ['workspace.{}'.format(arg) for arg in args]
 
-        workspace_data = client.get_boards(
+        workspace_data = api.get_boards(
             self.__creds.api_key_v2,
-            *args,
+            *api.get_field_list(api.DEFAULT_WORKSPACE_QUERY_FIELDS, 'workspace', *args),
             ids=[self.id])[0]['workspace']
 
         return en.Workspace(workspace_data)
@@ -1394,14 +1388,13 @@ class Board(_Board):
                     Page number to get, starting at 1.
         """
 
-        args = ['updates.'+ arg for arg in client.get_field_list(constants.DEFAULT_UPDATE_QUERY_FIELDS, *args)]
         updates_kwargs = {}
         if kwargs:
             updates_kwargs = {'updates': kwargs}
 
-        updates_data = client.get_boards(
+        updates_data = api.get_boards(
             self.__creds.api_key_v2,
-            *args,
+            *api.get_field_list(api.DEFAULT_UPDATE_QUERY_FIELDS, 'updates', *args),
             ids=[self.id],
             **updates_kwargs)[0]['updates']
 
@@ -1438,11 +1431,9 @@ class Board(_Board):
                     The list of tags unique identifiers.
         """
 
-        args = ['tags.'+ arg for arg in client.get_field_list(constants.DEFAULT_TAG_QUERY_FIELDS, *args)]
-
-        tags_data = client.get_boards(
+        tags_data = api.get_boards(
             self.__creds.api_key_v2,
-            *args,
+            *api.get_field_list(api.DEFAULT_TAG_QUERY_FIELDS, 'tags', *args),
             ids=[self.id])[0]['tags']
 
         return [en.Tag(data) for data in tags_data]
@@ -1473,5 +1464,5 @@ class NotEnoughGetColumnValueParameters(Exception):
         self.message = "Either the 'id' or 'title' is required when querying a column value."
 
 class WebhookConfigurationError(Exception):
-    def __init__(self, event: enums.WebhookEventType):
+    def __init__(self, event: WebhookEventType):
         self.message = "Webhook event type '{}' does not support configuraitons".format(event.name)

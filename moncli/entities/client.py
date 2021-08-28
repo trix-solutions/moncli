@@ -1,6 +1,5 @@
-from types import new_class
-from .. import api_v2 as client, enums, entities as en
-from ..api_v2 import constants
+from .. import api, entities as en
+from ..enums import *
 
 
 class MondayClient():
@@ -76,7 +75,7 @@ class MondayClient():
             self.__creds.api_key_v1 = api_key_v1
 
         if api_key_v2:
-            self.__creds.api_key_v2 = api_key_v2
+            self.api_key_v2 = api_key_v2
         
         # Only "login" when user_name and API Key v2 are provided.
         if username and api_key_v2 and self.me.email.lower() != username.lower():
@@ -98,9 +97,10 @@ class MondayClient():
     def api_key_v2(self, value):
         """Set API Key V2"""
         self.__creds.api_key_v2 = value
+        api.api_key = value
 
 
-    def create_board(self, board_name: str, board_kind: enums.BoardKind, *args, **kwargs):
+    def create_board(self, board_name: str, board_kind: BoardKind, *args, **kwargs):
         """Create a new board.
 
             Parameters
@@ -174,11 +174,11 @@ class MondayClient():
                     Optional board template id.
         """
         
-        board_data = client.create_board(
-            self.__creds.api_key_v2, 
+        board_data = api.create_board(
             board_name, 
             board_kind, 
             *args,
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return en.Board(creds=self.__creds, **board_data)
 
@@ -268,8 +268,7 @@ class MondayClient():
                 args.append('columns.settings_str')
                 break
         
-        boards_data = client.get_boards(
-            self.__creds.api_key_v2, 
+        boards_data = api.get_boards(
             *args, 
             **kwargs)
 
@@ -427,7 +426,7 @@ class MondayClient():
         """
         
         try:
-            board_data = client.get_boards(
+            board_data = api.get_boards(
                 self.__creds.api_key_v2, 
                 *args,
                 ids=[int(id)],
@@ -506,7 +505,7 @@ class MondayClient():
         record_count = 500
 
         while record_count >= page_limit:
-            boards_data = client.get_boards(
+            boards_data = api.get_boards(
                 self.__creds.api_key_v2, 
                 'id', 'name',
                 limit=page_limit,
@@ -585,7 +584,7 @@ class MondayClient():
                     The board's workspace unique identifier (null for main workspace).
         """
 
-        board_data = client.archive_board(
+        board_data = api.archive_board(
             self.__creds.api_key_v2, 
             board_id,
             *args)
@@ -600,7 +599,7 @@ class MondayClient():
                 ids : `list[int/str]`
                     Ids of the assets/files you want to get.
                     Example:
-                    >>> client.get_assets(ids=['12345678'])
+                    >>> api.get_assets(ids=['12345678'])
                 args : `tuple`
                     The list asset return fields.
 
@@ -634,7 +633,7 @@ class MondayClient():
         if not ids:
             raise AssetIdsRequired()
 
-        assets_data = client.get_assets(
+        assets_data = api.get_assets(
             self.__creds.api_key_v2,
             ids,
             *args)
@@ -700,19 +699,17 @@ class MondayClient():
         """
 
         if get_column_values:
-            new_args = ['column_values.{}'.format(arg) for arg in constants.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]
-            new_args.extend(['id', 'name'])
             args = list(args)
-            for arg in new_args:
+            for arg in ['id', 'name', 'column_values.[*]', 'board.id', 'board.columns.[*]']:
                 if arg not in args:
                     args.append(arg)
 
         if kwargs.__contains__('ids'):
             kwargs['ids'] = [int(id) for id in kwargs['ids']]
 
-        items_data = client.get_items(
-            self.__creds.api_key_v2, 
+        items_data = api.get_items(
             *args,
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
         
@@ -763,7 +760,7 @@ class MondayClient():
                     Page number to get, starting at 1.
         """
 
-        updates_data = client.get_updates(
+        updates_data = api.get_updates(
             self.__creds.api_key_v2, 
             *args,
             **kwargs)
@@ -809,7 +806,7 @@ class MondayClient():
                     The update's last edit date.
         """
         
-        update_data = client.delete_update(
+        update_data = api.delete_update(
             self.__creds.api_key_v2, 
             id, 
             *args)
@@ -861,14 +858,14 @@ class MondayClient():
                     The item's updates.
         """
         
-        item_data = client.clear_item_updates(
+        item_data = api.clear_item_updates(
             self.__creds.api_key_v2,
             item_id,
             *args)
         return en.Item(creds=self.__creds, **item_data)
 
 
-    def create_notification(self, text: str, user_id: str, target_id: str, target_type: enums.NotificationTargetType, *args, **kwargs):
+    def create_notification(self, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, *args, **kwargs):
         """Create a new notification.
 
             Parameters
@@ -904,7 +901,7 @@ class MondayClient():
                     The notification payload.
         """
 
-        notification_data = client.create_notification(
+        notification_data = api.create_notification(
             self.__creds.api_key_v2, 
             text, 
             user_id, 
@@ -947,7 +944,7 @@ class MondayClient():
                     The private board id to create the tag at (not needed for public boards).
         """
 
-        tag_data = client.create_or_get_tag(
+        tag_data = api.create_or_get_tag(
             self.__creds.api_key_v2, 
             tag_name,
             *args,
@@ -985,7 +982,7 @@ class MondayClient():
                     The list of tags unique identifiers.
         """
         
-        tags_data = client.get_tags(
+        tags_data = api.get_tags(
             self.__creds.api_key_v2,
             *args,
             **kwargs)
@@ -1072,7 +1069,7 @@ class MondayClient():
                     Number of users to get.
         """
 
-        users_data = client.get_users(
+        users_data = api.get_users(
             self.__creds.api_key_v2, 
             *args,
             **kwargs)
@@ -1112,8 +1109,7 @@ class MondayClient():
                     A list of teams unique identifiers.
         """
 
-        args = client.get_field_list(constants.DEFAULT_TEAM_QUERY_FIELDS, *args)
-        teams_data = client.get_teams(
+        teams_data = api.get_teams(
             self.__creds.api_key_v2,
             *args,
             **kwargs)
@@ -1187,9 +1183,7 @@ class MondayClient():
                     The user's UTC hours difference.
         """
 
-        args = client.get_field_list(constants.DEFAULT_USER_QUERY_FIELDS)
-
-        user_data = client.get_me(
+        user_data = api.get_me(
             self.__creds.api_key_v2, 
             *args)
 
@@ -1227,16 +1221,14 @@ class MondayClient():
                     The account's slug.
         """
 
-        args = client.get_field_list(constants.DEFAULT_ACCOUNT_QUERY_FIELDS)
-
-        account_data = client.get_account(
+        account_data = api.get_account(
             self.__creds.api_key_v2,
             *args)
 
         return en.Account(creds=self.__creds, **account_data)
 
 
-    def create_workspace(self, name: str, kind: enums.WorkspaceKind, *args, **kwargs):
+    def create_workspace(self, name: str, kind: WorkspaceKind, *args, **kwargs):
         """Creates a new workspace
 
             Parameters
@@ -1272,7 +1264,7 @@ class MondayClient():
                     The workspace's description.
         """
         
-        workspace_data = client.create_workspace(
+        workspace_data = api.create_workspace(
             self.__creds.api_key_v2,
             name, 
             kind,

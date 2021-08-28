@@ -23,22 +23,19 @@ class ArgumentValueKind(Enum):
 class GraphQLNode():
     """Base node in a GraphQL query.
     
-    __________
-    Properties
-    __________
-    name : `str`
-        Query node entity name.
-    arguments : `dict`
-        Arguments associated with the query node entity.
+        Properties
 
-    
-    _______
-    Methods
-    _______
-    format_body : `str`
-        Formats the GraphQL node into a query string.
-    format_arguments : `str`
-        Formats arguments as a query string.
+            name : `str`
+                Query node entity name.
+            arguments : `dict`
+                Arguments associated with the query node entity.
+
+        Methods
+
+            format_body : `str`
+                Formats the GraphQL node into a query string.
+            format_arguments : `str`
+                Formats arguments as a query string.
     """
 
     def __init__(self, field_name: str):
@@ -55,17 +52,15 @@ class GraphQLNode():
     def format_arguments(self, body: str):
         """Formats arguments as query string.
 
-        __________
-        Parameters
-        __________
-        body : `str`
-            The name of the GraphQL field being formatted with arguments.
+            Parameters
 
-        _______
-        Returns
-        _______
-        query_string : `str`
-            GraphQL-formatted query string.
+                body : `str`
+                    The name of the GraphQL field being formatted with arguments.
+
+            Returns
+
+                query_string : `str`
+                    GraphQL-formatted query string.
         """
 
         formatted_args = ', '.join(['{}:{}'.format(key, value) for key, value in self.arguments.items()])
@@ -76,24 +71,24 @@ class GraphQLNode():
 class GraphQLField(GraphQLNode):
     """A GraphQL field node.
 
-    _______
-    Methods
-    _______
-    add_fields : `void`
-        Add fields to node.
-    add_arguments : `void`
-        Add arguments to node.
-    get_field : `moncli.api_v2.graphql.GraphQLField`
-        Get a child field of the given GraphQL field.
-    format_body : `str`
-        Format the GraphQL node into a query string.
-    format_children : `str`
-        Format child fields into query string.
+        Methods
+
+            add_fields : `void`
+                Add fields to node.
+            add_arguments : `void`
+                Add arguments to node.
+            get_field : `moncli.api_v2.graphql.GraphQLField`
+                Get a child field of the given GraphQL field.
+            format_body : `str`
+                Format the GraphQL node into a query string.
+            format_children : `str`
+                Format child fields into query string.
     """
 
-    def __init__(self, field_name: str, *args, **kwargs):
+    def __init__(self, field_name: str, field_map: dict, *args, **kwargs):
         super(GraphQLField, self).__init__(field_name)
         self.__children: dict = {}
+        self._field_map = field_map
         
         self.add_fields(*args)
         self.add_arguments(**kwargs)
@@ -102,11 +97,10 @@ class GraphQLField(GraphQLNode):
     def add_fields(self, *args):
         """Add fields to node.
 
-        __________
-        Parameters
-        __________
-        args : `tuple`
-            The list of child fields to add.
+            Parameters
+
+                args : `tuple`
+                    The list of child fields to add.
         """
 
         for field in args:
@@ -116,16 +110,34 @@ class GraphQLField(GraphQLNode):
             
             if type(field) is str:
                 field_split = field.split('.')
-                existing_field = self.get_field(field_split[0])
-
-                # Add the new fields to the existing field
-                if existing_field:
-                    existing_field.add_fields('.'.join(field_split[1:]))
-                    continue
-
-                new_field = GraphQLField(field_split[0])
-                new_field.add_fields('.'.join(field_split[1:]))
-                self.__children.__setitem__(new_field.name, new_field)
+                parent_field = field_split[0]
+                child_fields = field_split[1:]
+                
+                if not child_fields:
+                    field_group = [[]]
+                # Check for list notation.
+                elif child_fields[0].startswith('[') and child_fields[0].endswith(']'):
+                    if len(child_fields) > 1:
+                        raise GraphQLError('Field list syntax is only available for leaf-level fields.')
+                    
+                    list_fields = child_fields[0][1:-1]
+                    if list_fields == '*':
+                        field_group = [[f] for f in self._field_map[parent_field]]
+                    else:
+                        field_group = [[f.strip()] for f in list_fields.split(',')]
+                else:
+                    field_group = [child_fields]
+                
+                for group in field_group:
+                    existing_field = self.get_field(parent_field)
+                    # Add the new fields to the existing field
+                    if existing_field:
+                        existing_field.add_fields('.'.join(group))
+                        continue
+                    
+                    new_field = GraphQLField(field_split[0], self._field_map)
+                    new_field.add_fields('.'.join(group))
+                    self.__children.__setitem__(new_field.name, new_field)
 
             elif type(field) is GraphQLField:
                 self.__children.__setitem__(field.name, field)
@@ -134,11 +146,10 @@ class GraphQLField(GraphQLNode):
     def add_arguments(self, **kwargs):
         """Add arguments to node.
 
-        __________
-        Parameters
-        __________
-        kwargs : `dict`
-            The field's argument pairs.
+            Parameters
+
+                kwargs : `dict`
+                    The field's argument pairs.
         """
 
         for key, value in kwargs.items():
@@ -158,17 +169,15 @@ class GraphQLField(GraphQLNode):
     def get_field(self, path: str):
         """Get a child field of the given GraphQL field.
 
-        __________
-        Parameters
-        __________
-        path : `str`
-            The string field path of the field.
+            Parameters
 
-        _______
-        Returns
-        _______
-        field : `moncli.api_v2.graphql.GraphQLField`
-            The retrieved graphql field.
+                path : `str`
+                    The string field path of the field.
+
+            Returns
+
+                field : `moncli.api_v2.graphql.GraphQLField`
+                    The retrieved graphql field.
         """
 
         split_path = path.split('.')
@@ -202,18 +211,16 @@ class GraphQLField(GraphQLNode):
     
     def format_children(self, body: str):
         """Format child fields into query string.
-        
-        __________
-        Parameters
-        __________
-        body : `str`
-            The body of the base query to be amended.
+            
+            Parameters
 
-        _______
-        Returns
-        _______
-        query_string : `str`
-            The amended GraphQL query string.
+                body : `str`
+                    The body of the base query to be amended.
+
+            Returns
+
+                query_string : `str`
+                    The amended GraphQL query string.
 
         """
 
@@ -224,43 +231,39 @@ class GraphQLField(GraphQLNode):
 class GraphQLOperation(GraphQLField):
     """A GraphQL node for operations.
     
-    __________
-    Properties
-    __________
-    action_type : `str`
-        The action type of the operation (query / mutation)
-    query_name : `str`
-        The name of the executed command.
-    args : `tuple`
-        A collection of added fields.
-    kwargs : `dict`
-        A collection of argument mappings 
+        Properties
+        
+            action_type : `str`
+                The action type of the operation (query / mutation)
+            query_name : `str`
+                The name of the executed command.
+            args : `tuple`
+                A collection of added fields.
+            kwargs : `dict`
+                A collection of argument mappings 
 
-    
-    _______
-    Methods
-    _______
-    add_query_variable : `void`
-        Add a query variable to the query.
+        Methods
+        
+            add_query_variable : `void`
+                Add a query variable to the query.
     """
 
-    def __init__(self, action_type: OperationType, query_name: str, *args, **kwargs):
+    def __init__(self, action_type: OperationType, query_name: str, field_map: dict, *args, **kwargs):
 
         self.action_type = action_type.name.lower()
-        super(GraphQLOperation, self).__init__(query_name, *args, **kwargs)
+        super(GraphQLOperation, self).__init__(query_name, field_map, *args, **kwargs)
         self.query_variables: dict = {}
 
 
     def add_query_variable(self, key: str, value):
         """Add a query variable to the query.
 
-        __________
-        Parameters
-        __________
-        key : `str`
-            The query variable key.
-        value : `object`
-            The query variable value.
+            Parameters
+
+                key : `str`
+                    The query variable key.
+                value : `object`
+                    The query variable value.
         """
 
         self.query_variables.__setitem__(key, value)  
@@ -367,88 +370,38 @@ class GraphQLError(Exception):
 def create_field(field_name: str, *args, **kwargs):
     """Create a GraphQL field.
 
-    __________
-    Parameters
-    __________
-    field_name : `str`
-        The name of the parent field to create.
-    args : `tuple`
-        A collection of child fields to add.
-    kwargs : `dict`
-        A field argument value map for queried return fields.
+        Parameters
 
-    _______
-    Returns
-    _______
-    field : `moncli.api_v2.graphql.GraphQLField`
-        A graphql field node.
+            field_name : `str`
+                The name of the parent field to create.
+            args : `tuple`
+                A collection of child fields to add.
+            kwargs : `dict`
+                A field argument value map for queried return fields.
+
+        Returns
+
+            field : `moncli.api_v2.graphql.GraphQLField`
+                A graphql field node.
     """
 
     return GraphQLField(field_name, *args, **kwargs)
 
 
-def create_query(query_name: str, *args, **kwargs):
-    """Create a GraphQL query operation.
-
-    __________
-    Parameters
-    __________
-    query_name : `str`
-        The name of the query to be run.
-    args : `tuple`
-        A collection of child return fields to add.
-    kwargs : `dict`
-        A field argument value map for queried return fields.
-
-    _______
-    Returns
-    _______
-    field : `moncli.api_v2.graphql.GraphQLOperation`
-        A graphql query operation node.
-    """
-    
-    return GraphQLOperation(OperationType.QUERY, query_name, *args, **kwargs)
-
-
-def create_mutation(query_name: str, *args, **kwargs):
-    """Create a GraphQL mutation operation.
-
-    __________
-    Parameters
-    __________
-    query_name : `str`
-        The name of the mutation to be run.
-    args : `tuple`
-        A collection of child return fields to add.
-    kwargs : `dict`
-        A field argument value map for queried return fields.
-
-    _______
-    Returns
-    _______
-    field : `moncli.api_v2.graphql.GraphQLOperation`
-        A graphql mutation operation node.
-    """
-    
-    return GraphQLOperation(OperationType.MUTATION, query_name, *args, **kwargs)
-
-
 def create_value(value, value_type: ArgumentValueKind):
     """Transform value into ArgumentValue
     
-    __________
-    Parameters
-    __________
-    value : `object`
-        Any data object value.
-    value_type : `moncli.api_v2.graphql.ArgumentValueKind`
-        The argument value conversion type.
+        Parameters
 
-    _______
-    Results
-    _______
-    value = `moncli.api_v2.graphql.ArgumentValue`
-        The GraphQL argument value.
+            value : `object`
+                Any data object value.
+            value_type : `moncli.api_v2.graphql.ArgumentValueKind`
+                The argument value conversion type.
+
+        Results
+
+            value = `moncli.api_v2.graphql.ArgumentValue`
+                The GraphQL argument value.
     """
 
     if value_type == ArgumentValueKind.Default:

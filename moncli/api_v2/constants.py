@@ -1,25 +1,25 @@
 from .graphql import ArgumentValueKind
 
-## Operation methods
+## API Configurations
+API_V2_ENDPOINT = 'https://api.monday.com/v2'
+API_V2_FILE_ENDPOINT = 'https://api.monday.com/v2/file'
 
+## Operation methods
 # Boards
 BOARDS = 'boards'
 CREATE_BOARD = 'create_board'
 ARCHIVE_BOARD = 'archive_board'
 ADD_SUBSCRIBERS_TO_BOARD = 'add_subscribers_to_board'
 DELETE_SUBSCRIBERS_FROM_BOARD = 'delete_subscribers_from_board'
-
 # Columns
 CREATE_COLUMN = 'create_column'
 CHANGE_COLUMN_VALUE = 'change_column_value'
 CHANGE_MULTIPLE_COLUMN_VALUES = 'change_multiple_column_values'
-
 # Groups
 DUPLICATE_GROUP = 'duplicate_group'
 CREATE_GROUP = 'create_group'
 ARCHIVE_GROUP = 'archive_group'
 DELETE_GROUP = 'delete_group'
-
 # Items
 ITEMS = 'items'
 ITEMS_BY_COLUMN_VALUES = 'items_by_column_values'
@@ -31,50 +31,35 @@ MOVE_ITEM_TO_GROUP = 'move_item_to_group'
 ARCHIVE_ITEM = 'archive_item'
 DELETE_ITEM = 'delete_item'
 DUPLICATE_ITEM = 'duplicate_item'
-
 # Updates
 UPDATES = 'updates'
 CREATE_UPDATE = 'create_update'
 DELETE_UPDATE = 'delete_update'
-
 # Notifications
 CREATE_NOTIFICATION = 'create_notification'
-
 # Tags
 TAGS = 'tags'
 CREATE_OR_GET_TAG = 'create_or_get_tag'
-
 # Users 
 USERS = 'users'
-
 # Teams
 TEAMS = 'teams'
-
 # Me
 ME = 'me'
-
 # Account
 ACCOUNT = 'account'
-
 # Webhooks
 CREATE_WEBHOOK = 'create_webhook'
 DELETE_WEBHOOK = 'delete_webhook'
-
 # Workspace
 CREATE_WORKSPACE = 'create_workspace'
-
 # Files
 ASSETS = 'assets'
 ADD_FILE_TO_UPDATE = 'add_file_to_update'
 ADD_FILE_TO_COLUMN = 'add_file_to_column'
 
 
-##
-
-
 ## Default Fields
-
-
 DEFAULT_BOARD_QUERY_FIELDS = [
     'id', 
     'name', 
@@ -232,204 +217,222 @@ DEFAULT_PLAN_QUERY_FIELDS = [
 ]
 
 
-##
+FIELD_MAP = {
+    'account': DEFAULT_ACCOUNT_QUERY_FIELDS,
+    'activity_logs': DEFAULT_ACTIVITY_LOG_QUERY_FIELDS,
+    'assets': DEFAULT_ASSET_QUERY_FIELDS,
+    'board': DEFAULT_BOARD_QUERY_FIELDS,
+    'columns': DEFAULT_COLUMN_QUERY_FIELDS,
+    'column_values': DEFAULT_COLUMN_VALUE_QUERY_FIELDS,
+    'creator': DEFAULT_USER_QUERY_FIELDS,
+    'group': DEFAULT_GROUP_QUERY_FIELDS,
+    'groups': DEFAULT_GROUP_QUERY_FIELDS,
+    'items': DEFAULT_ITEM_QUERY_FIELDS,
+    'owner': DEFAULT_USER_QUERY_FIELDS,
+    'replies': DEFAULT_REPLY_QUERY_FIELDS,
+    'subscribers': DEFAULT_USER_QUERY_FIELDS,
+    'tags': DEFAULT_TAG_QUERY_FIELDS,
+    'teams': DEFAULT_TEAM_QUERY_FIELDS,
+    'top_group': DEFAULT_GROUP_QUERY_FIELDS,
+    'updates': DEFAULT_UPDATE_QUERY_FIELDS,
+    'uploaded_by': DEFAULT_USER_QUERY_FIELDS,
+    'users': DEFAULT_USER_QUERY_FIELDS,
+    'views': DEFAULT_BOARD_VIEW_QUERY_FIELDS,
+    'workspace': DEFAULT_WORKSPACE_QUERY_FIELDS,
+}
 
-## Optional Parameters
-
-BOARDS_OPTIONAL_PARAMS = {
-    'limit': ArgumentValueKind.Int,
-    'page': ArgumentValueKind.Int,
-    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
-    'board_kind': ArgumentValueKind.Enum,
-    'state': ArgumentValueKind.Enum,
-    'newest_first': ArgumentValueKind.Bool,
-    'activity_logs': {
-        'limit': ArgumentValueKind.Int,
-        'page': ArgumentValueKind.Int,
-        'user_ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
-        'column_ids': (ArgumentValueKind.List, ArgumentValueKind.String),
-        'group_ids': (ArgumentValueKind.List, ArgumentValueKind.String),
-        'item_ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
-        'from': ArgumentValueKind.String,
-        'to': ArgumentValueKind.String
-    },
-    'columns': {
-        'ids': (ArgumentValueKind.List, ArgumentValueKind.String)
-    },
-    'groups': {
-        'ids': (ArgumentValueKind.List, ArgumentValueKind.String),
-        'items': {
+## Field list and default arguments map
+QUERY_MAP = {
+    BOARDS: (
+        DEFAULT_BOARD_QUERY_FIELDS, 
+        {
+            'limit': ArgumentValueKind.Int,
+            'page': ArgumentValueKind.Int,
             'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+            'board_kind': ArgumentValueKind.Enum,
+            'state': ArgumentValueKind.Enum,
+            'newest_first': ArgumentValueKind.Bool,
+            'activity_logs': {
+                'limit': ArgumentValueKind.Int,
+                'page': ArgumentValueKind.Int,
+                'user_ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+                'column_ids': (ArgumentValueKind.List, ArgumentValueKind.String),
+                'group_ids': (ArgumentValueKind.List, ArgumentValueKind.String),
+                'item_ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+                'from': ArgumentValueKind.String,
+                'to': ArgumentValueKind.String
+            },
+            'columns': {
+                'ids': (ArgumentValueKind.List, ArgumentValueKind.String)
+            },
+            'groups': {
+                'ids': (ArgumentValueKind.List, ArgumentValueKind.String),
+                'items': {
+                    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+                    'limit': ArgumentValueKind.Int,
+                    'page': ArgumentValueKind.Int
+                }
+            },
+            'items': {
+                'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+                'limit': ArgumentValueKind.Int,
+                'page': ArgumentValueKind.Int
+            },
+            'updates': {
+                'limit': ArgumentValueKind.Int,
+                'page': ArgumentValueKind.Int
+            },
+            'views': {
+                'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+                'type': ArgumentValueKind.String
+            }
+        }),
+    CREATE_BOARD: (
+        DEFAULT_BOARD_QUERY_FIELDS, 
+        {
+            'workspace_id': ArgumentValueKind.Int,
+            'template_id': ArgumentValueKind.Int
+        }),
+    ARCHIVE_BOARD: (DEFAULT_BOARD_QUERY_FIELDS, {}),
+    ADD_SUBSCRIBERS_TO_BOARD: (
+        DEFAULT_USER_QUERY_FIELDS, 
+        {
+            'kind': ArgumentValueKind.Enum
+        }),
+    DELETE_SUBSCRIBERS_FROM_BOARD: (DEFAULT_USER_QUERY_FIELDS, {}),
+    CREATE_COLUMN: (
+        DEFAULT_COLUMN_QUERY_FIELDS, 
+        {
+            'defaults': ArgumentValueKind.Json
+        }),
+    CHANGE_COLUMN_VALUE: (DEFAULT_ITEM_QUERY_FIELDS, {}),
+    CHANGE_MULTIPLE_COLUMN_VALUES: (DEFAULT_ITEM_QUERY_FIELDS, {}),
+    DUPLICATE_GROUP: (
+        DEFAULT_GROUP_QUERY_FIELDS, 
+        {
+            'add_to_top': ArgumentValueKind.Bool,
+            'group_title': ArgumentValueKind.String
+        }),
+    CREATE_GROUP: (DEFAULT_GROUP_QUERY_FIELDS, {}),
+    ARCHIVE_GROUP: (DEFAULT_GROUP_QUERY_FIELDS, {}),
+    DELETE_GROUP: (DEFAULT_GROUP_QUERY_FIELDS, {}),
+    ITEMS: (
+        DEFAULT_ITEM_QUERY_FIELDS, 
+        {
+            'assets': {
+                'column_ids': (ArgumentValueKind.List, ArgumentValueKind.String)
+            },
+            'limit': ArgumentValueKind.Int,
+            'page': ArgumentValueKind.Int,
+            'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+            'newest_first': ArgumentValueKind.Bool,
+            'column_values': {
+                'ids': (ArgumentValueKind.List, ArgumentValueKind.Default),
+            },
+            'updates': {
+                'limit': ArgumentValueKind.Int,
+                'page': ArgumentValueKind.Int
+            }
+        }),
+    ITEMS_BY_COLUMN_VALUES: (
+        DEFAULT_ITEM_QUERY_FIELDS, 
+        {
+            'limit': ArgumentValueKind.Int,
+            'page': ArgumentValueKind.Int,
+            'column_type': ArgumentValueKind.String,
+            'state': ArgumentValueKind.Enum,
+            'column_values': {
+                'ids': (ArgumentValueKind.List, ArgumentValueKind.Default),
+            },
+            'updates': {
+                'limit': ArgumentValueKind.Int,
+                'page': ArgumentValueKind.Int
+            }
+        }),
+    ITEMS_BY_MULTIPLE_COLUMN_VALUES: (
+        DEFAULT_ITEM_QUERY_FIELDS, 
+        {
+            'limit': ArgumentValueKind.Int,
+            'page': ArgumentValueKind.Int,
+            'column_type': ArgumentValueKind.String,
+            'state': ArgumentValueKind.Enum
+        }),
+    CREATE_ITEM: (
+        DEFAULT_ITEM_QUERY_FIELDS, 
+        {
+            'group_id': ArgumentValueKind.String,
+            'column_values': ArgumentValueKind.Json
+        }),
+    CREATE_SUBITEM: (
+        DEFAULT_ITEM_QUERY_FIELDS,
+        {
+            'column_values': ArgumentValueKind.Json
+        }),
+    CLEAR_ITEM_UPDATES: (DEFAULT_ITEM_QUERY_FIELDS, {}),
+    MOVE_ITEM_TO_GROUP: (DEFAULT_ITEM_QUERY_FIELDS, {}),
+    ARCHIVE_ITEM: (DEFAULT_ITEM_QUERY_FIELDS, {}),
+    DELETE_ITEM: (DEFAULT_ITEM_QUERY_FIELDS, {}),
+    DUPLICATE_ITEM: (
+        DEFAULT_ITEM_QUERY_FIELDS, 
+        {
+            'board_id': ArgumentValueKind.Int,
+            'with_updates': ArgumentValueKind.Bool,
+            'item_id': ArgumentValueKind.Int
+        }),
+    UPDATES: (
+        DEFAULT_UPDATE_QUERY_FIELDS, 
+        {
             'limit': ArgumentValueKind.Int,
             'page': ArgumentValueKind.Int
-        }
-    },
-    'items': {
-        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
-        'limit': ArgumentValueKind.Int,
-        'page': ArgumentValueKind.Int
-    },
-    'updates': {
-        'limit': ArgumentValueKind.Int,
-        'page': ArgumentValueKind.Int
-    },
-    'views': {
-        'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
-        'type': ArgumentValueKind.String
-    }
-}
-
-CREATE_BOARD_OPTIONAL_PARAMS = {
-    'workspace_id': ArgumentValueKind.Int,
-    'template_id': ArgumentValueKind.Int
-}
-
-ARCHIVE_BOARD_OPTIONAL_PARAMS = {
-
-}
-
-ADD_SUBSCRIBERS_TO_BOARD_OPTIONAL_PARAMS = {
-    'kind': ArgumentValueKind.Enum
-}
-
-DELETE_SUBSCRIBERS_FROM_BOARD_OPTIONAL_PARAMS = {
-    
-}
-
-CREATE_COLUMN_OPTIONAL_PARAMS = {
-
-}
-
-CHANGE_COLUMN_VALUE_OPTIONAL_PARAMS = {
-
-}
-
-CHANGE_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS = {
-
-}
-
-DUPLICATE_GROUP_OPTIONAL_PARAMS = {
-    'add_to_top': ArgumentValueKind.Bool,
-    'group_title': ArgumentValueKind.String
-}
-
-CREATE_GROUP_OPTIONAL_PARAMS = {
-
-}
-
-ARCHIVE_GROUP_OPTIONAL_PARAMS = {
-
-}
-
-DELETE_GROUP_OPTIONAL_PARAMS = {
-
-}
-
-ITEMS_OPTIONAL_PARAMS = {
-    'assets': {
-        'column_ids': (ArgumentValueKind.List, ArgumentValueKind.String)
-    },
-    'limit': ArgumentValueKind.Int,
-    'page': ArgumentValueKind.Int,
-    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
-    'newest_first': ArgumentValueKind.Bool,
-    'column_values': {
-        'ids': (ArgumentValueKind.List, ArgumentValueKind.Default),
-    },
-    'updates': {
-        'limit': ArgumentValueKind.Int,
-        'page': ArgumentValueKind.Int
-    }
-}
-
-ITEMS_BY_COLUMN_VALUES_OPTIONAL_PARAMS = {
-    'limit': ArgumentValueKind.Int,
-    'page': ArgumentValueKind.Int,
-    'column_type': ArgumentValueKind.String,
-    'state': ArgumentValueKind.Enum,
-    'column_values': {
-        'ids': (ArgumentValueKind.List, ArgumentValueKind.Default),
-    },
-    'updates': {
-        'limit': ArgumentValueKind.Int,
-        'page': ArgumentValueKind.Int
-    }
-}
-
-ITEMS_BY_MULTIPLE_COLUMN_VALUES_OPTIONAL_PARAMS = {
-    'limit': ArgumentValueKind.Int,
-    'page': ArgumentValueKind.Int,
-    'column_type': ArgumentValueKind.String,
-    'state': ArgumentValueKind.Enum
-}
-
-CREATE_ITEM_OPTIONAL_PARAMS = {
-    'group_id': ArgumentValueKind.String,
-    'column_values': ArgumentValueKind.Json
-}
-
-CREATE_SUBITEM_OPTIONAL_PARAMS = {
-    'column_values': ArgumentValueKind.Json
-}
-
-MOVE_ITEM_TO_GROUP_OPTIONAL_PARAMS = {
-    
-}
-
-ARCHIVE_ITEM_OPTIONAL_PARAMS = {
-
-}
-
-DELETE_ITEM_OPTIONAL_PARAMS = {
-
-}
-
-DUPLICATE_ITEM_ARGUMENTS = {
-    'board_id': ArgumentValueKind.Int,
-    'with_updates': ArgumentValueKind.Bool,
-    'item_id': ArgumentValueKind.Int
-}
-
-UPDATES_OPTIONAL_PARAMS = {
-    'limit': ArgumentValueKind.Int,
-    'page': ArgumentValueKind.Int
-}
-
-CREATE_UPDATE_OPTIONAL_PARAMS = {
-    'parent_id': ArgumentValueKind.Int
-}
-
-CREATE_NOTIFICATION_OPTIONAL_PARAMS ={
-    'payload': ArgumentValueKind.Json
-}
-
-TAGS_OPTIONAL_PARAMS = {
-    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
-}
-
-CREATE_OR_GET_TAG_OPTIONAL_PARAMS = {
-    'board_id': ArgumentValueKind.Int
-}
-
-USERS_OPTIONAL_PARAMS = {
-    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
-    'kind': ArgumentValueKind.Enum,
-    'newest_first': ArgumentValueKind.String,
-    'limit': ArgumentValueKind.Int
-}
-
-TEAMS_OPTIONAL_PARAMS = {
-    'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
-}
-
-CREATE_WEBHOOK_OPTIONAL_PARAMS = {
-    'config': ArgumentValueKind.Json
-}
-
-CREATE_WORKSPACE_OPTIONAL_PARAMS = {
-    'description': ArgumentValueKind.String
-}
-
-ASSETS_OPTIONAL_PARAMS = {
-    
+        }),
+    CREATE_UPDATE: (
+        DEFAULT_UPDATE_QUERY_FIELDS, 
+        {
+            'parent_id': ArgumentValueKind.Int
+        }),
+    DELETE_UPDATE: (DEFAULT_UPDATE_QUERY_FIELDS, {}),
+    CREATE_NOTIFICATION: (
+        DEFAULT_NOTIFICATION_QUERY_FIELDS, 
+        {
+            'payload': ArgumentValueKind.Json
+        }),
+    TAGS: (
+        DEFAULT_TAG_QUERY_FIELDS, 
+        {
+            'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
+        }),
+    CREATE_OR_GET_TAG: (
+        DEFAULT_TAG_QUERY_FIELDS, 
+        {
+            'board_id': ArgumentValueKind.Int
+        }),
+    USERS: (
+        DEFAULT_USER_QUERY_FIELDS,
+        {
+            'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
+            'kind': ArgumentValueKind.Enum,
+            'newest_first': ArgumentValueKind.String,
+            'limit': ArgumentValueKind.Int
+        }),
+    TEAMS: (
+        DEFAULT_TEAM_QUERY_FIELDS,
+        {
+            'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
+        }),
+    ME: (DEFAULT_USER_QUERY_FIELDS, {}),
+    ACCOUNT: (DEFAULT_ACCOUNT_QUERY_FIELDS, {}),
+    CREATE_WEBHOOK: (
+        DEFAULT_WEBHOOK_QUERY_FIELDS, 
+        {
+            'config': ArgumentValueKind.Json
+        }),
+    DELETE_WEBHOOK: (DEFAULT_WEBHOOK_QUERY_FIELDS, ),
+    CREATE_WORKSPACE: (
+        DEFAULT_WORKSPACE_QUERY_FIELDS, 
+        {
+            'description': ArgumentValueKind.String
+        }),
+    ASSETS: (DEFAULT_ASSET_QUERY_FIELDS, {}),
+    ADD_FILE_TO_UPDATE: (DEFAULT_ASSET_QUERY_FIELDS, {}),
+    ADD_FILE_TO_COLUMN: (DEFAULT_ASSET_QUERY_FIELDS, {})
 }

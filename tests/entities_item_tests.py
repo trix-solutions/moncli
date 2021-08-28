@@ -190,7 +190,7 @@ def test_item_should_get_column_value_with_extra_id(get_column_values, get_items
     # Arrange
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
     item = client.get_items()[0]
-    get_column_values.return_value = cv.ColumnValueCollection([cv.LongTextValue(**{
+    get_column_values.return_value = en.BaseColumnCollection([cv.LongTextValue(**{
         'id': 'text_column_01', 
         'title': 'Text Column 01', 
         'text': 'Hello, Grandma', 

@@ -4,11 +4,11 @@ from json import dumps, loads
 
 from pycountry import countries
 from pytz import timezone, exceptions as tzex
-from schematics.models import Model
 from schematics.transforms import blacklist
 from schematics.types import StringType
 
-from .. import entities as en, ColumnType, PeopleKind
+from .. import entities as en
+from ..enums import *
 
 
 SIMPLE_NULL_VALUE = ''
@@ -39,15 +39,12 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.subitems : 'SubitemsValue'
 }
 
-class _ColumnValue(Model):
+class _ColumnValue(en.BaseColumn):
     """Base column value model"""
 
-    id = StringType(required=True)
-    title = StringType()
     text = StringType()
     value = StringType()
     additional_info = StringType()
-    settings_str = StringType()
 
     class Options:
         roles = {'default': blacklist('settings_str')}
