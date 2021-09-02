@@ -1367,7 +1367,7 @@ def delete_item(item_id: str, *args, **kwargs):
     """
     
     kwargs['item_id'] = gql.IntValue(item_id)
-    return execute_query(api_key=kwargs.pop('api_key', None), DELETE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
 def duplicate_item(board_id: str, item_id: str, *args, **kwargs):
@@ -1748,7 +1748,7 @@ def add_file_to_update(update_id: str, file_path: str, *args, **kwargs):
     
     kwargs['file'] = gql.FileValue('$file')
     kwargs['update_id'] = gql.IntValue(update_id)
-    return upload_file(api_key, file_path, query_name=ADD_FILE_TO_UPDATE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return upload_file(file_path,api_key=kwargs.pop('api_key', None),  query_name=ADD_FILE_TO_UPDATE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
 def add_file_to_column(item_id: str, column_id: str, file_path: str, *args, **kwargs):
@@ -1800,7 +1800,7 @@ def add_file_to_column(item_id: str, column_id: str, file_path: str, *args, **kw
     kwargs['file'] = gql.FileValue('$file')
     kwargs['item_id'] = gql.IntValue(item_id)
     kwargs['column_id'] = gql.StringValue(column_id)
-    return upload_file(api_key, file_path, query_name=ADD_FILE_TO_COLUMN, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return upload_file(file_path,api_key=kwargs.pop('api_key', None),  query_name=ADD_FILE_TO_COLUMN, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
 def get_users(*args, **kwargs):
