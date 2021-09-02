@@ -52,7 +52,7 @@ def test_archive_board(execute_query):
     execute_query.return_value = {'id': '1', 'state': 'archived'}
 
     # Act
-    archived_board = handlers.archive_board('', '1', 'id', 'state')
+    archived_board = handlers.archive_board('1', 'id', 'state')
     
     # Assert
     ok_(archived_board != None)
@@ -69,7 +69,7 @@ def test_add_subscribers_to_board(execute_query):
     execute_query.return_value = {'id': user_id, 'name': name}
 
     # Act
-    subscriber = handlers.add_subscribers_to_board('', '1', ['1'])
+    subscriber = handlers.add_subscribers_to_board('1', ['1'])
 
     # Assert
     ok_(subscriber)
@@ -87,7 +87,7 @@ def test_remove_subscribers_from_board(execute_query):
 
     print(execute_query)
     # Act
-    subscribers = handlers.delete_subscribers_from_board('', '1', ['1'])
+    subscribers = handlers.delete_subscribers_from_board('1', ['1'])
 
     # Assert
     ok_(subscribers)
@@ -103,7 +103,7 @@ def test_create_column(execute_query):
     execute_query.return_value = {'id': 'text_column_1', 'title': title, 'type': 'text'}
 
     # Act
-    new_column = handlers.create_column('', '1', title, ColumnType.text, 'id', 'title', 'type')
+    new_column = handlers.create_column('1', title, ColumnType.text, 'id', 'title', 'type')
     
     # Assert
     ok_(new_column != None)
@@ -119,7 +119,7 @@ def test_change_column_value(execute_query):
     execute_query.return_value = {'id': '1'}
 
     # Act
-    updated_item = handlers.change_column_value('', '1', 'text_column_1', '1', 'Hello, world!', 'id')
+    updated_item = handlers.change_column_value('1', 'text_column_1', '1', 'Hello, world!', 'id')
     
     # Assert
     ok_(updated_item != None)
@@ -135,7 +135,7 @@ def test_change_multiple_column_value(execute_query):
     execute_query.return_value = {'id': '1'}
 
     # Act
-    updated_item = handlers.change_multiple_column_value('', '1', '1', column_values, 'id')
+    updated_item = handlers.change_multiple_column_value('1', '1', column_values, 'id')
     
     # Assert
     ok_(updated_item != None)
@@ -151,7 +151,7 @@ def test_duplicate_group(execute_query):
     execute_query.return_value = {'id': group_id}
 
     # Act
-    duplicated_group = handlers.duplicate_group('', '1', 'group_1', 'id')
+    duplicated_group = handlers.duplicate_group('1', 'group_1', 'id')
     
     # Assert
     ok_(duplicated_group != None)
@@ -167,7 +167,7 @@ def test_create_group(execute_query):
     execute_query.return_value = {'id': group_id, 'title': group_name}
 
     # Act
-    new_group = handlers.create_group('', '1', group_name, 'id', 'title')
+    new_group = handlers.create_group('1', group_name, 'id', 'title')
     
     # Assert
     ok_(new_group != None)
@@ -183,7 +183,7 @@ def test_archive_group(execute_query):
     execute_query.return_value = {'id': 'group_1', 'archived': True}
 
     # Act
-    archived_group = handlers.archive_group('', '1', 'group_1', 'archived')
+    archived_group = handlers.archive_group('1', 'group_1', 'archived')
     
     # Assert
     ok_(archived_group != None)
@@ -199,7 +199,7 @@ def test_delete_group(execute_query):
     execute_query.return_value = {'id': 'group_1', 'deleted': True}
 
     # Act
-    deleted_group = handlers.delete_group('', '1', 'group_1', 'deleted')
+    deleted_group = handlers.delete_group('1', 'group_1', 'deleted')
     
     # Assert
     ok_(deleted_group != None)
@@ -216,7 +216,7 @@ def test_create_item(execute_query):
     execute_query.return_value = {'id': '1', 'name': item_name}
 
     # Act
-    new_item = handlers.create_item('', item_name, '1', 'id', 'name')
+    new_item = handlers.create_item(item_name, '1', 'id', 'name')
     
     # Assert
     ok_(new_item != None)
@@ -234,7 +234,7 @@ def test_create_subitem(execute_query):
     execute_query.return_value = {'id': id, 'name': item_name}
 
     # Act
-    subitem = handlers.create_subitem('', '1', item_name)
+    subitem = handlers.create_subitem('1', item_name)
     
     # Assert
     ok_(subitem != None)
@@ -252,7 +252,7 @@ def test_clear_item_updates(execute_query):
     execute_query.return_value = {'id': id, 'name': item_name}
 
     # Act
-    item = handlers.clear_item_updates('', id)
+    item = handlers.clear_item_updates(id)
     
     # Assert
     ok_(item)
@@ -268,7 +268,7 @@ def test_get_items(execute_query):
     execute_query.return_value = [{'id': '1', 'name': 'Item One'}, {'id': '2', 'name': 'Item Two'}]
 
     # Act
-    items = handlers.get_items('', page=1, limit=2)
+    items = handlers.get_items(page=1, limit=2)
     
     # Assert
     ok_(items != None)
@@ -283,7 +283,7 @@ def test_get_items_by_column_values(execute_query):
     execute_query.return_value = [{'id': '1', 'name': 'Item One'}]
 
     # Act
-    items = handlers.get_items_by_column_values('', '1', 'name', 'Item One', 'id', 'name')
+    items = handlers.get_items_by_column_values('1', 'name', 'Item One', 'id', 'name')
     
     # Assert
     ok_(items != None)
@@ -298,7 +298,7 @@ def test_archive_item(execute_query):
     execute_query.return_value = {'id': '1', 'state': 'archived'}
 
     # Act
-    archived_item = handlers.archive_item('', '1', 'id', 'state')
+    archived_item = handlers.archive_item('1', 'id', 'state')
     
     # Assert
     ok_(archived_item != None)
@@ -313,7 +313,7 @@ def test_delete_item(execute_query):
     execute_query.return_value = {'id': '1', 'state': 'deleted'}
 
     # Act
-    deleted_item = handlers.delete_item('', '1', 'id', 'state')
+    deleted_item = handlers.delete_item('1', 'id', 'state')
     
     # Assert
     ok_(deleted_item != None)
@@ -330,7 +330,7 @@ def test_duplicate_item(execute_query):
     execute_query.return_value = {'id': id, 'name': name}
 
     # Act
-    duplicate_item = handlers.duplicate_item('', '1', '1')
+    duplicate_item = handlers.duplicate_item('1', '1')
     
     # Assert
     ok_(duplicate_item)
@@ -347,7 +347,7 @@ def test_create_update(execute_query):
     execute_query.return_value = {'id': '1', 'body': body, 'item_id': item_id}
 
     # Act
-    new_update = handlers.create_update('', body, item_id, 'id', 'body', 'item_id')
+    new_update = handlers.create_update(body, item_id, 'id', 'body', 'item_id')
     
     # Assert
     ok_(new_update != None)
@@ -363,7 +363,7 @@ def test_get_updates(execute_query):
     execute_query.return_value = [{'id': '1'}, {'id': '2'}, {'id': '3'}, {'id': '4'}, {'id': '5'}]
 
     # Act
-    updates = handlers.get_updates('', 'id', limit=5)
+    updates = handlers.get_updates('id', limit=5)
     
     # Assert
     ok_(updates != None)
@@ -381,7 +381,7 @@ def test_delete_update(execute_query):
     execute_query.return_value = {'id': id, 'item_id': item_id, 'creator_id': creator_id}
 
     # Act
-    update = handlers.delete_update('', '1')
+    update = handlers.delete_update('1')
     
     # Assert
     ok_(update)
@@ -399,7 +399,7 @@ def test_create_notification(execute_query):
     execute_query.return_value = {'text': text}
     
     # Act
-    notification = handlers.create_notification('', text, '1', '2', NotificationTargetType.Project, 'text')
+    notification = handlers.create_notification(text, '1', '2', NotificationTargetType.Project, 'text')
     
     # Assert
     ok_(notification != None)
@@ -415,7 +415,7 @@ def test_create_or_get_tag(execute_query):
     execute_query.return_value = {'id': '1', 'name': 'Tag One'}
     
     # Act
-    tag = handlers.create_or_get_tag('', name, 'id', 'name')
+    tag = handlers.create_or_get_tag(name, 'id', 'name')
     
     # Assert
     ok_(tag != None)
@@ -430,7 +430,7 @@ def test_get_tags(execute_query):
     execute_query.return_value = [{'id': '1'}, {'id': '2'}, {'id': '3'}]
 
     # Act
-    tags = handlers.get_tags('', 'id')
+    tags = handlers.get_tags('id')
     
     # Assert
     ok_(tags != None)
@@ -445,7 +445,7 @@ def test_get_users(execute_query):
     execute_query.return_value = [{'id': '1', 'name': 'Grandma'}, {'id': '2', 'name': 'Osamu Dazai'}]
 
     # Act
-    users = handlers.get_users('', 'id', 'name')
+    users = handlers.get_users('id', 'name')
     
     # Assert
     ok_(users != None)
@@ -461,7 +461,7 @@ def test_get_teams(execute_query):
     execute_query.return_value = [{'id': '1', 'name': team_name}]
 
     # Act
-    teams = handlers.get_teams('', 'id', 'name')
+    teams = handlers.get_teams('id', 'name')
     
     # Assert
     ok_(teams != None)
@@ -496,7 +496,7 @@ def test_create_webhook(execute_query):
     execute_query.return_value = {'id': webhook_id, 'board_id': int(board_id)}
 
     # Act
-    webhook = handlers.create_webhook('', board_id, url, event)
+    webhook = handlers.create_webhook(board_id, url, event)
 
     # Assert
     ok_(webhook != None)
@@ -514,7 +514,7 @@ def test_delete_webhook(execute_query):
     execute_query.return_value = {'id': webhook_id, 'board_id': int(board_id)}
 
     # Act
-    webhook = handlers.delete_webhook('', webhook_id)
+    webhook = handlers.delete_webhook(webhook_id)
 
     # Assert
     ok_(webhook != None)
@@ -532,7 +532,7 @@ def test_add_file_to_update(upload_file):
     upload_file.return_value = {'id': '12345', 'name': name, 'url': url}
 
     # Act
-    asset = handlers.add_file_to_update('', '12345', '/Users/test/{}'.format(name))
+    asset = handlers.add_file_to_update('12345', '/Users/test/{}'.format(name))
     
     # Assert
     ok_(asset != None)
@@ -550,7 +550,7 @@ def test_add_file_to_column(upload_file):
     upload_file.return_value = {'id': '12345', 'name': name, 'url': url}
 
     # Act
-    asset = handlers.add_file_to_column('', '12345', 'files', '/Users/test/{}'.format(name))
+    asset = handlers.add_file_to_column('12345', 'files', '/Users/test/{}'.format(name))
     
     # Assert
     ok_(asset != None)
@@ -570,7 +570,7 @@ def test_create_workspace(execute_query):
     execute_query.return_value = {'id': id, 'name': name, 'kind': kind.name, 'description': description}
 
     # Act
-    workspace = handlers.create_workspace('', name, kind, description=description)
+    workspace = handlers.create_workspace(name, kind, description=description)
 
     # Assert
     ok_(workspace != None)
