@@ -166,8 +166,8 @@ class Update(_Update):
         """
 
         user_data = api.get_users(
-            self.__creds.api_key_v2,
             *args,
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.creator_id)])[0]
         return en.User(creds=self.__creds, **user_data)
 
@@ -212,9 +212,9 @@ class Update(_Update):
         """
 
         update_data = api.create_update(
-            self.__creds.api_key_v2,
             body,
             self.item_id,
+            api_key=self.__creds.api_key_v2,
             *args,
             parent_id=self.id)
         return en.Update(creds=self.__creds, **update_data)
@@ -258,8 +258,8 @@ class Update(_Update):
 
         while record_count >= page_limit:
             updates_data = api.get_updates(
-                self.__creds.api_key_v2, 
                 'id', 'item_id', 
+                api_key=self.__creds.api_key_v2, 
                 *api.get_field_list(api.DEFAULT_REPLY_QUERY_FIELDS, 'replies', *args),
                 limit=page_limit,
                 page=page)
@@ -313,9 +313,9 @@ class Update(_Update):
         """
 
         asset_data = api.add_file_to_update(
-            self.__creds.api_key_v2,
             self.id,
             file_path,
+            api_key=self.__creds.api_key_v2,
             *args)
         return en.Asset(**asset_data)
 
@@ -362,8 +362,8 @@ class Update(_Update):
 
         while record_count >= page_limit:
             updates_data = api.get_updates(
-                self.__creds.api_key_v2, 
                 'id', 
+                api_key=self.__creds.api_key_v2, 
                 *api.get_field_list(api.DEFAULT_ASSET_QUERY_FIELDS, 'assets', *args),
                 limit=page_limit,
                 page=page)
@@ -417,8 +417,8 @@ class Update(_Update):
         """
 
         update_data = api.delete_update(
-            self.__creds.api_key_v2,
             self.id,
+            api_key=self.__creds.api_key_v2,
             *args)
         return Update(creds=self.__creds, **update_data)
 
@@ -543,7 +543,7 @@ class Reply(_Reply):
         """
 
         user_data = api.get_users(
-            self.__creds.api_key_v2,
             *args,
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.creator_id)])[0]
         return en.User(creds=self.__creds, **user_data)
