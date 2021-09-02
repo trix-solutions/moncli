@@ -86,3 +86,7 @@ class WorkspaceKind(Enum):
 class SubscriberKind(Enum):
     subscriber = 1
     owner = 2
+
+class WorkspaceSubscriberKind(Enum):
+    subscriber = 0
+    owner = 1

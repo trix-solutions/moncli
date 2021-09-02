@@ -2,7 +2,7 @@ from unittest.mock import patch
 from nose.tools import ok_, eq_
 
 from moncli.api_v2 import handlers, constants
-from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType, WebhookEventType, WorkspaceKind
+from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType, WebhookEventType, WorkspaceKind, WorkspaceSubscriberKind
 
 EXECUTE_QUERY_PATCH = 'moncli.api_v2.handlers.execute_query'
 UPLOAD_FILE_PATCH = 'moncli.api_v2.handlers.upload_file'
@@ -579,3 +579,23 @@ def test_create_workspace(execute_query):
     ok_(workspace['name'] == name)
     ok_(workspace['kind'] == kind.name)
     ok_(workspace['description'] == description)
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_add_users_to_workspace(execute_query):
+    
+    # Arrange
+    workspace_id = '12345'
+    user_ids = [12345,12124,124231,532234]
+    kind = WorkspaceSubscriberKind.subscriber
+    execute_query.return_value = {'id': id, "user_ids": user_ids, "kind": kind.name }
+    # Act
+
+    add_users = handlers.add_users_to_workspace(workspace_id,user_ids,kind)
+
+    # Assert
+
+    ok_(add_users != None)
+    ok_(type(add_users) is dict)
+    ok_(add_users['id'] == id)
+    ok_(add_users['user_ids'] == user_ids)
+    ok_(add_users['kind'] == kind.name)

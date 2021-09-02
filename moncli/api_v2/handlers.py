@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 
-from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind
+from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind, WorkspaceSubscriberKind
 from . import graphql as gql
 from .constants import *
 from .requests import execute_query, upload_file
@@ -420,7 +420,7 @@ def create_column(board_id: str, title: str, column_type: ColumnType, *args, **k
             board_id : `str`
                 The board's unique identifier.
             title : `str`
-                The new column's title.
+                The new column's title
             args : `tuple`
                 The list of column return fields.
             kwargs : `dict`
@@ -2148,3 +2148,39 @@ def create_workspace(name: str, kind: WorkspaceKind, *args, **kwargs):
     kwargs['name'] = gql.StringValue(name)
     kwargs['kind'] = gql.EnumValue(kind)
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+def add_users_to_workspace(workspace_id: str,user_ids: str, kind: WorkspaceSubscriberKind, *args, **kwargs):
+        """
+        Allows you to add users to a workspace. You can define if users will be added as regular subscribers or as owners of the workspace.
+
+            Parameters 
+
+                workspace_id: str
+                     The workspace's unique identifier
+                user_ids: str
+                        User IDs to subscribe to the workspace
+                kind: WorkspaceSUbscriberKind
+                    Kind of subscribers added (subscriber/owner)
+                *args: tuple
+                    The collection of workspace return fields.
+            
+            Return Fields
+        :
+                id:Int	
+                    The workspace identifier;
+                name:String
+                	The workspace name
+                kind:WorkspaceKind
+                	Will return Open for Open Workspaces, and Closed for Closed Workspaces.
+                description:String
+                	The description added to this workspace.
+
+
+        """
+
+
+        kwargs["workspace_id"]= gql.IntValue(workspace_id)      
+        kwargs['user_ids'] = gql.ListValue([gql.IntValue(id) for id in user_ids])
+        kwargs["kind"]= gql.EnumValue(kind)
+        
+        return execute_query(api_key=kwargs.pop('api_key', None), query_name=ADD_USERS_TO_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
