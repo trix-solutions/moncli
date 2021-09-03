@@ -302,8 +302,8 @@ class Board(_Board):
             kwargs = {'activity_logs': kwargs}
 
         activity_logs_data = api.get_boards(
+            self.__creds.api_key_v2,
             'id', 'name',
-            api_key=self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_ACTIVITY_LOG_QUERY_FIELDS, 'activity_logs', *args),
             ids=[self.id],
             **kwargs)[0]['activity_logs']
@@ -349,8 +349,8 @@ class Board(_Board):
             kwargs = {'views': kwargs}
 
         views_data = api.get_boards(
+            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_BOARD_VIEW_QUERY_FIELDS, 'views', *args),
-            api_key=self.__creds.api_key_v2,
             ids=[self.id],
             **kwargs)[0]['views']
 
@@ -434,9 +434,9 @@ class Board(_Board):
         """
 
         subscribers_data = api.add_subscribers_to_board(
+            self.__creds.api_key_v2,
             self.id,
             user_ids,
-            api_key=self.__creds.api_key_v2,
             *args,
             **kwargs)
 
@@ -515,8 +515,8 @@ class Board(_Board):
         }
 
         users_data = api.get_boards(
+            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_USER_QUERY_FIELDS, 'subscribers', *args),
-            api_key=self.__creds.api_key_v2,
             **kwargs)[0]['subscribers']
 
         return [en.User(creds=self.__creds, **user) for user in users_data]
@@ -592,9 +592,9 @@ class Board(_Board):
         """
         
         users_data = api.delete_subscribers_from_board(
+            self.__creds.api_key_v2,
             self.id,
             user_ids,
-            api_key=self.__creds.api_key_v2,
             *args)
 
         return [en.User(creds=self.__creds, **user) for user in users_data]
@@ -643,10 +643,10 @@ class Board(_Board):
         """
 
         column_data = api.create_column(
+            self.__creds.api_key_v2, 
             self.id, 
             title, 
             column_type, 
-            api_key=self.__creds.api_key_v2, 
             *args,
             **kwargs)
 
@@ -699,8 +699,8 @@ class Board(_Board):
 
         column_data = api.get_boards(
             *api.get_field_list(api.DEFAULT_COLUMN_QUERY_FIELDS, 'columns', *args),
-            ids=[int(self.id)],
             api_key=self.__creds.api_key_v2,
+            ids=[int(self.id)],
             limit=1,
             **column_kwargs)[0]['columns']
 
@@ -741,9 +741,9 @@ class Board(_Board):
         """
 
         group_data = api.create_group(
+            self.__creds.api_key_v2,
             self.id,
             group_name,
-            api_key=self.__creds.api_key_v2,
             *args)
 
         return en.Group(
@@ -795,8 +795,8 @@ class Board(_Board):
             group_kwargs['groups'] = kwargs
 
         groups_data = api.get_boards(
+            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_GROUP_QUERY_FIELDS, 'groups', *args),
-            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)],
             **group_kwargs)[0]['groups']
 
@@ -923,9 +923,9 @@ class Board(_Board):
                 raise InvalidColumnValue(type(column_values).__name__)
 
         item_data = api.create_item(
+            self.__creds.api_key_v2, 
             item_name, 
             self.id, 
-            api_key=self.__creds.api_key_v2, 
             *args, 
             **kwargs)
 
@@ -1002,8 +1002,8 @@ class Board(_Board):
             item_kwargs['items'] = kwargs
 
         items_data = api.get_boards(
+            self.__creds.api_key_v2,
             *args, 
-            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)],
             **item_kwargs)[0]['items']
 
@@ -1088,11 +1088,11 @@ class Board(_Board):
             value = column_value.format()
 
         items_data = api.get_items_by_column_values(
+            self.__creds.api_key_v2, 
             self.id, 
             column_value.id, 
             value, 
             *args,
-            api_key=self.__creds.api_key_v2, 
             **kwargs)
 
         return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data]
@@ -1176,10 +1176,10 @@ class Board(_Board):
             value = column_values
 
         items_data = api.get_items_by_multiple_column_values(
+            self.__creds.api_key_v2, 
             self.id, 
             column.id, 
             value, 
-            api_key=self.__creds.api_key_v2, 
             *args,
             **kwargs)
 
@@ -1266,10 +1266,10 @@ class Board(_Board):
             kwargs = {'config': kwargs}
 
         webhook_data = api.create_webhook(
+            self.__creds.api_key_v2, 
             self.id, 
             url, 
             event,
-            api_key=self.__creds.api_key_v2, 
             *args,
             **kwargs)
 
@@ -1301,8 +1301,8 @@ class Board(_Board):
         """
 
         webhook_data = api.delete_webhook(
+            self.__creds.api_key_v2, 
             webhook_id,
-            api_key=self.__creds.api_key_v2, 
             *args)
 
         webhook_data['is_active'] = False
@@ -1335,8 +1335,8 @@ class Board(_Board):
         """
 
         workspace_data = api.get_boards(
+            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_WORKSPACE_QUERY_FIELDS, 'workspace', *args),
-            api_key=self.__creds.api_key_v2,
             ids=[self.id])[0]['workspace']
 
         return en.Workspace(workspace_data)
@@ -1393,8 +1393,8 @@ class Board(_Board):
             updates_kwargs = {'updates': kwargs}
 
         updates_data = api.get_boards(
+            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_UPDATE_QUERY_FIELDS, 'updates', *args),
-            api_key=self.__creds.api_key_v2,
             ids=[self.id],
             **updates_kwargs)[0]['updates']
 
@@ -1432,8 +1432,8 @@ class Board(_Board):
         """
 
         tags_data = api.get_boards(
+            self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_TAG_QUERY_FIELDS, 'tags', *args),
-            api_key=self.__creds.api_key_v2,
             ids=[self.id])[0]['tags']
 
         return [en.Tag(data) for data in tags_data]

@@ -427,7 +427,7 @@ class MondayClient():
         
         try:
             board_data = api.get_boards(
-                api_key=self.__creds.api_key_v2, 
+                self.__creds.api_key_v2, 
                 *args,
                 ids=[int(id)],
                 limit=1)[0]
@@ -506,11 +506,9 @@ class MondayClient():
 
         while record_count >= page_limit:
             boards_data = api.get_boards(
-                 
-                'id', 
-                'name',
+                self.__creds.api_key_v2, 
+                'id', 'name',
                 limit=page_limit,
-                api_key=self.__creds.api_key_v2,
                 page=page)
             
             try:
@@ -587,8 +585,8 @@ class MondayClient():
         """
 
         board_data = api.archive_board(
+            self.__creds.api_key_v2, 
             board_id,
-            api_key=self.__creds.api_key_v2,
             *args)
         return en.Board(creds=self.__creds, **board_data)
 
@@ -636,8 +634,8 @@ class MondayClient():
             raise AssetIdsRequired()
 
         assets_data = api.get_assets(
+            self.__creds.api_key_v2,
             ids,
-            api_key=self.__creds.api_key_v2,            
             *args)
         return [en.asset.Asset(**data) for data in assets_data]
 
@@ -763,7 +761,7 @@ class MondayClient():
         """
 
         updates_data = api.get_updates(
-            api_key=self.__creds.api_key_v2, 
+            self.__creds.api_key_v2, 
             *args,
             **kwargs)
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
@@ -809,8 +807,8 @@ class MondayClient():
         """
         
         update_data = api.delete_update(
-            id,
-            api_key=self.__creds.api_key_v2,  
+            self.__creds.api_key_v2, 
+            id, 
             *args)
         return en.Update(creds=self.__creds, **update_data)
 
@@ -861,8 +859,8 @@ class MondayClient():
         """
         
         item_data = api.clear_item_updates(
+            self.__creds.api_key_v2,
             item_id,
-            api_key=self.__creds.api_key_v2,
             *args)
         return en.Item(creds=self.__creds, **item_data)
 
@@ -904,12 +902,12 @@ class MondayClient():
         """
 
         notification_data = api.create_notification(
+            self.__creds.api_key_v2, 
             text, 
             user_id, 
             target_id,
             target_type,
             *args,
-            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return en.Notification(notification_data)
     
@@ -947,9 +945,9 @@ class MondayClient():
         """
 
         tag_data = api.create_or_get_tag(
+            self.__creds.api_key_v2, 
             tag_name,
             *args,
-            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return en.Tag(tag_data)
 
@@ -985,8 +983,8 @@ class MondayClient():
         """
         
         tags_data = api.get_tags(
+            self.__creds.api_key_v2,
             *args,
-            api_key=self.__creds.api_key_v2,
             **kwargs)
         return [en.Tag(tag_data) for tag_data in tags_data]
     
@@ -1072,7 +1070,7 @@ class MondayClient():
         """
 
         users_data = api.get_users(
-            api_key=self.__creds.api_key_v2, 
+            self.__creds.api_key_v2, 
             *args,
             **kwargs)
         return [en.User(creds=self.__creds, **user_data) for user_data in users_data]
@@ -1112,7 +1110,7 @@ class MondayClient():
         """
 
         teams_data = api.get_teams(
-            api_key=self.__creds.api_key_v2,
+            self.__creds.api_key_v2,
             *args,
             **kwargs)
         return [en.Team(creds=self.__creds, **team_data) for team_data in teams_data]
@@ -1186,7 +1184,7 @@ class MondayClient():
         """
 
         user_data = api.get_me(
-            api_key=self.__creds.api_key_v2, 
+            self.__creds.api_key_v2, 
             *args)
 
         return en.User(creds=self.__creds, **user_data)
@@ -1224,7 +1222,7 @@ class MondayClient():
         """
 
         account_data = api.get_account(
-            api_key=self.__creds.api_key_v2,
+            self.__creds.api_key_v2,
             *args)
 
         return en.Account(creds=self.__creds, **account_data)
@@ -1267,11 +1265,10 @@ class MondayClient():
         """
         
         workspace_data = api.create_workspace(
-            
+            self.__creds.api_key_v2,
             name, 
             kind,
             *args,
-            api_key=self.__creds.api_key_v2,
             **kwargs)
 
         return en.Workspace(workspace_data)
