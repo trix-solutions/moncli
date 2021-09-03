@@ -908,10 +908,10 @@ class Board(_Board):
 
         if get_column_values:
             args = list(args)
-            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
+            for arg in ['items.column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
-            args.extend(['id', 'name'])
+            args.extend(['items.id', 'items.name'])
 
         column_values = kwargs.pop('column_values', None)
         if column_values:
@@ -990,10 +990,10 @@ class Board(_Board):
         
         if get_column_values:
             args = list(args)
-            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
+            for arg in ['items.column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
-            args.extend(['id', 'name'])
+            args.extend(['items.id', 'items.name'])
         else:
             args = api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'items', *args)
 
