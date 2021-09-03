@@ -2,7 +2,7 @@
 A Python Client and CLI tool for Monday.com
 
 ### Table of Contents ###
-* [Getting Started](#getting-started). 
+* [Getting Started](#getting-started)
    * [Setup](#setup)  
    * [Configuring the Client](#configuring-the-client)
 * [Using Moncli](#using-moncli)
@@ -11,20 +11,7 @@ A Python Client and CLI tool for Monday.com
    * [Working with Columns, Groups, and Items](#working-with-columns-groups-and-items)
    * [Changing Column Values](#changing-column-values)
    * [Posting Updates](#posting-updates)
-   * [Uploading Files](#uploading-files)
-* [Moncli Entities](#moncli-entities)  
-   * [MondayClient](#mondayclient)  
-   * [Board](#board)  
-   * [Group](#group)  
-   * [Item](#item)  
-   * [Update](#update)  
-   * [File/Asset](#file)  
-   * [User](#user)  
-   * [Account](#account)  
-   * [Other Entities](#other-entities)  
-* [Column Values](#column-values)  
-* [Using the API v2 Client](#using-the-api-v2-client)  
-* [Creating Custom GraphQL Queries](#creating-custom-graphql-queries)  
+   * [Uploading Files](#uploading-files)  
   
 # Getting Started
 
@@ -322,4 +309,7 @@ More information regarding the __Asset__ object is found in the [File/Asset](#fi
 
 
 ## Additional Questions/Feature Requests:
+
+The [Moncli Wiki](/trix-solutions/moncli/wiki) contains additional information regarding available entities and functionality.
+
 Please feel free to log an issue or request a new feature by submitting a new issue or reaching out to me at andrew.shatz@trix.solutions. Thank you and happy coding!!!
