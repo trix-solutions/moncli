@@ -165,8 +165,8 @@ class User(_User):
         """
 
         account_data = api.get_users(
-            api_key=self.__creds.api_key_v2, 
             *api.get_field_list(api.DEFAULT_ACCOUNT_QUERY_FIELDS, 'account', *args),
+            api_key=self.__creds.api_key_v2, 
             ids=[int(self.id)])[0]['account']
         return Account(
             creds=self.__creds,
@@ -200,8 +200,8 @@ class User(_User):
         """
 
         teams_data = api.get_users(
-            api_key=self.__creds.api_key_v2,
             *api.get_field_list(api.DEFAULT_TEAM_QUERY_FIELDS, 'teams', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['teams']
         return [Team(creds=self.__creds, **team_data) for team_data in teams_data]
     
@@ -386,8 +386,8 @@ class Team(_Team):
         if kwargs:
             kwargs = {'users': kwargs}
         users_data = api.get_teams(
-            api_key=self.__creds.api_key_v2, 
             *api.get_field_list(api.DEFAULT_USER_QUERY_FIELDS, 'users', *args),
+            api_key=self.__creds.api_key_v2, 
             ids=[int(self.id)],
             **kwargs)[0]['users']
         return [User(creds=self.__creds, **user_data) for user_data in users_data]
@@ -484,6 +484,7 @@ class Account(_Account):
         """
         
         plan_data = api.get_account(
-            api_key=self.__creds.api_key_v2, 
-            *api.get_field_list(api.DEFAULT_PLAN_QUERY_FIELDS, 'plan', *args))['plan']
+            *api.get_field_list(api.DEFAULT_PLAN_QUERY_FIELDS, 'plan',
+            *args,
+            api_key=self.__creds.api_key_v2))['plan']
         return en.Plan(plan_data)
