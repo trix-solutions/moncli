@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 
-from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind
+from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind, WorkspaceSubscriberKind
 from . import graphql as gql
 from .constants import *
 from .requests import execute_query, upload_file
