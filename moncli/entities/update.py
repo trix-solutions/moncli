@@ -214,8 +214,8 @@ class Update(_Update):
         update_data = api.create_update(
             body,
             self.item_id,
-            api_key=self.__creds.api_key_v2,
             *args,
+            api_key=self.__creds.api_key_v2,
             parent_id=self.id)
         return en.Update(creds=self.__creds, **update_data)
 
@@ -259,8 +259,8 @@ class Update(_Update):
         while record_count >= page_limit:
             updates_data = api.get_updates(
                 'id', 'item_id', 
-                api_key=self.__creds.api_key_v2, 
                 *api.get_field_list(api.DEFAULT_REPLY_QUERY_FIELDS, 'replies', *args),
+                api_key=self.__creds.api_key_v2, 
                 limit=page_limit,
                 page=page)
             
@@ -315,8 +315,8 @@ class Update(_Update):
         asset_data = api.add_file_to_update(
             self.id,
             file_path,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return en.Asset(**asset_data)
 
 
@@ -363,8 +363,8 @@ class Update(_Update):
         while record_count >= page_limit:
             updates_data = api.get_updates(
                 'id', 
-                api_key=self.__creds.api_key_v2, 
                 *api.get_field_list(api.DEFAULT_ASSET_QUERY_FIELDS, 'assets', *args),
+                api_key=self.__creds.api_key_v2, 
                 limit=page_limit,
                 page=page)
             
@@ -418,8 +418,8 @@ class Update(_Update):
 
         update_data = api.delete_update(
             self.id,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Update(creds=self.__creds, **update_data)
 
 
