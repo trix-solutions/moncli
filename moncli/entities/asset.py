@@ -132,7 +132,7 @@ class Asset(_Asset):
         """
         
         user_data = api.get_assets(
-            api_key=self.__creds.api_key_v2
             *api.get_field_list(api.DEFAULT_USER_QUERY_FIELDS, 'uploaded_by', *args),
+            api_key=self.__creds.api_key_v2,
             ids=[self.id])[0]['uploaded_by']
         return en.User(**user_data)
