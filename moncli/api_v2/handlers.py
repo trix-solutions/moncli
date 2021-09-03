@@ -170,13 +170,12 @@ def get_boards(*args, **kwargs) -> List[Dict[str, Any]]:
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=BOARDS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)  
 
 
-def archive_board(api_key: str, board_id: str, *args, **kwargs):
+def archive_board(board_id: str, *args, **kwargs):
     """Archives a board.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
+        
             board_id : `str`
                 The board's unique identifier.
             args : `tuple`
@@ -235,19 +234,22 @@ def archive_board(api_key: str, board_id: str, *args, **kwargs):
                 The workspace that contains this board (null for main workspace).
             workspace_id : `str`
                 The board's workspace unique identifier (null for main workspace).
+
+        Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
 
     kwargs['board_id'] = gql.IntValue(board_id)
-    return execute_query(api_key, query_name=ARCHIVE_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ARCHIVE_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def add_subscribers_to_board(api_key: str, board_id: str, user_ids: list, *args, **kwargs):
+def add_subscribers_to_board(board_id: str, user_ids: list, *args, **kwargs):
     """Add subscribers to a board.
 
         Parameters
 
-            api_key : `str`
-                The monday.com v2 API user key.
             board_id : `str`
                 The board's unique identifier.
             user_ids : `list[str]`
@@ -317,22 +319,22 @@ def add_subscribers_to_board(api_key: str, board_id: str, user_ids: list, *args,
 
         Optional Arguments
 
+            api_key : `str`
+                The monday.com v2 API user key.
             kind : `moncli.enums.SubscriberKind`
                 Subscribers kind (subscriber / owner).
     """
 
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['user_ids'] = gql.ListValue([int(id) for id in user_ids])
-    return execute_query(api_key, query_name=ADD_SUBSCRIBERS_TO_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ADD_SUBSCRIBERS_TO_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def delete_subscribers_from_board(api_key: str, board_id: str, user_ids: list, *args, **kwargs):
+def delete_subscribers_from_board(board_id: str, user_ids: list, *args, **kwargs):
     """Remove subscribers from the board.
 
         Parameters
 
-            api_key : `str`
-                The monday.com v2 API user key.
             board_id : `str`
                 The board's unique identifier.
             user_ids : `list[str]`
@@ -399,22 +401,25 @@ def delete_subscribers_from_board(api_key: str, board_id: str, user_ids: list, *
                 The user's profile url.
             utc_hours_diff : `int`
                 The user's UTC hours difference.
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
 
     kwargs = {
         'board_id': gql.IntValue(board_id),
         'user_ids': gql.ListValue([int(id) for id in user_ids])
     }
-    return execute_query(api_key, query_name=DELETE_SUBSCRIBERS_FROM_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_SUBSCRIBERS_FROM_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
     
-def create_column(api_key: str, board_id: str, title: str, column_type: ColumnType, *args, **kwargs):
+def create_column(board_id: str, title: str, column_type: ColumnType, *args, **kwargs):
     """Create a new column in board.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             board_id : `str`
                 The board's unique identifier.
             title : `str`
@@ -447,7 +452,9 @@ def create_column(api_key: str, board_id: str, title: str, column_type: ColumnTy
                 The column's width.
 
         Optional Arguments
-
+            
+            api_key : `str`
+                The monday.com v2 API user key.
             column_type : `moncli.enumns.ColumnType`
                 The type of column to create.
             defaults : `json`
@@ -457,16 +464,14 @@ def create_column(api_key: str, board_id: str, title: str, column_type: ColumnTy
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['title'] = gql.StringValue(title)
     kwargs['column_type'] = gql.EnumValue(column_type)
-    return execute_query(api_key, query_name=CREATE_COLUMN, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_COLUMN, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def change_column_value(api_key: str, item_id: str, column_id: str, board_id: str, value: str, *args, **kwargs):
+def change_column_value(item_id: str, column_id: str, board_id: str, value: str, *args, **kwargs):
     """Change an item's column value.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             item_id : `str`
                 The item's unique identifier.
             column_id : `str`
@@ -513,22 +518,25 @@ def change_column_value(api_key: str, item_id: str, column_id: str, board_id: st
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
+        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['item_id'] = gql.IntValue(item_id)
     kwargs['column_id'] = gql.StringValue(column_id)
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['value'] = gql.JsonValue(value)
-    return execute_query(api_key, query_name=CHANGE_COLUMN_VALUE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CHANGE_COLUMN_VALUE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def change_multiple_column_value(api_key: str, item_id: str, board_id: str, column_values: dict, *args, **kwargs):
+def change_multiple_column_value(item_id: str, board_id: str, column_values: dict, *args, **kwargs):
     """Changes the column values of a specific item.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             item_id : `str`
                 The item's unique identifier.
             board_id : `str`
@@ -573,21 +581,24 @@ def change_multiple_column_value(api_key: str, item_id: str, board_id: str, colu
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
+        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['item_id'] = gql.IntValue(item_id)
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['column_values'] = gql.JsonValue(column_values)
-    return execute_query(api_key, query_name=CHANGE_MULTIPLE_COLUMN_VALUES, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CHANGE_MULTIPLE_COLUMN_VALUES, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def get_assets(api_key: str, ids: list, *args, **kwargs):
+def get_assets(ids: list, *args, **kwargs):
     """Get a collection of assets by ids.
 
         Parameters
 
-            api_key : `str`
-                The monday.com v2 API user key.
             ids : `list[str]`
                 Ids of the assets/files you want to get.
             args : `tuple`
@@ -619,21 +630,24 @@ def get_assets(api_key: str, ids: list, *args, **kwargs):
             url : `str`
                 The user who uploaded the file
             url_thumbnail : `str`
-                Url to view the asset in thumbnail mode. Only available for images.   
+                Url to view the asset in thumbnail mode. Only available for images.  
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key. 
     """
     
     ids = [gql.IntValue(id).value for id in ids]
     kwargs['ids'] = gql.ListValue(ids)
-    return execute_query(api_key, query_name=ASSETS, operation_type=gql.OperationType.QUERY, *args, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ASSETS, operation_type=gql.OperationType.QUERY, *args, fields=args, arguments=kwargs)
 
 
-def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
+def duplicate_group(board_id: str, group_id: str, *args, **kwargs):
     """Duplicate a group.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             board_ id : `str`
                 The board's unique identifier.
             group_id : `str`
@@ -667,7 +681,9 @@ def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs)
 
         
         Optional Arguments
-        
+
+            api_key : `str`
+                The monday.com v2 API user key.
             add_to_top : `bool`
                 Should the new group be added to the top.
             group_title : `str`
@@ -676,16 +692,14 @@ def duplicate_group(api_key: str, board_id: str, group_id: str, *args, **kwargs)
     
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['group_id'] = gql.StringValue(group_id)
-    return execute_query(api_key, query_name=DUPLICATE_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DUPLICATE_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
+def create_group(board_id: str, group_name: str, *args, **kwargs):
     """Creates a new group in a specific board.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             board_id : `str`
                 The board's unique identifier.
             group_name : `str`
@@ -716,20 +730,24 @@ def create_group(api_key: str, board_id: str, group_name: str, *args, **kwargs):
                 The group's position in the board.
             title : `str`
                 The group's title.
+
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['group_name'] = gql.StringValue(group_name)
-    return execute_query(api_key, query_name=CREATE_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
+def archive_group(board_id: str, group_id: str, *args, **kwargs):
     """Archives a group in a specific board.
 
         Parameters
 
-            api_key : `str`
-                The monday.com v2 API user key.
             board_id : `str`
                 The board's unique identifier.
             group_id : `str`
@@ -760,20 +778,23 @@ def archive_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
                 The group's position in the board.
             title : `str`
                 The group's title.
+        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['group_id'] = gql.StringValue(group_id)    
-    return execute_query(api_key, query_name=ARCHIVE_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ARCHIVE_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
+def delete_group(board_id: str, group_id: str, *args, **kwargs):
     """Deletes a group in a specific board.
 
         Parameters
 
-            api_key : `str`
-                The monday.com v2 API user key.
             board_id : `str`
                 The board's unique identifier.
             group_id : `str`
@@ -804,20 +825,23 @@ def delete_group(api_key: str, board_id: str, group_id: str, *args, **kwargs):
                 The group's position in the board.
             title : `str`
                 The group's title.
+        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['group_id'] = gql.StringValue(group_id)       
-    return execute_query(api_key, query_name=DELETE_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
+def create_item(item_name: str, board_id: str, *args, **kwargs):
     """Create a new item.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             item_name : `str`
                 The new item's name.
             board_id : `str`
@@ -861,8 +885,10 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
             updates : `moncli.entities.Update`
                 The item's updates.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.        
             group_id : `str`
                 The group's unique identifier.
             column_values : `json`
@@ -871,16 +897,14 @@ def create_item(api_key: str, item_name: str, board_id: str, *args, **kwargs):
     
     kwargs['item_name'] = gql.StringValue(item_name)
     kwargs['board_id'] = gql.IntValue(board_id)    
-    return execute_query(api_key, query_name=CREATE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def create_subitem(api_key: str, parent_item_id: str, item_name: str, *args, **kwargs):
+def create_subitem(parent_item_id: str, item_name: str, *args, **kwargs):
     """Create subitem.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             parent_item_id : `str`
                 The parent item's unique identifier.
             item_name : `str`
@@ -924,15 +948,17 @@ def create_subitem(api_key: str, parent_item_id: str, item_name: str, *args, **k
             updates : `moncli.entities.Update`
                 The item's updates.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
             column_values : `json`
                 The column values of the new item.
     """
 
     kwargs['parent_item_id'] = gql.IntValue(parent_item_id)
     kwargs['item_name'] = gql.StringValue(item_name)
-    return execute_query(api_key, query_name=CREATE_SUBITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_SUBITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
 def get_items(*args, **kwargs):
@@ -996,13 +1022,11 @@ def get_items(*args, **kwargs):
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=ITEMS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
-def get_items_by_column_values(api_key: str, board_id: str, column_id: str, column_value: str, *args, **kwargs):
+def get_items_by_column_values(board_id: str, column_id: str, column_value: str, *args, **kwargs):
     """Search items by a value for a single column.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             board_id : `str`
                 The board's unique identifier.
             column_id : `str`
@@ -1048,8 +1072,10 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
             updates : `moncli.entities.Update`
                 The item's updates.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
             limit : `int`
                 Number of items to get.
             page : `int`
@@ -1063,16 +1089,14 @@ def get_items_by_column_values(api_key: str, board_id: str, column_id: str, colu
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['column_id'] = gql.StringValue(column_id)
     kwargs['column_value'] = gql.StringValue(column_value)
-    return execute_query(api_key, query_name=ITEMS_BY_COLUMN_VALUES, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ITEMS_BY_COLUMN_VALUES, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
-def get_items_by_multiple_column_values(api_key: str, board_id: str, column_id: str, column_value: list, *args, **kwargs):
+def get_items_by_multiple_column_values(board_id: str, column_id: str, column_value: list, *args, **kwargs):
     """Search items by multiple values for a single column.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             board_id : `str`
                 The board's unique identifier.
             column_id : `str`
@@ -1118,8 +1142,10 @@ def get_items_by_multiple_column_values(api_key: str, board_id: str, column_id: 
             updates : `moncli.entities.Update`
                 The item's updates.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
             limit : `int`
                 Number of items to get.
             page : `int`
@@ -1133,16 +1159,14 @@ def get_items_by_multiple_column_values(api_key: str, board_id: str, column_id: 
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['column_id'] = gql.StringValue(column_id)
     kwargs['column_values'] = gql.ListValue(column_value)
-    return execute_query(api_key, query_name=ITEMS_BY_MULTIPLE_COLUMN_VALUES, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ITEMS_BY_MULTIPLE_COLUMN_VALUES, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
-def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
+def clear_item_updates(item_id: str, *args, **kwargs):
     """Clear an item's updates.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             item_id : `str`
                 The item's unique identifier.
             args : `tuple`
@@ -1183,19 +1207,22 @@ def clear_item_updates(api_key: str, item_id: str, *args, **kwargs):
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['item_id'] = gql.IntValue(item_id)
-    return execute_query(api_key, query_name=CLEAR_ITEM_UPDATES, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CLEAR_ITEM_UPDATES, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwargs):
+def move_item_to_group(item_id: str, group_id: str, *args, **kwargs):
     """Move an item to a different group.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             item_id : `str`
                 The item's unique identifier.
             group_id : `str`
@@ -1238,20 +1265,23 @@ def move_item_to_group(api_key: str, item_id: str, group_id: str, *args, **kwarg
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
+        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['item_id'] = gql.IntValue(item_id)
     kwargs['group_id'] = gql.StringValue(group_id)
-    return execute_query(api_key, query_name=MOVE_ITEM_TO_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=MOVE_ITEM_TO_GROUP, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def archive_item(api_key: str, item_id: str, *args, **kwargs):
+def archive_item(item_id: str, *args, **kwargs):
     """Archive an item.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             item_id : `str`
                 The item's unique identifier.
             args : `tuple`
@@ -1292,19 +1322,22 @@ def archive_item(api_key: str, item_id: str, *args, **kwargs):
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['item_id'] = gql.IntValue(item_id)
-    return execute_query(api_key, query_name=ARCHIVE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ARCHIVE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def delete_item(api_key: str, item_id: str, *args, **kwargs):
+def delete_item(item_id: str, *args, **kwargs):
     """Delete an item.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             item_id : `str`
                 The item's unique identifier.
             args : `tuple`
@@ -1345,19 +1378,22 @@ def delete_item(api_key: str, item_id: str, *args, **kwargs):
                 The item's last update date.
             updates : `moncli.entities.Update`
                 The item's updates.
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['item_id'] = gql.IntValue(item_id)
-    return execute_query(api_key, DELETE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def duplicate_item(api_key: str, board_id: str, item_id: str, *args, **kwargs):
+def duplicate_item(board_id: str, item_id: str, *args, **kwargs):
     """Duplicate an item.
 
         Parameters
 
-            api_key : `str`
-                The monday.com v2 API user key.
             board_id : `str`
                 The board's unique identifier.
             item_id : `str`
@@ -1403,6 +1439,8 @@ def duplicate_item(api_key: str, board_id: str, item_id: str, *args, **kwargs):
 
         Optional Arguments
 
+            api_key : `str`
+                The monday.com v2 API user key.
             with_updates : `bool`
                 Duplicate with the item's updates.
     """
@@ -1411,16 +1449,14 @@ def duplicate_item(api_key: str, board_id: str, item_id: str, *args, **kwargs):
         'board_id': gql.IntValue(board_id),
         'item_id': gql.IntValue(item_id)
     }
-    return execute_query(api_key, query_name=DUPLICATE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DUPLICATE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
+def create_update(body: str, item_id: str, *args, **kwargs):
     """Create a new update.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             body : `str`
                 The update text.
             item_id : `str`
@@ -1458,24 +1494,24 @@ def create_update(api_key: str, body: str, item_id: str, *args, **kwargs):
             updated_at : `str`
                 The update's last edit date.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.        
             parent_id : `str`
                 The parent post identifier.
     """
     
     kwargs['body'] = gql.StringValue(body)
     kwargs['item_id'] = gql.IntValue(item_id)
-    return execute_query(api_key, query_name=CREATE_UPDATE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_UPDATE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def get_updates(api_key: str, *args, **kwargs):
+def get_updates(*args, **kwargs):
     """Get a collection of updates.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             args : `tuple`
                 The list of update return fields.
             kwargs : `dict`
@@ -1509,24 +1545,24 @@ def get_updates(api_key: str, *args, **kwargs):
             updated_at : `str`
                 The update's last edit date.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.        
             limit : `int`
                 Number of updates to get; the default is 25.
             page : `int`
                 Page number to get, starting at 1.
     """
     
-    return execute_query(api_key, query_name=UPDATES, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=UPDATES, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
-def delete_update(api_key: str, id: str, *args, **kwargs):
+def delete_update(id: str, *args, **kwargs):
     """Delete an update.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             id : `int`
                 The update's unique identifier.
             args : `tuple`
@@ -1561,19 +1597,22 @@ def delete_update(api_key: str, id: str, *args, **kwargs):
                 The update's text body.
             updated_at : `str`
                 The update's last edit date.
+        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['id'] = gql.IntValue(id)
-    return execute_query(api_key, query_name=DELETE_UPDATE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_UPDATE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def create_notification(api_key: str, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, *args, **kwargs):
+def create_notification(text: str, user_id: str, target_id: str, target_type: NotificationTargetType, *args, **kwargs):
     """Create a new notfication.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             text : `str`
                 The notification text.
             user_id : `str`
@@ -1599,8 +1638,10 @@ def create_notification(api_key: str, text: str, user_id: str, target_id: str, t
             text : `str`
                 The notification text.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.        
             payload : `json`
                 The notification payload.
     """
@@ -1609,16 +1650,14 @@ def create_notification(api_key: str, text: str, user_id: str, target_id: str, t
     kwargs['user_id'] = gql.IntValue(user_id)
     kwargs['target_id'] = gql.IntValue(target_id)
     kwargs['target_type'] = gql.EnumValue(target_type)    
-    return execute_query(api_key, query_name=CREATE_NOTIFICATION, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_NOTIFICATION, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
+def create_or_get_tag(tag_name: str, *args, **kwargs):
     """Create a new tag or get it if it already exists.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             tag_name : `str`
                 The new tag's name.
             args : `tuple`
@@ -1641,23 +1680,23 @@ def create_or_get_tag(api_key: str, tag_name: str, *args, **kwargs):
                 The tag's name.
 
         
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.        
             board_id : `str`
                 The private board id to create the tag at (not needed for public boards).
     """
     
     kwargs['tag_name'] = gql.StringValue(tag_name)
-    return execute_query(api_key, query_name=CREATE_OR_GET_TAG, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_OR_GET_TAG, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def get_tags(api_key: str, *args, **kwargs):
+def get_tags(*args, **kwargs):
     """Get a collection of tags.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             args : `tuple`
                 The list of tag return fields.
             kwargs : `dict`
@@ -1677,22 +1716,22 @@ def get_tags(api_key: str, *args, **kwargs):
             name : `str`
                 The tag's name.
         
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
             ids : `list[str]`
                 A list of tags unique identifiers.
     """
     
-    return execute_query(api_key, query_name=TAGS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=TAGS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
-def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kwargs):
+def add_file_to_update(update_id: str, file_path: str, *args, **kwargs):
     """Add a file to an update.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             update_id : `str`
                 The update to add the file to.
             file_path : `str`
@@ -1727,20 +1766,23 @@ def add_file_to_update(api_key: str, update_id: str, file_path: str, *args, **kw
                 The user who uploaded the file
             url_thumbnail : `str`
                 Url to view the asset in thumbnail mode. Only available for images.  
+        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['file'] = gql.FileValue('$file')
     kwargs['update_id'] = gql.IntValue(update_id)
-    return upload_file(api_key, file_path, query_name=ADD_FILE_TO_UPDATE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return upload_file(file_path, api_key=kwargs.pop('api_key', None), query_name=ADD_FILE_TO_UPDATE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: str, *args, **kwargs):
+def add_file_to_column(item_id: str, column_id: str, file_path: str, *args, **kwargs):
     """Add a file to a column value.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             item_id : `str`
                 The item to add the file to.
             column_id : `str`
@@ -1777,21 +1819,24 @@ def add_file_to_column(api_key: str, item_id: str, column_id: str, file_path: st
                 The user who uploaded the file
             url_thumbnail : `str`
                 Url to view the asset in thumbnail mode. Only available for images.
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['file'] = gql.FileValue('$file')
     kwargs['item_id'] = gql.IntValue(item_id)
     kwargs['column_id'] = gql.StringValue(column_id)
-    return upload_file(api_key, file_path, query_name=ADD_FILE_TO_COLUMN, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return upload_file(file_path, api_key=kwargs.pop('api_key', None), query_name=ADD_FILE_TO_COLUMN, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def get_users(api_key: str, *args, **kwargs):
+def get_users(*args, **kwargs):
     """Get a collection of users.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             args : `tuple`
                 The list of user return fields.
             kwargs : `dict`
@@ -1855,8 +1900,10 @@ def get_users(api_key: str, *args, **kwargs):
             utc_hours_diff : `int`
                 The user's UTC hours difference.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
             ids : `list[str]`
                 A list of users unique identifiers.
             kind : `moncli.enums.UserKind`
@@ -1867,16 +1914,14 @@ def get_users(api_key: str, *args, **kwargs):
                 Nimber of users to get.
     """
     
-    return execute_query(api_key, query_name=USERS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=USERS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
-def get_teams(api_key: str, *args, **kwargs):
+def get_teams(*args, **kwargs):
     """Get a collection of teams.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             args : `tuple`
                 The list of team return fields.
             kwargs : `dict`
@@ -1898,22 +1943,22 @@ def get_teams(api_key: str, *args, **kwargs):
             users : `moncli.entities.user.User`
                 The users in the team.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
             ids : `list[str]`
                 A list of teams unique identifiers.
     """
     
-    return execute_query(api_key, query_name=TEAMS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=TEAMS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
-def get_me(api_key: str, *args, **kwargs):
+def get_me(*args, **kwargs):
     """Get the connected user's information.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             args : `tuple`
                 The list of user return fields.
             kwargs : `dict`
@@ -1976,12 +2021,17 @@ def get_me(api_key: str, *args, **kwargs):
                 The user's profile url.
             utc_hours_diff : `int`
                 The user's UTC hours difference.
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
-    return execute_query(api_key, query_name=ME, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ME, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
-def get_account(api_key: str, *args, **kwargs):
+def get_account(*args, **kwargs):
     """Get the connected account's information.
 
         Parameters
@@ -2014,12 +2064,17 @@ def get_account(api_key: str, *args, **kwargs):
                 Show weekends in timeline.
             slug : `str`
                 The account's slug.
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
-    return execute_query(api_key, query_name=ACCOUNT, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ACCOUNT, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)
 
 
-def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventType, *args, **kwargs):
+def create_webhook(board_id: str, url: str, event: WebhookEventType, *args, **kwargs):
     """Create a new webhook.
 
         Parameters
@@ -2049,8 +2104,10 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
             id : `str`
                 The webhook's unique identifier.
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.        
             config : `json`
                 The webhook config.
     """
@@ -2058,16 +2115,14 @@ def create_webhook(api_key: str, board_id: str, url: str, event: WebhookEventTyp
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['url'] = gql.StringValue(url)
     kwargs['event'] = gql.EnumValue(event)
-    return execute_query(api_key, query_name=CREATE_WEBHOOK, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_WEBHOOK, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
+def delete_webhook(webhook_id: str, *args, **kwargs):
     """Delete a new webhook.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             webhook_id : `str`
                 The webhook's unique identifier.
             args : `tuple`
@@ -2086,19 +2141,22 @@ def delete_webhook(api_key: str, webhook_id: str, *args, **kwargs):
                 The webhook's board id.
             id : `str`
                 The webhook's unique identifier.
+
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
     """
     
     kwargs['id'] = gql.IntValue(webhook_id)
-    return execute_query(api_key, query_name=DELETE_WEBHOOK, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_WEBHOOK, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwargs):
+def create_workspace(name: str, kind: WorkspaceKind, *args, **kwargs):
     """Create a new workspace.
 
         Parameters
         
-            api_key : `str`
-                The monday.com v2 API user key.
             name : `str`
                 The Workspace's name
             kind : `moncli.enums.WorkspaceKind`
@@ -2124,12 +2182,14 @@ def create_workspace(api_key: str, name: str, kind: WorkspaceKind, *args, **kwar
             description : `str`
                 The workspace's description
 
-        Optional Arguments
-        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.        
             description : `str`
                 The Workspace's description.
     """
     
     kwargs['name'] = gql.StringValue(name)
     kwargs['kind'] = gql.EnumValue(kind)
-    return execute_query(api_key, query_name=CREATE_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)

@@ -112,9 +112,9 @@ class Group(_Group):
         """
 
         group_data = api.duplicate_group(
-            self.__creds.api_key_v2, 
             self.__board.id, 
             self.id, 
+            api_key=self.__creds.api_key_v2, 
             *args,
             **kwargs)
         return Group(
@@ -155,9 +155,9 @@ class Group(_Group):
         """
 
         group_data = api.archive_group(
-            self.__creds.api_key_v2,
             self.__board.id,
             self.id, 
+            api_key=self.__creds.api_key_v2,
             *args)
         return Group(
             creds=self.__creds,
@@ -197,9 +197,9 @@ class Group(_Group):
         """
 
         group_data = api.delete_group(
-            self.__creds.api_key_v2,
             self.__board,
             self.id, 
+            api_key=self.__creds.api_key_v2,
             *args)
         return Group(
             creds=self.__creds,
@@ -260,9 +260,9 @@ class Group(_Group):
         """
 
         item_data = api.create_item(
-            self.__creds.api_key_v2,
             item_name,
             self.__board.id, 
+            api_key=self.__creds.api_key_v2,
             *args,
             group_id=self.id,
             **kwargs)
@@ -336,8 +336,8 @@ class Group(_Group):
         if kwargs:
             group_kwargs['groups']['items'] = kwargs
         items_data = api.get_boards(
-            self.__creds.api_key_v2, 
             *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'groups.items', *args),
+            api_key=self.__creds.api_key_v2, 
             ids=[int(self.__board.id)],
             limit=1,
             **group_kwargs)[0]['groups'][0]['items']
