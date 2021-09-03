@@ -310,6 +310,6 @@ More information regarding the __Asset__ object is found in the [File/Asset](#fi
 
 ## Additional Questions/Feature Requests:
 
-The [Moncli Wiki](/wiki) contains additional information regarding available entities and functionality.
+The [Moncli Wiki](https://github.com/trix-solutions/moncli/wiki) contains additional information regarding available entities and functionality.
 
 Please feel free to log an issue or request a new feature by submitting a new issue or reaching out to me at andrew.shatz@trix.solutions. Thank you and happy coding!!!
