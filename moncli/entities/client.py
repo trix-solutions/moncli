@@ -270,6 +270,7 @@ class MondayClient():
         
         boards_data = api.get_boards(
             *args, 
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
 
         for data in boards_data:
@@ -427,8 +428,8 @@ class MondayClient():
         
         try:
             board_data = api.get_boards(
-                api_key=self.__creds.api_key_v2, 
                 *args,
+                api_key=self.__creds.api_key_v2, 
                 ids=[int(id)],
                 limit=1)[0]
         except IndexError:
@@ -586,8 +587,8 @@ class MondayClient():
 
         board_data = api.archive_board(
             board_id,
-            api_key=self.__creds.api_key_v2, 
-            *args)
+            *args, 
+            api_key=self.__creds.api_key_v2)
         return en.Board(creds=self.__creds, **board_data)
 
 
@@ -635,8 +636,8 @@ class MondayClient():
 
         assets_data = api.get_assets(
             ids,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return [en.asset.Asset(**data) for data in assets_data]
 
 
@@ -761,8 +762,8 @@ class MondayClient():
         """
 
         updates_data = api.get_updates(
-            api_key=self.__creds.api_key_v2, 
             *args,
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return [en.Update(creds=self.__creds, **update_data) for update_data in updates_data]
 
@@ -808,8 +809,8 @@ class MondayClient():
         
         update_data = api.delete_update(
             id, 
-            api_key=self.__creds.api_key_v2, 
-            *args)
+            *args, 
+            api_key=self.__creds.api_key_v2)
         return en.Update(creds=self.__creds, **update_data)
 
 
@@ -860,8 +861,8 @@ class MondayClient():
         
         item_data = api.clear_item_updates(
             item_id,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return en.Item(creds=self.__creds, **item_data)
 
 
@@ -946,8 +947,8 @@ class MondayClient():
 
         tag_data = api.create_or_get_tag(
             tag_name,
-            api_key=self.__creds.api_key_v2, 
             *args,
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return en.Tag(tag_data)
 
@@ -983,8 +984,8 @@ class MondayClient():
         """
         
         tags_data = api.get_tags(
-            api_key=self.__creds.api_key_v2,
             *args,
+            api_key=self.__creds.api_key_v2,
             **kwargs)
         return [en.Tag(tag_data) for tag_data in tags_data]
     
@@ -1070,8 +1071,8 @@ class MondayClient():
         """
 
         users_data = api.get_users(
-            api_key=self.__creds.api_key_v2, 
             *args,
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return [en.User(creds=self.__creds, **user_data) for user_data in users_data]
     
@@ -1110,8 +1111,8 @@ class MondayClient():
         """
 
         teams_data = api.get_teams(
-            api_key=self.__creds.api_key_v2,
             *args,
+            api_key=self.__creds.api_key_v2,
             **kwargs)
         return [en.Team(creds=self.__creds, **team_data) for team_data in teams_data]
     
@@ -1184,8 +1185,8 @@ class MondayClient():
         """
 
         user_data = api.get_me(
-            api_key=self.__creds.api_key_v2, 
-            *args)
+            *args, 
+            api_key=self.__creds.api_key_v2)
 
         return en.User(creds=self.__creds, **user_data)
 
@@ -1222,8 +1223,8 @@ class MondayClient():
         """
 
         account_data = api.get_account(
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
 
         return en.Account(creds=self.__creds, **account_data)
 
@@ -1267,8 +1268,8 @@ class MondayClient():
         workspace_data = api.create_workspace(
             name, 
             kind,
-            api_key=self.__creds.api_key_v2,
             *args,
+            api_key=self.__creds.api_key_v2,
             **kwargs)
 
         return en.Workspace(workspace_data)
