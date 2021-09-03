@@ -11,8 +11,6 @@ def create_board(board_name: str, board_kind: BoardKind, *args, **kwargs):
 
         Parameters
 
-            api_key : `str`
-                The monday.com v2 API user key.
             board_name : `str`
                 The board's name.
             board_kind : `moncli.enums.BoardKind`
@@ -76,6 +74,8 @@ def create_board(board_name: str, board_kind: BoardKind, *args, **kwargs):
 
         Optional Arguments
 
+            api_key : `str`
+                The monday.com v2 API user key.
             workspace_id : `int`
                 Optional workspace id.
             template_id : `int`
@@ -174,7 +174,6 @@ def archive_board(board_id: str, *args, **kwargs):
     """Archives a board.
 
         Parameters
-        
         
             board_id : `str`
                 The board's unique identifier.
