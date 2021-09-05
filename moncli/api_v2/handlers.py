@@ -2195,15 +2195,15 @@ def create_workspace(name: str, kind: WorkspaceKind, *args, **kwargs):
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def add_users_to_workspace(workspace_id: str,user_ids: str, kind: WorkspaceSubscriberKind, *args, **kwargs):
+def add_users_to_workspace(workspace_id: str,user_ids: list[str], kind: WorkspaceSubscriberKind, *args, **kwargs):
         """
         Allows you to add users to a workspace. You can define if users will be added as regular subscribers or as owners of the workspace.
 
             Parameters 
 
-                workspace_id: str
+                workspace_id: int
                      The workspace's unique identifier
-                user_ids: str
+                user_ids: `list[str]`
                         User IDs to subscribe to the workspace
                 kind: WorkspaceSUbscriberKind
                     Kind of subscribers added (subscriber/owner)
@@ -2212,14 +2212,12 @@ def add_users_to_workspace(workspace_id: str,user_ids: str, kind: WorkspaceSubsc
             
             Return Fields
         :
-                id:Int	
+                id: Int	
                     The workspace identifier;
-                name:String
+                name: String
                 	The workspace name
-                kind:WorkspaceKind
+                kind: WorkspaceKind
                 	Will return Open for Open Workspaces, and Closed for Closed Workspaces.
-                description:String
-                	The description added to this workspace.
 
 
         """
