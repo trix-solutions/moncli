@@ -55,7 +55,7 @@ class Group(_Group):
 
         items = kwargs.pop('items', None)
         if items != None and not self.__items:
-            self.__items = [en.Item(creds=self.__creds, **items)]
+            self.__items = [en.Item(creds=self.__creds, **item) for item in items]
 
         super(Group, self).__init__(kwargs)
     
@@ -157,8 +157,8 @@ class Group(_Group):
         group_data = api.archive_group(
             self.__board.id,
             self.id, 
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Group(
             creds=self.__creds,
             __board=self.__board,
@@ -199,8 +199,8 @@ class Group(_Group):
         group_data = api.delete_group(
             self.__board,
             self.id, 
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Group(
             creds=self.__creds,
             __board=self.__board,
@@ -262,8 +262,8 @@ class Group(_Group):
         item_data = api.create_item(
             item_name,
             self.__board.id, 
-            api_key=self.__creds.api_key_v2,
             *args,
+            api_key=self.__creds.api_key_v2,
             group_id=self.id,
             **kwargs)
         return en.Item(creds=self.__creds, **item_data)
