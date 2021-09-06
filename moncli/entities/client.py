@@ -50,6 +50,8 @@ class MondayClient():
                 Get the connected user's account.
             create_workspace : `moncli.entities.Workspace`
                 Create a new workspace.
+            add_users_to_workspace: `moncli.entities.Workspace`
+                Adds new users to a new workspace.
     """
 
     def __init__(self, **kwargs):    
@@ -1267,6 +1269,43 @@ class MondayClient():
         
         workspace_data = api.create_workspace(
             name, 
+            kind,
+            *args,
+            api_key=self.__creds.api_key_v2,
+            **kwargs)
+
+        return en.Workspace(workspace_data)
+    
+    def add_users_to_workspace(self, workspace_id: str,user_ids: tuple[str], kind: WorkspaceSubscriberKind, *args, **kwargs):
+        """
+        Allows you to add users to a workspace. You can define if users will be added as regular subscribers or as owners of the workspace.
+
+            Parameters 
+
+                workspace_id: int
+                     The workspace's unique identifier
+                user_ids: `list[str]`
+                        User IDs to subscribe to the workspace
+                kind: WorkspaceSUbscriberKind
+                    Kind of subscribers added (subscriber/owner)
+                args: tuple
+                    The collection of workspace return fields.
+                kwargs : `dict`
+                    Optional keyword arguments listed below.
+            
+            Return Fields
+        :
+                id: Int	
+                    The workspace identifier;
+                name: String
+                	The workspace name
+                kind: WorkspaceKind
+                	Will return Open for Open Workspaces, and Closed for Closed Workspaces.
+         """
+         
+        workspace_data = api.add_users_to_workspace(
+            workspace_id,
+            user_ids, 
             kind,
             *args,
             api_key=self.__creds.api_key_v2,

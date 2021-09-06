@@ -247,8 +247,8 @@ class User(_User):
             self.id, 
             target_id, 
             target_type, 
-            api_key=self.__creds.api_key_v2, 
             *args, 
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return en.Notification(notification_data)
 
