@@ -266,26 +266,23 @@ def test_should_create_workspace(create_workspace):
     eq_(workspace.kind, kind.name)
     eq_(workspace.description, description)
 
-
 @patch('moncli.api_v2.delete_users_from_workspace')
-def test_should_add_users_to_workspace(delete_users_from_workspace):
+def test_should_remove_users_from_workspace(delete_users_from_workspace):
 
-    workspace_id = '12345'
+    id = '12345'
     user_ids = ['1','2','3','4','5']
     
-    delete_users_from_workspace.return_value = {'workspace_id': str,'user_ids': list(str), }
+    delete_users_from_workspace.return_value = {'workspace_id': id}
 
     # Act
-    workspace = client.delete_users_from_workspace(workspace_id ,user_ids)
+    workspace = client.delete_users_from_workspace(id ,user_ids)
 
     # Assert
-    eq_(workspace != None)
+    ok_(workspace != None)
     eq_(workspace.id, id)
-    eq_(workspace.user_ids, user_ids)
-
+    
 
 @patch('moncli.api_v2.get_users')
-
 def test_should_retrieve_list_of_users(get_users):
 
     # Arrange 

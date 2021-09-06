@@ -2172,8 +2172,14 @@ def create_workspace(name: str, kind: WorkspaceKind, *args, **kwargs):
 
         Return Fields
         
-            data : `dict`
-                A monday.com workspace in dictionary form.
+            id : `str`
+                The workspace's unique identifier.
+            name : `str`
+                The workspace's name.
+            kind : `str`
+                The workspace's kind (open / closed)
+            description : `str`
+                The workspace's description
 
          Optional Arguments
 
@@ -2187,15 +2193,14 @@ def create_workspace(name: str, kind: WorkspaceKind, *args, **kwargs):
     kwargs['kind'] = gql.EnumValue(kind)
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
-
-def delete_users_from_workspace(workspace_id: str, user_ids: list(str), *args: tuple, **kwargs: dict ):
+def delete_users_from_workspace(workspace_id: str, user_ids: list(), *args: tuple, **kwargs: dict ):
     """
         Allows you to delete users to a workspace.
 
             Parameters 
 
                 workspace_id: int
-                     The workspace's unique identifier
+                        The workspace's unique identifier
                 user_ids: `list[str]`
                         User IDs to subscribe to the workspace
                 *args: tuple
@@ -2206,7 +2211,7 @@ def delete_users_from_workspace(workspace_id: str, user_ids: list(str), *args: t
                 id: Int	
                     The workspace identifier;
                 user_ids: List(Str)
-                	List of user_ids
+                    List of user_ids
 
             Optional Arguments
 
@@ -2218,6 +2223,5 @@ def delete_users_from_workspace(workspace_id: str, user_ids: list(str), *args: t
     """
     kwargs["workspace_id"]= gql.IntValue(workspace_id)
     kwargs['user_ids'] = gql.ListValue([gql.IntValue(id) for id in user_ids])
-    
-    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_USERS_FROM_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_USERS_FROM_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)

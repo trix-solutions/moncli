@@ -1275,10 +1275,8 @@ class MondayClient():
             **kwargs)
 
         return en.Workspace(workspace_data)
-    
-    
 
-    def delete_users_from_workspace(self, workspace_id: str, user_ids: list(str), *args: tuple, **kwargs: dict ):
+    def delete_users_from_workspace(self, workspace_id: str, user_ids: list(), *args: tuple, **kwargs: dict ):
         """
                 Allows you to delete users to a workspace.
 
@@ -1308,7 +1306,6 @@ class MondayClient():
            )
 
         return en.Workspace(workspace_data)
-
 class AuthorizationError(Exception):
     def __init__(self, user_name: str):
         self.message = 'User {} was not recognized by the applied token'.format(user_name)
