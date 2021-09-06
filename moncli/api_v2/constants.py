@@ -289,7 +289,7 @@ QUERY_MAP = {
                 'type': ArgumentValueKind.String
             }
         }),
-    ADD_USERS_TO_WORKSPACE: (DEFAULT_WORKSPACE_QUERY_FIELDS, {
+    ADD_USERS_TO_WORKSPACE: (DEFAULT_USER_QUERY_FIELDS, {
         
     }),
     CREATE_BOARD: (
