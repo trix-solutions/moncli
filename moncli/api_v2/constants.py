@@ -53,7 +53,9 @@ CREATE_WEBHOOK = 'create_webhook'
 DELETE_WEBHOOK = 'delete_webhook'
 # Workspace
 CREATE_WORKSPACE = 'create_workspace'
+ADD_USERS_TO_WORKSPACE = 'add_users_to_workspace'
 DELETE_USERS_FROM_WORKSPACE = 'delete_users_from_workspace'
+
 # Files
 ASSETS = 'assets'
 ADD_FILE_TO_UPDATE = 'add_file_to_update'
@@ -288,6 +290,9 @@ QUERY_MAP = {
                 'type': ArgumentValueKind.String
             }
         }),
+    ADD_USERS_TO_WORKSPACE: (DEFAULT_USER_QUERY_FIELDS, {
+        
+    }),
     CREATE_BOARD: (
         DEFAULT_BOARD_QUERY_FIELDS, 
         {

@@ -2,7 +2,7 @@ from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
 from moncli import client, entities as en
-from moncli.enums import BoardKind, NotificationTargetType, WorkspaceKind
+from moncli.enums import BoardKind, NotificationTargetType, WorkspaceKind, SubscriberKind
 
 
 @patch('moncli.api_v2.create_board')
@@ -265,6 +265,24 @@ def test_should_create_workspace(create_workspace):
     eq_(workspace.name, name)
     eq_(workspace.kind, kind.name)
     eq_(workspace.description, description)
+    
+    
+@patch('moncli.api_v2.add_users_to_workspace')
+def test_should_add_users_to_workspace(add_users_to_workspace):
+
+    id = '12345'
+    user_ids = ['1','2','3','4','5']
+    kind = SubscriberKind.owner
+    add_users_to_workspace.return_value = {'id': id, 'kind': kind.name}
+
+    # Act
+    workspace = client.add_users_to_workspace(id ,user_ids, kind)
+
+    # Assert
+    ok_(workspace != None)
+    eq_(workspace.id, id)
+    eq_(workspace.kind , kind.name)
+
 
 @patch('moncli.api_v2.delete_users_from_workspace')
 def test_should_remove_users_from_workspace(delete_users_from_workspace):
@@ -280,7 +298,7 @@ def test_should_remove_users_from_workspace(delete_users_from_workspace):
     # Assert
     ok_(workspace != None)
     eq_(workspace.id, id)
-    
+
 
 @patch('moncli.api_v2.get_users')
 def test_should_retrieve_list_of_users(get_users):

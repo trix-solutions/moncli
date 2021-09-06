@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 
-from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind
+from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind, WorkspaceSubscriberKind
 from . import graphql as gql
 from .constants import *
 from .requests import execute_query, upload_file
@@ -175,6 +175,7 @@ def archive_board(board_id: str, *args, **kwargs):
 
         Parameters
         
+
             board_id : `str`
                 The board's unique identifier.
             args : `tuple`
@@ -2193,9 +2194,91 @@ def create_workspace(name: str, kind: WorkspaceKind, *args, **kwargs):
     kwargs['kind'] = gql.EnumValue(kind)
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
+
+def add_users_to_workspace(workspace_id: str,user_ids: list(), kind: WorkspaceSubscriberKind, *args, **kwargs):
+        """Allows you to add users to a workspace. You can define if users will be added as regular subscribers or as owners of the workspace.
+
+            Parameters 
+
+                workspace_id: int
+                     The workspace's unique identifier
+                user_ids: `list[str]`
+                    User IDs to subscribe to the workspace
+                kind: WorkspaceSUbscriberKind
+                    Kind of subscribers added (subscriber/owner)
+                *args: tuple
+                    The collection of workspace return fields.
+            
+            Return Fields
+
+                account : `moncli.entities.Account`
+                    The user's account.
+                birthday : `str`
+                    The user's birthday.
+                country_code : `str`
+                    The user's country code.
+                created_at : `str`
+                    The user's creation date.
+                email : `str`
+                    The user's email.
+                enabled : `bool`
+                    Is the user enabled or not.
+                id : `str`
+                    The user's unique identifier.
+                is_guest : `bool`
+                    Is the user a guest or not.
+                is_pending : `bool`
+                    Is the user a pending user.
+                is_view_only : `bool`
+                    Is the user a view only user or not.
+                join_date : `str`
+                    The date the user joined the account.
+                location : `str`
+                    The user' location.
+                mobile_phone : `str`
+                    The user's mobile phone number.
+                name : `str`
+                    The user's name.
+                phone : `str`
+                    The user's phone number.
+                photo_original : `str`
+                    The user's photo in the original size.
+                photo_small : `str`
+                    The user's photo in small size (150x150).
+                photo_thumb : `str`
+                    The user's photo in thumbnail size (100x100).
+                photo_thumb_small : `str`
+                    The user's photo in small thumbnail size (50x50).
+                photo_tiny : `str`
+                    The user's photo in tiny size (30x30).
+                teams : `list[moncli.entities.Team]`
+                    The teams the user is a member in.
+                time_zone_identifier : `str`
+                    The user's time zone identifier.
+                title : `str`
+                    The user's title.
+                url : `str`
+                    The user's profile url.
+                utc_hours_diff : `int`
+                    The user's UTC hours difference.
+            
+            Optional Arguments
+
+                api_key: `str`
+                    The monday.com v2 API user key.
+                kwargs: dict
+                    Additional Arguments
+        """
+
+        kwargs["workspace_id"]= gql.IntValue(workspace_id)      
+        kwargs['user_ids'] = gql.ListValue([int(id) for id in user_ids])
+        kwargs["kind"]= gql.EnumValue(kind)
+        
+        return execute_query(api_key=kwargs.pop('api_key', None), query_name=ADD_USERS_TO_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+
 def delete_users_from_workspace(workspace_id: str, user_ids: list(), *args: tuple, **kwargs: dict ):
-    """
-        Allows you to delete users to a workspace.
+    """Allows you to delete users to a workspace.
 
             Parameters 
 
@@ -2207,12 +2290,13 @@ def delete_users_from_workspace(workspace_id: str, user_ids: list(), *args: tupl
                     The collection of workspace return fields.
             
             Return Fields
-        
+                
                 id: Int	
                     The workspace identifier;
                 user_ids: List(Str)
                     List of user_ids
 
+                
             Optional Arguments
 
                 api_key: `str`
