@@ -579,3 +579,20 @@ def test_create_workspace(execute_query):
     ok_(workspace['name'] == name)
     ok_(workspace['kind'] == kind.name)
     ok_(workspace['description'] == description)
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_remove_users_from_workspace(execute_query):
+
+    # Arrange
+    workspace_id = '12345'
+    user_ids = ['1','2','3','4','5']
+    execute_query.return_value = {'workspace_id': str, 'user_ids': list(str) }
+
+    # Act
+    workspace = handlers.delete_users_from_workspace(workspace_id ,user_ids)
+
+    # Assert
+    ok_(workspace != None)
+    ok_(type(workspace) is dict)
+    ok_(workspace['id'] == id)
+    ok_(workspace['user_ids'] == user_ids)

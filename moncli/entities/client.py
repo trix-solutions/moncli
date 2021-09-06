@@ -50,6 +50,8 @@ class MondayClient():
                 Get the connected user's account.
             create_workspace : `moncli.entities.Workspace`
                 Create a new workspace.
+            delete_users_from_workspace: `moncli.entities.Workspace`
+                Deletes users from workspace
     """
 
     def __init__(self, **kwargs):    
@@ -1271,6 +1273,39 @@ class MondayClient():
             *args,
             api_key=self.__creds.api_key_v2,
             **kwargs)
+
+        return en.Workspace(workspace_data)
+    
+    
+
+    def delete_users_from_workspace(self, workspace_id: str, user_ids: list(str), *args: tuple, **kwargs: dict ):
+        """
+                Allows you to delete users to a workspace.
+
+                    Parameters 
+
+                        workspace_id: int
+                            The workspace's unique identifier
+                        user_ids: `list[str]`
+                                User IDs to subscribe to the workspace
+                        *args: tuple
+                            The collection of workspace return fields.
+                    
+                    Return Fields
+                
+                        id: Int	
+                            The workspace identifier;
+                        user_ids: List(Str)
+                            List of user_ids
+
+            """
+        workspace_data = api.delete_users_from_workspace(
+            workspace_id,
+            user_ids,
+            *args,
+            api_key=self.__creds.api_key_v2,
+            **kwargs
+           )
 
         return en.Workspace(workspace_data)
 
