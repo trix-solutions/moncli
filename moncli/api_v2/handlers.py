@@ -2195,7 +2195,7 @@ def create_workspace(name: str, kind: WorkspaceKind, *args, **kwargs):
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
-def add_users_to_workspace(workspace_id: str,user_ids: list[str], kind: WorkspaceSubscriberKind, *args, **kwargs):
+def add_users_to_workspace(workspace_id: str,user_ids: list(), kind: WorkspaceSubscriberKind, *args, **kwargs):
         """
         Allows you to add users to a workspace. You can define if users will be added as regular subscribers or as owners of the workspace.
 
@@ -2211,14 +2211,21 @@ def add_users_to_workspace(workspace_id: str,user_ids: list[str], kind: Workspac
                     The collection of workspace return fields.
             
             Return Fields
-        :
+        
                 id: Int	
                     The workspace identifier;
-                name: String
-                	The workspace name
+                user_ids: List(Str)
+                	List of user_ids
                 kind: WorkspaceKind
                 	Will return Open for Open Workspaces, and Closed for Closed Workspaces.
+            
+            
+            Optional Arguments
 
+                api_key: `str`
+                    The monday.com v2 API user key.
+                kwargs: dict
+                    Additional Arguments
 
         """
 

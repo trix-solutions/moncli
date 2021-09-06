@@ -259,10 +259,11 @@ class Update(_Update):
         while record_count >= page_limit:
             updates_data = api.get_updates(
                 'id', 'item_id', 
-                api_key=self.__creds.api_key_v2, 
                 *api.get_field_list(api.DEFAULT_REPLY_QUERY_FIELDS, 'replies', *args),
+                api_key=self.__creds.api_key_v2,
                 limit=page_limit,
-                page=page)
+                page=page,
+                )
             
             try:
                 target_update = [update for update in updates_data if update['id'] == self.id][0]
