@@ -272,7 +272,7 @@ def test_should_remove_users_from_workspace(delete_users_from_workspace):
     id = '12345'
     user_ids = ['1','2','3','4','5']
     
-    delete_users_from_workspace.return_value = {'workspace_id': id}
+    delete_users_from_workspace.return_value = {'id': id}
 
     # Act
     workspace = client.delete_users_from_workspace(id ,user_ids)
