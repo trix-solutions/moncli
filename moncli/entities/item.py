@@ -224,8 +224,8 @@ class Item(_Item):
             self.id,
             file_column.id,
             file_path,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return en.Asset(**asset_data)
 
 
@@ -323,8 +323,8 @@ class Item(_Item):
             file_column.id,
             self.__board.id,
             file_column.format(),
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
 
 
@@ -669,8 +669,8 @@ class Item(_Item):
             column_id,
             self.board.id,
             value,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
     
 
@@ -739,8 +739,8 @@ class Item(_Item):
             self.id,
             self.board.id,
             values,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
 
 
@@ -799,8 +799,8 @@ class Item(_Item):
         subitem_data = api.create_subitem(
             self.id,
             item_name,
-            api_key=self.__creds.api_key_v2,
             *args,
+            api_key=self.__creds.api_key_v2,
             **kwargs)
         return Item(creds=self.__creds, **subitem_data)
 
@@ -862,8 +862,8 @@ class Item(_Item):
         item_data = api.move_item_to_group(
             self.id,
             group_id,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
 
 
@@ -912,8 +912,8 @@ class Item(_Item):
 
         item_data = api.archive_item(
             self.id,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
 
 
@@ -962,8 +962,8 @@ class Item(_Item):
 
         item_data = api.delete_item(
             self.id,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
 
 
@@ -1020,8 +1020,8 @@ class Item(_Item):
         item_data = api.duplicate_item(
             self.board.id,
             self.id,
-            api_key=self.__creds.api_key_v2,
             *args,
+            api_key=self.__creds.api_key_v2,
             *kwargs)
         return Item(creds=self.__creds, **item_data)
 
@@ -1075,8 +1075,8 @@ class Item(_Item):
         update_data = api.create_update(
             body, 
             self.id,
-            api_key=self.__creds.api_key_v2, 
             *args,
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return en.Update(creds=self.__creds, **update_data)
 
@@ -1229,8 +1229,8 @@ class Item(_Item):
 
         item_data = api.clear_item_updates(
             self.id,
-            api_key=self.__creds.api_key_v2,
-            *args)
+            *args,
+            api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
 
     
