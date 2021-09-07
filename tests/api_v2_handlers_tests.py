@@ -614,7 +614,7 @@ def test_remove_users_from_workspace(execute_query):
     ok_(workspace != None)
     ok_(workspace['id'] == workspace_id)
 
-    
+
 @patch(EXECUTE_QUERY_PATCH)
 def test_add_teams_to_workspace(execute_query):
 

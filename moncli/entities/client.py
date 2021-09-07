@@ -1581,7 +1581,6 @@ class MondayClient():
         return [en.Team(creds=self.__creds, **data) for data in teams_data]
 
 
-        
 class AuthorizationError(Exception):
     def __init__(self, user_name: str):
         self.message = 'User {} was not recognized by the applied token'.format(user_name)
