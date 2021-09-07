@@ -44,6 +44,8 @@ CREATE_OR_GET_TAG = 'create_or_get_tag'
 USERS = 'users'
 # Teams
 TEAMS = 'teams'
+ADD_TEAMS_TO_WORKSPACE = 'add_teams_to_workspace'
+DELETE_TEAMS_FROM_WORKSPACE = 'delete_users_from_workspace'
 # Me
 ME = 'me'
 # Account
@@ -67,7 +69,8 @@ DEFAULT_BOARD_QUERY_FIELDS = [
     'id', 
     'name', 
     'board_folder_id', 
-    'board_kind', 
+    'board_kind',
+    'communication', 
     'description', 
     'permissions',
     'pos',
@@ -424,6 +427,17 @@ QUERY_MAP = {
         DEFAULT_TEAM_QUERY_FIELDS,
         {
             'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
+        }),
+    ADD_TEAMS_TO_WORKSPACE: (
+        DEFAULT_TEAM_QUERY_FIELDS ,
+         {
+
+         }),
+    DELETE_TEAMS_FROM_WORKSPACE: 
+    (
+        DEFAULT_TEAM_QUERY_FIELDS , 
+        {
+            
         }),
     ME: (DEFAULT_USER_QUERY_FIELDS, {}),
     ACCOUNT: (DEFAULT_ACCOUNT_QUERY_FIELDS, {}),

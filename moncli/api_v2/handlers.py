@@ -2276,7 +2276,7 @@ def add_users_to_workspace(workspace_id: str,user_ids: list(), kind: WorkspaceSu
         
         return execute_query(api_key=kwargs.pop('api_key', None), query_name=ADD_USERS_TO_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
-
+      
 def delete_users_from_workspace(workspace_id: str, user_ids: list(), *args: tuple, **kwargs: dict ):
     """Allows you to delete users to a workspace.
 
@@ -2350,7 +2350,76 @@ def delete_users_from_workspace(workspace_id: str, user_ids: list(), *args: tupl
                     Additional Arguments
                 
     """
+    
     kwargs["workspace_id"]= gql.IntValue(workspace_id)
     kwargs['user_ids'] = gql.ListValue([int(id) for id in user_ids])
 
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_USERS_FROM_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+  
+def add_teams_to_workspace(workspace_id: str, team_ids: list(), *args, **kwargs ):
+    """
+        Allows you to add teams to a workspace.
+
+        Parameters
+
+            workspace_id: str
+                The workspace's unique identifier.
+            team_ids: list()
+                Team ids to subscribe to the workspace.
+        
+        Returns
+
+            data : `dict`
+                A monday.com workspace in dictionary form.
+        
+        Return Fields
+
+            id: str
+                The workspace's unique identifier.
+        
+        Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
+
+
+    """
+    kwargs['workspace_id'] = gql.IntValue(workspace_id)
+    kwargs['team_ids'] = gql.ListValue(int(id) for id in team_ids)
+
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ADD_TEAMS_TO_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+
+def delete_teams_from_workspace(workspace_id: str, team_ids: list(), *args, **kwargs ):
+    """
+        Allows you to remove teams to a workspace.
+
+        Parameters
+
+            workspace_id: str
+                The workspace's unique identifier.
+            team_ids: list()
+                Team ids to subscribe to the workspace.
+        
+        Returns
+
+            data : `dict`
+                A monday.com workspace in dictionary form.
+        
+        Return Fields
+
+            id: str
+                The workspace's unique identifier.
+        
+        Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
+
+
+    """
+    kwargs['workspace_id'] = gql.IntValue(workspace_id)
+    kwargs['team_ids'] = gql.ListValue(int(id) for id in team_ids)
+
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_TEAMS_FROM_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)

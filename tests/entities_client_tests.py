@@ -269,7 +269,8 @@ def test_should_create_workspace(create_workspace):
     
 @patch('moncli.api_v2.add_users_to_workspace')
 def test_should_add_users_to_workspace(add_users_to_workspace):
-
+    
+    #Arrange
     id = '12345'
     user_ids = ['1','2','3','4','5']
     kind = WorkspaceSubscriberKind.owner
@@ -293,6 +294,39 @@ def test_should_remove_users_from_workspace(delete_users_from_workspace):
 
     # Act
     workspace = client.delete_users_from_workspace(id ,user_ids)
+    eq_(workspace[0].id, id)
+
+    
+@patch('moncli.api_v2.add_teams_to_workspace')
+def test_should_add_teams_to_workspace(add_teams_to_workspace):
+
+    # Arrange
+    workspace_id = '12345'
+    team_ids =  [105939, 105940, 105941]
+    add_teams_to_workspace.return_value = {'id': '12345'}
+
+    # Act
+    workspace = client.add_teams_to_workspace(workspace_id, team_ids)
+
+    #Assert
+    ok_(workspace != None)
+    eq_(workspace.id, workspace_id)
+    
+
+@patch('moncli.api_v2.delete_teams_from_workspace')
+def test_should_add_teams_to_workspace(delete_teams_from_workspace):
+
+    # Arrange
+    workspace_id = '12345'
+    team_ids =  [105939, 105940, 105941]
+    delete_teams_from_workspace.return_value = {'id': '12345'}
+
+    # Act
+    workspace = client.delete_teams_from_workspace(workspace_id, team_ids)
+
+    #Assert
+    ok_(workspace != None)
+    eq_(workspace.id, workspace_id)
 
     # Assert
     ok_(workspace != None)
