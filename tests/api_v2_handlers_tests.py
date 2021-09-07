@@ -613,3 +613,20 @@ def test_add_teams_to_workspace(execute_query):
     ok_(workspace != None)
     ok_(type(workspace is dict))
     ok_(workspace['id'] == workspace_id)
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_remove_teams_from_workspace(execute_query):
+
+    #Arrange
+    workspace_id = '12345'
+    team_ids =  ['105939', '105940', '105941']
+    execute_query.return_value = {'id': '12345'}
+
+    # Act
+    workspace = handlers.delete_teams_from_workspace(workspace_id, team_ids)
+
+    # Assert
+
+    ok_(workspace != None)
+    ok_(type(workspace is dict))
+    ok_(workspace['id'] == workspace_id)
