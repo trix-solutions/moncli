@@ -52,6 +52,13 @@ class MondayClient():
                 Create a new workspace.
             add_users_to_workspace: `moncli.entities.Workspace`
                 Adds new users to a new workspace.
+            delete_users_from_workspace: `moncli.entities.Workspace`
+                Deletes  users from an existing workspace.
+            add_teams_to_workspace: `moncli.entities.Workspace`
+                Allows you to add teams to a workspace.
+            delete_teams_from_workspace: `moncli.entities.Workspace`
+                Allows you to remove teams to a workspace.
+
     """
 
     def __init__(self, **kwargs):    
