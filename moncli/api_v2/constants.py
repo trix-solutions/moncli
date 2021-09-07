@@ -439,7 +439,7 @@ QUERY_MAP = {
             'description': ArgumentValueKind.String
         }),
     DELETE_USERS_FROM_WORKSPACE: (
-        DEFAULT_WORKSPACE_QUERY_FIELDS,
+        DEFAULT_USER_QUERY_FIELDS,
          {
 
          }),

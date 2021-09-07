@@ -2306,6 +2306,6 @@ def delete_users_from_workspace(workspace_id: str, user_ids: list(), *args: tupl
                 
     """
     kwargs["workspace_id"]= gql.IntValue(workspace_id)
-    kwargs['user_ids'] = gql.ListValue([gql.IntValue(id) for id in user_ids])
+    kwargs['user_ids'] = gql.ListValue([int(id) for id in user_ids])
 
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_USERS_FROM_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
