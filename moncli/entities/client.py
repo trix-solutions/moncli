@@ -1348,7 +1348,7 @@ class MondayClient():
                     The user's UTC hours difference.
          """
          
-        workspace_data = api.add_users_to_workspace(
+        users_data = api.add_users_to_workspace(
             workspace_id,
             user_ids, 
             kind,
@@ -1356,7 +1356,8 @@ class MondayClient():
             api_key=self.__creds.api_key_v2,
             **kwargs)
 
-        return  en.Workspace(workspace_data)
+        return [en.User(creds=self.__creds, **data) for data in users_data]
+
 
     def delete_users_from_workspace(self, workspace_id: str, user_ids: list(), *args: tuple, **kwargs: dict ):
         """
@@ -1425,16 +1426,18 @@ class MondayClient():
                             The user's UTC hours difference.
 
 
-            """
-        workspace_data = api.delete_users_from_workspace(
+        """
+        
+        users_data = api.delete_users_from_workspace(
             workspace_id,
             user_ids,
             *args,
             api_key=self.__creds.api_key_v2,
-            **kwargs
-           )
+            **kwargs)
 
-        return en.Workspace(workspace_data)
+        return [en.User(creds=self.__creds, **data) for data in users_data]
+
+
 class AuthorizationError(Exception):
     def __init__(self, user_name: str):
         self.message = 'User {} was not recognized by the applied token'.format(user_name)

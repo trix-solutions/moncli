@@ -273,15 +273,14 @@ def test_should_add_users_to_workspace(add_users_to_workspace):
     id = '12345'
     user_ids = ['1','2','3','4','5']
     kind = WorkspaceSubscriberKind.owner
-    add_users_to_workspace.return_value = {'id': id, 'kind': kind.name}
+    add_users_to_workspace.return_value = [{'id': id}]
 
     # Act
     workspace = client.add_users_to_workspace(id ,user_ids, kind)
 
     # Assert
     ok_(workspace != None)
-    eq_(workspace.id, id)
-    eq_(workspace.kind , kind.name)
+    eq_(workspace[0].id, id)
 
 
 @patch('moncli.api_v2.delete_users_from_workspace')
@@ -290,14 +289,14 @@ def test_should_remove_users_from_workspace(delete_users_from_workspace):
     id = '12345'
     user_ids = ['1','2','3','4','5']
     
-    delete_users_from_workspace.return_value = {'id': id}
+    delete_users_from_workspace.return_value = [{'id': id}]
 
     # Act
     workspace = client.delete_users_from_workspace(id ,user_ids)
 
     # Assert
     ok_(workspace != None)
-    eq_(workspace.id, id)
+    eq_(workspace[0].id, id)
 
 
 @patch('moncli.api_v2.get_users')
