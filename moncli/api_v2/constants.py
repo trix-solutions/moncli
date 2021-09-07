@@ -186,6 +186,7 @@ DEFAULT_USER_QUERY_FIELDS = [
     'enabled',
     'birthday',
     'country_code',
+    'is_admin',
     'is_guest',
     'is_pending',
     'join_date',
