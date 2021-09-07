@@ -580,6 +580,7 @@ def test_create_workspace(execute_query):
     ok_(workspace['kind'] == kind.name)
     ok_(workspace['description'] == description)
 
+    
 @patch(EXECUTE_QUERY_PATCH)
 def test_add_users_to_workspace(execute_query):
 
@@ -597,7 +598,23 @@ def test_add_users_to_workspace(execute_query):
     ok_(workspace['id'] == id)
     ok_(workspace['kind'] == kind.name)
 
+    
 @patch(EXECUTE_QUERY_PATCH)
+def test_remove_users_from_workspace(execute_query):
+
+    #Arrange
+    workspace_id = '12345'
+    user_ids=['1','2','3','4','5']
+    execute_query.return_value = {'id': '12345'}
+
+    #Act
+    workspace = handlers.delete_users_from_workspace(workspace_id,user_ids)
+
+    #Assert
+    ok_(workspace != None)
+    ok_(workspace['id'] == workspace_id)
+
+    
 def test_add_teams_to_workspace(execute_query):
 
     #Arrange
@@ -614,6 +631,7 @@ def test_add_teams_to_workspace(execute_query):
     ok_(type(workspace is dict))
     ok_(workspace['id'] == workspace_id)
 
+    
 @patch(EXECUTE_QUERY_PATCH)
 def test_remove_teams_from_workspace(execute_query):
 
@@ -629,4 +647,4 @@ def test_remove_teams_from_workspace(execute_query):
 
     ok_(workspace != None)
     ok_(type(workspace is dict))
-    ok_(workspace['id'] == workspace_id)
+    ok_(workspace['id'] == workspace_id
