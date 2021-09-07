@@ -1459,8 +1459,8 @@ class MondayClient():
         
         Returns
 
-            teams: list()
-                List of teams added to workspace
+            teams: `list[moncli.entities.user.Team]`
+                List of teams deleted from the workspace
         
         Return Fields
 
@@ -1522,14 +1522,14 @@ class MondayClient():
        """
         
         teams_data = api.add_teams_to_workspace(
-                workspace_id,
-                team_ids,
-                *args,
-                api_key=self.__creds.api_key_v2,
-                **kwargs)
+            workspace_id,
+            team_ids,
+            *args,
+            api_key=self.__creds.api_key_v2,
+            **kwargs)
 
         return [en.Team(creds=self.__creds, **data) for data in teams_data]
-        
+
 
     def delete_teams_from_workspace(self, workspace_id: str, team_ids: list(), *args, **kwargs ):
         """Allows you to delete teams from a workspace.
@@ -1572,11 +1572,11 @@ class MondayClient():
         """
         
         teams_data = api.delete_teams_from_workspace(
-                workspace_id,
-                team_ids,
-                *args,
-                api_key=self.__creds.api_key_v2,
-                **kwargs)
+            workspace_id,
+            team_ids,
+            *args,
+            api_key=self.__creds.api_key_v2,
+            **kwargs)
 
         return [en.Team(creds=self.__creds, **data) for data in teams_data]
 
