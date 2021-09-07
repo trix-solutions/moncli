@@ -45,7 +45,7 @@ USERS = 'users'
 # Teams
 TEAMS = 'teams'
 ADD_TEAMS_TO_WORKSPACE = 'add_teams_to_workspace'
-DELETE_TEAMS_FROM_WORKSPACE = 'delete_users_from_workspace'
+DELETE_TEAMS_FROM_WORKSPACE = 'delete_teams_from_workspace'
 # Me
 ME = 'me'
 # Account
