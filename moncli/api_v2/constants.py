@@ -44,6 +44,7 @@ CREATE_OR_GET_TAG = 'create_or_get_tag'
 USERS = 'users'
 # Teams
 TEAMS = 'teams'
+ADD_TEAMS_TO_WORKSPACE = 'add_teams_to_workspace'
 # Me
 ME = 'me'
 # Account
@@ -424,6 +425,11 @@ QUERY_MAP = {
         {
             'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
         }),
+    ADD_TEAMS_TO_WORKSPACE: (
+        DEFAULT_TEAM_QUERY_FIELDS ,
+         {
+
+         }),
     ME: (DEFAULT_USER_QUERY_FIELDS, {}),
     ACCOUNT: (DEFAULT_ACCOUNT_QUERY_FIELDS, {}),
     CREATE_WEBHOOK: (
