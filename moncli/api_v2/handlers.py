@@ -1863,6 +1863,8 @@ def get_users(*args, **kwargs):
                 Is the user enabled or not.
             id : `str`
                 The user's unique identifier.
+            is_admin: `bool`
+                Is the user a admin or not.
             is_guest : `bool`
                 Is the user a guest or not.
             is_pending : `bool`
@@ -1985,6 +1987,8 @@ def get_me(*args, **kwargs):
                 Is the user enabled or not.
             id : `str`
                 The user's unique identifier.
+            is_admin: `bool`
+                Is the user a admin or not.
             is_guest : `bool`
                 Is the user a guest or not.
             is_pending : `bool`
@@ -2369,20 +2373,20 @@ def add_teams_to_workspace(workspace_id: str, team_ids: list(), *args, **kwargs 
                 Team ids to subscribe to the workspace.
         
         Returns
-
+            
             data : `dict`
-                A monday.com workspace in dictionary form.
-        
+                A monday.com team in dictionary form.
+
         Return Fields
-
-            id: str
-                The workspace's unique identifier.
         
-        Optional Arguments
-
-            api_key : `str`
-                The monday.com v2 API user key.
-
+            id : `int`
+                The team's unique identifier.
+            name : `str`
+                The team's name.
+            picture_url : `str`
+                The team's picture url.
+            users : `moncli.entities.user.User`
+                The users in the team.
 
     """
     kwargs['workspace_id'] = gql.IntValue(workspace_id)
@@ -2401,16 +2405,23 @@ def delete_teams_from_workspace(workspace_id: str, team_ids: list(), *args, **kw
                 The workspace's unique identifier.
             team_ids: list()
                 Team ids to subscribe to the workspace.
-        
+                
         Returns
-
+            
             data : `dict`
-                A monday.com workspace in dictionary form.
-        
-        Return Fields
+                A monday.com team in dictionary form.
 
-            id: str
-                The workspace's unique identifier.
+        Return Fields
+        
+            id : `int`
+                The team's unique identifier.
+            name : `str`
+                The team's name.
+            picture_url : `str`
+                The team's picture url.
+            users : `moncli.entities.user.User`
+                The users in the team. 
+
         
         Optional Arguments
 

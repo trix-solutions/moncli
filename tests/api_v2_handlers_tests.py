@@ -615,21 +615,21 @@ def test_remove_users_from_workspace(execute_query):
     ok_(workspace['id'] == workspace_id)
 
     
+@patch(EXECUTE_QUERY_PATCH)
 def test_add_teams_to_workspace(execute_query):
 
     #Arrange
     workspace_id = '12345'
     team_ids =  ['105939', '105940', '105941']
-    execute_query.return_value = {'id': '12345'}
+    execute_query.return_value = [{'id': '105939'}, {'id': '105940'}, {'id': '105940'}]
 
     # Act
-    workspace = handlers.add_teams_to_workspace(workspace_id, team_ids)
+    teams = handlers.add_teams_to_workspace(workspace_id, team_ids)
 
     # Assert
-
-    ok_(workspace != None)
-    ok_(type(workspace is dict))
-    ok_(workspace['id'] == workspace_id)
+    ok_(teams != None)
+    ok_(type(teams is list))
+    eq_(len(teams), 3)
 
     
 @patch(EXECUTE_QUERY_PATCH)
@@ -638,13 +638,12 @@ def test_remove_teams_from_workspace(execute_query):
     #Arrange
     workspace_id = '12345'
     team_ids =  ['105939', '105940', '105941']
-    execute_query.return_value = {'id': '12345'}
+    execute_query.return_value = [{'id': '105939'}, {'id': '105940'}, {'id': '105940'}]
 
     # Act
-    workspace = handlers.delete_teams_from_workspace(workspace_id, team_ids)
+    teams = handlers.delete_teams_from_workspace(workspace_id, team_ids)
 
     # Assert
-
-    ok_(workspace != None)
-    ok_(type(workspace is dict))
-    ok_(workspace['id'] == workspace_id
+    ok_(teams != None)
+    ok_(type(teams is list))
+    eq_(len(teams), 3)

@@ -163,7 +163,8 @@ DEFAULT_REPLY_QUERY_FIELDS = [
 DEFAULT_ASSET_QUERY_FIELDS = [
     'id',
     'name',
-    'url'
+    'url',
+    'communication'
 ]
 
 DEFAULT_WEBHOOK_QUERY_FIELDS = [
@@ -186,6 +187,7 @@ DEFAULT_USER_QUERY_FIELDS = [
     'enabled',
     'birthday',
     'country_code',
+    'is_admin',
     'is_guest',
     'is_pending',
     'join_date',

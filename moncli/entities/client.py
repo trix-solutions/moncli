@@ -1029,6 +1029,8 @@ class MondayClient():
                     Is the user enabled or not.
                 id : `str`
                     The user's unique identifier.
+                is_admin: `bool`
+                    Is the user a admin or not.
                 is_guest : `bool`
                     Is the user a guest or not.
                 is_pending : `bool`
@@ -1154,6 +1156,8 @@ class MondayClient():
                     Is the user enabled or not.
                 id : `str`
                     The user's unique identifier.
+                is_admin: `bool`
+                    Is the user a admin or not.
                 is_guest : `bool`
                     Is the user a guest or not.
                 is_pending : `bool`
@@ -1455,12 +1459,12 @@ class MondayClient():
         
         Returns
 
-            data : `dict`
-                A monday.com workspace in dictionary form.
+            teams: `list[moncli.entities.user.Team]`
+                List of teams deleted from the workspace
         
         Return Fields
 
-            account : `moncli.entities.Account`
+                account : `moncli.entities.User`
                     The user's account.
                 birthday : `str`
                     The user's birthday.
@@ -1517,98 +1521,64 @@ class MondayClient():
                 The monday.com v2 API user key.
        """
         
-        workspace_data = api.add_teams_to_workspace(
-                workspace_id,
-                team_ids,
-                *args,
-                api_key=self.__creds.api_key_v2,
-                **kwargs)
+        teams_data = api.add_teams_to_workspace(
+            workspace_id,
+            team_ids,
+            *args,
+            api_key=self.__creds.api_key_v2,
+            **kwargs)
 
-        return en.Workspace(workspace_data)
+        return [en.Team(creds=self.__creds, **data) for data in teams_data]
+
 
     def delete_teams_from_workspace(self, workspace_id: str, team_ids: list(), *args, **kwargs ):
-
         """Allows you to delete teams from a workspace.
 
-        Parameters
+            Parameters
 
-            workspace_id: str
-                The workspace's unique identifier.
-            team_ids: list()
-                Team ids to subscribe to the workspace.
-        
-        Returns
+                workspace_id: str
+                    The workspace's unique identifier.
+                team_ids: list()
+                    Team ids to subscribe to the workspace.
+            
+            Returns
 
-            data : `dict`
-                A monday.com workspace in dictionary form.
-        
-        Return Fields
+                teams: `list[moncli.entities.user.Team]`
+                    List of teams deleted from the workspace
+            
+            Return Fields
+            
+                Return Fields
 
-            account : `moncli.entities.Account`
-                    The user's account.
-                birthday : `str`
-                    The user's birthday.
-                country_code : `str`
-                    The user's country code.
-                created_at : `str`
-                    The user's creation date.
-                email : `str`
-                    The user's email.
-                enabled : `bool`
-                    Is the user enabled or not.
-                id : `str`
-                    The user's unique identifier.
-                is_guest : `bool`
-                    Is the user a guest or not.
-                is_pending : `bool`
-                    Is the user a pending user.
-                is_view_only : `bool`
-                    Is the user a view only user or not.
-                join_date : `str`
-                    The date the user joined the account.
-                location : `str`
-                    The user' location.
-                mobile_phone : `str`
-                    The user's mobile phone number.
+                id : `int`
+                    The team's unique identifier.
                 name : `str`
-                    The user's name.
-                phone : `str`
-                    The user's phone number.
-                photo_original : `str`
-                    The user's photo in the original size.
-                photo_small : `str`
-                    The user's photo in small size (150x150).
-                photo_thumb : `str`
-                    The user's photo in thumbnail size (100x100).
-                photo_thumb_small : `str`
-                    The user's photo in small thumbnail size (50x50).
-                photo_tiny : `str`
-                    The user's photo in tiny size (30x30).
-                teams : `list[moncli.entities.Team]`
-                    The teams the user is a member in.
-                time_zone_identifier : `str`
-                    The user's time zone identifier.
-                title : `str`
-                    The user's title.
-                url : `str`
-                    The user's profile url.
-                utc_hours_diff : `int`
-                    The user's UTC hours difference.
+                    The team's name.
+                picture_url : `str`
+                    The team's picture url.
+                users : `moncli.entities.user.User`
+                    The users in the team.
+                name : `str`
+                    The team's name.
+                picture_url : `str`
+                    The team's picture url.
+                users : `moncli.entities.user.User`
+                    The users in the team.
 
-        Optional Arguments
+            Optional Arguments
 
-            api_key : `str`
-                The monday.com v2 API user key.
-       """
+                api_key : `str`
+                    The monday.com v2 API user key.
+        """
         
-        workspace_data = api.delete_teams_from_workspace(
-                workspace_id,
-                team_ids,
-                *args,
-                api_key=self.__creds.api_key_v2,
-                **kwargs)
+        teams_data = api.delete_teams_from_workspace(
+            workspace_id,
+            team_ids,
+            *args,
+            api_key=self.__creds.api_key_v2,
+            **kwargs)
 
-        return en.Workspace(workspace_data)
+        return [en.Team(creds=self.__creds, **data) for data in teams_data]
 
 
         
