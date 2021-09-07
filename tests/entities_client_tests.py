@@ -2,7 +2,7 @@ from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
 from moncli import client, entities as en
-from moncli.enums import BoardKind, NotificationTargetType, WorkspaceKind, SubscriberKind
+from moncli.enums import BoardKind, NotificationTargetType, WorkspaceKind, WorkspaceSubscriberKind
 
 
 @patch('moncli.api_v2.create_board')
@@ -272,7 +272,7 @@ def test_should_add_users_to_workspace(add_users_to_workspace):
 
     id = '12345'
     user_ids = ['1','2','3','4','5']
-    kind = SubscriberKind.owner
+    kind = WorkspaceSubscriberKind.owner
     add_users_to_workspace.return_value = {'id': id, 'kind': kind.name}
 
     # Act

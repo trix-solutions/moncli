@@ -1356,7 +1356,7 @@ class MondayClient():
             api_key=self.__creds.api_key_v2,
             **kwargs)
 
-        return [en.User(creds=self.__creds, **data) for data in workspace_data]
+        return  en.Workspace(workspace_data)
 
     def delete_users_from_workspace(self, workspace_id: str, user_ids: list(), *args: tuple, **kwargs: dict ):
         """

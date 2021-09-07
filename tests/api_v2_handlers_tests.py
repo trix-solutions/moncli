@@ -611,4 +611,3 @@ def test_remove_users_from_workspace(execute_query):
     #Assert
     ok_(workspace != None)
     ok_(workspace['id'] == workspace_id)
-    ok_(workspace['user_ids'] == user_ids)
