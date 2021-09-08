@@ -1318,6 +1318,8 @@ class MondayClient():
                     Is the user enabled or not.
                 id : `str`
                     The user's unique identifier.
+                is_admin: `bool`
+                    Is the user a admin or not.
                 is_guest : `bool`
                     Is the user a guest or not.
                 is_pending : `bool`
@@ -1396,6 +1398,8 @@ class MondayClient():
                             Is the user enabled or not.
                         id : `str`
                             The user's unique identifier.
+                        is_admin: `bool`
+                            Is the user a admin or not.
                         is_guest : `bool`
                             Is the user a guest or not.
                         is_pending : `bool`
