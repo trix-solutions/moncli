@@ -191,7 +191,7 @@ class Item(_Item):
         """The parent item ."""
         if self.__parent_item == None: 
             self.__parent_item = self.get_parent_item()
-        return self.get_parent_item
+        return self.__parent_item
 
 
     def add_file(self, file_column: en.FileValue, file_path: str, *args):
@@ -1314,7 +1314,7 @@ class Item(_Item):
             Returns
 
                 item : `moncli.entities.Item`
-                    The updated item.
+                    The parent item.
 
             Return Fields
 
@@ -1346,8 +1346,8 @@ class Item(_Item):
                     The item's updates.
         """
         item_data =  api.get_items(
-            'id','parent_item',
-            ids = [self.id],
+            *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'parent_item', *args),
+            ids=[self.id]
         )[0]['parent_item']
         return Item(creds=self.__creds, **item_data)
 
