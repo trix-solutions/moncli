@@ -1314,7 +1314,7 @@ class Item(_Item):
             Returns
 
                 item : `moncli.entities.Item`
-                    The updated item.
+                    The parent item.
 
             Return Fields
 
@@ -1346,9 +1346,8 @@ class Item(_Item):
                     The item's updates.
         """
         item_data =  api.get_items(
-            'id',   
             *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'parent_item', *args),
-            ids = [self.id],
+            ids=[self.id]
         )[0]['parent_item']
         return Item(creds=self.__creds, **item_data)
 
