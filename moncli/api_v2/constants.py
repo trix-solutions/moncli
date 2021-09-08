@@ -164,7 +164,8 @@ DEFAULT_ASSET_QUERY_FIELDS = [
     'id',
     'name',
     'url',
-    'communication'
+    'file_size',
+    'file_extension'
 ]
 
 DEFAULT_WEBHOOK_QUERY_FIELDS = [
