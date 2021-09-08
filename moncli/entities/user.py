@@ -16,6 +16,7 @@ class _User(Model):
     enabled = types.BooleanType()
     birthday = types.StringType()
     country_code = types.StringType()
+    is_admin = types.BooleanType()
     is_guest = types.BooleanType()
     is_pending = types.BooleanType()
     join_date = types.StringType()
@@ -49,6 +50,8 @@ class User(_User):
                 Is the user enabled or not.
             id : `str`
                 The user's unique identifier.
+            is_admin: `bool`
+                Is the user a admin or not.
             is_guest : `bool`
                 Is the user a guest or not.
             is_pending : `bool`

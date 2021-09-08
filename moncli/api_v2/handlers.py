@@ -2229,6 +2229,8 @@ def add_users_to_workspace(workspace_id: str,user_ids: list(), kind: WorkspaceSu
                     Is the user enabled or not.
                 id : `str`
                     The user's unique identifier.
+                is_admin: `bool`
+                    Is the user a admin or not.   
                 is_guest : `bool`
                     Is the user a guest or not.
                 is_pending : `bool`
@@ -2309,6 +2311,8 @@ def delete_users_from_workspace(workspace_id: str, user_ids: list(), *args: tupl
                     Is the user enabled or not.
                 id : `str`
                     The user's unique identifier.
+                is_admin: `bool`
+                    Is the user a admin or not.
                 is_guest : `bool`
                     Is the user a guest or not.
                 is_pending : `bool`
