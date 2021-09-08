@@ -1346,7 +1346,8 @@ class Item(_Item):
                     The item's updates.
         """
         item_data =  api.get_items(
-            'id','parent_item',
+            'id',   
+            *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'parent_item', *args),
             ids = [self.id],
         )[0]['parent_item']
         return Item(creds=self.__creds, **item_data)
