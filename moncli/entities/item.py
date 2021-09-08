@@ -191,7 +191,7 @@ class Item(_Item):
         """The parent item ."""
         if self.__parent_item == None: 
             self.__parent_item = self.get_parent_item()
-        return self.get_parent_item
+        return self.__parent_item
 
 
     def add_file(self, file_column: en.FileValue, file_path: str, *args):
