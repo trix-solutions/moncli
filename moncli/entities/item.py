@@ -739,11 +739,14 @@ class Item(_Item):
             value = str(column_value.index)
         else:
             value = column_value.text
-            item_data = api.change_simple_column_value(
-                self.id,
-                self.board.id,
-                column_value.id,
-                value)
+        item_data = api.change_simple_column_value(
+            self.id,
+            self.board.id,
+            column_value.id,
+            value,
+            *args,
+            api_key=self.__creds.api_key_v2)
+        return Item(creds=self.__creds, **item_data)
 
     def change_multiple_column_values(self, column_values, get_column_values: bool = False, *args):
         """Change the item's column values.

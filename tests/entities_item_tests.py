@@ -6,7 +6,6 @@ from nose.tools import ok_, eq_, raises
 from moncli import client, entities as en
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
-import pdb
 
 @patch('moncli.api_v2.get_items')
 def test_item_should_get_board(get_items):
@@ -273,7 +272,8 @@ def test_should_update_simple_column_value_for_status(change_simple_column_value
         id= 'long_text', 
         title= 'Description', 
         text= "My previous keyword doesn't work", 
-        value= json.dumps('{"index":14,"post_id":null,"changed_at":"2020-05-30T19:51:09.981Z"}' ))
+        value= json.dumps({"index":14,"post_id": None,"changed_at":"2020-05-30T19:51:09.981Z"}),
+        settings_str='{}' )
 
     # Act
     item = item.change_simple_column_value(column_value,get_board,get_items)
