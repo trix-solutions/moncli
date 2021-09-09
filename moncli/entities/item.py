@@ -57,6 +57,8 @@ class Item(_Item):
                 Removes files from a column value.
             get_board : `moncli.entities.Board`
                 Get the board that contains this item.
+            get_group : `moncli.entities.Group`
+                Get the group containing this item.
             get_creator : `moncli.entities.User`
                 Get the item's creator.
             get_column_values : `list[moncli.entities.ColumnValue]`
@@ -397,7 +399,7 @@ class Item(_Item):
 
 
     def get_group(self, *args):
-        """Get the board that contains this item.
+        """Get the group that contains this item.
 
             Parameters
 

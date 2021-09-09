@@ -107,6 +107,10 @@ class Board(_Board):
                 Delete a new webhook.
             get_workspace : `moncli.entities.Workspace`
                 Get the board's workspace that contains this board (null for main workspace).
+            get_updates : `list[moncli.entities.Update]`
+                Get the board's updates.
+            get_tags : `list[moncli.entities.Tag]`
+                Get the board's tags.
     """
 
     def __init__(self, **kwargs):
@@ -1343,7 +1347,7 @@ class Board(_Board):
 
     
     def get_updates(self, *args, **kwargs):
-        """Retrieves the board's updates
+        """Get the board's updates
  
             Parameters
     
@@ -1402,7 +1406,7 @@ class Board(_Board):
 
     
     def get_tags(self, *args):
-        """Retrieves the board's tags
+        """Get the board's tags
 
             Parameters
 
