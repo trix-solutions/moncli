@@ -1,7 +1,9 @@
 from schematics.models import Model
 from schematics.types import StringType
-
 from .. import api, entities as en
+from moncli.entities import column_value as cv
+from moncli.enums import ColumnType
+
 
 
 class _Item(Model):
@@ -688,6 +690,62 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
     
+
+    def change_simple_column_value(self, column_value, *args):
+        """Change the item's column values using simple values.
+
+            Parameters
+
+                column_values : `moncli.entities.column_value.ColumnValue 
+                    The column value to update. 
+                args : `tuple`
+                    Optional item return fields.
+
+            Returns
+
+                item : `moncli.entities.Item`
+                    The updated item.
+
+            Return Fields
+
+                assets : `list[moncli.entities.asset.Asset]`
+                    The item's assets/files.
+                board : `moncli.entities.board.Board`
+                    The board that contains this item.
+                column_values : `list[moncli.entities.column_value.ColumnValue]`
+                    The item's column values.
+                created_at : `str`
+                    The item's create date.
+                creator : `moncli.entities.user.User`
+                    The item's creator.
+                creator_id : `str`
+                    The item's unique identifier.
+                group : `moncli.entities.group.Group`
+                    The group that contains this item.
+                id : `str`
+                    The item's unique identifier.
+                name : `str`
+                    The item's name.
+                state : `str`
+                    The board's state (all / active / archived / deleted)
+                subscriber : `moncli.entities.user.User`
+                    The pulse's subscribers.
+                updated_at : `str`
+                    The item's last update date.
+                updates : `moncli.entities.update.Update`
+                    The item's updates.
+        """
+
+        value = column_value.simple_format()
+        item_data = api.change_simple_column_value(
+            self.id,
+            self.board.id,
+            column_value.id,
+            value,
+            *args,
+            api_key=self.__creds.api_key_v2)
+
+        return Item(creds=self.__creds, **item_data)
 
     def change_multiple_column_values(self, column_values, get_column_values: bool = False, *args):
         """Change the item's column values.

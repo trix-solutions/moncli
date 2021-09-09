@@ -126,6 +126,24 @@ def test_change_column_value(execute_query):
     ok_(type(updated_item) is dict)
     ok_(updated_item['id'] == '1')
 
+@patch(EXECUTE_QUERY_PATCH)
+def test_change_simple_column_value(execute_query):
+
+    # Arrange
+    board_id = '12345678'
+    item_id =  '2345678'
+    column_id = 'new_column'
+    value   =   "Simple Value to update"
+    execute_query.return_value = {'id': '2345678'}
+
+    # Act
+    updated_item = handlers.change_simple_column_value(board_id='12345678',item_id='2345678',column_id='new_column',value="Simple Value to update")
+    
+    # Assert
+    ok_(updated_item != None)
+    ok_(updated_item['id'] == item_id)
+
+
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_change_multiple_column_value(execute_query):
