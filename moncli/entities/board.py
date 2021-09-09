@@ -914,10 +914,10 @@ class Board(_Board):
 
         if get_column_values:
             args = list(args)
-            for arg in ['items.column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
                 if arg not in args:
                     args.append(arg)
-            args.extend(['items.id', 'items.name'])
+            args.extend(['id', 'name'])
 
         column_values = kwargs.pop('column_values', None)
         if column_values:
