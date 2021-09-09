@@ -735,10 +735,8 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
-        if type(column_value) == cv.StatusValue :
-            value = str(column_value.index)
-        else:
-            value = column_value.text
+
+        value = column_value.simple_format()
         item_data = api.change_simple_column_value(
             self.id,
             self.board.id,
@@ -746,6 +744,7 @@ class Item(_Item):
             value,
             *args,
             api_key=self.__creds.api_key_v2)
+
         return Item(creds=self.__creds, **item_data)
 
     def change_multiple_column_values(self, column_values, get_column_values: bool = False, *args):

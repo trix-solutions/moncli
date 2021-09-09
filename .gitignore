@@ -49,6 +49,7 @@ coverage.xml
 
 #local_testing_file
 test.py
+
 # Translations
 *.mo
 *.pot
