@@ -111,6 +111,23 @@ def test_create_column(execute_query):
     ok_(new_column['title'] == title)
     ok_(new_column['type'] == ColumnType.text.name)
 
+@patch(EXECUTE_QUERY_PATCH)
+def test_change_column_title(execute_query):
+
+    # Arrange
+    column_id='text_column_1'
+    board_id='12345678'
+    title='Hello, world!'
+    execute_query.return_value = {'id': '1'}
+
+    # Act
+    updated_item = handlers.change_column_title(column_id='text_column_1', board_id='12345678', title='Hello, world!')
+    
+    # Assert
+    ok_(updated_item != None)
+    ok_(type(updated_item) is dict)
+    ok_(updated_item['id'] == '1')
+
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_change_column_value(execute_query):

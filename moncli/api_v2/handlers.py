@@ -467,6 +467,68 @@ def create_column(board_id: str, title: str, column_type: ColumnType, *args, **k
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_COLUMN, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
+def change_column_title(title: str, column_id: str, board_id: str, *args, **kwargs):
+    """Change an item's column value.
+
+        Parameters
+        
+            title : `str`
+                The The new title of the column.
+            column_id : `str`
+                The column's unique identifier.
+            board_id : `str`
+                The board's unique identifier.
+            args : `tuple`
+                The list of item return fields.
+            kwargs : `dict`
+                Optional arguments for changing a column value.
+
+        Returns
+            
+            data : `dict`
+                A monday.com column in item form.
+
+        Return Fields
+        
+            assets : `list[moncli.entities.Asset]`
+                The item's assets/files.
+            board : `moncli.entities.Board`
+                The board that contains this item.
+            column_values : `list[moncli.entities.ColumnValue]`
+                The item's column values.
+            created_at : `str`
+                The item's create date.
+            creator : `moncli.entities.User`
+                The item's creator.
+            creator_id : `str`
+                The item's unique identifier.
+            group : `moncli.entities.Group`
+                The group that contains this item.
+            id : `str`
+                The item's unique identifier.
+            name : `str`
+                The item's name.
+            state : `str`
+                The board's state (all / active / archived / deleted)
+            subscriber : `moncli.entities.User`
+                The pulse's subscribers.
+            updated_at : `str`
+                The item's last update date.
+            updates : `moncli.entities.Update`
+                The item's updates.
+        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
+    """
+    
+    kwargs['column_id'] = gql.StringValue(column_id)
+    kwargs['board_id'] = gql.IntValue(board_id)
+    kwargs['title'] = gql.StringValue(title)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CHANGE_COLUMN_TITLE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+
 def change_column_value(item_id: str, column_id: str, board_id: str, value: str, *args, **kwargs):
     """Change an item's column value.
 

@@ -233,7 +233,26 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_
     # Act
     item.change_column_value(column_value=[1,2,3,4,5])
 
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_column_values')
+@patch('moncli.api_v2.change_column_title')
+def test_should_change_column_title(get_column_values,change_column_title,get_items):
+    
+    # Add
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    get_column_values.return_value = en.ColumnValue({'id': 'long_text', 'title': 'Description', 'text': "", 'value': '{}'}),
+    change_column_title.return_values = {'id': '1', 'name': 'Test Item 1'}
+    item = client.get_items()[0]
+    column = item.get_column_values()[0]
+    new_title = "New Test title"
 
+    # Act
+    column_value = column.change_column_title(column, title=new_title)
+    print(column)
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.id, '1')
 
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
@@ -252,6 +271,7 @@ def test_item_should_change_multiple_column_values_with_dictionary(change_multip
     # Assert 
     ok_(item != None)
     eq_(item.name, 'Test Item 01')
+
 
 
 @patch('moncli.api_v2.get_items')
