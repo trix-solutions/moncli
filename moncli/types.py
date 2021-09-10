@@ -4,6 +4,7 @@ from datetime import datetime
 from schematics.types import BaseType
 
 from . import entities as en
+from .config import *
 
 class MondayType(BaseType):
 
@@ -54,13 +55,11 @@ class MondayType(BaseType):
         for k, v in settings.items():
             self.metadata[k] = v
 
-        loaded_value = json.loads(value.value)
-        self._extract_metadata(loaded_value)
         try:
             additional_info = json.loads(value.additional_info)
         except:
             additional_info = value.additional_info
-        self.original_value = self._convert((value.text, loaded_value, additional_info))
+        self.original_value = self._convert((value.text, value.value, additional_info))
         return self.original_value
 
     def to_primitive(self, value, context=None):
@@ -70,21 +69,8 @@ class MondayType(BaseType):
             return self.null_value
         return self._export(value)
 
-    def value_changed(self, value, other):
-        if (value and not other) or (other and not value):
-            return True
-        return self._compare(value, other)
-
     def _cast(self, value):
         return self.native_type(value)
-
-    def _extract_metadata(self, value):
-        try:
-            changed_at = value.pop('changed_at', None)
-            if changed_at:
-                self.metadata['changed_at'] = datetime.strptime(changed_at, ZULU_FORMAT)
-        except:
-            pass
 
     def _convert(self, value: tuple):
         _, data, _ = value
@@ -92,6 +78,3 @@ class MondayType(BaseType):
 
     def _export(self, value):
         return value
-
-    def _compare(self, value, other):
-        return value != other
