@@ -1,5 +1,6 @@
 from .. import api, entities as en
 from ..enums import *
+from ..error import MondayClientError
 
 
 class MondayClient():
@@ -62,32 +63,7 @@ class MondayClient():
 
     def __init__(self, **kwargs):    
         self.__me = None
-        self.__creds = en.MondayClientCredentials()
-
-        try:
-            username = kwargs['user_name']
-        except KeyError:
-            username = None
-
-        try:
-            api_key_v1 = kwargs['api_key_v1']
-        except KeyError:
-            api_key_v1 = None
-
-        try:
-            api_key_v2 = kwargs['api_key_v2']
-        except KeyError:
-            api_key_v2 = None
-
-        if api_key_v1:
-            self.__creds.api_key_v1 = api_key_v1
-
-        if api_key_v2:
-            self.api_key_v2 = api_key_v2
-        
-        # Only "login" when user_name and API Key v2 are provided.
-        if username and api_key_v2 and self.me.email.lower() != username.lower():
-            raise AuthorizationError(username)
+        self.__creds = en.MondayClientCredentials(kwargs.pop('api_key', None))
 
     @property
     def me(self):
@@ -97,16 +73,14 @@ class MondayClient():
         return self.__me
 
     @property
-    def api_key_v2(self):
+    def api_key(self):
         """Get API Key V2"""
         return self.__creds.api_key_v2
 
-    @api_key_v2.setter
-    def api_key_v2(self, value):
+    @api_key.setter
+    def api_key(self, value):
         """Set API Key V2"""
         self.__creds.api_key_v2 = value
-        api.api_key = value
-
 
     def create_board(self, board_name: str, board_kind: BoardKind, *args, **kwargs):
         """Create a new board.
@@ -364,9 +338,9 @@ class MondayClient():
         """
         
         if id != None and name != None:
-            raise TooManyGetBoardParameters()
+            raise MondayClientError('too_many_parameters', "Unable to use both 'id' and 'name' when querying for a board.")
         if id == None and name == None:
-            raise NotEnoughGetBoardParameters()
+            raise MondayClientError('not_enough_parameters', "Either the 'id' or 'name' is required when querying a board.")
         if id != None:         
             return self.get_board_by_id(id)
         else:
@@ -443,7 +417,7 @@ class MondayClient():
                 ids=[int(id)],
                 limit=1)[0]
         except IndexError:
-            raise BoardNotFound('id', id)
+            raise MondayClientError('board_not_found', 'Could not find board with ID "{}".'.format(id))
         return en.Board(creds=self.__creds, **board_data)
 
 
@@ -529,7 +503,7 @@ class MondayClient():
                 page += 1
                 record_count = len(boards_data)
                 continue
-        raise BoardNotFound('name', name)   
+        raise MondayClientError('board_not_found', 'Could not find board with name "{}".'.format(name))   
 
 
     def archive_board(self, board_id: str, *args):
@@ -642,7 +616,7 @@ class MondayClient():
         """
         
         if not ids:
-            raise AssetIdsRequired()
+            raise MondayClientError('invalid_parameters', 'File IDs are required.')
 
         assets_data = api.get_assets(
             ids,
