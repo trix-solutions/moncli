@@ -16,8 +16,7 @@ class MondayClientCredentials():
             The access key for monday.com API v2.
     """
 
-    def __init__(self, api_key_v1: str = None, api_key_v2: str = None):
-        self.api_key_v1 = api_key_v1
+    def __init__(self, api_key_v2: str = None):
         self.api_key_v2 = api_key_v2
 
 
