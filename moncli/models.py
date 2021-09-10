@@ -79,9 +79,13 @@ class MondayModel(Model):
         base_dict = super().to_primitive(role=role, app_data=app_data, **kwargs)
         result = {}
 
+        def value_changed(self, value, other):
+            return value != other
+
         for field, value in base_dict.items():
             model_field = self._fields[field]
-            if diff_only and not model_field.value_changed(getattr(self, field), self._original_values[field]):
+            new_value = pickle.dumps(getattr(self, field))
+            if diff_only and not value_changed(new_value, self._original_values[field]):
                 continue
             try:
                 result[model_field.metadata['id']] = value
