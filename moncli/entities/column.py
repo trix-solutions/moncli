@@ -71,19 +71,6 @@ class Column(BaseColumn):
     
     def __repr__(self):
         return str(self.to_primitive())
-
-    @property
-    def settings(self):
-        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
-        if not self.settings_str:
-            return None
-        settings_obj = json.loads(self.settings_str)
-        if self.column_type is ColumnType.status:
-            return en.StatusSettings(settings_obj, strict=False)
-        elif self.column_type is ColumnType.dropdown:
-            return en.DropdownSettings(settings_obj, strict=False)
-        else:
-            return settings_obj
     
     @property
     def column_type(self):
