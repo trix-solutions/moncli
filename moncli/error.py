@@ -8,6 +8,13 @@ class MoncliError(Exception):
             'message': message
         })
 
+
+class MondayClientError(MoncliError):
+    entity_type = 'MondayClient'
+    def __init__(self, error_code, message):
+        super().__init__(error_code, None, self.entity_type, message)
+
+
 class ColumnValueError(MoncliError):
     entity_type = 'ColumnValue'
 
