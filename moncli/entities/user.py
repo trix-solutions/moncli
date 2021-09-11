@@ -484,7 +484,6 @@ class Account(_Account):
         """
         
         plan_data = api.get_account(
-            *api.get_field_list(api.DEFAULT_PLAN_QUERY_FIELDS, 'plan',
-            *args,
-            api_key=self.__creds.api_key_v2))['plan']
+            *api.get_field_list(api.DEFAULT_PLAN_QUERY_FIELDS, 'plan', *args),
+            api_key=self.__creds.api_key_v2)['plan']
         return en.Plan(plan_data)
