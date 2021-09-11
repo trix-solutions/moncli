@@ -3,8 +3,9 @@ import json
 from schematics.transforms import blacklist
 from schematics.types import StringType
 
+from ... import entities as en
 from ...error import ColumnValueError
-from .. import entities as en
+from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
 
 class _ColumnValue(en.BaseColumn):
     """Base column value model"""
@@ -17,9 +18,6 @@ class _ColumnValue(en.BaseColumn):
 
     def __repr__(self):
         return str(self.to_primitive())
-
-    def format(self):
-        return self.to_primitive()
 
 
 class ColumnValue(_ColumnValue):
@@ -52,19 +50,19 @@ class ColumnValue(_ColumnValue):
 
     null_value = None
     read_only = False
-    is_simple = False
     allow_casts = ()
     native_type = None
     native_default = None
 
     def __init__(self, **kwargs):
         value = kwargs.pop('value', None)
-        super(ColumnValue, self).__init__(kwargs)
+        super().__init__(**kwargs)
         # Set seriaized configured null value if no value.
-        if value == self.null_value:
-            self._value = None
-        value = json.loads(value)
-        self._value = self._convert(value)
+        if value and value != self.null_value:
+            value = json.loads(value)
+            self._value = self._convert(value)
+        else:
+            self._value = self.native_default
 
     @property
     def value(self):
@@ -74,9 +72,10 @@ class ColumnValue(_ColumnValue):
     def value(self, value):
         if isinstance(value, self.allow_casts):
             self._value = self._cast(value)
-        elif isinstance(value, self.native_type):
+        elif value == self.native_default or isinstance(value, self.native_type):
             self._value = value
-        raise ColumnValueError('invalid_column_value', self.id, 'Unable to set value "{}" to column "{}".'.format(value, self.title))
+        else:
+            raise ColumnValueError('invalid_column_value', self.id, 'Unable to set value "{}" to column "{}".'.format(value, self.title))
 
     @property
     def settings(self):
@@ -89,9 +88,23 @@ class ColumnValue(_ColumnValue):
     def format(self):
         if self.read_only:
             raise ColumnValueError('readonly_column', self.id, 'Cannot format value for read-only column "{}".'.format(self.title))
+        if self.value == self.native_default:
+            return self.null_value
+        return self._format()
 
     def _convert(self, value):
         return value
 
     def _cast(self, value):
-        return value
+        return self.native_type(value)
+    
+    def _format(self):
+        return str(self.value)
+
+
+class SimpleNullValue(ColumnValue):
+    null_value = SIMPLE_NULL_VALUE
+
+
+class ComplexNullValue(ColumnValue):
+    null_value = COMPLEX_NULL_VALUE

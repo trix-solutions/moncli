@@ -142,7 +142,7 @@ class Board(_Board):
         if activity_logs and not self.__activity_logs:
             self.__activity_logs = [en.ActivityLog(log) for log in activity_logs]
         if columns and not self.__columns:
-            self.__columns = en.BaseColumnCollection([en.Column(column) for column in columns])
+            self.__columns = en.BaseColumnCollection([en.Column(**column) for column in columns])
         if groups and not self.__groups:
             self.__groups = [en.Group(creds=self.__creds, **group) for group in groups]
         if items and not self.__items:
@@ -668,7 +668,7 @@ class Board(_Board):
             api_key=self.__creds.api_key_v2,
             **kwargs)
 
-        column = en.Column(column_data)
+        column = en.Column(**column_data)
         self.__columns.append(column)
         return column
 
@@ -768,7 +768,7 @@ class Board(_Board):
             limit=1,
             **column_kwargs)[0]['columns']
 
-        return en.BaseColumnCollection([en.Column(data) for data in column_data])
+        return en.BaseColumnCollection([en.Column(**data) for data in column_data])
 
 
     def add_group(self, group_name: str, *args):
@@ -1338,7 +1338,7 @@ class Board(_Board):
             **kwargs)
 
         webhook_data['is_active'] = True
-        return en.objects.Webhook(webhook_data)
+        return en.Webhook(webhook_data)
 
 
     def delete_webhook(self, webhook_id: str, *args):
@@ -1370,7 +1370,7 @@ class Board(_Board):
             api_key=self.__creds.api_key_v2)
 
         webhook_data['is_active'] = False
-        return en.objects.Webhook(webhook_data)
+        return en.Webhook(webhook_data)
 
 
     def get_workspace(self, *args):
