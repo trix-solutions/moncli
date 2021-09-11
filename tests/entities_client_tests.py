@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
-from moncli import client, entities as en
+from moncli import client, entities as en, error as e
 from moncli.enums import BoardKind, NotificationTargetType, WorkspaceKind
 
 
@@ -40,14 +40,14 @@ def test_should_retrieve_a_list_of_boards(get_boards):
 
 
 
-@raises(en.client.NotEnoughGetBoardParameters)
+@raises(e.MondayClientError)
 def test_should_fail_to_retrieve_single_board_due_to_too_few_parameters():
 
     # Act
     client.get_board()
 
 
-@raises(en.client.TooManyGetBoardParameters)
+@raises(e.MondayClientError)
 def test_should_fail_to_retrieve_single_board_due_to_too_many_parameters():
 
     # Act
@@ -105,7 +105,7 @@ def test_should_archive_a_board(archive_board):
     eq_(board.id, id)
 
 
-@raises(en.client.AssetIdsRequired)
+@raises(e.MondayClientError)
 def test_should_fail_to_retrieve_assets_with_no_ids():
 
     # Act
