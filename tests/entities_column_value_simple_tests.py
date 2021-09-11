@@ -2,7 +2,7 @@ import json
 
 from nose.tools import ok_, eq_, raises
 
-from moncli import entities as en
+from moncli import entities as en, error as e
 from moncli.enums import *
 
 def test_should_return_empty_text_column_value():
@@ -79,6 +79,22 @@ def test_should_return_text_column_with_value_when_setting_an_float_value():
     column_type = ColumnType.text
     title = 'Text 5'
     text = 123.45
+    column_value = en.create_column_value(column_type, id=id, title=title)
+    
+    # Act
+    column_value.value = text
+
+    # Assert
+    eq_(column_value.value, str(text))
+
+@raises(e.ColumnValueError)
+def test_should_throw_exception_when_setting_an_invalid_value():
+
+    # Arrange
+    id = 'text_5'
+    column_type = ColumnType.text
+    title = 'Text 5'
+    text = {'value': 123.45}
     column_value = en.create_column_value(column_type, id=id, title=title)
     
     # Act
