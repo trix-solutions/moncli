@@ -1,49 +1,32 @@
-from .base import ColumnValue
+from .base import SimpleNullValue, ComplexNullValue
 
-class DateValue(ColumnValue):
+
+class DateValue(ComplexNullValue):
     """A date column value."""
-
-    def format(self):
-        """Format for column value update."""
-        pass
+    pass
         
 
-class DropdownValue(ColumnValue):
+class DropdownValue(ComplexNullValue):
     """A dropdown column value."""
-
-    def format(self):
-        """Format for column value update."""
-        pass
+    pass
 
 
-class EmailValue(ColumnValue):
+class EmailValue(ComplexNullValue):
     """An email column value."""
+    pass
 
-    def format(self):
-        """Format for column value update."""
-        pass
-
-class LinkValue(ColumnValue):
+class LinkValue(ComplexNullValue):
     """A link column value."""
-
-    def format(self):
-        """Format for column value update."""
-        pass
+    pass
 
 
-class LongTextValue(ColumnValue):
+class LongTextValue(ComplexNullValue):
     """A long text column value."""
-    
-    def format(self):
-        """Format for column value update."""
-        pass
+    pass
 
-class NumberValue(ColumnValue):
+
+class NumberValue(SimpleNullValue):
     """A number column value."""
-
-    def format(self):
-        """Format for column value update."""
-        pass
 
     def __isfloat(self, value):
         """Is the value a float."""
@@ -63,33 +46,20 @@ class NumberValue(ColumnValue):
         return a == b
 
 
-class PeopleValue(ColumnValue):
+class PeopleValue(ComplexNullValue):
     """A people column value."""
-    
-    def format(self):
-        """Format for column value update."""
-        pass
 
 
-class PhoneValue(ColumnValue):
+class PhoneValue(ComplexNullValue):
     """A phone column value."""
 
-    def format(self):
-        """Format for column value update."""
-        pass
 
-
-class StatusValue(ColumnValue):
+class StatusValue(ComplexNullValue):
     """A status column value."""
 
-    def format(self):
-        """Format for column value update."""
-        pass
 
-
-class TextValue(ColumnValue):
+class TextValue(SimpleNullValue):
     """A text column value."""
 
-    def format(self):
-        """Format for column value update."""
-        pass
+    native_type = str
+    allow_casts = (int, float)

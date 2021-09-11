@@ -446,7 +446,7 @@ def test_should_get_column_value_by_title(get_columns, create_board):
 
     # Arrange
     create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
-    get_columns.return_value = [en.Column({'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})]
+    get_columns.return_value = [en.Column(**{'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})]
     board = client.create_board('Test Board 1', BoardKind.public)
 
     # Act 

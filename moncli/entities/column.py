@@ -1,8 +1,3 @@
-import json, warnings
-
-from schematics.models import Model
-from schematics.types import StringType, BooleanType, IntType
-
 from .. import entities as en
 from ..enums import *
 
@@ -34,10 +29,11 @@ COLUMN_TYPE_MAPPINGS = {
 }
 
 
-class BaseColumn(Model):
-    id = StringType(required=True)
-    title = StringType()
-    settings_str = StringType()
+class BaseColumn(object):
+    def __init__(self, **kwargs):
+        self.id = kwargs.pop('id')
+        self.title = kwargs.pop('title', None)
+        self.settings_str = kwargs.pop('settings_str', None)
 
 
 class Column(BaseColumn):
@@ -65,9 +61,11 @@ class Column(BaseColumn):
             The column's width.
     """
 
-    archived = BooleanType()
-    type = StringType()
-    width = IntType()
+    def __init__(self, **kwargs):
+        self.archived = kwargs.pop('archived', None)
+        self.type = kwargs.pop('type', None)
+        self.settings_str = kwargs.pop('width', None)
+        super().__init__(**kwargs)
     
     def __repr__(self):
         return str(self.to_primitive())
