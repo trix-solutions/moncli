@@ -689,6 +689,90 @@ def test_should_return_empty_hour_column_value_when_hour_and_minute_set_to_null(
     eq_(format, {})
 
 
+def test_should_raise_location_error_for_invalid_latitude():
+    # Arrange 
+    
+    lat="89.123"
+    lng="12.154"
+    address = "Gia Pyramid complex"
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type, lat=lat, lng=lng , address=address)
+
+    # Act
+    column_value.lat = None
+    format =column_value.format()
+
+    # Assert
+    ok_(column_value, cv.COMPLEX_NULL_VALUE)
+    eq_(column_value.lng, None)
+    eq_(column_value.lat, None)
+    eq_(column_value.address, None)
+    eq_(format, {})
+
+    
+def test_should_raise_location_error_for_invalid_longitude():
+    # Arrange 
+    
+    lat="89.123"
+    lng="12.154"
+    address = "Gia Pyramid complex"
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type, lat=lat, lng=lng , address=address)
+
+    # Act
+    column_value.lng = None
+    format =column_value.format()
+
+    # Assert
+    ok_(column_value, cv.COMPLEX_NULL_VALUE)
+    eq_(column_value.lng, None)
+    eq_(column_value.lat, None)
+    eq_(column_value.address, None)
+    eq_(format, {})
+    
+def test_should_return_empty_location_value_if_latitude_or_longitude_not_provided():
+    # Arrange 
+    
+    lat="89.123"
+    lng="12.154"
+    address = "Gia Pyramid complex"
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type, lat=lat, lng=lng , address=address)
+
+    # Act
+    column_value.lat = None
+    column_value.lng = None
+    format =column_value.format()
+
+    # Assert
+    ok_(column_value, cv.COMPLEX_NULL_VALUE)
+    eq_(column_value.lng, None)
+    eq_(column_value.lat, None)
+    eq_(column_value.address, None)
+    eq_(format, {})
+
+    
+def test_should_return_location_value():
+    # Arrange 
+    
+    lat="89.123"
+    lng="12.154"
+    address = "Gia Pyramid complex"
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type, lat=lat, lng=lng , address=address)
+
+    # Act
+    format =column_value.format()
+
+    # Assert
+    ok_(column_value !=  None)
+    eq_(column_value.lng, lng)
+    eq_(column_value.lat, lat)
+    eq_(column_value.address, address)
+
+    
+
+
 def test_should_return_empty_link_column_value():
 
     # Arrange

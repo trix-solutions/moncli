@@ -21,6 +21,7 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.email: 'EmailValue',
     ColumnType.hour: 'HourValue',
     ColumnType.link: 'LinkValue',
+    ColumnType.location: 'LocationValue',
     ColumnType.long_text: 'LongTextValue',
     ColumnType.name: 'NameValue',
     ColumnType.numbers: 'NumberValue',
@@ -511,6 +512,67 @@ class LinkValue(ColumnValue):
         if self.url:
             return { 'url': self.url, 'text': self.url_text }
         return self.null_value
+
+
+class LocationValue(ColumnValue):
+    def __init__(self, **kwargs):
+        super(LocationValue,self).__init__(**kwargs)
+    
+    @property
+    def lat(self):
+        """ The latitude value"""
+        try:
+             return loads(self.value)['lat']
+        except KeyError:
+            return None
+        
+    @lat.setter
+    def lat(self, value):
+        latitude = self.value['lat']
+        if not latitude:
+            raise LocationError(latitude)
+        self.set_value(lat=latitude)
+   
+    @property
+    def lng(self):
+        """ The longitude value"""
+        try:
+             return loads(self.value)['lng']
+        except KeyError:
+            return None
+        
+    @lng.setter
+    def lng(self, value):
+        longitude = self.value['lng']
+        if not longitude:
+            raise LocationError(longitude)
+        self.set_value(lng=longitude)
+    
+    @property
+    def address(self):
+        """ The address value"""
+        try:
+             return loads(self.value)['address']
+        except KeyError:
+            return None
+        
+    @address.setter
+    def address(self, value):
+        address = self.value['address']
+        if not address:
+            raise LocationError(address)
+        self.set_value(address=address)
+
+    def format(self):
+        """Format for column value update."""
+        if self.lat and self.lng and self.address:
+            return { 'lat': self.lat, 'lng': self.lng, 'address': self.address }
+        if (self.lat == None ) or (self.lng == None):
+            return COMPLEX_NULL_VALUE
+
+
+    
+    
 
 
 class LongTextValue(ColumnValue):
@@ -1384,3 +1446,8 @@ class StatusLabelError(Exception):
 class ItemIdNotFound(Exception):
     def __init__(self, item_id: str):
         self.message = 'Unable to find item ID "{}".'.format(item_id)
+
+
+class LocationError(Exception):
+    def __init__(self, message: str):
+        self.message = message
