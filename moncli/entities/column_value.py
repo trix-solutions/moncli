@@ -55,6 +55,9 @@ class _ColumnValue(en.BaseColumn):
     def format(self):
         return self.to_primitive()
 
+    def simple_format(self):
+        raise SimpleValueFormatException(str(type(self)))
+
 
 class ColumnValue(_ColumnValue):
     """The value of an items column.
@@ -1307,6 +1310,11 @@ def validate_time(time_string: str):
         datetime.strptime(time_string, '%H:%M:%S')
     except ValueError:
         raise TimeFormatError(time_string)
+
+
+class SimpleValueFormatException(Exception):
+    def __init__(self, column_type: str):
+        self.message = 'Column value of type {} does not support simple string formatting.'.format(column_type)
 
 
 class ColumnValueSettingsError(Exception):

@@ -7,7 +7,6 @@ from moncli import client, entities as en
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
 
-
 @patch('moncli.api_v2.get_items')
 def test_item_should_get_board(get_items):
 
@@ -246,6 +245,58 @@ def test_should_change_column_title(get_column_values,change_column_title,get_it
     column = item.get_column_values()[0]
     new_title = "New Test title"
 
+
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@patch('moncli.api_v2.change_simple_column_value')
+def test_should_update_simple_column_value(change_simple_column_value, get_board, get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
+    change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
+    item = client.get_items()[0]
+    column_value = cv.create_column_value(
+        ColumnType.long_text, 
+        id= 'long_text', 
+        title= 'Description', 
+        text= "My previous keyword doesn't work", 
+        value= 'My previous keyword' )
+    
+
+    # Act
+    item = item.change_simple_column_value(column_value,get_board,get_items)
+    
+    # Assert 
+    ok_(item != None)
+    eq_(item.id, '1'),
+    eq_(item.name, 'Test Item 01')
+
+    
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@patch('moncli.api_v2.change_simple_column_value')
+def test_should_update_simple_column_value_for_status(change_simple_column_value, get_board, get_items):
+     # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
+    change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
+    item = client.get_items()[0]
+    column_value = cv.create_column_value(
+        ColumnType.status, 
+        id= 'long_text', 
+        title= 'Description', 
+        text= "My previous keyword doesn't work", 
+        value= json.dumps({"index":14,"post_id": None,"changed_at":"2020-05-30T19:51:09.981Z"}),
+        settings_str='{}' )
+
+    # Act
+    item = item.change_simple_column_value(column_value,get_board,get_items)
+    
+    # Assert 
+    ok_(item != None)
+    eq_(item.id, '1'),
+    eq_(item.name, 'Test Item 01')
+
     # Act
     column_value = column.change_column_title(column, title=new_title)
     print(column)
@@ -264,10 +315,11 @@ def test_item_should_change_multiple_column_values_with_dictionary(change_multip
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     change_multiple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
     item = client.get_items()[0]
+    print
 
     # Act
     item = item.change_multiple_column_values({'text_column_01': 'Hello, world!'})
-
+    
     # Assert 
     ok_(item != None)
     eq_(item.name, 'Test Item 01')
