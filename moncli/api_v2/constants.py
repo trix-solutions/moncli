@@ -261,7 +261,6 @@ QUERY_MAP = {
             'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
             'board_kind': ArgumentValueKind.Enum,
             'state': ArgumentValueKind.Enum,
-            'newest_first': ArgumentValueKind.Bool,
             'activity_logs': {
                 'limit': ArgumentValueKind.Int,
                 'page': ArgumentValueKind.Int,
@@ -288,6 +287,7 @@ QUERY_MAP = {
                 'limit': ArgumentValueKind.Int,
                 'page': ArgumentValueKind.Int
             },
+            'order_by': ArgumentValueKind.Enum,
             'updates': {
                 'limit': ArgumentValueKind.Int,
                 'page': ArgumentValueKind.Int
