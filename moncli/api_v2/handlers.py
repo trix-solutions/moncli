@@ -163,8 +163,8 @@ def get_boards(*args, **kwargs) -> List[Dict[str, Any]]:
                 The board's kind (public / private /share).
             state : `moncli.enums.State`
                 The state of the board (all / active / archived / deleted),; the default is active.
-            newest_first : `bool`
-                Get the recently created boards at the top of the list.        
+            order_by : `moncli.enums.BoardsOrderBy`
+                The order in which to retrieve your boards (created_at / used_at).       
     """
     
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=BOARDS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)  
