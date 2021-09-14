@@ -15,6 +15,7 @@ COLUMN_TYPE_MAPPINGS = {
     'email': ColumnType.email,
     'hour': ColumnType.hour,
     'link': ColumnType.link,
+    'location': ColumnType.location,
     'long-text': ColumnType.long_text,
     'name': ColumnType.name,
     'numeric': ColumnType.numbers,

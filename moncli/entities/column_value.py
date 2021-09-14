@@ -21,6 +21,7 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.email: 'EmailValue',
     ColumnType.hour: 'HourValue',
     ColumnType.link: 'LinkValue',
+    ColumnType.location: 'LocationValue',
     ColumnType.long_text: 'LongTextValue',
     ColumnType.name: 'NameValue',
     ColumnType.numbers: 'NumberValue',
@@ -511,6 +512,86 @@ class LinkValue(ColumnValue):
         if self.url:
             return { 'url': self.url, 'text': self.url_text }
         return self.null_value
+
+
+class LocationValue(ColumnValue):
+    """A Location column Value
+
+        Properties
+
+            lat: `str`
+                The latitude value
+            lng: `str`
+                The longitude value
+            address: `str`
+                The address value
+
+    """
+    def __init__(self, **kwargs):
+        super(LocationValue,self).__init__(**kwargs)
+    
+    @property
+    def lat(self):
+        """ The latitude value"""
+        try:
+             return loads(self.value)['lat']
+        except KeyError:
+            return None
+        
+    @lat.setter
+    def lat(self, latitude):
+        print("lat setter")
+        latitude = self.lat
+        if (float(latitude) > 90) or (float(latitude) > -90) :
+            return self.set_value(lat=latitude)
+        else:
+            raise LocationError(latitude)
+   
+    @property
+    def lng(self):
+        """ The longitude value"""
+        try:
+             return loads(self.value)['lng']
+        except KeyError:
+            return None
+        
+    @lng.setter
+    def lng(self, longitude):
+        print("lng setter")
+        longitude = self.lng
+        print(longitude)
+        if (float(longitude) < 180) or (float(longitude) > -180) :
+            return self.set_value(lng=longitude)
+        else:
+            raise LocationError(longitude)
+
+    
+    @property
+    def address(self):
+        """ The address value"""
+        try:
+             return loads(self.value)['address']
+        except KeyError:
+            return None
+        
+    @address.setter
+    def address(self, address):
+        if not address:
+            raise LocationError(address)
+        else:
+            return self.set_value(address=address)
+
+    def format(self):
+        """Format for column value update."""
+        print("format setter")
+        if not (self.lat   or self.lng):
+            return COMPLEX_NULL_VALUE
+        if self.lat and self.lng and self.address:
+            return { 'lat': self.lat, 'lng': self.lng, 'address': self.address }
+
+
+    
+    
 
 
 class LongTextValue(ColumnValue):
@@ -1384,3 +1465,8 @@ class StatusLabelError(Exception):
 class ItemIdNotFound(Exception):
     def __init__(self, item_id: str):
         self.message = 'Unable to find item ID "{}".'.format(item_id)
+
+
+class LocationError(Exception):
+    def __init__(self, message: str):
+        self.message = message
