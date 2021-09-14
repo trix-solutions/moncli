@@ -691,7 +691,7 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
     
 
-    def change_simple_column_value(self, id="",title="", value="", *args):
+    def change_simple_column_value(self, id=None,title=None, value=None, *args):
         """Change the item's column values using simple values.
 
             Parameters
@@ -737,9 +737,9 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
-        if not (id and title) :
+        if not id and  not title :
             raise NotEnoughChangeSimpleColumnValueParameters()
-        if (id and   title) :
+        if id and   title :
             raise TooManyChangeSimpleColumnValueParameters()
                 
         if id:

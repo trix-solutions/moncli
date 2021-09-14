@@ -1,4 +1,5 @@
 import json
+from moncli.api_v2.handlers import get_boards
 
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
@@ -233,35 +234,26 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_
     # Act
     item.change_column_value(column_value=[1,2,3,4,5])
 
-# @patch('moncli.api_v2.get_items')
-@patch.object(en.Item, 'get_boards')
-@patch('moncli.api_v2.change_simple_column_value')
+@patch('moncli.api_v2.get_items')
 @raises(en.item.TooManyChangeSimpleColumnValueParameters)
-def test_should_fail_to_change_simple_column_value_with_too_many_parameters(change_simple_column_value,get_boards):
+def test_should_fail_to_change_simple_column_value_with_too_many_parameters(get_items):
     # Arrange
-    # get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
-    get_boards.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
-    change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
-    board=client.get_boards()[0]
-    item = board.get_columns()[0]
-    column_value = item.get_columns()[0]
-    id = column_value.id
-    title = column_value.title
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    
+    item = client.get_items()[0]
+    id = "long_text"
+    title = "mock title"
 
     # Act 
 
     item.change_simple_column_value(id,title,value="change value")
 
 @patch('moncli.api_v2.get_items')
-@patch.object(en.Item, 'get_boards')
-@patch('moncli.api_v2.change_simple_column_value')
 @raises(en.item.NotEnoughChangeSimpleColumnValueParameters)
-def test_should_fail_to_change_column_value_from_too_few_parameters(change_simple_column_value,get_boards, get_items):
+def test_should_fail_to_change_column_value_from_too_few_parameters( get_items):
     # Arrange
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
-    get_boards.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     item = client.get_items()[0]
-    change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
     
 
     # Act 
@@ -269,24 +261,26 @@ def test_should_fail_to_change_column_value_from_too_few_parameters(change_simpl
     item.change_simple_column_value(value="change value")
 
 @patch('moncli.api_v2.get_items')
-@patch.object(en.Item, 'get_board')
+@patch.object(en.Item,'get_board')
+@patch.object(en.Item, 'get_column_values')
 @patch('moncli.api_v2.change_simple_column_value')
-def test_should_update_simple_column_value(change_simple_column_value, get_board, get_items):
+def test_should_update_simple_column_value(change_simple_column_value, get_column_values,get_board, get_items):
     # Arrange
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
-    item = client.get_items()[0]
     column_value = cv.create_column_value(
         ColumnType.long_text, 
         id= 'long_text', 
         title= 'Description', 
         text= "My previous keyword doesn't work", 
         value= 'My previous keyword' )
+    get_column_values.return_value = en.BaseColumnCollection([column_value])
+    item = client.get_items()[0]
     change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
     
 
     # Act
-    item = item.change_simple_column_value(id=column_value.id,title=None)
+    item = item.change_simple_column_value(id=column_value.id,title=None,value="new value")
     
     # Assert 
     ok_(item != None)
@@ -296,8 +290,9 @@ def test_should_update_simple_column_value(change_simple_column_value, get_board
     
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
+@patch.object(en.Item, 'get_column_values')
 @patch('moncli.api_v2.change_simple_column_value')
-def test_should_update_simple_column_value_for_status(change_simple_column_value, get_board, get_items):
+def test_should_update_simple_column_value_for_status(change_simple_column_value,get_column_values, get_board, get_items):
      # Arrange
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
@@ -309,10 +304,11 @@ def test_should_update_simple_column_value_for_status(change_simple_column_value
         text= "My previous keyword doesn't work", 
         value= json.dumps({"index":14,"post_id": None,"changed_at":"2020-05-30T19:51:09.981Z"}),
         settings_str='{}' )
+    get_column_values.return_value = en.BaseColumnCollection([column_value])
     change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
 
     # Act
-    item = item.change_simple_column_value(id=column_value.id,title=None)
+    item = item.change_simple_column_value(id=column_value.id,value="new value")
     
     # Assert 
     ok_(item != None)
