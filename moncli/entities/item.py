@@ -693,7 +693,7 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
     
 
-    def change_simple_column_value(self, id=None,title=None, value=None, *args):
+    def change_simple_column_value(self, id = None, title = None, value = None, *args):
         """Change the item's column values using simple values.
 
             Parameters
@@ -750,10 +750,10 @@ class Item(_Item):
             column_value = self.column_values[title]
         
         item_data = api.change_simple_column_value(
-            item_id=self.id,
-            board_id=self.board.id,
-            column_id=column_value.id,
-            value=value,
+            self.id,
+            self.board.id,
+            column_value.id,
+            value,
             *args,
             api_key=self.__creds.api_key_v2)        
 

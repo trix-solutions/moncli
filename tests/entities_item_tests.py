@@ -222,7 +222,6 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_b
     item.change_column_value(column_value='5')
 
 
-
 @patch('moncli.api_v2.get_items')
 @raises(en.InvalidColumnValue)
 def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_id(get_items):
@@ -233,6 +232,7 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_
 
     # Act
     item.change_column_value(column_value=[1,2,3,4,5])
+
 
 @patch('moncli.api_v2.get_items')
 @raises(en.item.TooManyChangeSimpleColumnValueParameters)
@@ -248,6 +248,7 @@ def test_should_fail_to_change_simple_column_value_with_too_many_parameters(get_
 
     item.change_simple_column_value(id,title,value="change value")
 
+
 @patch('moncli.api_v2.get_items')
 @raises(en.item.NotEnoughChangeSimpleColumnValueParameters)
 def test_should_fail_to_change_column_value_from_too_few_parameters( get_items):
@@ -260,11 +261,13 @@ def test_should_fail_to_change_column_value_from_too_few_parameters( get_items):
 
     item.change_simple_column_value(value="change value")
 
+
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item,'get_board')
 @patch.object(en.Item, 'get_column_values')
 @patch('moncli.api_v2.change_simple_column_value')
 def test_should_update_simple_column_value(change_simple_column_value, get_column_values,get_board, get_items):
+    
     # Arrange
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
@@ -277,7 +280,6 @@ def test_should_update_simple_column_value(change_simple_column_value, get_colum
     get_column_values.return_value = en.BaseColumnCollection([column_value])
     item = client.get_items()[0]
     change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
-    
 
     # Act
     item = item.change_simple_column_value(id=column_value.id,title=None,value="new value")
@@ -293,7 +295,8 @@ def test_should_update_simple_column_value(change_simple_column_value, get_colum
 @patch.object(en.Item, 'get_column_values')
 @patch('moncli.api_v2.change_simple_column_value')
 def test_should_update_simple_column_value_for_status(change_simple_column_value,get_column_values, get_board, get_items):
-     # Arrange
+    
+    # Arrange
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     item = client.get_items()[0]
@@ -314,8 +317,6 @@ def test_should_update_simple_column_value_for_status(change_simple_column_value
     ok_(item != None)
     eq_(item.id, '1'),
     eq_(item.name, 'Test Item 01')
-
-
 
 
 @patch('moncli.api_v2.get_items')
