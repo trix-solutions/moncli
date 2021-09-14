@@ -6,6 +6,10 @@ class BoardKind(Enum):
     share = 3
 
 
+class BoardsOrderBy(Enum):
+    created_at = 1
+    used_at = 2
+
 class ColumnType(Enum):
     auto_number = 1
     checkbox = 2
