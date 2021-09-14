@@ -522,46 +522,50 @@ class LocationValue(ColumnValue):
     def lat(self):
         """ The latitude value"""
         try:
-             return loads(self.value)['lat']
+            return loads(self.value)['lat']
         except KeyError:
-            return None
+            return self.value
         
     @lat.setter
-    def lat(self, value):
-        latitude = self.value['lat']
-        if not latitude:
+    def lat(self, latitude):
+        if latitude:
+            latitude = float(latitude)
+            if latitude >= -90 and latitude <= 90:
+                return self.set_value(lat=latitude)
+        else:
             raise LocationError(latitude)
-        self.set_value(lat=latitude)
+        
    
     @property
     def lng(self):
         """ The longitude value"""
         try:
-             return loads(self.value)['lng']
+            return loads(self.value)['lng']
         except KeyError:
-            return None
-        
+            return self.value
+
+
     @lng.setter
-    def lng(self, value):
-        longitude = self.value['lng']
-        if not longitude:
+    def lng(self, longitude):
+        if longitude:
+            longitude = float(longitude)
+            if longitude >= -180 and longitude <= 180:
+                return self.set_value(lat=longitude)
+        else:
             raise LocationError(longitude)
-        self.set_value(lng=longitude)
     
     @property
     def address(self):
         """ The address value"""
-        try:
-             return loads(self.value)['address']
-        except KeyError:
-            return None
+        if self.address:
+            return loads(self.value)['address']
+        
         
     @address.setter
-    def address(self, value):
-        address = self.value['address']
+    def address(self, address):
         if not address:
             raise LocationError(address)
-        self.set_value(address=address)
+        return self.set_value(address=address)
 
     def format(self):
         """Format for column value update."""

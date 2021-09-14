@@ -688,81 +688,75 @@ def test_should_return_empty_hour_column_value_when_hour_and_minute_set_to_null(
     eq_(column_value.minute, 0)
     eq_(format, {})
 
-
+@raises(cv.LocationError)
 def test_should_raise_location_error_for_invalid_latitude():
     # Arrange 
     
+    id="location_1"
+    title="Location"
     lat="89.123"
     lng="12.154"
-    address = "Gia Pyramid complex"
+    address = "Giza Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location
-    column_value = cv.create_column_value(column_type, lat=lat, lng=lng , address=address)
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
 
     # Act
-    column_value.lat = None
+    column_value.lat = "12321.121"
     format =column_value.format()
 
-    # Assert
-    ok_(column_value, cv.COMPLEX_NULL_VALUE)
-    eq_(column_value.lng, None)
-    eq_(column_value.lat, None)
-    eq_(column_value.address, None)
-    eq_(format, {})
-
-    
+@raises(cv.LocationError)   
 def test_should_raise_location_error_for_invalid_longitude():
     # Arrange 
     
+    id="location_1"
+    title="Location"
     lat="89.123"
     lng="12.154"
-    address = "Gia Pyramid complex"
+    address = "Giza Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location
-    column_value = cv.create_column_value(column_type, lat=lat, lng=lng , address=address)
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
 
     # Act
-    column_value.lng = None
+    column_value.lng = '1231.231'
     format =column_value.format()
+    print(format)
 
-    # Assert
-    ok_(column_value, cv.COMPLEX_NULL_VALUE)
-    eq_(column_value.lng, None)
-    eq_(column_value.lat, None)
-    eq_(column_value.address, None)
-    eq_(format, {})
-    
+
+@raises(cv.LocationError)   
 def test_should_return_empty_location_value_if_latitude_or_longitude_not_provided():
     # Arrange 
     
+    id="location_1"
+    title="Location"
     lat="89.123"
     lng="12.154"
-    address = "Gia Pyramid complex"
+    address = "Giza Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location
-    column_value = cv.create_column_value(column_type, lat=lat, lng=lng , address=address)
-
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
+    
     # Act
-    column_value.lat = None
+    column_value.lat = "50.10"
     column_value.lng = None
-    format =column_value.format()
-
-    # Assert
-    ok_(column_value, cv.COMPLEX_NULL_VALUE)
-    eq_(column_value.lng, None)
-    eq_(column_value.lat, None)
-    eq_(column_value.address, None)
-    eq_(format, {})
-
+    
     
 def test_should_return_location_value():
     # Arrange 
     
+    id="location_1"
+    title="Location"
     lat="89.123"
     lng="12.154"
-    address = "Gia Pyramid complex"
+    address = "Giza Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location
-    column_value = cv.create_column_value(column_type, lat=lat, lng=lng , address=address)
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
 
     # Act
     format =column_value.format()
+    print(format)
 
     # Assert
     ok_(column_value !=  None)
