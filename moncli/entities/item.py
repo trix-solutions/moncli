@@ -739,9 +739,9 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
-        if not id and  not title :
+        if not id and not title :
             raise NotEnoughChangeSimpleColumnValueParameters()
-        if id and   title :
+        if id and title :
             raise TooManyChangeSimpleColumnValueParameters()
                 
         if id:
