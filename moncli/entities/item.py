@@ -693,13 +693,15 @@ class Item(_Item):
         return Item(creds=self.__creds, **item_data)
     
 
-    def change_simple_column_value(self, column_value, *args):
+    def change_simple_column_value(self, id = None, title = None, value = None, *args):
         """Change the item's column values using simple values.
 
             Parameters
 
-                column_values : `moncli.entities.column_value.ColumnValue 
-                    The column value to update. 
+                id: str
+                    The id value of the column 
+                title: str 
+                    The title of the column
                 args : `tuple`
                     Optional item return fields.
 
@@ -737,15 +739,24 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
-
-        value = column_value.simple_format()
+        
+        if not id and not title :
+            raise NotEnoughChangeSimpleColumnValueParameters()
+        if id and title :
+            raise TooManyChangeSimpleColumnValueParameters()
+                
+        if id:
+            column_value = self.column_values[id]   
+        elif title:
+            column_value = self.column_values[title]
+        
         item_data = api.change_simple_column_value(
             self.id,
             self.board.id,
             column_value.id,
             value,
             *args,
-            api_key=self.__creds.api_key_v2)
+            api_key=self.__creds.api_key_v2)        
 
         return Item(creds=self.__creds, **item_data)
 
@@ -1418,3 +1429,11 @@ class ColumnValueRequired(Exception):
 class UpdateNotFound(Exception):
     def __init__(self, update_id: str):
         self.message = "Item does not contain update with ID '{}'.".format(update_id)
+
+class TooManyChangeSimpleColumnValueParameters(Exception):
+    def __init__(self):
+        self.message = "Unable to use both 'id' and 'title' when changing a simple column value"
+
+class NotEnoughChangeSimpleColumnValueParameters(Exception):
+    def __init__(self):
+        self.message = "Either 'id' or 'title' is required when changing a simple column value"
