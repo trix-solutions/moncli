@@ -233,20 +233,18 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_
     # Act
     item.change_column_value(column_value=[1,2,3,4,5])
 
-@patch('moncli.api_v2.get_items')
+# @patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_boards')
 @patch('moncli.api_v2.change_simple_column_value')
 @raises(en.item.TooManyChangeSimpleColumnValueParameters)
-def test_should_fail_to_change_simple_column_value_with_too_many_parameters(change_simple_column_value,  get_items):
+def test_should_fail_to_change_simple_column_value_with_too_many_parameters(change_simple_column_value,get_boards):
     # Arrange
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
-    item = client.get_items()[0]
-    column_value = cv.create_column_value(
-        ColumnType.long_text, 
-        id= 'long_text', 
-        title= 'Description', 
-        text= "My previous keyword doesn't work", 
-        value= 'My previous keyword' )
+    # get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    get_boards.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
+    board=client.get_boards()[0]
+    item = board.get_columns()[0]
+    column_value = item.get_columns()[0]
     id = column_value.id
     title = column_value.title
 
@@ -255,18 +253,14 @@ def test_should_fail_to_change_simple_column_value_with_too_many_parameters(chan
     item.change_simple_column_value(id,title,value="change value")
 
 @patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_boards')
 @patch('moncli.api_v2.change_simple_column_value')
 @raises(en.item.NotEnoughChangeSimpleColumnValueParameters)
-def test_should_fail_to_change_column_value_from_too_few_parameters(change_simple_column_value, get_items):
+def test_should_fail_to_change_column_value_from_too_few_parameters(change_simple_column_value,get_boards, get_items):
     # Arrange
     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    get_boards.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
     item = client.get_items()[0]
-    column_value = cv.create_column_value(
-        ColumnType.long_text, 
-        id= 'long_text', 
-        title= 'Description', 
-        text= "My previous keyword doesn't work", 
-        value= 'My previous keyword' )
     change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
     
 
