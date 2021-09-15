@@ -193,6 +193,8 @@ DEFAULT_USER_QUERY_FIELDS = [
     'is_admin',
     'is_guest',
     'is_pending',
+    'is_verified',
+    'is_view_only',
     'join_date',
     'location',
     'mobile_phone',
