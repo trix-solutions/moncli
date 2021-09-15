@@ -540,7 +540,6 @@ def test_item_should_clear_item_updates(clear_item_updates, get_items):
     eq_(len(updated_item.updates), 0)
 
 
-
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.add_file_to_column')
 def test_item_should_add_file(add_file_to_column, get_items):

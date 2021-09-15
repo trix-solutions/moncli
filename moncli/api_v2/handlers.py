@@ -504,8 +504,6 @@ def change_column_title(title: str, column_id: str, board_id: str, *args, **kwar
                 The column's title.
             type : `str`
                 The column's type.
-            column_type : `moncli.entities.ColumnType`
-                The column's type as an enum.
             width : `int`
                 The column's width.
             
