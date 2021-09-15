@@ -1931,6 +1931,8 @@ def get_users(*args, **kwargs):
                 Is the user a guest or not.
             is_pending : `bool`
                 Is the user a pending user.
+            is_verified: `bool`
+                Is the user is verified
             is_view_only : `bool`
                 Is the user a view only user or not.
             join_date : `str`
@@ -2055,6 +2057,8 @@ def get_me(*args, **kwargs):
                 Is the user a guest or not.
             is_pending : `bool`
                 Is the user a pending user.
+            is_verified: `bool`
+                Is the user is verified
             is_view_only : `bool`
                 Is the user a view only user or not.
             join_date : `str`
