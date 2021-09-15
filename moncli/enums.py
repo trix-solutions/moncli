@@ -78,6 +78,10 @@ class WebhookEventType(Enum):
     change_specific_column_value = 3
     create_update = 4
     incoming_notification = 5
+    create_subitem = 7
+    change_subitem_column_value = 8
+    change_subitem_name = 9
+    create_subitem_update = 10
 
 class WorkspaceKind(Enum):
     open = 1
