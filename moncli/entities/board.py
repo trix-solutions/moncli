@@ -85,6 +85,8 @@ class Board(_Board):
                 Remove subscribers from the board.
             add_column : `moncli.entities.Column`
                 Create a new column in board.
+            change_column_title : 'moncli.entities.board'
+                Change title of a column.
             get_columns : `list[moncli.entities.Column]`
                 Get the board's visible columns.
             add_group : `moncli.entities.Group`
@@ -663,6 +665,52 @@ class Board(_Board):
         column = en.Column(column_data)
         self.__columns.append(column)
         return column
+
+    
+
+    def change_column_title(self,  title: 'str', column, *args):
+        """Change title of a column.
+
+           Parameters
+
+                column : 'str'
+                    The column object to be updated.
+                title : 'str'
+                    The new title of the column.
+                args : 'tuple'
+                    The collection of item return fields.
+
+            Returns
+
+                column :  'moncli.entities.column.Column'
+                    The updated column title.
+
+            Return Fields
+
+                archived : `bool`
+                    Is the column archived or not.
+                id : `str`
+                    The column's unique identifier.
+                pos : `str`
+                    The column's position in the board.
+                settings_str : `str`
+                    The column's settings in a string form.
+                title : `str`
+                    The column's title.
+                type : `str`
+                    The column's type.
+                width : `int`
+                    The column's width.
+        """
+        
+        column_data = api.change_column_title(
+            title,
+            column.id,
+            self.id,
+            *args,
+            api_key=self.__creds.api_key_v2)
+        
+        return en.Column(column_data)
 
    
     def get_columns(self, *args, **kwargs):

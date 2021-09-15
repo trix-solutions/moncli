@@ -338,6 +338,7 @@ def test_item_should_change_multiple_column_values_with_dictionary(change_multip
     eq_(item.name, 'Test Item 01')
 
 
+
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 @patch('moncli.api_v2.change_multiple_column_value')
@@ -537,7 +538,6 @@ def test_item_should_clear_item_updates(clear_item_updates, get_items):
     ok_(updated_item)
     eq_(updated_item.id, id)
     eq_(len(updated_item.updates), 0)
-
 
 
 @patch('moncli.api_v2.get_items')
