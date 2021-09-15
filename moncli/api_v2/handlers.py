@@ -468,12 +468,12 @@ def create_column(board_id: str, title: str, column_type: ColumnType, *args, **k
 
 
 def change_column_title(title: str, column_id: str, board_id: str, *args, **kwargs):
-    """Change an item's column value.
+    """Change an item's column title.
 
         Parameters
         
             title : `str`
-                The The new title of the column.
+                The new title of the column.
             column_id : `str`
                 The column's unique identifier.
             board_id : `str`
