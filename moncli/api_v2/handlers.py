@@ -490,34 +490,26 @@ def change_column_title(title: str, column_id: str, board_id: str, *args, **kwar
 
         Return Fields
         
-            assets : `list[moncli.entities.Asset]`
-                The item's assets/files.
-            board : `moncli.entities.Board`
-                The board that contains this item.
-            column_values : `list[moncli.entities.ColumnValue]`
-                The item's column values.
-            created_at : `str`
-                The item's create date.
-            creator : `moncli.entities.User`
-                The item's creator.
-            creator_id : `str`
-                The item's unique identifier.
-            group : `moncli.entities.Group`
-                The group that contains this item.
+            archived : `bool`
+                Is the column archived or not.
             id : `str`
-                The item's unique identifier.
-            name : `str`
-                The item's name.
-            state : `str`
-                The board's state (all / active / archived / deleted)
-            subscriber : `moncli.entities.User`
-                The pulse's subscribers.
-            updated_at : `str`
-                The item's last update date.
-            updates : `moncli.entities.Update`
-                The item's updates.
-        
-         Optional Arguments
+                The column's unique identifier.
+            pos : `str`
+                The column's position in the board. 
+            settings_str : `str`
+                The column's settings in a string form.
+            settings : `moncli.entities.Settings`
+                The settings in entity form (status / dropdown)
+            title : `str`
+                The column's title.
+            type : `str`
+                The column's type.
+            column_type : `moncli.entities.ColumnType`
+                The column's type as an enum.
+            width : `int`
+                The column's width.
+            
+        Optional Arguments
 
             api_key : `str`
                 The monday.com v2 API user key.
