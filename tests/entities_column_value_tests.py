@@ -694,16 +694,15 @@ def test_should_raise_location_error_for_invalid_latitude():
     
     id="location_1"
     title="Location"
-    lat="89.123"
-    lng="12.154"
+    lat=89.123
+    lng=12.154
     address = "Giza Pyramid complex"
     location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location
     column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
 
     # Act
-    column_value.lat = "12321.121"
-    format =column_value.format()
+    column_value.lat = 12321.121
 
 @raises(cv.LocationError)   
 def test_should_raise_location_error_for_invalid_longitude():
@@ -711,15 +710,15 @@ def test_should_raise_location_error_for_invalid_longitude():
     
     id="location_1"
     title="Location"
-    lat="89.123"
-    lng="12.154"
+    lat=89.123
+    lng=12.154
     address = "Giza Pyramid complex"
     location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location
     column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
 
     # Act
-    column_value.lng = '1231.231'
+    column_value.lng = 1231.231
     format =column_value.format()
     print(format)
 
@@ -730,16 +729,16 @@ def test_should_return_empty_location_value_if_latitude_or_longitude_not_provide
     
     id="location_1"
     title="Location"
-    lat="89.123"
-    lng="12.154"
+    lat=89.123
+    lng=12.154
     address = "Giza Pyramid complex"
     location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location
     column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
     
     # Act
-    column_value.lat = "912.21"
-    column_value.lng = "2312.23"
+    column_value.lat = 912.21
+    column_value.lng = 2312.23
     format =column_value.format()
     print(format)
     
@@ -750,8 +749,8 @@ def test_should_return_location_value():
     
     id="location_1"
     title="Location"
-    lat="89.123"
-    lng="12.154"
+    lat=89.123
+    lng=12.154
     address = "Giza Pyramid complex"
     location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location

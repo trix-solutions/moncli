@@ -515,6 +515,17 @@ class LinkValue(ColumnValue):
 
 
 class LocationValue(ColumnValue):
+    """A link column value.
+
+    Properties
+
+        lat : `float`
+            The latitude value.
+        lng : `float`
+            The longitude value.
+        address: `str`
+            The address value
+    """
     def __init__(self, **kwargs):
         super(LocationValue,self).__init__(**kwargs)
     
@@ -528,8 +539,6 @@ class LocationValue(ColumnValue):
         
     @lat.setter
     def lat(self, latitude):
-        # if latitude:
-        latitude = float(latitude)
         if latitude >= -90 and latitude <= 90:
             print("latitude = ",latitude)
             return self.set_value(lat=latitude)
@@ -548,11 +557,7 @@ class LocationValue(ColumnValue):
 
     @lng.setter
     def lng(self, longitude):
-        print("longitude = ",longitude)
-        # if longitude:
-        longitude = float(longitude)
         if longitude >= -180 and longitude <= 180:
-            print("longitude = ",longitude)
             return self.set_value(lng=longitude)
         else:
             raise LocationError(longitude)
