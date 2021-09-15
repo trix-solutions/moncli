@@ -738,8 +738,11 @@ def test_should_return_empty_location_value_if_latitude_or_longitude_not_provide
     column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
     
     # Act
-    column_value.lat = "50.10"
-    column_value.lng = None
+    column_value.lat = "912.21"
+    column_value.lng = "2312.23"
+    format =column_value.format()
+    print(format)
+    
     
     
 def test_should_return_location_value():

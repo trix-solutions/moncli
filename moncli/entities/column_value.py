@@ -528,10 +528,11 @@ class LocationValue(ColumnValue):
         
     @lat.setter
     def lat(self, latitude):
-        if latitude:
-            latitude = float(latitude)
-            if latitude >= -90 and latitude <= 90:
-                return self.set_value(lat=latitude)
+        # if latitude:
+        latitude = float(latitude)
+        if latitude >= -90 and latitude <= 90:
+            print("latitude = ",latitude)
+            return self.set_value(lat=latitude)
         else:
             raise LocationError(latitude)
         
@@ -547,18 +548,19 @@ class LocationValue(ColumnValue):
 
     @lng.setter
     def lng(self, longitude):
-        if longitude:
-            longitude = float(longitude)
-            if longitude >= -180 and longitude <= 180:
-                return self.set_value(lat=longitude)
+        print("longitude = ",longitude)
+        # if longitude:
+        longitude = float(longitude)
+        if longitude >= -180 and longitude <= 180:
+            print("longitude = ",longitude)
+            return self.set_value(lng=longitude)
         else:
             raise LocationError(longitude)
     
     @property
     def address(self):
         """ The address value"""
-        if self.address:
-            return loads(self.value)['address']
+        return loads(self.value)['address']
         
         
     @address.setter
