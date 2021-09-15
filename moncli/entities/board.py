@@ -698,7 +698,6 @@ class Board(_Board):
                 width : `int`
                     The column's width.
         """
-
         column_data = api.change_column_title(
             title,
             column.id,

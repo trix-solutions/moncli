@@ -5,12 +5,11 @@ api_key_v2="eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjEyMzc0MTI4NCwidWlkIjoyNDUwMTE4NiwiaWF
 moncli.api.api_key = api_key_v2
 moncli.api.connection_timeout= 30
 
-boards= client.get_boards()
-print(boards[0])
-columns = boards[0].get_columns()
+boards= client.get_boards()[0]
+print(boards)
+columns = boards.get_columns()[0]
 
 
-print(columns[0])
+print(columns)
 # print(columns)
-x = boards[0].change_column_title('Newest Title 3', columns[0])
-print(type(x))
+x = boards.change_column_title(title='no title 3', column=columns)

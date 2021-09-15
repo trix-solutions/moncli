@@ -151,33 +151,26 @@ def test_should_add_new_column(create_column, create_board):
     eq_(column.column_type, column_type)
 
 
-@patch('moncli.api_v2.change_column_title')
-@patch(en.Board,'get_columns')
+@patch.object(en.Board, 'get_columns')
 @patch('moncli.api_v2.get_boards')
-def test_should_change_column_title(get_boards,get_columns, change_column_title, ):
+def test_should_change_column_title(get_boards,get_columns ):
 
     # Arrange
-    title = 'Text Column 1'
+
+    title = 'new title'
     get_boards.return_value = [{'id': '1', 'name': 'Test Board 1'}]
     get_columns.return_value = [en.Column({'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})]
-    change_column_title.return_value = {'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'}
     board = client.get_boards()[0]
     column = board.get_columns()[0]
 
     # Act 
-    title_value = board.change_column_title(title = title, column=column)
 
+    title_value = board.change_column_title(title = title, column=column)
     # Assert
+
     ok_(column != None)
     eq_(title_value.title, title)
     eq_(title_value.id, column.id)
-
-
-
-
-
-
-
 
 
 @patch('moncli.api_v2.create_board')
