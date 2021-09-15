@@ -13,6 +13,7 @@ ADD_SUBSCRIBERS_TO_BOARD = 'add_subscribers_to_board'
 DELETE_SUBSCRIBERS_FROM_BOARD = 'delete_subscribers_from_board'
 # Columns
 CREATE_COLUMN = 'create_column'
+CHANGE_COLUMN_TITLE = 'change_column_title'
 CHANGE_COLUMN_VALUE = 'change_column_value'
 CHANGE_SIMPLE_COLUMN_VALUE = 'change_simple_column_value'
 CHANGE_MULTIPLE_COLUMN_VALUES = 'change_multiple_column_values'
@@ -261,7 +262,6 @@ QUERY_MAP = {
             'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
             'board_kind': ArgumentValueKind.Enum,
             'state': ArgumentValueKind.Enum,
-            'newest_first': ArgumentValueKind.Bool,
             'activity_logs': {
                 'limit': ArgumentValueKind.Int,
                 'page': ArgumentValueKind.Int,
@@ -288,6 +288,7 @@ QUERY_MAP = {
                 'limit': ArgumentValueKind.Int,
                 'page': ArgumentValueKind.Int
             },
+            'order_by': ArgumentValueKind.Enum,
             'updates': {
                 'limit': ArgumentValueKind.Int,
                 'page': ArgumentValueKind.Int
@@ -318,6 +319,7 @@ QUERY_MAP = {
         {
             'defaults': ArgumentValueKind.Json
         }),
+    CHANGE_COLUMN_TITLE: (DEFAULT_COLUMN_QUERY_FIELDS, {}),
     CHANGE_COLUMN_VALUE: (DEFAULT_ITEM_QUERY_FIELDS, {}),
     CHANGE_SIMPLE_COLUMN_VALUE: (DEFAULT_ITEM_QUERY_FIELDS, {}),
     CHANGE_MULTIPLE_COLUMN_VALUES: (DEFAULT_ITEM_QUERY_FIELDS, {}),

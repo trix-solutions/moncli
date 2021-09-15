@@ -163,8 +163,8 @@ def get_boards(*args, **kwargs) -> List[Dict[str, Any]]:
                 The board's kind (public / private /share).
             state : `moncli.enums.State`
                 The state of the board (all / active / archived / deleted),; the default is active.
-            newest_first : `bool`
-                Get the recently created boards at the top of the list.        
+            order_by : `moncli.enums.BoardsOrderBy`
+                The order in which to retrieve your boards (created_at / used_at).       
     """
     
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=BOARDS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)  
@@ -465,6 +465,58 @@ def create_column(board_id: str, title: str, column_type: ColumnType, *args, **k
     kwargs['title'] = gql.StringValue(title)
     kwargs['column_type'] = gql.EnumValue(column_type)
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_COLUMN, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+
+def change_column_title(title: str, column_id: str, board_id: str, *args, **kwargs):
+    """Change an item's column title.
+
+        Parameters
+        
+            title : `str`
+                The new title of the column.
+            column_id : `str`
+                The column's unique identifier.
+            board_id : `str`
+                The board's unique identifier.
+            args : `tuple`
+                The list of item return fields.
+            kwargs : `dict`
+                Optional arguments for changing a column value.
+
+        Returns
+            
+            data : `dict`
+                A monday.com column in item form.
+
+        Return Fields
+        
+            archived : `bool`
+                Is the column archived or not.
+            id : `str`
+                The column's unique identifier.
+            pos : `str`
+                The column's position in the board. 
+            settings_str : `str`
+                The column's settings in a string form.
+            settings : `moncli.entities.Settings`
+                The settings in entity form (status / dropdown)
+            title : `str`
+                The column's title.
+            type : `str`
+                The column's type.
+            width : `int`
+                The column's width.
+            
+        Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
+    """
+    
+    kwargs['column_id'] = gql.StringValue(column_id)
+    kwargs['board_id'] = gql.IntValue(board_id)
+    kwargs['title'] = gql.StringValue(title)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CHANGE_COLUMN_TITLE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
 def change_column_value(item_id: str, column_id: str, board_id: str, value: str, *args, **kwargs):

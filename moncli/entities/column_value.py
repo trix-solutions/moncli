@@ -515,16 +515,17 @@ class LinkValue(ColumnValue):
 
 
 class LocationValue(ColumnValue):
-    """A link column value.
+    """A Location column Value
 
-    Properties
+        Properties
 
-        lat : `float`
-            The latitude value.
-        lng : `float`
-            The longitude value.
-        address: `str`
-            The address value
+            lat: `str`
+                The latitude value
+            lng: `str`
+                The longitude value
+            address: `str`
+                The address value
+
     """
     def __init__(self, **kwargs):
         super(LocationValue,self).__init__(**kwargs)
@@ -580,10 +581,6 @@ class LocationValue(ColumnValue):
             return { 'lat': self.lat, 'lng': self.lng, 'address': self.address }
         if (self.lat == None ) or (self.lng == None):
             return COMPLEX_NULL_VALUE
-
-
-    
-    
 
 
 class LongTextValue(ColumnValue):
