@@ -618,59 +618,7 @@ class Item(_Item):
 
         return self.column_values[id]
     
-    def change_column_title(self,column, title: str, *args):
-        """Get an item's column value by ID or title.
-
-            Parameters
-
-                column : `moncli.entities.column.Column`
-                    The column value to update.
-                title : `str`
-                    The The new title of the column.  
-                args : `tuple`
-                    Optional item return fields.
-
-            Returns
-
-                item : `moncli.entities.Item`
-                    The updated item.
-
-            Return Fields
-
-                assets : `list[moncli.entities.asset.Asset]`
-                    The item's assets/files.
-                board : `moncli.entities.board.Board`
-                    The board that contains this item.
-                column_values : `list[moncli.entities.column_value.ColumnValue]`
-                    The item's column values.
-                created_at : `str`
-                    The item's create date.
-                creator : `moncli.entities.user.User`
-                    The item's creator.
-                creator_id : `str`
-                    The item's unique identifier.
-                group : `moncli.entities.group.Group`
-                    The group that contains this item.
-                id : `str`
-                    The item's unique identifier.
-                name : `str`
-                    The item's name.
-                state : `str`
-                    The board's state (all / active / archived / deleted)
-                subscriber : `moncli.entities.user.User`
-                    The pulse's subscribers.
-                updated_at : `str`
-                    The item's last update date.
-                updates : `moncli.entities.update.Update`
-                    The item's updates.
-        """        
-        item_data = api.change_column_title(
-            title,
-            board_id=self.id,
-            column_id=column.id,
-            *args,
-            api_key=self.__creds.api_key_v2)
-        return Item(creds=self.__creds, **item_data)
+    
 
     def change_column_value(self, column_value = None, get_column_values: bool = None, *args):
         """Get an item's column value by ID or title.
