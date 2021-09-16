@@ -541,7 +541,7 @@ class LocationValue(ColumnValue):
     @lat.setter
     def lat(self, latitude):
         try:
-            float(latitude)
+            latitude = float(latitude)
             if latitude >= -90 and latitude <= 90:
                 return self.set_value(lat=latitude)
             else:
@@ -563,7 +563,7 @@ class LocationValue(ColumnValue):
     @lng.setter
     def lng(self, longitude):
         try: 
-            float(longitude) 
+            longitude = float(longitude) 
             if longitude >= -180 and longitude <= 180:
                 return self.set_value(lng=longitude)
             else:

@@ -704,6 +704,7 @@ def test_should_raise_location_error_for_invalid_latitude():
     # Act
     column_value.lat = 12321.121
 
+
 @raises(cv.LocationError)   
 def test_should_raise_location_error_for_invalid_longitude():
     # Arrange 
@@ -719,10 +720,8 @@ def test_should_raise_location_error_for_invalid_longitude():
 
     # Act
     column_value.lng = 1231.231
-    format =column_value.format()
 
-
-@raises(cv.LocationError)   
+  
 def test_should_return_empty_location_value_if_latitude_or_longitude_not_provided():
     # Arrange 
     
@@ -764,9 +763,8 @@ def test_should_return_location_value():
     eq_(column_value.lat, lat)
     eq_(column_value.address, address)
 
-    
 
-
+@raises(cv.LocationError)
 def test_should_raise_location_error_for_invalid_latitude():
     # Arrange 
     
@@ -787,7 +785,8 @@ def test_should_raise_location_error_for_invalid_latitude():
     # Assert
     ok_(format, cv.COMPLEX_NULL_VALUE)
 
-    
+
+@raises(cv.LocationError)
 def test_should_raise_location_error_for_invalid_longitude():
     # Arrange 
     
@@ -802,7 +801,6 @@ def test_should_raise_location_error_for_invalid_longitude():
 
     # Act
     column_value.lng = "12321"
-    format = column_value.format()
 
     # Assert
     eq_(format, cv.COMPLEX_NULL_VALUE)
@@ -813,18 +811,18 @@ def test_should_return_empty_location_value_if_latitude_or_longitude_not_provide
     
     id="location_1"
     title="Location"
-    lat=""
-    lng=""
+    lat=None
+    lng=None
     address = "Gia Pyramid complex"
     location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location
     column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
 
     # Act
-    format =column_value.format()
+    format = column_value.format()
 
     # Assert
-    ok_(column_value, cv.COMPLEX_NULL_VALUE)
+    eq_(format, cv.COMPLEX_NULL_VALUE)
 
     
 def test_should_return_location_value():
@@ -832,8 +830,8 @@ def test_should_return_location_value():
     
     id="location_1"
     title="Location"
-    lat="89.123"
-    lng="12.154"
+    lat=89.123
+    lng=12.154
     address = "Gia Pyramid complex"
     location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
     column_type=ColumnType.location
@@ -844,7 +842,7 @@ def test_should_return_location_value():
     format = str(column_value.format())
 
     # Assert
-    ok_(column_value !=  None)
+    ok_(column_value != None)
     eq_(column_value.lng, lng)
     eq_(column_value.lat, lat)
     eq_(column_value.address, address)
