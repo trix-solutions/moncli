@@ -265,6 +265,8 @@ class MondayClient():
                     The board's kind (public / private / share)
                 state : `moncli.enums.State`
                     The state of the board (all / active / archived / deleted), the default is active.
+                order_by : `moncli.enums.BoardsOrderBy`
+                    The order in which to retrieve your boards (created_at / used_at). 
         """
 
         # Add columns to board if column_values are asked for.
@@ -1035,6 +1037,8 @@ class MondayClient():
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
@@ -1162,6 +1166,8 @@ class MondayClient():
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
@@ -1324,6 +1330,8 @@ class MondayClient():
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
@@ -1403,6 +1411,8 @@ class MondayClient():
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
