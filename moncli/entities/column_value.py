@@ -534,64 +534,63 @@ class LocationValue(ColumnValue):
     def lat(self):
         """ The latitude value"""
         try:
-             return loads(self.value)['lat']
+            return loads(self.value)['lat']
         except KeyError:
-            return None
+            return self.value
         
     @lat.setter
     def lat(self, latitude):
-        print("lat setter")
-        latitude = self.lat
-        if (float(latitude) > 90) or (float(latitude) > -90) :
+        try:
+            latitude = float(latitude)
+            if latitude >= -90 and latitude <= 90:
+                return self.set_value(lat=latitude)
+            else:
+                raise LocationError("Latitude must be between -90 and 90")
+        except TypeError:
+            if latitude:
+                raise LocationError("Invalid Location")
             return self.set_value(lat=latitude)
-        else:
-            raise LocationError(latitude)
    
     @property
     def lng(self):
         """ The longitude value"""
         try:
-             return loads(self.value)['lng']
+            return loads(self.value)['lng']
         except KeyError:
-            return None
-        
+            return self.value
+
+
     @lng.setter
     def lng(self, longitude):
-        print("lng setter")
-        longitude = self.lng
-        print(longitude)
-        if (float(longitude) < 180) or (float(longitude) > -180) :
+        try: 
+            longitude = float(longitude) 
+            if longitude >= -180 and longitude <= 180:
+                return self.set_value(lng=longitude)
+            else:
+                raise LocationError("Longitude must be between -180 and 180") 
+        except TypeError: 
+            if longitude:  
+                raise LocationError("Invalid Longitude")
             return self.set_value(lng=longitude)
-        else:
-            raise LocationError(longitude)
-
     
     @property
     def address(self):
         """ The address value"""
-        try:
-             return loads(self.value)['address']
-        except KeyError:
-            return None
+        return loads(self.value)['address']
+        
         
     @address.setter
     def address(self, address):
         if not address:
             raise LocationError(address)
-        else:
-            return self.set_value(address=address)
+        return self.set_value(address=address)
 
     def format(self):
         """Format for column value update."""
-        print("format setter")
-        if not (self.lat   or self.lng):
-            return COMPLEX_NULL_VALUE
         if self.lat and self.lng and self.address:
             return { 'lat': self.lat, 'lng': self.lng, 'address': self.address }
-
-
-    
-    
+        if (self.lat == None ) or (self.lng == None):
+            return COMPLEX_NULL_VALUE
 
 
 class LongTextValue(ColumnValue):
