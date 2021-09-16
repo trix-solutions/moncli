@@ -12,6 +12,7 @@ COLUMN_TYPE_MAPPINGS = {
     'country': ColumnType.country,
     'date': ColumnType.date,
     'dropdown': ColumnType.dropdown,
+    'dependency': ColumnType.dependency,
     'email': ColumnType.email,
     'hour': ColumnType.hour,
     'link': ColumnType.link,

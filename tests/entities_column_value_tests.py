@@ -471,6 +471,62 @@ def test_should_remove_label_to_dropdown_column_value():
     eq_(format, {})
     
 
+def test_should_create_empty_dependency_column():
+    
+   # Arrange
+    
+    column_type = ColumnType.dependency
+
+    # Act
+    column_value = cv.create_column_value(column_type)
+
+    # Assert 
+    ok_(column_value)
+    eq_(column_value.item_ids, [])
+
+
+def test_should_add_item_id_empty_dependency_column():
+    
+    # Arrange
+    column_type = ColumnType.dependency
+    column_value = cv.create_column_value(column_type)
+
+    # Act
+    column_value.add_item("12345")
+    format = column_value.format()
+    
+    # Assert
+    ok_(format != cv.COMPLEX_NULL_VALUE)
+    eq_(format, {'item_ids': [12345]})
+
+
+@raises(cv.ItemIdNotFound)
+def test_should_raise_error_when_removing_id_from_dependency_column():
+    
+    # Arrange
+    column_type = ColumnType.dependency
+    column_value = cv.create_column_value(column_type)
+
+    # Act
+    column_value.remove_item("12345678")
+
+
+def test_should_remove_id_from_dependency_column():
+    
+    # Arrange
+    column_type = ColumnType.dependency
+    column_value = cv.create_column_value(column_type)
+
+    # Act
+    column_value.add_item("12345678")
+    column_value.remove_item("12345678")
+    format = column_value.format()
+
+    # Assert
+    ok_(format != None)
+    eq_(format,{'item_ids': []})
+
+
 def test_should_return_empty_email_column_value():
 
     # Arrange
