@@ -547,8 +547,9 @@ class LocationValue(ColumnValue):
             else:
                 raise LocationError("Latitude must be between -90 and 90")
         except TypeError:
-            if not latitude:
+            if latitude:
                 raise LocationError("Invalid Location")
+            return self.set_value(lat=latitude)
    
     @property
     def lng(self):
@@ -568,9 +569,9 @@ class LocationValue(ColumnValue):
             else:
                 raise LocationError("Longitude must be between -180 and 180") 
         except TypeError: 
-            if not longitude:  
+            if longitude:  
                 raise LocationError("Invalid Longitude")
-            
+            return self.set_value(lng=longitude)
     
     @property
     def address(self):
