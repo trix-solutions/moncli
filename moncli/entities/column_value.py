@@ -324,7 +324,7 @@ class DependencyValue(ColumnValue):
     def format(self):
         ids = self.item_ids
         """Format for column value update."""
-        return {'linkedPulseIds': [{'linkedPulseId': str(id)} for id in ids]}
+        return {'item_ids': [int(id) for id in self.item_ids]}
 
 class DropdownValue(ColumnValue):
     """A dropdown column value.
