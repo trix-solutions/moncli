@@ -471,6 +471,62 @@ def test_should_remove_label_to_dropdown_column_value():
     eq_(format, {})
     
 
+def test_should_create_empty_dependency_column():
+    
+   # Arrange
+    
+    column_type = ColumnType.dependency
+
+    # Act
+    column_value = cv.create_column_value(column_type)
+
+    # Assert 
+    ok_(column_value)
+    eq_(column_value.item_ids, [])
+
+
+def test_should_add_item_id_empty_dependency_column():
+    
+    # Arrange
+    column_type = ColumnType.dependency
+    column_value = cv.create_column_value(column_type)
+
+    # Act
+    column_value.add_item("12345")
+    format = column_value.format()
+    
+    # Assert
+    ok_(format != cv.COMPLEX_NULL_VALUE)
+    eq_(format, {'item_ids': [12345]})
+
+
+@raises(cv.ItemIdNotFound)
+def test_should_raise_error_when_removing_id_from_dependency_column():
+    
+    # Arrange
+    column_type = ColumnType.dependency
+    column_value = cv.create_column_value(column_type)
+
+    # Act
+    column_value.remove_item("12345678")
+
+
+def test_should_remove_id_from_dependency_column():
+    
+    # Arrange
+    column_type = ColumnType.dependency
+    column_value = cv.create_column_value(column_type)
+
+    # Act
+    column_value.add_item("12345678")
+    column_value.remove_item("12345678")
+    format = column_value.format()
+
+    # Assert
+    ok_(format != None)
+    eq_(format,{'item_ids': []})
+
+
 def test_should_return_empty_email_column_value():
 
     # Arrange
@@ -687,6 +743,165 @@ def test_should_return_empty_hour_column_value_when_hour_and_minute_set_to_null(
     eq_(column_value.hour, None)
     eq_(column_value.minute, 0)
     eq_(format, {})
+
+@raises(cv.LocationError)
+def test_should_raise_location_error_for_invalid_latitude():
+    # Arrange 
+    
+    id="location_1"
+    title="Location"
+    lat=89.123
+    lng=12.154
+    address = "Giza Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
+
+    # Act
+    column_value.lat = 12321.121
+
+
+@raises(cv.LocationError)   
+def test_should_raise_location_error_for_invalid_longitude():
+    # Arrange 
+    
+    id="location_1"
+    title="Location"
+    lat=89.123
+    lng=12.154
+    address = "Giza Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
+
+    # Act
+    column_value.lng = 1231.231
+
+  
+def test_should_return_empty_location_value_if_latitude_or_longitude_not_provided():
+    # Arrange 
+    
+    id="location_1"
+    title="Location"
+    lat=89.123
+    lng=12.154
+    address = "Giza Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
+    
+    # Act
+    column_value.lat = 912.21
+    column_value.lng = 2312.23
+    format =column_value.format()
+    
+    
+    
+def test_should_return_location_value():
+    # Arrange 
+    
+    id="location_1"
+    title="Location"
+    lat=89.123
+    lng=12.154
+    address = "Giza Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
+
+    # Act
+    format =column_value.format()
+
+
+    # Assert
+    ok_(column_value !=  None)
+    eq_(column_value.lng, lng)
+    eq_(column_value.lat, lat)
+    eq_(column_value.address, address)
+
+
+@raises(cv.LocationError)
+def test_should_raise_location_error_for_invalid_latitude():
+    # Arrange 
+    
+    id="location_1"
+    title="Location"
+    lat="89.123"
+    lng="12.154"
+    address = "Gia Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
+    column_type=ColumnType.location
+    
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
+    
+    # Act
+    column_value.lat = "8492398"
+    format =column_value.format()
+
+    # Assert
+    ok_(format, cv.COMPLEX_NULL_VALUE)
+
+
+@raises(cv.LocationError)
+def test_should_raise_location_error_for_invalid_longitude():
+    # Arrange 
+    
+    id="location_1"
+    title="Location"
+    lat="89.123"
+    lng="12.154"
+    address = "Gia Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
+
+    # Act
+    column_value.lng = "12321"
+
+    # Assert
+    eq_(format, cv.COMPLEX_NULL_VALUE)
+    
+    
+def test_should_return_empty_location_value_if_latitude_or_longitude_not_provided():
+    # Arrange 
+    
+    id="location_1"
+    title="Location"
+    lat=None
+    lng=None
+    address = "Gia Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, cv.COMPLEX_NULL_VALUE)
+
+    
+def test_should_return_location_value():
+    # Arrange 
+    
+    id="location_1"
+    title="Location"
+    lat=89.123
+    lng=12.154
+    address = "Gia Pyramid complex"
+    location=json.dumps({'lat':lat, 'lng':lng , 'address':address})
+    column_type=ColumnType.location
+    column_value = cv.create_column_value(column_type,id=id, title=title, value=location)
+    
+    # Act
+
+    format = str(column_value.format())
+
+    # Assert
+    ok_(column_value != None)
+    eq_(column_value.lng, lng)
+    eq_(column_value.lat, lat)
+    eq_(column_value.address, address)
 
 
 def test_should_return_empty_link_column_value():

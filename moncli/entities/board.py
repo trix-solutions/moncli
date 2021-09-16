@@ -85,6 +85,8 @@ class Board(_Board):
                 Remove subscribers from the board.
             add_column : `moncli.entities.Column`
                 Create a new column in board.
+            change_column_title : 'moncli.entities.board'
+                Change title of a column.
             get_columns : `list[moncli.entities.Column]`
                 Get the board's visible columns.
             add_group : `moncli.entities.Group`
@@ -107,6 +109,10 @@ class Board(_Board):
                 Delete a new webhook.
             get_workspace : `moncli.entities.Workspace`
                 Get the board's workspace that contains this board (null for main workspace).
+            get_updates : `list[moncli.entities.Update]`
+                Get the board's updates.
+            get_tags : `list[moncli.entities.Tag]`
+                Get the board's tags.
     """
 
     def __init__(self, **kwargs):
@@ -396,6 +402,8 @@ class Board(_Board):
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
@@ -480,6 +488,8 @@ class Board(_Board):
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
@@ -563,6 +573,8 @@ class Board(_Board):
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
@@ -659,6 +671,52 @@ class Board(_Board):
         column = en.Column(column_data)
         self.__columns.append(column)
         return column
+
+    
+
+    def change_column_title(self,  title: 'str', column, *args):
+        """Change title of a column.
+
+           Parameters
+
+                column : 'str'
+                    The column object to be updated.
+                title : 'str'
+                    The new title of the column.
+                args : 'tuple'
+                    The collection of item return fields.
+
+            Returns
+
+                column :  'moncli.entities.column.Column'
+                    The updated column title.
+
+            Return Fields
+
+                archived : `bool`
+                    Is the column archived or not.
+                id : `str`
+                    The column's unique identifier.
+                pos : `str`
+                    The column's position in the board.
+                settings_str : `str`
+                    The column's settings in a string form.
+                title : `str`
+                    The column's title.
+                type : `str`
+                    The column's type.
+                width : `int`
+                    The column's width.
+        """
+        
+        column_data = api.change_column_title(
+            title,
+            column.id,
+            self.id,
+            *args,
+            api_key=self.__creds.api_key_v2)
+        
+        return en.Column(column_data)
 
    
     def get_columns(self, *args, **kwargs):
@@ -1349,7 +1407,7 @@ class Board(_Board):
 
     
     def get_updates(self, *args, **kwargs):
-        """Retrieves the board's updates
+        """Get the board's updates
  
             Parameters
     
@@ -1408,7 +1466,7 @@ class Board(_Board):
 
     
     def get_tags(self, *args):
-        """Retrieves the board's tags
+        """Get the board's tags
 
             Parameters
 
