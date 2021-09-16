@@ -19,6 +19,8 @@ class _User(Model):
     is_admin = types.BooleanType()
     is_guest = types.BooleanType()
     is_pending = types.BooleanType()
+    is_verified = types.BooleanType() 
+    is_view_only = types.BooleanType()
     join_date = types.StringType()
     location = types.StringType()
     mobile_phone = types.StringType()
@@ -56,6 +58,8 @@ class User(_User):
                 Is the user a guest or not.
             is_pending : `bool`
                 Is the user a pending user.
+            is_verified: `bool`
+                Is the user is verified
             is_view_only : `bool`
                 Is the user a view only user or not.
             join_date : `str`
@@ -343,6 +347,8 @@ class Team(_Team):
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
