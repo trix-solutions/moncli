@@ -220,6 +220,35 @@ def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_b
     item.change_column_value(column_value='5')
 
 
+@patch('moncli.api_v2.get_items')
+@raises(en.item.InvalidParameterError)
+def test_should_fail_to_update_item_name_if_input_new_name_parameter_is_none(get_items):
+
+    # Arrange
+    get_items.return_value = [{'id': 2, 'name': 'Test Item 2'}]
+    item = client.get_items()[0]
+
+    # Act
+    item.change_item_name(None)
+
+
+@patch.object(en.Item,'change_item_name')
+@patch('moncli.api_v2.get_items')
+def test_should_update_item_name_if_new_name_parameter_contains_a_valid_value(get_items, change_name):
+
+    # Arrange
+    get_items.return_value = [{'id': 2, 'name': 'Test Item 2'}]
+    change_name.return_value = {'id': 2, 'name': 'changed name'}
+    item = client.get_items()[0]
+    new_name = 'changed name'
+
+
+    # Act
+    new_item = item.change_item_name(new_name)
+
+    # Assert
+    ok_(item != None)
+    eq_(new_item['name'], new_name)
 
 @patch('moncli.api_v2.get_items')
 @raises(en.InvalidColumnValue)
