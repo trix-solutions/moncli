@@ -63,8 +63,9 @@ def execute_query(timeout: int = None, **kwargs):
 
     if include_complexity:
         if 'mutation' in query:
-            raise MondayApiError(query_name, 400, '', ['Query complexity cannot be retrieved for mutation requests.'])
-        query = query.replace('query {', 'query { complexity { before, after }')
+            query = query.replace('query {', 'mutation { complexity { before, after }')
+        else:
+            query = query.replace('query {', 'query { complexity { before, after }')
 
     headers = { 'Authorization': api_key }
     data = { 'query': query, 'variables': variables }
