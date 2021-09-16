@@ -720,7 +720,6 @@ def test_should_raise_location_error_for_invalid_longitude():
     # Act
     column_value.lng = 1231.231
     format =column_value.format()
-    print(format)
 
 
 @raises(cv.LocationError)   
@@ -740,7 +739,6 @@ def test_should_return_empty_location_value_if_latitude_or_longitude_not_provide
     column_value.lat = 912.21
     column_value.lng = 2312.23
     format =column_value.format()
-    print(format)
     
     
     
@@ -758,7 +756,7 @@ def test_should_return_location_value():
 
     # Act
     format =column_value.format()
-    print(format)
+
 
     # Assert
     ok_(column_value !=  None)

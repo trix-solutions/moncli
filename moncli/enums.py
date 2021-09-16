@@ -43,7 +43,6 @@ class ColumnType(Enum):
     subitems = 30
     board_relation = 31
     integration = 32
-    # location = 33
     name = 99999 # This column is a text type but comes standard with every board.
 
 

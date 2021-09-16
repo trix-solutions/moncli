@@ -540,12 +540,15 @@ class LocationValue(ColumnValue):
         
     @lat.setter
     def lat(self, latitude):
-        if latitude >= -90 and latitude <= 90:
-            print("latitude = ",latitude)
-            return self.set_value(lat=latitude)
-        else:
-            raise LocationError(latitude)
-        
+        try:
+            float(latitude)
+            if latitude >= -90 and latitude <= 90:
+                return self.set_value(lat=latitude)
+            else:
+                raise LocationError("Latitude must be between -90 and 90")
+        except TypeError:
+            if not latitude:
+                raise LocationError("Invalid Location")
    
     @property
     def lng(self):
@@ -558,10 +561,16 @@ class LocationValue(ColumnValue):
 
     @lng.setter
     def lng(self, longitude):
-        if longitude >= -180 and longitude <= 180:
-            return self.set_value(lng=longitude)
-        else:
-            raise LocationError(longitude)
+        try: 
+            float(longitude) 
+            if longitude >= -180 and longitude <= 180:
+                return self.set_value(lng=longitude)
+            else:
+                raise LocationError("Longitude must be between -180 and 180") 
+        except TypeError: 
+            if not longitude:  
+                raise LocationError("Invalid Longitude")
+            
     
     @property
     def address(self):
