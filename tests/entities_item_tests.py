@@ -233,14 +233,15 @@ def test_should_fail_to_update_item_name_if_input_new_name_parameter_is_none(get
     # Act
     item.change_name(None)
 
-
-@patch.object(en.Item,'change_name')
+@patch.object(en.Item,'get_board')
 @patch('moncli.api_v2.get_items')
-def test_should_update_item_name_if_new_name_parameter_contains_a_valid_value(get_items, change_name):
+@patch('moncli.api_v2.change_multiple_column_value')
+def test_should_update_item_name_if_new_name_parameter_contains_a_valid_value(change_multiple_column_value,get_items,get_board):
 
     # Arrange
-    get_items.return_value = [{'id': 2, 'name': 'Test Item 2'}]
-    change_name.return_value = {'id': 2, 'name': 'changed name'}
+    get_board.return_values = {'id': "123", 'name': "Test Board"}
+    get_items.return_value = [{'id': '123', 'name': 'Test Item '}]
+    change_multiple_column_value.return_value = {'id': 2, 'name': 'changed name'}
     item = client.get_items()[0]
     new_name = 'changed name'
 
