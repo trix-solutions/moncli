@@ -3,7 +3,7 @@ from schematics.types import StringType
 from .. import api, entities as en
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
-import json
+
 
 
 class _Item(Model):
@@ -625,7 +625,7 @@ class Item(_Item):
         return self.column_values[id]
 
 
-    def change_item_name(self, new_name: str):
+    def change_name(self, new_name: str):
         """Change the name of an item.
 
             Parameters
