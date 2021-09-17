@@ -16,8 +16,11 @@ class _User(Model):
     enabled = types.BooleanType()
     birthday = types.StringType()
     country_code = types.StringType()
+    is_admin = types.BooleanType()
     is_guest = types.BooleanType()
     is_pending = types.BooleanType()
+    is_verified = types.BooleanType() 
+    is_view_only = types.BooleanType()
     join_date = types.StringType()
     location = types.StringType()
     mobile_phone = types.StringType()
@@ -49,10 +52,14 @@ class User(_User):
                 Is the user enabled or not.
             id : `str`
                 The user's unique identifier.
+            is_admin: `bool`
+                Is the user a admin or not.
             is_guest : `bool`
                 Is the user a guest or not.
             is_pending : `bool`
                 Is the user a pending user.
+            is_verified: `bool`
+                Is the user is verified
             is_view_only : `bool`
                 Is the user a view only user or not.
             join_date : `str`
@@ -247,8 +254,8 @@ class User(_User):
             self.id, 
             target_id, 
             target_type, 
-            api_key=self.__creds.api_key_v2, 
             *args, 
+            api_key=self.__creds.api_key_v2, 
             **kwargs)
         return en.Notification(notification_data)
 
@@ -334,10 +341,14 @@ class Team(_Team):
                     Is the user enabled or not.
                 id : `str`
                     The user's unique identifier.
+                is_admin: `bool`
+                    Is the user a admin or not.
                 is_guest : `bool`
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
@@ -484,7 +495,6 @@ class Account(_Account):
         """
         
         plan_data = api.get_account(
-            *api.get_field_list(api.DEFAULT_PLAN_QUERY_FIELDS, 'plan',
-            *args,
-            api_key=self.__creds.api_key_v2))['plan']
+            *api.get_field_list(api.DEFAULT_PLAN_QUERY_FIELDS, 'plan'),
+            api_key=self.__creds.api_key_v2)['plan']
         return en.Plan(plan_data)

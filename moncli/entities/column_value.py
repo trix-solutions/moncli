@@ -18,9 +18,11 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.country: 'CountryValue',
     ColumnType.date: 'DateValue',
     ColumnType.dropdown: 'DropdownValue',
+    ColumnType.dependency: 'DependencyValue',
     ColumnType.email: 'EmailValue',
     ColumnType.hour: 'HourValue',
     ColumnType.link: 'LinkValue',
+    ColumnType.location: 'LocationValue',
     ColumnType.long_text: 'LongTextValue',
     ColumnType.name: 'NameValue',
     ColumnType.numbers: 'NumberValue',
@@ -54,6 +56,9 @@ class _ColumnValue(en.BaseColumn):
 
     def format(self):
         return self.to_primitive()
+
+    def simple_format(self):
+        raise SimpleValueFormatException(str(type(self)))
 
 
 class ColumnValue(_ColumnValue):
@@ -259,6 +264,68 @@ class DateValue(ColumnValue):
             return result
         return self.null_value
         
+class DependencyValue(ColumnValue):
+    """An Dependency column value.
+    
+    Properties
+
+        item_ids : `list[str]`
+            The list of linked items unique identifiers.
+
+    Methods
+
+        add_item : `void`
+            Add item to link list.
+        remove_item : `void`
+            remove item from remove.
+
+    """
+    def __init__(self, **kwargs):
+        super(DependencyValue, self).__init__(**kwargs)
+    
+    @property
+    def item_ids(self):
+        """List of linked items unique identifiers."""
+        try:
+            return [str(id['linkedPulseId']) for id in loads(self.value)['linkedPulseIds']]
+        except:
+            return []
+
+    @property
+    def settings(self):
+        return loads(self.__settings)
+
+    def add_item(self, item_id: str):
+        """Add item to link list.
+
+        Parameters
+
+            item_id : `str`
+                Item unique identifier to add.
+        """
+        ids = self.item_ids
+        ids.append(str(item_id))
+        self.value = dumps({'linkedPulseIds': [{'linkedPulseId': str(id)} for id in ids]})
+
+    def remove_item(self, item_id: str):
+        """Remove item from link list.
+
+        Parameters
+
+            item_id : `str`
+                Item unique identifier to remove.
+        """
+
+        if item_id not in self.item_ids:
+            raise ItemIdNotFound(item_id)
+
+        ids = [id for id in self.item_ids if id != item_id]
+        self.value = dumps({'linkedPulseIds': [{'linkedPulseId': int(id)} for id in ids]})
+
+    def format(self):
+        ids = self.item_ids
+        """Format for column value update."""
+        return {'item_ids': [int(id) for id in self.item_ids]}
 
 class DropdownValue(ColumnValue):
     """A dropdown column value.
@@ -508,6 +575,85 @@ class LinkValue(ColumnValue):
         if self.url:
             return { 'url': self.url, 'text': self.url_text }
         return self.null_value
+
+
+class LocationValue(ColumnValue):
+    """A Location column Value
+
+        Properties
+
+            lat: `str`
+                The latitude value
+            lng: `str`
+                The longitude value
+            address: `str`
+                The address value
+
+    """
+    def __init__(self, **kwargs):
+        super(LocationValue,self).__init__(**kwargs)
+    
+    @property
+    def lat(self):
+        """ The latitude value"""
+        try:
+            return loads(self.value)['lat']
+        except KeyError:
+            return self.value
+        
+    @lat.setter
+    def lat(self, latitude):
+        try:
+            latitude = float(latitude)
+            if latitude >= -90 and latitude <= 90:
+                return self.set_value(lat=latitude)
+            else:
+                raise LocationError("Latitude must be between -90 and 90")
+        except TypeError:
+            if latitude:
+                raise LocationError("Invalid Location")
+            return self.set_value(lat=latitude)
+   
+    @property
+    def lng(self):
+        """ The longitude value"""
+        try:
+            return loads(self.value)['lng']
+        except KeyError:
+            return self.value
+
+
+    @lng.setter
+    def lng(self, longitude):
+        try: 
+            longitude = float(longitude) 
+            if longitude >= -180 and longitude <= 180:
+                return self.set_value(lng=longitude)
+            else:
+                raise LocationError("Longitude must be between -180 and 180") 
+        except TypeError: 
+            if longitude:  
+                raise LocationError("Invalid Longitude")
+            return self.set_value(lng=longitude)
+    
+    @property
+    def address(self):
+        """ The address value"""
+        return loads(self.value)['address']
+        
+        
+    @address.setter
+    def address(self, address):
+        if not address:
+            raise LocationError(address)
+        return self.set_value(address=address)
+
+    def format(self):
+        """Format for column value update."""
+        if self.lat and self.lng and self.address:
+            return { 'lat': self.lat, 'lng': self.lng, 'address': self.address }
+        if (self.lat == None ) or (self.lng == None):
+            return COMPLEX_NULL_VALUE
 
 
 class LongTextValue(ColumnValue):
@@ -1309,6 +1455,11 @@ def validate_time(time_string: str):
         raise TimeFormatError(time_string)
 
 
+class SimpleValueFormatException(Exception):
+    def __init__(self, column_type: str):
+        self.message = 'Column value of type {} does not support simple string formatting.'.format(column_type)
+
+
 class ColumnValueSettingsError(Exception):
     def __init__(self, column_type: str):
         self.message = 'Settings attribute is missing from input {} column data.'.format(column_type)
@@ -1376,3 +1527,8 @@ class StatusLabelError(Exception):
 class ItemIdNotFound(Exception):
     def __init__(self, item_id: str):
         self.message = 'Unable to find item ID "{}".'.format(item_id)
+
+
+class LocationError(Exception):
+    def __init__(self, message: str):
+        self.message = message

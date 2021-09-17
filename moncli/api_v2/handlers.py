@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 
-from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind
+from ..enums import BoardKind, ColumnType, NotificationTargetType, WebhookEventType, WorkspaceKind, WorkspaceSubscriberKind
 from . import graphql as gql
 from .constants import *
 from .requests import execute_query, upload_file
@@ -163,8 +163,8 @@ def get_boards(*args, **kwargs) -> List[Dict[str, Any]]:
                 The board's kind (public / private /share).
             state : `moncli.enums.State`
                 The state of the board (all / active / archived / deleted),; the default is active.
-            newest_first : `bool`
-                Get the recently created boards at the top of the list.        
+            order_by : `moncli.enums.BoardsOrderBy`
+                The order in which to retrieve your boards (created_at / used_at).       
     """
     
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=BOARDS, operation_type=gql.OperationType.QUERY, fields=args, arguments=kwargs)  
@@ -175,6 +175,7 @@ def archive_board(board_id: str, *args, **kwargs):
 
         Parameters
         
+
             board_id : `str`
                 The board's unique identifier.
             args : `tuple`
@@ -466,6 +467,58 @@ def create_column(board_id: str, title: str, column_type: ColumnType, *args, **k
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_COLUMN, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
+def change_column_title(title: str, column_id: str, board_id: str, *args, **kwargs):
+    """Change an item's column title.
+
+        Parameters
+        
+            title : `str`
+                The new title of the column.
+            column_id : `str`
+                The column's unique identifier.
+            board_id : `str`
+                The board's unique identifier.
+            args : `tuple`
+                The list of item return fields.
+            kwargs : `dict`
+                Optional arguments for changing a column value.
+
+        Returns
+            
+            data : `dict`
+                A monday.com column in item form.
+
+        Return Fields
+        
+            archived : `bool`
+                Is the column archived or not.
+            id : `str`
+                The column's unique identifier.
+            pos : `str`
+                The column's position in the board. 
+            settings_str : `str`
+                The column's settings in a string form.
+            settings : `moncli.entities.Settings`
+                The settings in entity form (status / dropdown)
+            title : `str`
+                The column's title.
+            type : `str`
+                The column's type.
+            width : `int`
+                The column's width.
+            
+        Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
+    """
+    
+    kwargs['column_id'] = gql.StringValue(column_id)
+    kwargs['board_id'] = gql.IntValue(board_id)
+    kwargs['title'] = gql.StringValue(title)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CHANGE_COLUMN_TITLE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+
 def change_column_value(item_id: str, column_id: str, board_id: str, value: str, *args, **kwargs):
     """Change an item's column value.
 
@@ -529,6 +582,68 @@ def change_column_value(item_id: str, column_id: str, board_id: str, value: str,
     kwargs['board_id'] = gql.IntValue(board_id)
     kwargs['value'] = gql.JsonValue(value)
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CHANGE_COLUMN_VALUE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+def change_simple_column_value(item_id: str, board_id: str, column_id: str, value: str, *args, **kwargs):
+    """Changes the column valuesvalues using simple values
+
+        Parameters
+        
+            item_id : str
+                The item's identifier.
+            column_id : str
+                The column identifier on your board.
+            board_id : str
+                The board identifier.
+            value : str
+                The new simple value of the column.
+            *args : tuple
+                The collection of item return fields.
+
+        Returns
+            
+            data : `dict`
+                A monday.com column in item form.
+
+        Return Fields
+        
+            assets : `list[moncli.entities.Asset]`
+                The item's assets/files.
+            board : `moncli.entities.Board`
+                The board that contains this item.
+            column_values : `list[moncli.entities.ColumnValue]`
+                The item's column values.
+            created_at : `str`
+                The item's create date.
+            creator : `moncli.entities.User`
+                The item's creator.
+            creator_id : `str`
+                The item's unique identifier.
+            group : `moncli.entities.Group`
+                The group that contains this item.
+            id : `str`
+                The item's unique identifier.
+            name : `str`
+                The item's name.
+            state : `str`
+                The board's state (all / active / archived / deleted)
+            subscriber : `moncli.entities.User`
+                The pulse's subscribers.
+            updated_at : `str`
+                The item's last update date.
+            updates : `moncli.entities.Update`
+                The item's updates.
+        
+         Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
+    """
+    
+    kwargs['item_id'] = gql.IntValue(item_id)
+    kwargs['board_id'] = gql.IntValue(board_id)
+    kwargs['column_id'] = gql.StringValue(column_id)
+    kwargs['value']=gql.StringValue(value)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CHANGE_SIMPLE_COLUMN_VALUE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
 def change_multiple_column_value(item_id: str, board_id: str, column_values: dict, *args, **kwargs):
@@ -1862,10 +1977,14 @@ def get_users(*args, **kwargs):
                 Is the user enabled or not.
             id : `str`
                 The user's unique identifier.
+            is_admin: `bool`
+                Is the user a admin or not.
             is_guest : `bool`
                 Is the user a guest or not.
             is_pending : `bool`
                 Is the user a pending user.
+            is_verified: `bool`
+                Is the user is verified
             is_view_only : `bool`
                 Is the user a view only user or not.
             join_date : `str`
@@ -1984,10 +2103,14 @@ def get_me(*args, **kwargs):
                 Is the user enabled or not.
             id : `str`
                 The user's unique identifier.
+            is_admin: `bool`
+                Is the user a admin or not.
             is_guest : `bool`
                 Is the user a guest or not.
             is_pending : `bool`
                 Is the user a pending user.
+            is_verified: `bool`
+                Is the user is verified
             is_view_only : `bool`
                 Is the user a view only user or not.
             join_date : `str`
@@ -2192,3 +2315,244 @@ def create_workspace(name: str, kind: WorkspaceKind, *args, **kwargs):
     kwargs['name'] = gql.StringValue(name)
     kwargs['kind'] = gql.EnumValue(kind)
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+
+def add_users_to_workspace(workspace_id: str,user_ids: list(), kind: WorkspaceSubscriberKind, *args, **kwargs):
+        """Allows you to add users to a workspace. You can define if users will be added as regular subscribers or as owners of the workspace.
+
+            Parameters 
+
+                workspace_id: int
+                     The workspace's unique identifier
+                user_ids: `list[str]`
+                    User IDs to subscribe to the workspace
+                kind: WorkspaceSUbscriberKind
+                    Kind of subscribers added (subscriber/owner)
+                *args: tuple
+                    The collection of workspace return fields.
+            
+            Return Fields
+
+                account : `moncli.entities.Account`
+                    The user's account.
+                birthday : `str`
+                    The user's birthday.
+                country_code : `str`
+                    The user's country code.
+                created_at : `str`
+                    The user's creation date.
+                email : `str`
+                    The user's email.
+                enabled : `bool`
+                    Is the user enabled or not.
+                id : `str`
+                    The user's unique identifier.
+                is_admin: `bool`
+                    Is the user a admin or not.   
+                is_guest : `bool`
+                    Is the user a guest or not.
+                is_pending : `bool`
+                    Is the user a pending user.
+                is_view_only : `bool`
+                    Is the user a view only user or not.
+                join_date : `str`
+                    The date the user joined the account.
+                location : `str`
+                    The user' location.
+                mobile_phone : `str`
+                    The user's mobile phone number.
+                name : `str`
+                    The user's name.
+                phone : `str`
+                    The user's phone number.
+                photo_original : `str`
+                    The user's photo in the original size.
+                photo_small : `str`
+                    The user's photo in small size (150x150).
+                photo_thumb : `str`
+                    The user's photo in thumbnail size (100x100).
+                photo_thumb_small : `str`
+                    The user's photo in small thumbnail size (50x50).
+                photo_tiny : `str`
+                    The user's photo in tiny size (30x30).
+                teams : `list[moncli.entities.Team]`
+                    The teams the user is a member in.
+                time_zone_identifier : `str`
+                    The user's time zone identifier.
+                title : `str`
+                    The user's title.
+                url : `str`
+                    The user's profile url.
+                utc_hours_diff : `int`
+                    The user's UTC hours difference.
+            
+            Optional Arguments
+
+                api_key: `str`
+                    The monday.com v2 API user key.
+                kwargs: dict
+                    Additional Arguments
+        """
+
+        kwargs["workspace_id"]= gql.IntValue(workspace_id)      
+        kwargs['user_ids'] = gql.ListValue([int(id) for id in user_ids])
+        kwargs["kind"]= gql.EnumValue(kind)
+        
+        return execute_query(api_key=kwargs.pop('api_key', None), query_name=ADD_USERS_TO_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+      
+def delete_users_from_workspace(workspace_id: str, user_ids: list(), *args: tuple, **kwargs: dict ):
+    """Allows you to delete users to a workspace.
+
+            Parameters 
+
+                workspace_id: int
+                        The workspace's unique identifier
+                user_ids: `list[str]`
+                        User IDs to subscribe to the workspace
+                *args: tuple
+                    The collection of workspace return fields.
+            
+            Return Fields
+                
+                account : `moncli.entities.Account`
+                    The user's account.
+                birthday : `str`
+                    The user's birthday.
+                country_code : `str`
+                    The user's country code.
+                created_at : `str`
+                    The user's creation date.
+                email : `str`
+                    The user's email.
+                enabled : `bool`
+                    Is the user enabled or not.
+                id : `str`
+                    The user's unique identifier.
+                is_admin: `bool`
+                    Is the user a admin or not.
+                is_guest : `bool`
+                    Is the user a guest or not.
+                is_pending : `bool`
+                    Is the user a pending user.
+                is_view_only : `bool`
+                    Is the user a view only user or not.
+                join_date : `str`
+                    The date the user joined the account.
+                location : `str`
+                    The user' location.
+                mobile_phone : `str`
+                    The user's mobile phone number.
+                name : `str`
+                    The user's name.
+                phone : `str`
+                    The user's phone number.
+                photo_original : `str`
+                    The user's photo in the original size.
+                photo_small : `str`
+                    The user's photo in small size (150x150).
+                photo_thumb : `str`
+                    The user's photo in thumbnail size (100x100).
+                photo_thumb_small : `str`
+                    The user's photo in small thumbnail size (50x50).
+                photo_tiny : `str`
+                    The user's photo in tiny size (30x30).
+                teams : `list[moncli.entities.Team]`
+                    The teams the user is a member in.
+                time_zone_identifier : `str`
+                    The user's time zone identifier.
+                title : `str`
+                    The user's title.
+                url : `str`
+                    The user's profile url.
+                utc_hours_diff : `int`
+                    The user's UTC hours difference.
+                
+            Optional Arguments
+
+                api_key: `str`
+                    The monday.com v2 API user key.
+                kwargs: dict
+                    Additional Arguments
+                
+    """
+    
+    kwargs["workspace_id"]= gql.IntValue(workspace_id)
+    kwargs['user_ids'] = gql.ListValue([int(id) for id in user_ids])
+
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_USERS_FROM_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+  
+def add_teams_to_workspace(workspace_id: str, team_ids: list(), *args, **kwargs ):
+    """
+        Allows you to add teams to a workspace.
+
+        Parameters
+
+            workspace_id: str
+                The workspace's unique identifier.
+            team_ids: list()
+                Team ids to subscribe to the workspace.
+        
+        Returns
+            
+            data : `dict`
+                A monday.com team in dictionary form.
+
+        Return Fields
+        
+            id : `int`
+                The team's unique identifier.
+            name : `str`
+                The team's name.
+            picture_url : `str`
+                The team's picture url.
+            users : `moncli.entities.user.User`
+                The users in the team.
+
+    """
+    kwargs['workspace_id'] = gql.IntValue(workspace_id)
+    kwargs['team_ids'] = gql.ListValue(int(id) for id in team_ids)
+
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=ADD_TEAMS_TO_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+
+
+def delete_teams_from_workspace(workspace_id: str, team_ids: list(), *args, **kwargs ):
+    """
+        Allows you to remove teams to a workspace.
+
+        Parameters
+
+            workspace_id: str
+                The workspace's unique identifier.
+            team_ids: list()
+                Team ids to subscribe to the workspace.
+                
+        Returns
+            
+            data : `dict`
+                A monday.com team in dictionary form.
+
+        Return Fields
+        
+            id : `int`
+                The team's unique identifier.
+            name : `str`
+                The team's name.
+            picture_url : `str`
+                The team's picture url.
+            users : `moncli.entities.user.User`
+                The users in the team. 
+
+        
+        Optional Arguments
+
+            api_key : `str`
+                The monday.com v2 API user key.
+
+
+    """
+    kwargs['workspace_id'] = gql.IntValue(workspace_id)
+    kwargs['team_ids'] = gql.ListValue(int(id) for id in team_ids)
+
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_TEAMS_FROM_WORKSPACE, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)

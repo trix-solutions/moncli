@@ -31,6 +31,9 @@ MANIFEST
 *.manifest
 *.spec
 
+#test file
+test.py
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -46,6 +49,10 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+
+
+#local_testing_file
+test.py
 
 # Translations
 *.mo

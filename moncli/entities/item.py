@@ -1,7 +1,9 @@
 from schematics.models import Model
 from schematics.types import StringType
-
 from .. import api, entities as en
+from moncli.entities import column_value as cv
+from moncli.enums import ColumnType
+
 
 
 class _Item(Model):
@@ -65,6 +67,8 @@ class Item(_Item):
                 Get the item's column values.
             get_column_value : `moncli.entities.ColumnValue`
                 Get an item's column value by ID or title.
+            change_item_name: `moncli.entities.Item`
+                change an Item's column name
             change_column_value : `moncli.entities.Item`
                 Change an item's column value.
             change_multiple_column_values : `moncli.entities.Item`
@@ -97,6 +101,7 @@ class Item(_Item):
         self.__creator = kwargs.pop('__creator', None)
         self.__column_values = en.BaseColumnCollection()
         self.__updates = kwargs.pop('__updates', None)
+        self. __parent_item = kwargs.pop(' __parent_item',None)
 
         assets = kwargs.pop('assets', None)
         board = kwargs.pop('board', None)
@@ -104,6 +109,7 @@ class Item(_Item):
         creator = kwargs.pop('creator', None)
         column_values = kwargs.pop('column_values', None)
         updates = kwargs.pop('updates', None)
+        parent_item = kwargs.pop(' __parent_item',None)
 
         super(Item, self).__init__(kwargs)
 
@@ -123,6 +129,8 @@ class Item(_Item):
                 self.__column_values.append(en.create_column_value(column.column_type, settings_str=column.settings_str, **data))
         if updates != None and not self.__updates:
             self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
+        if parent_item and not self.__parent_item: 
+            self.__parent_item = en.Item(creds=self.__creds, **parent_item)
 
     def __repr__(self):
         o = self.to_primitive()
@@ -138,6 +146,8 @@ class Item(_Item):
                 o['column_values'].append(value.to_primitive())
         if self.__updates:
             o['updates'] = [value.to_primitive() for value in self.__updates]
+        if self.__parent_item:
+            o['parent_item'] = self.__parent_item.to_primitive
         return str(o)
 
     @property
@@ -181,6 +191,13 @@ class Item(_Item):
         if self.__updates == None: 
             self.__updates = self.get_updates()
         return self.__updates
+    
+    @property
+    def parent_item(self):
+        """The parent item ."""
+        if self.__parent_item == None: 
+            self.__parent_item = self.get_parent_item()
+        return self.__parent_item
 
 
     def add_file(self, file_column: en.FileValue, file_path: str, *args):
@@ -466,10 +483,14 @@ class Item(_Item):
                     Is the user enabled or not.
                 id : `str`
                     The user's unique identifier.
+                is_admin: `bool`
+                    Is the user a admin or not.
                 is_guest : `bool`
                     Is the user a guest or not.
                 is_pending : `bool`
                     Is the user a pending user.
+                is_verified: `bool`
+                    Is the user is verified
                 is_view_only : `bool`
                     Is the user a view only user or not.
                 join_date : `str`
@@ -602,7 +623,62 @@ class Item(_Item):
             return self.column_values[title]
 
         return self.column_values[id]
-    
+
+
+    def change_name(self, new_name: str):
+        """Change the name of an item.
+
+            Parameters
+
+                nem_name : 'str'
+                    The new name of the item.
+
+            Returns
+
+                item : `moncli.entities.Item`
+                    The updated item.
+
+            Return Fields
+
+                assets : `list[moncli.entities.asset.Asset]`
+                    The item's assets/files.
+                board : `moncli.entities.board.Board`
+                    The board that contains this item.
+                column_values : `list[moncli.entities.column_value.ColumnValue]`
+                    The item's column values.
+                created_at : `str`
+                    The item's create date.
+                creator : `moncli.entities.user.User`
+                    The item's creator.
+                creator_id : `str`
+                    The item's unique identifier.
+                group : `moncli.entities.group.Group`
+                    The group that contains this item.
+                id : `str`
+                    The item's unique identifier.
+                name : `str`
+                    The item's name.
+                state : `str`
+                    The board's state (all / active / archived / deleted)
+                subscriber : `moncli.entities.user.User`
+                    The pulse's subscribers.
+                updated_at : `str`
+                    The item's last update date.
+                updates : `moncli.entities.update.Update`
+                    The item's updates.
+        """
+        if new_name == None:
+            raise InvalidParameterError()
+        item_name = {'name':new_name}
+
+        item_data = api.change_multiple_column_value(
+            self.id,
+            self.board.id,
+            item_name,
+            api_key=self.__creds.api_key_v2)
+
+
+        return en.Item(creds=self.__creds, **item_data)
 
     def change_column_value(self, column_value = None, get_column_values: bool = None, *args):
         """Get an item's column value by ID or title.
@@ -675,6 +751,73 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
     
+
+    def change_simple_column_value(self, id = None, title = None, value = None, *args):
+        """Change the item's column values using simple values.
+
+            Parameters
+
+                id: str
+                    The id value of the column 
+                title: str 
+                    The title of the column
+                args : `tuple`
+                    Optional item return fields.
+
+            Returns
+
+                item : `moncli.entities.Item`
+                    The updated item.
+
+            Return Fields
+
+                assets : `list[moncli.entities.asset.Asset]`
+                    The item's assets/files.
+                board : `moncli.entities.board.Board`
+                    The board that contains this item.
+                column_values : `list[moncli.entities.column_value.ColumnValue]`
+                    The item's column values.
+                created_at : `str`
+                    The item's create date.
+                creator : `moncli.entities.user.User`
+                    The item's creator.
+                creator_id : `str`
+                    The item's unique identifier.
+                group : `moncli.entities.group.Group`
+                    The group that contains this item.
+                id : `str`
+                    The item's unique identifier.
+                name : `str`
+                    The item's name.
+                state : `str`
+                    The board's state (all / active / archived / deleted)
+                subscriber : `moncli.entities.user.User`
+                    The pulse's subscribers.
+                updated_at : `str`
+                    The item's last update date.
+                updates : `moncli.entities.update.Update`
+                    The item's updates.
+        """
+        
+        if not id and not title :
+            raise NotEnoughChangeSimpleColumnValueParameters()
+        if id and title :
+            raise TooManyChangeSimpleColumnValueParameters()
+                
+        if id:
+            column_value = self.column_values[id]   
+        elif title:
+            column_value = self.column_values[title]
+        
+        item_data = api.change_simple_column_value(
+            self.id,
+            self.board.id,
+            column_value.id,
+            value,
+            *args,
+            api_key=self.__creds.api_key_v2)        
+
+        return Item(creds=self.__creds, **item_data)
 
     def change_multiple_column_values(self, column_values, get_column_values: bool = False, *args):
         """Change the item's column values.
@@ -1285,11 +1428,58 @@ class Item(_Item):
                 to : `str`
                     To timespamp (ISO8601).
         """
+
         
         kwargs['item_ids'] = [int(self.id)]
         return self.board.get_activity_logs(*args, **kwargs)
 
+    def get_parent_item(self, *args, **kwargs):
+        """Get Parent Item of a Subitem.
 
+            Parameters
+
+                args : `tuple`
+                    Optional item return fields.
+
+            Returns
+
+                item : `moncli.entities.Item`
+                    The parent item.
+
+            Return Fields
+
+                assets : `list[moncli.entities.asset.Asset]`
+                    The item's assets/files.
+                board : `moncli.entities.board.Board`
+                    The board that contains this item.
+                column_values : `list[moncli.entities.column_value.ColumnValue]`
+                    The item's column values.
+                created_at : `str`
+                    The item's create date.
+                creator : `moncli.entities.user.User`
+                    The item's creator.
+                creator_id : `str`
+                    The item's unique identifier.
+                group : `moncli.entities.group.Group`
+                    The group that contains this item.
+                id : `str`
+                    The item's unique identifier.
+                name : `str`
+                    The item's name.
+                state : `str`
+                    The board's state (all / active / archived / deleted)
+                subscriber : `moncli.entities.user.User`
+                    The pulse's subscribers.
+                updated_at : `str`
+                    The item's last update date.
+                updates : `moncli.entities.update.Update`
+                    The item's updates.
+        """
+        item_data =  api.get_items(
+            *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'parent_item', *args),
+            ids=[self.id]
+        )[0]['parent_item']
+        return Item(creds=self.__creds, **item_data)
 
 class ColumnValueRequired(Exception):
     def __init__(self):
@@ -1298,3 +1488,15 @@ class ColumnValueRequired(Exception):
 class UpdateNotFound(Exception):
     def __init__(self, update_id: str):
         self.message = "Item does not contain update with ID '{}'.".format(update_id)
+
+class TooManyChangeSimpleColumnValueParameters(Exception):
+    def __init__(self):
+        self.message = "Unable to use both 'id' and 'title' when changing a simple column value"
+
+class NotEnoughChangeSimpleColumnValueParameters(Exception):
+    def __init__(self):
+        self.message = "Either 'id' or 'title' is required when changing a simple column value"
+
+class InvalidParameterError(Exception):
+    def __init__(self):
+        self.message = "New name must be present"
