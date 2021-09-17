@@ -102,3 +102,86 @@ def test_should_throw_exception_when_setting_an_invalid_value():
 
     # Assert
     eq_(column_value.value, str(text))
+
+
+
+def creating_a_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'value_1'
+    title = "value"
+    column_type = ColumnType.numbers
+    value=None
+    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    #Assert
+    eq_(format, "")
+
+def creating_a_column_value_with_api_input_data():
+
+    id = 'value_1'
+    title = "value"
+    column_type = ColumnType.numbers
+    value = 123
+    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    #Assert
+    eq_(format, str(value))
+
+def setting_none_to_value():
+
+    # Arrange
+    id = 'value_1'
+    title = "value"
+    column_type = ColumnType.numbers
+    value=None
+    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    #Assert
+    eq_(format, None)
+
+def setting_an_int_or_float_to_value():
+    id = 'value_1'
+    title = "value"
+    column_type = ColumnType.numbers
+    value = 123.32
+    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    #Assert
+    eq_(float(format), value)
+
+@raises(e.ColumnValueError)
+def setting_an_improper_string_to_value():
+    id = 'value_1'
+    title = "value"
+    column_type = ColumnType.numbers
+    value = "just a number"
+
+    # Act
+    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+    
+
+def setting_a_valid_string_value():
+    id = 'value_1'
+    title = "value"
+    column_type = ColumnType.numbers
+    value = "123.32"
+    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    #Assert
+    eq_(format, float(value))
