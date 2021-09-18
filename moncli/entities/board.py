@@ -716,7 +716,7 @@ class Board(_Board):
             *args,
             api_key=self.__creds.api_key_v2)
         
-        return en.Column(column_data)
+        return en.Column(**column_data)
 
    
     def get_columns(self, *args, **kwargs):
