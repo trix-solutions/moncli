@@ -77,7 +77,7 @@ class ColumnValue(_ColumnValue):
 
     @property
     def settings(self):
-        return json.dumps(self.settings_str)
+        return json.loads(self.settings_str)
 
     @property
     def additional_info_map(self):
@@ -90,6 +90,13 @@ class ColumnValue(_ColumnValue):
         if self.value == self.native_default:
             return self.null_value
         return self._format()
+
+    def __repr__(self):
+        print(str({
+            'id': self.id,
+            'title': self.title,
+            'value': self.value
+        }))
 
     def _convert(self, value):
         return value
