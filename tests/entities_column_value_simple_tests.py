@@ -144,10 +144,9 @@ def test_should_setting_none_to_value():
 
     # Act
     column_value.value = value
-    format = column_value.format()
 
     #Assert
-    eq_(value, None)
+    eq_(column_value.value, None)
 
 def test_should_setting_an_int_or_float_to_value():
     id = 'value_1'
@@ -158,10 +157,9 @@ def test_should_setting_an_int_or_float_to_value():
 
     # Act
     column_value.value = value
-    format = column_value.format()
 
     #Assert
-    eq_(float(format), value)
+    eq_(column_value.value,value)
 
 @raises(e.ColumnValueError)
 def test_should_setting_an_improper_string_to_value():
@@ -184,7 +182,6 @@ def test_should_setting_a_valid_string_value():
 
     # Act
     column_value.value = value
-    format = column_value.format()
 
     #Assert
-    eq_(format, value)
+    eq_(column_value.value, float(value))

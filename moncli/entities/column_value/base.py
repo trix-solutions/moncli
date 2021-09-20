@@ -14,9 +14,6 @@ class _ColumnValue(en.BaseColumn):
     text = StringType()
     additional_info = StringType()
 
-    class Options:
-        roles = {'default': blacklist('settings_str')}
-
 class ColumnValue(_ColumnValue):
     """The value of an items column.
 
