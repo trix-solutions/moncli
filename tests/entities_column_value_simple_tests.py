@@ -11,7 +11,7 @@ def test_should_return_empty_text_column_value():
     id = 'text_1'
     column_type = ColumnType.text
     title = 'Text 1'
-    column_value = en.create_column_value(column_type, id=id, title=title)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
     
     # Act
     format = column_value.format()
@@ -29,7 +29,7 @@ def test_should_return_text_column_value_with_loaded_text():
     column_type = ColumnType.text
     title = 'Text 2'
     text = 'Hello, Grandma!'
-    column_value = en.create_column_value(column_type, id=id, title=title, value=json.dumps(text))
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=json.dumps(text))
     
     # Act
     format = column_value.format()
@@ -47,7 +47,7 @@ def test_should_return_empty_text_column_value_when_value_is_set_to_native_defau
     column_type = ColumnType.text
     title = 'Text 3'
     text = 'Hello, Grandma!'
-    column_value = en.create_column_value(column_type, id=id, title=title, value=json.dumps(text))
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=json.dumps(text))
     
     # Act
     column_value.value = None
@@ -63,7 +63,7 @@ def test_should_return_text_column_with_value_when_setting_an_int_value():
     column_type = ColumnType.text
     title = 'Text 4'
     text = 12345
-    column_value = en.create_column_value(column_type, id=id, title=title)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
     
     # Act
     column_value.value = text
@@ -79,7 +79,7 @@ def test_should_return_text_column_with_value_when_setting_an_float_value():
     column_type = ColumnType.text
     title = 'Text 5'
     text = 123.45
-    column_value = en.create_column_value(column_type, id=id, title=title)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
     
     # Act
     column_value.value = text
@@ -95,7 +95,7 @@ def test_should_throw_exception_when_setting_an_invalid_value():
     column_type = ColumnType.text
     title = 'Text 5'
     text = {'value': 123.45}
-    column_value = en.create_column_value(column_type, id=id, title=title)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
     
     # Act
     column_value.value = text
@@ -113,7 +113,7 @@ def test_should_create_a_column_value_with_no_API_input_data():
     title = 'people 1'
     value = None
     
-    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
     
     # Act
     format = column_value.format()
@@ -132,7 +132,7 @@ def test_should_create_a_column_value_with_no_API_input_data():
     # value = [{'id':134 , 'kind':PeopleKind.person},
     #         {'id': 234 , 'kind':PeopleKind.person}]
     
-    column_value = en.create_column_value(column_type, id=id, title=title)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
     
     # Act
     format = column_value.format()
@@ -150,7 +150,7 @@ def test_should_create_a_column_value_with_API_input_data():
     title = 'people 1'
     value_dict ={'personsAndTeams': [{'id':134 , 'kind':'person'},{'id':11234 , 'kind':'person'}]}
     value = json.dumps(value_dict)
-    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
     
     # Act
     format = column_value.format()[0]
@@ -166,7 +166,7 @@ def test_should_set_value_to_none():
     id = 'people_1'
     column_type = ColumnType.people
     title = 'people 1'
-    column_value = en.create_column_value(column_type, id=id, title=title)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
     
     # Act
     column_value.value = []
@@ -184,7 +184,7 @@ def test_should_throw_exception_when_setting_an_invalid_column_value():
     title = 'people 1'
     value_dict ={'personsAndTeams': [{'id':123 , 'kind':'not person'},{'id':11234 , 'kind':'person'}]}
     value = json.dumps(value_dict)
-    column_value = en.create_column_value(column_type, id=id, title=title)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
     
     # Act
     column_value.value = value
