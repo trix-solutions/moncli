@@ -1,8 +1,8 @@
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
-from moncli import client, entities as en, error as e
-from moncli.enums import BoardKind, NotificationTargetType, WorkspaceKind
+from moncli import client, entities as en
+from moncli.enums import BoardKind, NotificationTargetType, WorkspaceKind, WorkspaceSubscriberKind
 
 
 @patch('moncli.api_v2.create_board')
@@ -40,14 +40,14 @@ def test_should_retrieve_a_list_of_boards(get_boards):
 
 
 
-@raises(e.MondayClientError)
+@raises(en.client.MondayClientError)
 def test_should_fail_to_retrieve_single_board_due_to_too_few_parameters():
 
     # Act
     client.get_board()
 
 
-@raises(e.MondayClientError)
+@raises(en.client.MondayClientError)
 def test_should_fail_to_retrieve_single_board_due_to_too_many_parameters():
 
     # Act
@@ -105,7 +105,7 @@ def test_should_archive_a_board(archive_board):
     eq_(board.id, id)
 
 
-@raises(e.MondayClientError)
+@raises(en.client.MondayClientError)
 def test_should_fail_to_retrieve_assets_with_no_ids():
 
     # Act
@@ -265,10 +265,73 @@ def test_should_create_workspace(create_workspace):
     eq_(workspace.name, name)
     eq_(workspace.kind, kind.name)
     eq_(workspace.description, description)
+    
+    
+@patch('moncli.api_v2.add_users_to_workspace')
+def test_should_add_users_to_workspace(add_users_to_workspace):
+    
+    #Arrange
+    id = '12345'
+    user_ids = ['1','2','3','4','5']
+    kind = WorkspaceSubscriberKind.owner
+    add_users_to_workspace.return_value = [{'id': id}]
+
+    # Act
+    workspace = client.add_users_to_workspace(id ,user_ids, kind)
+
+    # Assert
+    ok_(workspace != None)
+    eq_(workspace[0].id, id)
+
+
+@patch('moncli.api_v2.delete_users_from_workspace')
+def test_should_remove_users_from_workspace(delete_users_from_workspace):
+
+    id = '12345'
+    user_ids = ['1','2','3','4','5']
+    
+    delete_users_from_workspace.return_value = [{'id': id}]
+
+    # Act
+    workspace = client.delete_users_from_workspace(id ,user_ids)
+    eq_(workspace[0].id, id)
+
+    
+@patch('moncli.api_v2.add_teams_to_workspace')
+def test_should_add_teams_to_workspace(add_teams_to_workspace):
+
+    # Arrange
+    workspace_id = '12345'
+    team_ids =  [105939, 105940, 105941]
+    add_teams_to_workspace.return_value = [{'id': '105939'}, {'id': '105940'}, {'id': '105940'}]
+
+    # Act
+    teams = client.add_teams_to_workspace(workspace_id, team_ids)
+
+    #Assert
+    ok_(teams != None)
+    ok_(type(teams is list))
+    eq_(len(teams), 3)
+    
+
+@patch('moncli.api_v2.delete_teams_from_workspace')
+def test_should_delete_teams_from_workspace(delete_teams_from_workspace):
+
+    # Arrange
+    workspace_id = '12345'
+    team_ids =  [105939, 105940, 105941]
+    delete_teams_from_workspace.return_value = [{'id': '105939'}, {'id': '105940'}, {'id': '105940'}]
+
+    # Act
+    teams = client.delete_teams_from_workspace(workspace_id, team_ids)
+
+    #Assert
+    ok_(teams != None)
+    ok_(type(teams is list))
+    eq_(len(teams), 3)
 
 
 @patch('moncli.api_v2.get_users')
-
 def test_should_retrieve_list_of_users(get_users):
 
     # Arrange 

@@ -13,7 +13,9 @@ ADD_SUBSCRIBERS_TO_BOARD = 'add_subscribers_to_board'
 DELETE_SUBSCRIBERS_FROM_BOARD = 'delete_subscribers_from_board'
 # Columns
 CREATE_COLUMN = 'create_column'
+CHANGE_COLUMN_TITLE = 'change_column_title'
 CHANGE_COLUMN_VALUE = 'change_column_value'
+CHANGE_SIMPLE_COLUMN_VALUE = 'change_simple_column_value'
 CHANGE_MULTIPLE_COLUMN_VALUES = 'change_multiple_column_values'
 # Groups
 DUPLICATE_GROUP = 'duplicate_group'
@@ -44,6 +46,8 @@ CREATE_OR_GET_TAG = 'create_or_get_tag'
 USERS = 'users'
 # Teams
 TEAMS = 'teams'
+ADD_TEAMS_TO_WORKSPACE = 'add_teams_to_workspace'
+DELETE_TEAMS_FROM_WORKSPACE = 'delete_teams_from_workspace'
 # Me
 ME = 'me'
 # Account
@@ -53,6 +57,9 @@ CREATE_WEBHOOK = 'create_webhook'
 DELETE_WEBHOOK = 'delete_webhook'
 # Workspace
 CREATE_WORKSPACE = 'create_workspace'
+ADD_USERS_TO_WORKSPACE = 'add_users_to_workspace'
+DELETE_USERS_FROM_WORKSPACE = 'delete_users_from_workspace'
+
 # Files
 ASSETS = 'assets'
 ADD_FILE_TO_UPDATE = 'add_file_to_update'
@@ -64,7 +71,8 @@ DEFAULT_BOARD_QUERY_FIELDS = [
     'id', 
     'name', 
     'board_folder_id', 
-    'board_kind', 
+    'board_kind',
+    'communication', 
     'description', 
     'permissions',
     'pos',
@@ -157,7 +165,9 @@ DEFAULT_REPLY_QUERY_FIELDS = [
 DEFAULT_ASSET_QUERY_FIELDS = [
     'id',
     'name',
-    'url'
+    'url',
+    'file_size',
+    'file_extension'
 ]
 
 DEFAULT_WEBHOOK_QUERY_FIELDS = [
@@ -180,8 +190,11 @@ DEFAULT_USER_QUERY_FIELDS = [
     'enabled',
     'birthday',
     'country_code',
+    'is_admin',
     'is_guest',
     'is_pending',
+    'is_verified',
+    'is_view_only',
     'join_date',
     'location',
     'mobile_phone',
@@ -251,7 +264,6 @@ QUERY_MAP = {
             'ids': (ArgumentValueKind.List, ArgumentValueKind.Int),
             'board_kind': ArgumentValueKind.Enum,
             'state': ArgumentValueKind.Enum,
-            'newest_first': ArgumentValueKind.Bool,
             'activity_logs': {
                 'limit': ArgumentValueKind.Int,
                 'page': ArgumentValueKind.Int,
@@ -278,6 +290,7 @@ QUERY_MAP = {
                 'limit': ArgumentValueKind.Int,
                 'page': ArgumentValueKind.Int
             },
+            'order_by': ArgumentValueKind.Enum,
             'updates': {
                 'limit': ArgumentValueKind.Int,
                 'page': ArgumentValueKind.Int
@@ -287,6 +300,9 @@ QUERY_MAP = {
                 'type': ArgumentValueKind.String
             }
         }),
+    ADD_USERS_TO_WORKSPACE: (DEFAULT_USER_QUERY_FIELDS, {
+        
+    }),
     CREATE_BOARD: (
         DEFAULT_BOARD_QUERY_FIELDS, 
         {
@@ -305,7 +321,9 @@ QUERY_MAP = {
         {
             'defaults': ArgumentValueKind.Json
         }),
+    CHANGE_COLUMN_TITLE: (DEFAULT_COLUMN_QUERY_FIELDS, {}),
     CHANGE_COLUMN_VALUE: (DEFAULT_ITEM_QUERY_FIELDS, {}),
+    CHANGE_SIMPLE_COLUMN_VALUE: (DEFAULT_ITEM_QUERY_FIELDS, {}),
     CHANGE_MULTIPLE_COLUMN_VALUES: (DEFAULT_ITEM_QUERY_FIELDS, {}),
     DUPLICATE_GROUP: (
         DEFAULT_GROUP_QUERY_FIELDS, 
@@ -419,6 +437,17 @@ QUERY_MAP = {
         {
             'ids': (ArgumentValueKind.List, ArgumentValueKind.Int)
         }),
+    ADD_TEAMS_TO_WORKSPACE: (
+        DEFAULT_TEAM_QUERY_FIELDS ,
+         {
+
+         }),
+    DELETE_TEAMS_FROM_WORKSPACE: 
+    (
+        DEFAULT_TEAM_QUERY_FIELDS , 
+        {
+            
+        }),
     ME: (DEFAULT_USER_QUERY_FIELDS, {}),
     ACCOUNT: (DEFAULT_ACCOUNT_QUERY_FIELDS, {}),
     CREATE_WEBHOOK: (
@@ -432,6 +461,11 @@ QUERY_MAP = {
         {
             'description': ArgumentValueKind.String
         }),
+    DELETE_USERS_FROM_WORKSPACE: (
+        DEFAULT_USER_QUERY_FIELDS,
+         {
+
+         }),
     ASSETS: (DEFAULT_ASSET_QUERY_FIELDS, {}),
     ADD_FILE_TO_UPDATE: (DEFAULT_ASSET_QUERY_FIELDS, {}),
     ADD_FILE_TO_COLUMN: (DEFAULT_ASSET_QUERY_FIELDS, {})

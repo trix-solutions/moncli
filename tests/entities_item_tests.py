@@ -221,6 +221,37 @@
 #     item.change_column_value(column_value='5')
 
 
+# @patch('moncli.api_v2.get_items')
+# @raises(en.item.InvalidParameterError)
+# def test_should_fail_to_update_item_name_if_input_new_name_parameter_is_none(get_items):
+
+#     # Arrange
+#     get_items.return_value = [{'id': 2, 'name': 'Test Item 2'}]
+#     item = client.get_items()[0]
+
+#     # Act
+#     item.change_name(None)
+
+# @patch.object(en.Item,'get_board')
+# @patch('moncli.api_v2.get_items')
+# @patch('moncli.api_v2.change_multiple_column_value')
+# def test_should_update_item_name_if_new_name_parameter_contains_a_valid_value(change_multiple_column_value,get_items,get_board):
+
+#     # Arrange
+#     get_board.return_values = {'id': "123", 'name': "Test Board"}
+#     get_items.return_value = [{'id': '123', 'name': 'Test Item '}]
+#     change_multiple_column_value.return_value = {'id': 2, 'name': 'changed name'}
+#     item = client.get_items()[0]
+#     new_name = 'changed name'
+
+
+#     # Act
+#     new_item = item.change_name(new_name)
+
+#     # Assert
+#     ok_(item != None)
+#     eq_(new_item['name'], new_name)
+
 
 # @patch('moncli.api_v2.get_items')
 # @raises(en.InvalidColumnValue)
@@ -233,6 +264,90 @@
 #     # Act
 #     item.change_column_value(column_value=[1,2,3,4,5])
 
+
+# @patch('moncli.api_v2.get_items')
+# @raises(en.item.TooManyChangeSimpleColumnValueParameters)
+# def test_should_fail_to_change_simple_column_value_with_too_many_parameters(get_items):
+#     # Arrange
+#     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+    
+#     item = client.get_items()[0]
+#     id = "long_text"
+#     title = "mock title"
+
+#     # Act 
+
+#     item.change_simple_column_value(id,title,value="change value")
+
+
+# @patch('moncli.api_v2.get_items')
+# @raises(en.item.NotEnoughChangeSimpleColumnValueParameters)
+# def test_should_fail_to_change_column_value_from_too_few_parameters( get_items):
+#     # Arrange
+#     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+#     item = client.get_items()[0]
+    
+
+#     # Act 
+
+#     item.change_simple_column_value(value="change value")
+
+
+# @patch('moncli.api_v2.get_items')
+# @patch.object(en.Item,'get_board')
+# @patch.object(en.Item, 'get_column_values')
+# @patch('moncli.api_v2.change_simple_column_value')
+# def test_should_update_simple_column_value(change_simple_column_value, get_column_values,get_board, get_items):
+    
+#     # Arrange
+#     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+#     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
+#     column_value = cv.create_column_value(
+#         ColumnType.long_text, 
+#         id= 'long_text', 
+#         title= 'Description', 
+#         text= "My previous keyword doesn't work", 
+#         value= 'My previous keyword' )
+#     get_column_values.return_value = en.BaseColumnCollection([column_value])
+#     item = client.get_items()[0]
+#     change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
+
+#     # Act
+#     item = item.change_simple_column_value(id=column_value.id,title=None,value="new value")
+    
+#     # Assert 
+#     ok_(item != None)
+#     eq_(item.id, '1'),
+#     eq_(item.name, 'Test Item 01')
+
+    
+# @patch('moncli.api_v2.get_items')
+# @patch.object(en.Item, 'get_board')
+# @patch.object(en.Item, 'get_column_values')
+# @patch('moncli.api_v2.change_simple_column_value')
+# def test_should_update_simple_column_value_for_status(change_simple_column_value,get_column_values, get_board, get_items):
+    
+#     # Arrange
+#     get_items.return_value = [{'id': '1', 'name': 'Test Item 01'}]
+#     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
+#     item = client.get_items()[0]
+#     column_value = cv.create_column_value(
+#         ColumnType.status, 
+#         id= 'long_text', 
+#         title= 'Description', 
+#         text= "My previous keyword doesn't work", 
+#         value= json.dumps({"index":14,"post_id": None,"changed_at":"2020-05-30T19:51:09.981Z"}),
+#         settings_str='{}' )
+#     get_column_values.return_value = en.BaseColumnCollection([column_value])
+#     change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
+
+#     # Act
+#     item = item.change_simple_column_value(id=column_value.id,value="new value")
+    
+#     # Assert 
+#     ok_(item != None)
+#     eq_(item.id, '1'),
+#     eq_(item.name, 'Test Item 01')
 
 
 # @patch('moncli.api_v2.get_items')

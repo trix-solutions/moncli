@@ -2,7 +2,7 @@ from unittest.mock import patch
 from nose.tools import ok_, eq_
 
 from moncli.api_v2 import handlers, constants
-from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType, WebhookEventType, WorkspaceKind
+from moncli.enums import BoardKind, ColumnType, State, NotificationTargetType, WebhookEventType, WorkspaceKind, SubscriberKind
 
 EXECUTE_QUERY_PATCH = 'moncli.api_v2.handlers.execute_query'
 UPLOAD_FILE_PATCH = 'moncli.api_v2.handlers.upload_file'
@@ -111,6 +111,23 @@ def test_create_column(execute_query):
     ok_(new_column['title'] == title)
     ok_(new_column['type'] == ColumnType.text.name)
 
+@patch(EXECUTE_QUERY_PATCH)
+def test_change_column_title(execute_query):
+
+    # Arrange
+    column_id='text_column_1'
+    board_id='12345678'
+    title='Hello, world!'
+    execute_query.return_value = {'id': '1'}
+
+    # Act
+    updated_item = handlers.change_column_title(column_id='text_column_1', board_id='12345678', title='Hello, world!')
+    
+    # Assert
+    ok_(updated_item != None)
+    ok_(type(updated_item) is dict)
+    ok_(updated_item['id'] == '1')
+
 
 @patch(EXECUTE_QUERY_PATCH)
 def test_change_column_value(execute_query):
@@ -125,6 +142,24 @@ def test_change_column_value(execute_query):
     ok_(updated_item != None)
     ok_(type(updated_item) is dict)
     ok_(updated_item['id'] == '1')
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_change_simple_column_value(execute_query):
+
+    # Arrange
+    board_id = '12345678'
+    item_id =  '2345678'
+    column_id = 'new_column'
+    value   =   "Simple Value to update"
+    execute_query.return_value = {'id': '2345678'}
+
+    # Act
+    updated_item = handlers.change_simple_column_value(board_id='12345678',item_id='2345678',column_id='new_column',value="Simple Value to update")
+    
+    # Assert
+    ok_(updated_item != None)
+    ok_(updated_item['id'] == item_id)
+
 
 
 @patch(EXECUTE_QUERY_PATCH)
@@ -579,3 +614,71 @@ def test_create_workspace(execute_query):
     ok_(workspace['name'] == name)
     ok_(workspace['kind'] == kind.name)
     ok_(workspace['description'] == description)
+
+    
+@patch(EXECUTE_QUERY_PATCH)
+def test_add_users_to_workspace(execute_query):
+
+    # Arrange
+    id = '12345'
+    user_ids = ['1','2','3','4','5']
+    kind = SubscriberKind.subscriber
+    execute_query.return_value = {'id': '12345',  'kind': kind.name }
+    # Act
+    workspace = handlers.add_users_to_workspace(id,user_ids, kind)
+
+    # Assert
+    ok_(workspace != None)
+    ok_(type(workspace) is dict)
+    ok_(workspace['id'] == id)
+    ok_(workspace['kind'] == kind.name)
+
+    
+@patch(EXECUTE_QUERY_PATCH)
+def test_remove_users_from_workspace(execute_query):
+
+    #Arrange
+    workspace_id = '12345'
+    user_ids=['1','2','3','4','5']
+    execute_query.return_value = {'id': '12345'}
+
+    #Act
+    workspace = handlers.delete_users_from_workspace(workspace_id,user_ids)
+
+    #Assert
+    ok_(workspace != None)
+    ok_(workspace['id'] == workspace_id)
+
+
+@patch(EXECUTE_QUERY_PATCH)
+def test_add_teams_to_workspace(execute_query):
+
+    #Arrange
+    workspace_id = '12345'
+    team_ids =  ['105939', '105940', '105941']
+    execute_query.return_value = [{'id': '105939'}, {'id': '105940'}, {'id': '105940'}]
+
+    # Act
+    teams = handlers.add_teams_to_workspace(workspace_id, team_ids)
+
+    # Assert
+    ok_(teams != None)
+    ok_(type(teams is list))
+    eq_(len(teams), 3)
+
+    
+@patch(EXECUTE_QUERY_PATCH)
+def test_remove_teams_from_workspace(execute_query):
+
+    #Arrange
+    workspace_id = '12345'
+    team_ids =  ['105939', '105940', '105941']
+    execute_query.return_value = [{'id': '105939'}, {'id': '105940'}, {'id': '105940'}]
+
+    # Act
+    teams = handlers.delete_teams_from_workspace(workspace_id, team_ids)
+
+    # Assert
+    ok_(teams != None)
+    ok_(type(teams is list))
+    eq_(len(teams), 3)

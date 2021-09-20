@@ -6,6 +6,11 @@ class BoardKind(Enum):
     share = 3
 
 
+class BoardsOrderBy(Enum):
+    created_at = 1
+    used_at = 2
+
+
 class ColumnType(Enum):
     auto_number = 1
     checkbox = 2
@@ -40,7 +45,7 @@ class ColumnType(Enum):
     board_relation = 31
     integration = 32
     name = 99999 # This column is a text type but comes standard with every board.
-
+    dependency = 34
 
 class NotificationTargetType(Enum):
     Project = 1
@@ -78,11 +83,23 @@ class WebhookEventType(Enum):
     change_specific_column_value = 3
     create_update = 4
     incoming_notification = 5
+    change_name = 6
+    create_subitem = 7
+    change_subitem_column_value = 8
+    change_subitem_name = 9
+    create_subitem_update = 10
+
 
 class WorkspaceKind(Enum):
     open = 1
     closed = 2
 
+
 class SubscriberKind(Enum):
     subscriber = 1
     owner = 2
+
+
+class WorkspaceSubscriberKind(Enum):
+    subscriber = 0
+    owner = 1
