@@ -92,11 +92,11 @@ class ColumnValue(_ColumnValue):
         return self._format()
 
     def __repr__(self):
-        print(str({
+        return str({
             'id': self.id,
             'title': self.title,
             'value': self.value
-        }))
+        })
 
     def _convert(self, value):
         return value
