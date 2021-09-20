@@ -1144,9 +1144,9 @@ class Board(_Board):
                     args.append(arg)
             args.extend(['id', 'name'])
 
-        if isinstance(column_value, en.DateValue):
+        if isinstance(column_value, en.cv.DateValue):
             value = column_value.date
-        elif isinstance(column_value, en.StatusValue):
+        elif isinstance(column_value, en.cv.StatusValue):
             value = column_value.label
         else:
             value = column_value.format()
