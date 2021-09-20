@@ -7,24 +7,18 @@ from ... import entities as en
 from ...error import ColumnValueError
 from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
 
+
 class _ColumnValue(en.BaseColumn):
     """Base column value model"""
 
     text = StringType()
     additional_info = StringType()
 
-    class Options:
-        roles = {'default': blacklist('settings_str')}
-
-    def __repr__(self):
-        return str(self.to_primitive())
-
-
 class ColumnValue(_ColumnValue):
     """The value of an items column.
 
     Properties
- 
+
         additional_info : `json`
             The column value's additional information.
         id : `str`
@@ -57,7 +51,7 @@ class ColumnValue(_ColumnValue):
     def __init__(self, **kwargs):
         value = kwargs.pop('value', None)
         super().__init__(**kwargs)
-        # Set seriaized configured null value if no value.
+        # Set serialized configured null value if no value.
         if value and value != self.null_value:
             value = json.loads(value)
             self._value = self._convert(value)
@@ -75,11 +69,12 @@ class ColumnValue(_ColumnValue):
         elif value == self.native_default or isinstance(value, self.native_type):
             self._value = value
         else:
-            raise ColumnValueError('invalid_column_value', self.id, 'Unable to set value "{}" to column "{}".'.format(value, self.title))
+            raise ColumnValueError('invalid_column_value', self.id,
+                                   'Unable to set value "{}" to column "{}".'.format(value, self.title))
 
     @property
     def settings(self):
-        return json.dumps(self.settings_str)
+        return json.loads(self.settings_str)
 
     @property
     def additional_info_map(self):
@@ -87,17 +82,25 @@ class ColumnValue(_ColumnValue):
 
     def format(self):
         if self.read_only:
-            raise ColumnValueError('readonly_column', self.id, 'Cannot format value for read-only column "{}".'.format(self.title))
+            raise ColumnValueError(
+                'readonly_column', self.id, 'Cannot format value for read-only column "{}".'.format(self.title))
         if self.value == self.native_default:
             return self.null_value
         return self._format()
+
+    def __repr__(self):
+        return str({
+            'id': self.id,
+            'title': self.title,
+            'value': self.value
+        })
 
     def _convert(self, value):
         return value
 
     def _cast(self, value):
         return self.native_type(value)
-    
+
     def _format(self):
         return str(self.value)
 
