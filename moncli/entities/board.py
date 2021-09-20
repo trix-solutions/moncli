@@ -1226,7 +1226,7 @@ class Board(_Board):
             column = [column for column in columns.values() if column.title == title][0]
 
         column_type = column.column_type      
-        return en.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
+        return en.cv.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
 
 
     def create_webhook(self, url: str, event: WebhookEventType, *args, **kwargs):
