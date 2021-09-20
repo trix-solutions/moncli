@@ -30,47 +30,30 @@ class NumberValue(SimpleNullValue):
 
     native_type = (int,float)
     allow_casts = (str)
-
-    def __init__(self, **kwargs):
-        super(NumberValue, self).__init__(**kwargs)
     
-    @property
-    def number(self):
-        return self._value
-
-    @number.setter
-    def number(self,value):
-        if isinstance(value,self.native_type):
-            value = self._convert(value)
-        elif isinstance(value, self.allow_casts):
-            value = self._cast(value) 
-        else:
-            value = self._format(value)
-    
-    def format(self):
-        return self._format(self.value)
-
     def _convert(self, value):
-        if self.__isint(self.value):
+        if self.__isint(value):
            return int(value)
-        elif self.__isfloat(self.value):
+        elif self.__isfloat(value):
            return float(value)
         
 
     def _cast(self, value):
         if isinstance(value,self.allow_casts):
-            if not (isinstance(value,self.native_type)):
-                raise ColumnValueError(
-                    'invalid_number',
-                    self.id,
-                    'Unable to convert "{}" to a number value.'.fomrat(value)
-                    )
-            return self._convert(value)
+            if self.__isint(value):
+                return int(value)
+            elif self.__isfloat(value):
+                return float(value)
+        raise ColumnValueError(
+                'invalid_number',
+                self.id,
+                'Unable to convert "{}" to a number value.'.format(value)
+                )
 
-    def _format(self, value):
-        if value == None:
-            return SIMPLE_NULL_VALUE
-        return self.allow_casts(self.value)
+    def _format(self):
+        if self.value != None:
+            return self.allow_casts(self.value)
+        return SIMPLE_NULL_VALUE
 
     def __isfloat(self, value):
         """Is the value a float."""
