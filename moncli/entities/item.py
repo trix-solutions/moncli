@@ -183,7 +183,7 @@ class Item(_Item):
         return self.__updates
 
 
-    def add_file(self, file_column: en.FileValue, file_path: str, *args):
+    def add_file(self, file_column: en.cv.FileValue, file_path: str, *args):
         """Add a file to a column value.
 
             Parameters
@@ -283,7 +283,7 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, file_column: en.FileValue, *args):
+    def remove_files(self, file_column: en.cv.FileValue, *args):
         """Add a file to a column value.
 
             Parameters

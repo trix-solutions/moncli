@@ -1014,7 +1014,7 @@ class Board(_Board):
         return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data] 
 
 
-    def get_items_by_column_values(self, column_value: en.ColumnValue, get_column_values: bool = False, *args, **kwargs):
+    def get_items_by_column_values(self, column_value: en.cv.ColumnValue, get_column_values: bool = False, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters
