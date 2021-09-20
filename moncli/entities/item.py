@@ -120,7 +120,7 @@ class Item(_Item):
             columns_map = { column.id: column for column in self.board.columns }
             for data in column_values:
                 column = columns_map[data['id']]
-                self.__column_values.append(en.create_column_value(column.column_type, settings_str=column.settings_str, **data))
+                self.__column_values.append(en.cv.create_column_value(column.column_type, settings_str=column.settings_str, **data))
         if updates != None and not self.__updates:
             self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
 
@@ -554,7 +554,7 @@ class Item(_Item):
             column = columns_map[id]
             column_type = column.column_type
             data['settings_str'] = column.settings_str
-            values.append(en.create_column_value(column_type, **data))
+            values.append(en.cv.create_column_value(column_type, **data))
         return en.BaseColumnCollection(values)
 
 
