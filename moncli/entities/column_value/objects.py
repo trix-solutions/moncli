@@ -10,8 +10,19 @@ class PersonOrTeam(object):
             the name of the  enums.PeopleKind  associated with the Person or Team
 
     """
-    def __init__():
-        def __init__(self, **kwargs):
-            super(PersonOrTeam, self).__init__(kwargs)
-            id = (int,str)
-            kind = enums.PeopleKind
+    def __init__(self,id,kind, **kwargs):
+        # super(PersonOrTeam, self).__init__(kwargs)
+        self.id = id 
+        self.kind=kind
+
+class Person(PersonOrTeam):
+   def __init__(self, **kwargs):
+        super(Person, self).__init__(kwargs)
+        self.id = id 
+        self.kind = enums.PeopleKind.person
+
+class Team(PersonOrTeam):
+   def __init__(self, **kwargs):
+        super(Team, self).__init__(kwargs)
+        self.id = id 
+        self.kind = enums.PeopleKind.team

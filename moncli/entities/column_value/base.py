@@ -16,9 +16,6 @@ class _ColumnValue(en.BaseColumn):
     class Options:
         roles = {'default': blacklist('settings_str')}
 
-    def __repr__(self):
-        return str(self.to_primitive())
-
 
 class ColumnValue(_ColumnValue):
     """The value of an items column.
