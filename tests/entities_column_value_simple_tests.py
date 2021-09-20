@@ -153,12 +153,12 @@ def test_should_create_a_column_value_with_API_input_data():
     column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
     
     # Act
-    format = column_value.format()[0]
+    person_value = column_value.format()['personsAndTeams']
+    format = person_value[0]
 
     # Assert
 
     eq_(format['id'],134)
-    eq_(format['kind'],'person')
 
 def test_should_set_value_to_none():
      # Arrange

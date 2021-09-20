@@ -56,8 +56,15 @@ class PeopleValue(ComplexNullValue):
     allow_casts = ()
 
     def _convert(self, value):
+        return_list = []
         value_list = value['personsAndTeams']
-        return [{PersonOrTeam(value_data['id'], enums.PeopleKind[value_data['kind']])} for value_data in value_list]
+        for value_data in value_list:
+            return_data = PersonOrTeam(
+                            value_data['id'], 
+                            enums.PeopleKind[value_data['kind']]
+                            )
+            return_list.append(return_data)
+        return return_list
     
     def _format(self):
         personsAndTeams = []
@@ -68,10 +75,10 @@ class PeopleValue(ComplexNullValue):
                     self.id,
                     'Invalid person or team value "{}".'.format(list_item)
                 )
-            personsAndTeams = list_item.id
+            id = list_item.id
             peopleKind = list_item.kind
-            personsAndTeams.append({ 'personsAndTeams': personsAndTeams, 'peopleKind':peopleKind })
-        return personsAndTeams
+            personsAndTeams.append({ 'id': id, 'kind':peopleKind })
+        return {'personsAndTeams': personsAndTeams}
 
 
 class PhoneValue(ComplexNullValue):
