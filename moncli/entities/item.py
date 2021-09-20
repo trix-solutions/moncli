@@ -736,7 +736,7 @@ class Item(_Item):
 
         if column_value is None:
             raise ColumnValueRequired()
-        if not isinstance(column_value, en.ColumnValue):
+        if not isinstance(column_value, en.cv.ColumnValue):
             raise en.board.InvalidColumnValue(type(column_value).__name__)
         else:
             column_id = column_value.id
