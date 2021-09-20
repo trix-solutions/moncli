@@ -14,12 +14,17 @@ class PersonOrTeam(object):
         self.id = id 
         self.kind=kind
 
+    def __repr__(self):
+        return str({
+            'id': self.id,
+            'kind': self.kind.name
+        })
+
 class Person(PersonOrTeam):
    def __init__(self, id):
         super(Person, self).__init__(id,kind=enums.PeopleKind.person)
-        self.id = id 
-        self.kind = enums.PeopleKind.person
+
 
 class Team(PersonOrTeam):
    def __init__(self,id):
-        super(Team, self).__init__(id)
+        super(Team, self).__init__(id, kind=enums.PeopleKind.team)
