@@ -261,7 +261,7 @@ def test_should_create_date_column_value_with_no_input_data():
     title = 'date'
     column_type = ColumnType.date
     value=None
-    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
 
     # Act
     format = column_value.format()
@@ -276,19 +276,95 @@ def test_should_create_date_column_value_with_input_data():
     id = 'date_1'
     title = 'date'
     column_type = ColumnType.date
-    date_value= {
-        'date': "2020-12-12",
-        'time': "12:20:30"
-        }
+    date_value = datetime(2020,12,12,12,20,30)
+    date_value = {
+        'date': str(date_value.date()),
+        'time': str(date_value.time())
+    }
     value = json.dumps(date_value)
-    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
 
     # Act
     format = column_value.format()
 
     # Assert
-    eq_(format,date_value)
     eq_(format['date'],'2020-12-12')
     eq_(format['time'], '12:20:30')
 
-def test_should_set
+def test_should_set_date_value_to_none_to_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=None
+
+    # Assert
+    eq_(column_value.value,None)
+
+def test_should_set_datetime_input_value_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = datetime(2020, 12, 12, 12, 30, 12)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+
+    # Assert
+    eq_(column_value.value,value)
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_unix_timestamp_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = 999999999999
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+
+def test_should_set_valid_unix_timestamp_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = 9999999999
+    date_value=datetime(2286, 11, 20, 23, 16, 39)
+    date = str(date_value.date())
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+    format = column_value.format()
+
+    # Assert
+    eq_(format['date'],date)
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_monday_simple_string_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = "202020-120-120 123:234:233"
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+
+
+def test_should_set_monday_simple_string_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = "2020-12-12 12:24:23"
+    date_value = datetime(2020,12,12,12,24,23)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+    format = column_value.format()
+    # Assert
+    eq_(format['date'],str(date_value.date()))

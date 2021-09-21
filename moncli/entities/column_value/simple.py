@@ -1,10 +1,12 @@
 from moncli.error import ColumnValueError
 from moncli.entities.column_value.objects import PersonOrTeam
 from moncli import enums
-
+from datetime import datetime, timedelta
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE
 from ...error import ColumnValueError
+from moncli.config import DATE_FORMAT,TIME_FORMAT
+import pytz
 
 class DateValue(ComplexNullValue):
     """A date column value."""
@@ -30,7 +32,10 @@ class DateValue(ComplexNullValue):
         if isinstance(value,int):
             try: 
                 new_date_value =  datetime.fromtimestamp(value)
-                return new_date_value
+                date=str(new_date_value.date())
+                time=str(new_date_value.time())
+                date_dict = dict(date=date,time=time)
+                return self._convert(date_dict)
 
             except ValueError:
                 raise ColumnValueError(
@@ -41,18 +46,20 @@ class DateValue(ComplexNullValue):
 
         if isinstance(value, str):
             date_value = value.split()
-            if len(date_value) == 2:
-                value['date'] = date_value[0]
-                value['time'] = date_value[1]
-            elif len(date_value) == 1:
-                value['date'] == "".join(date_value)
-            else:
+            return_value = {}
+            try:
+                if len(date_value) == 1:
+                    return self._convert(value)
+                if len(date_value) == 2:
+                    return_value['date'] = date_value[0]
+                    return_value['time'] = date_value[1]
+                    return self._convert(return_value)
+            except (TypeError, ValueError) as e:
                 raise ColumnValueError(
                     'invalid_simple_date',
                      self.id,
                     'Unable to convert "{}" from a simple string date format.'.format(value)
                 )
-            return value
             
     def _format(self):
         if self.has_time:
@@ -60,7 +67,7 @@ class DateValue(ComplexNullValue):
             date = datetime.strftime(utc_date, DATE_FORMAT)
             time = datetime.strftime(utc_date, TIME_FORMAT)
             return {'date': date, 'time': time}
-        return {'date': datetime.strftime(self.value, DATE_FORMAT)}
+        return {'date': datetime.strftime(self.value['date'], DATE_FORMAT)}
         
         
 
