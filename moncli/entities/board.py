@@ -1074,7 +1074,7 @@ class Board(_Board):
         return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data] 
 
 
-    def get_items_by_column_values(self, column_value: en.ColumnValue, get_column_values: bool = False, *args, **kwargs):
+    def get_items_by_column_values(self, column_value: en.cv.ColumnValue, get_column_values: bool = False, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters
@@ -1144,9 +1144,9 @@ class Board(_Board):
                     args.append(arg)
             args.extend(['id', 'name'])
 
-        if isinstance(column_value, en.DateValue):
+        if isinstance(column_value, en.cv.DateValue):
             value = column_value.date
-        elif isinstance(column_value, en.StatusValue):
+        elif isinstance(column_value, en.cv.StatusValue):
             value = column_value.label
         else:
             value = column_value.format()
@@ -1286,7 +1286,7 @@ class Board(_Board):
             column = [column for column in columns.values() if column.title == title][0]
 
         column_type = column.column_type      
-        return en.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
+        return en.cv.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
 
 
     def create_webhook(self, url: str, event: WebhookEventType, *args, **kwargs):

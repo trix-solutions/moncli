@@ -126,7 +126,7 @@ class Item(_Item):
             columns_map = { column.id: column for column in self.board.columns }
             for data in column_values:
                 column = columns_map[data['id']]
-                self.__column_values.append(en.create_column_value(column.column_type, settings_str=column.settings_str, **data))
+                self.__column_values.append(en.cv.create_column_value(column.column_type, settings_str=column.settings_str, **data))
         if updates != None and not self.__updates:
             self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
         if parent_item and not self.__parent_item: 
@@ -200,7 +200,7 @@ class Item(_Item):
         return self.__parent_item
 
 
-    def add_file(self, file_column: en.FileValue, file_path: str, *args):
+    def add_file(self, file_column: en.cv.FileValue, file_path: str, *args):
         """Add a file to a column value.
 
             Parameters
@@ -300,7 +300,7 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, file_column: en.FileValue, *args):
+    def remove_files(self, file_column: en.cv.FileValue, *args):
         """Add a file to a column value.
 
             Parameters
@@ -575,7 +575,7 @@ class Item(_Item):
             column = columns_map[id]
             column_type = column.column_type
             data['settings_str'] = column.settings_str
-            values.append(en.create_column_value(column_type, **data))
+            values.append(en.cv.create_column_value(column_type, **data))
         return en.BaseColumnCollection(values)
 
 
@@ -736,7 +736,7 @@ class Item(_Item):
 
         if column_value is None:
             raise ColumnValueRequired()
-        if not isinstance(column_value, en.ColumnValue):
+        if not isinstance(column_value, en.cv.ColumnValue):
             raise en.board.InvalidColumnValue(type(column_value).__name__)
         else:
             column_id = column_value.id
