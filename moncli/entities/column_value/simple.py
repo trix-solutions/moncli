@@ -1,6 +1,11 @@
+from moncli.error import ColumnValueError
+from moncli.entities.column_value.objects import PersonOrTeam
+from moncli import enums
+
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE
 from ...error import ColumnValueError
+
 class DateValue(ComplexNullValue):
     """A date column value."""
     pass
@@ -75,6 +80,35 @@ class NumberValue(SimpleNullValue):
 
 class PeopleValue(ComplexNullValue):
     """A people column value."""
+
+    native_type = list
+    native_default = []
+    allow_casts = ()
+
+    def _convert(self, value):
+        return_list = []
+        value_list = value['personsAndTeams']
+        for value_data in value_list:
+            return_data = PersonOrTeam(
+                            value_data['id'], 
+                            enums.PeopleKind[value_data['kind']]
+                            )
+            return_list.append(return_data)
+        return return_list
+    
+    def _format(self):
+        personsAndTeams = []
+        for list_item in self.value:
+            if not isinstance(list_item,PersonOrTeam):
+                raise ColumnValueError(
+                    'invalid_people_value',
+                    self.id,
+                    'Invalid person or team value "{}".'.format(list_item)
+                )
+            id = list_item.id
+            peopleKind = list_item.kind
+            personsAndTeams.append({ 'id': id, 'kind': peopleKind.name })
+        return {'personsAndTeams': personsAndTeams}
 
 
 class PhoneValue(ComplexNullValue):
