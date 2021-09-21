@@ -69,7 +69,7 @@ class ColumnValue(_ColumnValue):
         elif value == self.native_default or isinstance(value, self.native_type):
             self._value = value
         elif not value:
-            self._value = self.native_default
+            self._value = copy.deepcopy(self.native_default)
         else:
             raise ColumnValueError('invalid_column_value', self.id,
                                    'Unable to set value "{}" to column "{}".'.format(value, self.title))

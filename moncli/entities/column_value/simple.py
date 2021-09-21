@@ -107,7 +107,7 @@ class PeopleValue(ComplexNullValue):
                 )
             id = list_item.id
             peopleKind = list_item.kind
-            personsAndTeams.append({ 'id': id, 'kind':peopleKind })
+            personsAndTeams.append({ 'id': id, 'kind': peopleKind.name })
         return {'personsAndTeams': personsAndTeams}
 
 
