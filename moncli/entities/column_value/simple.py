@@ -1,12 +1,13 @@
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE
 from ...error import ColumnValueError
-from datetime import datetime, timedelta
+from datetime import date, datetime
+from datetime import timedelta
 from moncli.config import DATE_FORMAT,TIME_FORMAT
 import pytz
 class DateValue(ComplexNullValue):
     """A date column value."""
-    native_type = datetime.datetime 
+    native_type = datetime
     allow_casts = (int, str)
     has_time = False
 
@@ -16,7 +17,7 @@ class DateValue(ComplexNullValue):
             new_date = datetime.strptime(value['date'], DATE_FORMAT)
             self.has_time = True
             new_date = pytz.timezone('UTC').localize(new_date)
-            new_date = new_date + timedelta(hours=new_time.hours, minutes=new_time.minutes, seconds=new_time.seconds)
+            new_date = new_date + timedelta(hours=new_time.hour, minutes=new_time.minute, seconds=new_time.second)
             date_value = new_date.astimezone(datetime.now().astimezone().tzinfo) 
             return date_value
 
@@ -36,10 +37,32 @@ class DateValue(ComplexNullValue):
                      self.id,
                     'Unable to convert "{}" from UNIX timestamp.'.format(value)
                 )
+
         if isinstance(value, str):
-            try:
-                date=value.split()[0]
-                time=value.split()[1]
+            date_value = value.split()
+            if len(date_value) == 2:
+                value['date'] = date_value[0]
+                value['time'] = date_value[1]
+            elif len(date_value) == 1:
+                value['date'] == "".join(date_value)
+            else:
+                raise ColumnValueError(
+                    'invalid_simple_date',
+                     self.id,
+                    'Unable to convert "{}" from a simple string date format.'.format(value)
+                )
+            return value
+            
+    def _format(self):
+        if self.has_time:
+            utc_date = self.value.astimezone(pytz.timezone('UTC'))
+            date = datetime.strftime(utc_date, DATE_FORMAT)
+            time = datetime.strftime(utc_date, TIME_FORMAT)
+            return {'date': date, 'time': time}
+        return {'date': datetime.strftime(self.value, DATE_FORMAT)}
+        
+        
+
 
 class DropdownValue(ComplexNullValue):
     """A dropdown column value."""

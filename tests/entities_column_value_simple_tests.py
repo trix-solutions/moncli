@@ -1,5 +1,6 @@
+import collections
 import json
-
+from datetime import datetime
 from nose.tools import ok_, eq_, raises
 
 from moncli import entities as en, error as e
@@ -185,3 +186,43 @@ def test_should_setting_a_valid_string_value():
 
     #Assert
     eq_(column_value.value, float(value))
+
+def test_should_create_date_column_value_with_no_input_data():
+
+    # Arrange
+
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value=None
+    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format,{})
+
+def test_should_create_date_column_value_with_input_data():
+
+    # Arrange
+
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    date_value= {
+        'date': "2020-12-12",
+        'time': "12:20:30"
+        }
+    value = json.dumps(date_value)
+    column_value = en.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format,date_value)
+    eq_(format['date'],'2020-12-12')
+    eq_(format['time'], '12:20:30')
+
+def test_should_set
