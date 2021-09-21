@@ -49,7 +49,8 @@ class DateValue(ComplexNullValue):
             return_value = {}
             try:
                 if len(date_value) == 1:
-                    return self._convert(value)
+                    return_value['date'] = value
+                    return self._convert(return_value)
                 if len(date_value) == 2:
                     return_value['date'] = date_value[0]
                     return_value['time'] = date_value[1]
