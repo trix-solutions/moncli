@@ -103,7 +103,7 @@ def test_should_throw_exception_when_setting_an_invalid_value():
     eq_(column_value.value, str(text))
 
 
-def test_should_create_a_column_value_with_no_API_input_data():
+def test_should_create_a_people_column_value_with_no_api_input_data():
 
     # Arrange
 
@@ -121,26 +121,8 @@ def test_should_create_a_column_value_with_no_API_input_data():
 
     eq_(format, {})
 
-def test_should_create_a_column_value_with_no_API_input_data():
 
-    # Arrange
-
-    id = 'people_1'
-    column_type = ColumnType.people
-    title = 'people 1'
-    # value = [{'id':134 , 'kind':PeopleKind.person},
-    #         {'id': 234 , 'kind':PeopleKind.person}]
-    
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
-    
-    # Act
-    format = column_value.format()
-
-    # Assert
-
-    eq_(format, {})
-
-def test_should_create_a_column_value_with_API_input_data():
+def test_should_create_a_people_column_value_with_no_api_input_data():
 
     # Arrange
 
@@ -159,7 +141,7 @@ def test_should_create_a_column_value_with_API_input_data():
 
     eq_(format['id'],134)
 
-def test_should_set_value_to_none():
+def test_should_set_people_column_value_to_none():
      # Arrange
 
     id = 'people_1'
@@ -168,15 +150,15 @@ def test_should_set_value_to_none():
     column_value = en.cv.create_column_value(column_type, id=id, title=title)
     
     # Act
-    column_value.value = []
-    format = column_value.format()
+
+    column_value.value = None
 
     # Assert
 
-    eq_(format,{})
+    eq_(column_value.value,[])
 
 @raises(e.ColumnValueError)
-def test_should_throw_exception_when_setting_an_invalid_column_value():
+def test_should_throw_an_exception_when_setting_an_invalid_value_to_people_column_value():
 
     id = 'people_1'
     column_type = ColumnType.people
