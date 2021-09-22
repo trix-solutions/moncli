@@ -155,7 +155,7 @@ class StatusValue(ComplexNullValue):
         labels = self.settings['labels']
         for key, value in labels.items():
          if self.value == value:
-             index= key
+             index= int(key)
         return dict(index=index)
 
 class TextValue(SimpleNullValue):
