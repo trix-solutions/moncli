@@ -46,7 +46,7 @@ class DateValue(ComplexNullValue):
             date_value = value.split()
             try:
                 if len(date_value) == 1:
-                    new_date = datetime.strptime(value['date'], DATE_FORMAT)
+                    new_date = datetime.strptime(value, DATE_FORMAT)
                     return new_date
                 if len(date_value) == 2:
                     self.has_time = True
@@ -66,7 +66,7 @@ class DateValue(ComplexNullValue):
             date = datetime.strftime(utc_date, DATE_FORMAT)
             time = datetime.strftime(utc_date, TIME_FORMAT)
             return {'date': date, 'time': time}
-        return {'date': datetime.strftime(self.value['date'], DATE_FORMAT)}
+        return {'date': datetime.strftime(self.value, DATE_FORMAT)}
         
         
 
