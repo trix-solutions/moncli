@@ -32,10 +32,8 @@ class DateValue(ComplexNullValue):
         if isinstance(value,int):
             try: 
                 new_date_value =  datetime.fromtimestamp(value)
-                date=str(new_date_value.date())
-                time=str(new_date_value.time())
-                date_dict = dict(date=date,time=time)
-                return self._convert(date_dict)
+                self.has_time = True
+                return new_date_value
 
             except ValueError:
                 raise ColumnValueError(
@@ -46,15 +44,15 @@ class DateValue(ComplexNullValue):
 
         if isinstance(value, str):
             date_value = value.split()
-            return_value = {}
             try:
                 if len(date_value) == 1:
-                    return_value['date'] = value
-                    return self._convert(return_value)
+                    new_date = datetime.strptime(value['date'], DATE_FORMAT)
+                    return new_date
                 if len(date_value) == 2:
-                    return_value['date'] = date_value[0]
-                    return_value['time'] = date_value[1]
-                    return self._convert(return_value)
+                    self.has_time = True
+                    new_format = '{} {}'.format(DATE_FORMAT, TIME_FORMAT) 
+                    new_date = datetime.strptime(value, new_format)
+                    return new_date
             except (TypeError, ValueError) as e:
                 raise ColumnValueError(
                     'invalid_simple_date',
