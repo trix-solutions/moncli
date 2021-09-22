@@ -48,6 +48,8 @@ class MondayType(BaseType):
             return value
 
         if not isinstance(value, en.cv.ColumnValue):
+            if isinstance(value, self.native_type):
+                return value
             if self.allow_casts and isinstance(value, self.allow_casts):
                 return self._cast(value)
             raise ConversionError("Couldn't interpret '{}' as type {}.".format(str(value), self.native_type.__name__))
@@ -65,6 +67,7 @@ class MondayType(BaseType):
             return None
         if not value:
             return self.null_value
+        # Assume that conversions 
         return self._export(value)
 
     def _cast(self, value):
