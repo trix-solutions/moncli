@@ -40,6 +40,8 @@ class Item(_Item):
                 The item's unique identifier.
             name : `str`
                 The item's name.
+            parent_item: moncli.entities.Item
+                The relevant parent item for the subitem.
             state : `str`
                 The board's state (all / active / archived / deleted)
             subscriber : `moncli.entities.User`
@@ -67,12 +69,18 @@ class Item(_Item):
                 Get the item's column values.
             get_column_value : `moncli.entities.ColumnValue`
                 Get an item's column value by ID or title.
+            get_parent_item: `moncli.entities.Item`
+                Get Parent Item of a Subitem.
             change_item_name: `moncli.entities.Item`
                 change an Item's column name
             change_column_value : `moncli.entities.Item`
                 Change an item's column value.
+            change_simple_column_value: `moncli.entities.Item`
+                Change an item's column value using simple values.
             change_multiple_column_values : `moncli.entities.Item`
                 Change the item's column values.
+            change_name: `moncli.entities.Item`
+                Change the name of an item.
             create_subitem : `moncli.entities.Item`
                 Create subitem.
             move_to_group : `moncli.entities.Item`
@@ -761,6 +769,8 @@ class Item(_Item):
                     The id value of the column 
                 title: str 
                     The title of the column
+                value: `str`
+                    The value to be changed
                 args : `tuple`
                     Optional item return fields.
 
