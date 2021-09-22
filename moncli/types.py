@@ -67,7 +67,8 @@ class MondayType(BaseType):
             return None
         if not value:
             return self.null_value
-        # Assume that conversions 
+        # Assume that conversions are necessary before exporting
+        value = self.to_native(value)
         return self._export(value)
 
     def _cast(self, value):
