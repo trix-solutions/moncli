@@ -1297,7 +1297,8 @@ class Board(_Board):
                 url : `str`
                     The webhook URL.
                 event : `moncli.enums.WebhookEventType`
-                    The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update).
+                    The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update / change_name / when_date_arrived)
+                    The sub-item event to listen to (create_subitem / create_subitem_update / change_subitem_name / change_subitem_column_value)
                 args : `tuple`
                     The list of webhook return fields.
                 kwargs : `dict`
