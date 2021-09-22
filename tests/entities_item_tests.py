@@ -208,20 +208,6 @@
 
 
 # @patch('moncli.api_v2.get_items')
-# @patch.object(en.Item, 'get_board')
-# @raises(en.InvalidColumnValue)
-# def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_board, get_items):
-
-#     # Arrange
-#     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
-#     get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
-#     item = client.get_items()[0]
-
-#     # Act
-#     item.change_column_value(column_value='5')
-
-
-# @patch('moncli.api_v2.get_items')
 # @raises(en.item.InvalidParameterError)
 # def test_should_fail_to_update_item_name_if_input_new_name_parameter_is_none(get_items):
 
@@ -231,6 +217,7 @@
 
 #     # Act
 #     item.change_name(None)
+
 
 # @patch.object(en.Item,'get_board')
 # @patch('moncli.api_v2.get_items')
