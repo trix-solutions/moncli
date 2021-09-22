@@ -117,7 +117,19 @@ class PhoneValue(ComplexNullValue):
 
 class StatusValue(ComplexNullValue):
     """A status column value."""
+    native_type = str
+    allow_casts = (int, str)
 
+    def _convert(self, value):
+        settings_str = self.settings()
+        label = settings_str['labels'] 
+        index = str(value['index'])
+        value = label[index] 
+        return value
+    
+    def _cast(self, value):
+        if isinstance(value,int):
+            
 
 class TextValue(SimpleNullValue):
     """A text column value."""
