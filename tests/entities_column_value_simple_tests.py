@@ -251,3 +251,54 @@ def test_should_set_number_column_value_to__a_valid_string_value():
 
     #Assert
     eq_(column_value.value, float(value))
+
+def test_should_create_a_status_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    #Assert
+    eq_(format, {})
+
+def test_should_create_a_status_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    index_value = {
+        'index': 1,
+    }
+    settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
+    settings_str = json.dumps(settings)
+    value = json.dumps(index_value)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value,settings_str=settings_str)
+
+    # Act
+    format = column_value.format()
+
+    #Assert
+    eq_(format['index'], 1)
+
+def test_should_set_invalid_value_to_status_value():
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    index_value = {
+        'index': 'invalid value',
+    }
+    settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
+    settings_str = json.dumps(settings)
+    value = json.dumps(index_value)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
+
+    # Act 
+
+    column_value.value = value
