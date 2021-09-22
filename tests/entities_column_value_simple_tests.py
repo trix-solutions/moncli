@@ -287,6 +287,7 @@ def test_should_create_a_status_column_value_with_api_input_data():
     eq_(column_value.value,'Done')
     eq_(format['index'], 1)
 
+
 def test_should_set_none_to_status_value():
     # Arrange
     id = 'status_1'
@@ -314,6 +315,7 @@ def test_should_set_invalid_label_value_to_status_value():
     # Act 
 
     column_value.value = "Not Done"
+
 
 def test_should_set_a_status_column_value_with_string_index_value():
 
@@ -354,6 +356,7 @@ def test_should_set_invalid_integer_to_status_index_value():
 
     column_value.value = value
 
+
 def test_should_set_a_status_column_value_with_valid_integer_index_value():
 
     # Arrange
@@ -374,6 +377,7 @@ def test_should_set_a_status_column_value_with_valid_integer_index_value():
     #Assert
     eq_(column_value.value,'Done')
     eq_(format['index'], 1)
+
 
 @raises(e.ColumnValueError)
 def test_should_set_invalid_string_to_status_index_value():
@@ -393,6 +397,7 @@ def test_should_set_invalid_string_to_status_index_value():
 
     column_value.value = value
 
+
 def test_should_set_a_status_column_value_with_valid_integer_index_value():
 
     # Arrange
@@ -413,6 +418,7 @@ def test_should_set_a_status_column_value_with_valid_integer_index_value():
     #Assert
     eq_(column_value.value,'Done')
     eq_(format['index'], 1)
+    
 
 def test_should_set_a_status_column_value_with_valid_string_label_value():
 
