@@ -1,15 +1,75 @@
 from moncli.error import ColumnValueError
 from moncli.entities.column_value.objects import PersonOrTeam
 from moncli import enums
-
+from datetime import datetime, timedelta
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE
 from ...error import ColumnValueError
+from moncli.config import DATE_FORMAT,TIME_FORMAT
+import pytz
 
 class DateValue(ComplexNullValue):
     """A date column value."""
-    pass
+    native_type = datetime
+    allow_casts = (int, str)
+    has_time = False
+
+    def _convert(self,value):
+        try:
+            new_time = datetime.strptime(value['time'], TIME_FORMAT)
+            new_date = datetime.strptime(value['date'], DATE_FORMAT)
+            self.has_time = True
+            new_date = pytz.timezone('UTC').localize(new_date)
+            new_date = new_date + timedelta(hours=new_time.hour, minutes=new_time.minute, seconds=new_time.second)
+            date_value = new_date.astimezone(datetime.now().astimezone().tzinfo) 
+            return date_value
+
+        except KeyError:
+            new_date = datetime.strptime(value['date'], DATE_FORMAT)
+            return new_date
         
+    def _cast(self,value):
+        if isinstance(value,int):
+            try: 
+                new_date_value =  datetime.fromtimestamp(value)
+                self.has_time = True
+                return new_date_value
+
+            except ValueError:
+                raise ColumnValueError(
+                    'invalid_unix_date',
+                     self.id,
+                    'Unable to convert "{}" from UNIX timestamp.'.format(value)
+                )
+
+        if isinstance(value, str):
+            date_value = value.split()
+            try:
+                if len(date_value) == 1:
+                    new_date = datetime.strptime(value, DATE_FORMAT)
+                    return new_date
+                if len(date_value) == 2:
+                    self.has_time = True
+                    new_format = '{} {}'.format(DATE_FORMAT, TIME_FORMAT) 
+                    new_date = datetime.strptime(value, new_format)
+                    return new_date
+            except (TypeError, ValueError) as e:
+                raise ColumnValueError(
+                    'invalid_simple_date',
+                     self.id,
+                    'Unable to convert "{}" from a simple string date format.'.format(value)
+                )
+            
+    def _format(self):
+        if self.has_time:
+            utc_date = self.value.astimezone(pytz.timezone('UTC'))
+            date = datetime.strftime(utc_date, DATE_FORMAT)
+            time = datetime.strftime(utc_date, TIME_FORMAT)
+            return {'date': date, 'time': time}
+        return {'date': datetime.strftime(self.value, DATE_FORMAT)}
+        
+        
+
 
 class DropdownValue(ComplexNullValue):
     """A dropdown column value."""

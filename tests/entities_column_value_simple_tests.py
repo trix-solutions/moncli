@@ -1,5 +1,6 @@
+import collections
 import json
-
+from datetime import datetime
 from nose.tools import ok_, eq_, raises
 
 from moncli import entities as en, error as e
@@ -149,6 +150,7 @@ def test_should_create_a_people_column_value_with_no_api_input_data():
     eq_(format['id'], 134)
 
 
+
 def test_should_set_people_column_value_to_none():
     # Arrange
 
@@ -164,6 +166,7 @@ def test_should_set_people_column_value_to_none():
     # Assert
 
     eq_(column_value.value, [])
+
 
 
 @raises(e.ColumnValueError)
@@ -242,6 +245,7 @@ def test_should_set_number_column_value_to_int_or_float_to_value():
     eq_(column_value.value, value)
 
 
+
 @raises(e.ColumnValueError)
 def test_should_set_number_column_value_to_an_improper_string_and_error():
     id = 'value_1'
@@ -268,7 +272,128 @@ def test_should_set_number_column_value_to__a_valid_string_value():
     eq_(column_value.value, float(value))
 
 
-def test_should_create_a_dropdown_column_value_with_no_api_input_data():
+def test_should_create_date_column_value_with_no_input_data():
+
+    # Arrange
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value=None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_create_date_column_value_with_input_data():
+
+    # Arrange
+
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    date_value = datetime(2020,12,12,12,20,30)
+    date_value = {
+        'date': str(date_value.date()),
+        'time': str(date_value.time())
+    }
+    value = json.dumps(date_value)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format['date'],'2020-12-12')
+    eq_(format['time'], '12:20:30')
+
+
+def test_should_set_date_value_to_none_to_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=None
+
+    # Assert
+    eq_(column_value.value,None)
+
+def test_should_set_datetime_input_value_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = datetime(2020, 12, 12, 12, 30, 12)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+
+    # Assert
+    eq_(column_value.value,value)
+
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_unix_timestamp_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = 999999999999
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+
+
+def test_should_set_valid_unix_timestamp_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = 9999999999
+    date_value=datetime(2286, 11, 20, 23, 16, 39)
+    date = str(date_value.date())
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+    format = column_value.format()
+
+    # Assert
+    eq_(format['date'],date)
+
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_monday_simple_string_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = "202020-120-120 123:234:233"
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+
+
+def test_should_set_monday_simple_string_to_date_column_value():
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    value = "2020-12-12 12:24:23"
+    date_value = datetime(2020,12,12,12,24,23)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value=value
+    format = column_value.format()
+    # Assert
+    eq_(format['date'],str(date_value.date()))
+
+
+def test_should_set_none_to_dropdown_column_value():
 
     # Arrange
 
@@ -280,10 +405,25 @@ def test_should_create_a_dropdown_column_value_with_no_api_input_data():
     column_value = en.cv.create_column_value(column_type, id=id, title=title)
 
     # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, [])
+
+
+def test_should_create_a_dropdown_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'dropdown_1'
+    column_type = ColumnType.dropdown
+    title = 'drop down 1'
+    value = None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
     format = column_value.format()
 
     # Assert
-
     eq_(format, {})
 
 
@@ -315,29 +455,12 @@ def test_should_create_a_dropdown_column_value_with_api_input_data():
     column_value = en.cv.create_column_value(
         column_type, id=id, title=title, value=value, settings_str=settings_str)
 
-    # Act
+    # Act 
     format = column_value.format()
 
-    # Assert
+    # Assert    
     eq_(format['ids'], [1])
 
-def test_should_set_none_to_dropdown_column_value():
-
-    # Arrange
-
-    id = 'dropdown_1'
-    column_type = ColumnType.dropdown
-    title = 'drop down 1'
-    value = None
-
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
-
-    # Act
-    column_value.value = value
-
-    # Assert
-
-    eq_(column_value.value, [])
 
 @raises(e.ColumnValueError)
 def test_should_set_invalid_integer_to_dropdown_column_value():
@@ -366,6 +489,7 @@ def test_should_set_invalid_integer_to_dropdown_column_value():
     column_value.value.append(123)
     column_value.format()
 
+
 @raises(e.ColumnValueError)
 def test_should_set_invalid_string_to_dropdown_index_column_value():
     
@@ -392,6 +516,7 @@ def test_should_set_invalid_string_to_dropdown_index_column_value():
     # Act
     column_value.value.append('42069')
     column_value.format()
+
 
 @raises(e.ColumnValueError)
 def test_should_set_invalid_string_to_dropdown_label_column_value():
