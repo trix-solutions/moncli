@@ -328,7 +328,7 @@ def test_should_set_none_to_dropdown_column_value():
     id = 'dropdown_1'
     column_type = ColumnType.dropdown
     title = 'drop down 1'
-    value = []
+    value = None
 
     column_value = en.cv.create_column_value(column_type, id=id, title=title)
 
@@ -390,7 +390,7 @@ def test_should_set_invalid_string_to_dropdown_index_column_value():
     column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str =settings_str)
 
     # Act
-    column_value.value.append("not a valid string")
+    column_value.value.append('42069')
     column_value.format()
 
 @raises(e.ColumnValueError)
