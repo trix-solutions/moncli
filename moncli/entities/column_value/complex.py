@@ -1,3 +1,4 @@
+from moncli.error import ColumnValueError
 from .base import ColumnValue
 
 class CheckboxValue(ColumnValue):
@@ -17,8 +18,28 @@ class HourValue(ColumnValue):
 
 class ItemLinkValue(ColumnValue):
     """An item link column value."""
-    pass
+    native_type = list
+    native_default = []
 
+    def _convert(self, value):
+        list_id = value['linkedPulseIds']
+        item_id = [id_value['linkedPulseId'] for id_value in list_id ]
+        return item_id
+
+    def _format(self):
+        item_ids = []
+        list_value = self.value
+        for value in list_value:
+            try:
+                value = int(value)
+                item_ids.append(value)
+            except ValueError:
+                raise ColumnValueError(
+                                    'invalid_item_id',
+                                    self.id,
+                                    'Invalid item ID "{}".'.format(list_value)
+                                    )
+        return dict(item_ids=item_ids)
 
 class RatingValue(ColumnValue):
     """A rating column value."""
