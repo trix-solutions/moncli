@@ -73,7 +73,48 @@ class DateValue(ComplexNullValue):
 
 class DropdownValue(ComplexNullValue):
     """A dropdown column value."""
-    pass
+    native_type = list
+    native_default = []
+
+    def _convert(self, value):
+        labels = self.settings['labels']
+        ids = value['ids']
+        label_list = []
+
+        for item in labels:
+            if item['id'] in ids:
+                label_list.append(item['name'])   
+        return label_list
+
+    def _format(self):
+        labels = self.settings['labels']
+        label_ids = [label['id'] for label in labels]
+        label_names = [label['name'] for label in labels]
+        ids = []
+        for value in self.value:
+            if isinstance(value,(int,str)):
+                try:
+                    value = int(value)
+                    if value in label_ids:
+                        ids.append(value)
+                    else:
+                        raise ColumnValueError(
+                                'invalid_dropdown_index',
+                                self.id,
+                                'Dropdown does not contain index "{}".'.format(value)
+                              )
+                except ValueError:
+                    if value in label_names:
+                        list_id = [label['id'] for label in labels if label['name']==value][0]
+                        ids.append(list_id)
+                    else:
+                        raise ColumnValueError(
+                                'invalid_dropdown_label',
+                                self.id,
+                                'Dropdown does not contain label "{}".'.format(value)
+                                   )
+        ids = list(set(ids))
+        return dict(ids=ids)    
 
 
 class EmailValue(ComplexNullValue):
@@ -177,7 +218,47 @@ class PhoneValue(ComplexNullValue):
 
 class StatusValue(ComplexNullValue):
     """A status column value."""
+    native_type = str
+    allow_casts = (int, str)
 
+    def _convert(self, value):
+        settings = self.settings
+        labels = settings['labels']
+        index = str(value['index'])
+        value = labels[index]  
+        return value
+    
+    def _cast(self, value):
+        if isinstance(value,int):
+            index = str(value)
+            labels = self.settings['labels']
+            try:
+                value = labels[index]
+                return value
+            except KeyError:
+                raise ColumnValueError( 'invalid_status_index',self.id,
+                                        'Cannot find a status with the following index "{}"'.format(value)
+                 )
+        if isinstance(value,str):
+            labels = self.settings['labels']
+            try:
+                int(value)
+                label = labels[value]
+                return label
+            except (ValueError,KeyError):
+                if value in labels.values():
+                    return value
+                raise ColumnValueError( 'invalid_status_index',self.id,
+                                        'Cannot find a status with the following index "{}"'.format(value))
+        
+    def _format(self):
+        index = None
+        labels = self.settings['labels']
+        for key, value in labels.items():
+            if self.value == value:
+                index= int(key)
+                break
+        return dict(index=index)
 
 class TextValue(SimpleNullValue):
     """A text column value."""
