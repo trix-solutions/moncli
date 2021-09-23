@@ -97,3 +97,24 @@ def test_should_append_invalid_string_id_to_item_link_column_value():
     # Act
     column_value.value.append('not a valid string')
     column_value.format()
+
+
+def test_should_item_link_column_with_api_data_with_no_linkedpulseid_key():
+
+    # Arrange
+    id = 'item_link'
+    title="Item Link"
+    column_type = ColumnType.board_relation
+    api_value={
+                'id' : [
+                    {'linkedPulseId': 123456789 }
+                ]
+                }
+    value = json.dumps(api_value)
+
+    # Act
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+
+
+    # Assert 
+    eq_(column_value.value,[])

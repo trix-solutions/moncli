@@ -22,9 +22,12 @@ class ItemLinkValue(ComplexNullValue):
     native_default = []
 
     def _convert(self, value):
-        list_id = value['linkedPulseIds']
-        item_id = [id_value['linkedPulseId'] for id_value in list_id ]
-        return item_id
+        try:
+            list_id = value['linkedPulseIds']
+            item_id = [id_value['linkedPulseId'] for id_value in list_id ]
+            return item_id
+        except KeyError:
+            return []
 
     def _format(self):
         item_ids = []
