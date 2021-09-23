@@ -41,7 +41,7 @@ class DropdownValue(ComplexNullValue):
                         raise ColumnValueError(
                                 'invalid_dropdown_index',
                                 self.id,
-                                'Dropdown does not contain index "{}".'.format(self.value)
+                                'Dropdown does not contain index "{}".'.format(value)
                               )
                 except ValueError:
                     if value in label_names:
@@ -51,8 +51,9 @@ class DropdownValue(ComplexNullValue):
                         raise ColumnValueError(
                                 'invalid_dropdown_label',
                                 self.id,
-                                'Dropdown does not contain label "{}".'.format(self.value)
+                                'Dropdown does not contain label "{}".'.format(value)
                                    )
+        ids = list(set(ids))
         return dict(ids=ids)    
 
 
