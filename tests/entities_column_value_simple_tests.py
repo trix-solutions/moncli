@@ -247,7 +247,7 @@ def test_should_set_number_column_value_to_int_or_float_to_value():
 
 
 @raises(e.ColumnValueError)
-def test_should_set_number_column_value_to_an_improper_string_and_error():
+def test_should_set_number__an_improper_string_to_column_value_and_error():
     id = 'value_1'
     title = "value"
     column_type = ColumnType.numbers
@@ -544,3 +544,156 @@ def test_should_set_invalid_string_to_dropdown_label_column_value():
     # Act
     column_value.value.append("dateTime")
     column_value.format()
+
+
+def test_should_create_a_status_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format() 
+    
+    #Assert
+    eq_(format, {})
+
+
+def test_should_create_a_status_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    index_value = {
+        'index': 1,
+    }
+    settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
+    settings_str = json.dumps(settings)
+    value = json.dumps(index_value)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value,settings_str=settings_str)
+
+    # Act
+    format = column_value.format()
+
+    #Assert
+    eq_(column_value.value,'Done')
+    eq_(format['index'], 1)
+
+
+def test_should_set_none_to_status_value():
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act 
+    column_value.value = None
+
+    #Assert
+    eq_(column_value.value, None)
+
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_string_label_value_to_status_value():
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
+    settings_str = json.dumps(settings)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
+
+    # Act 
+    column_value.value = "Not Done"
+
+
+def test_should_set_a_status_column_value_with_string_label_value():
+
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
+    settings_str = json.dumps(settings)
+    value = 'Done'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.settings_str=settings_str
+    column_value.value=value
+
+    #Assert
+    eq_(column_value.value,'Done')
+
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_integer_to_status_index_value():
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
+    settings_str = json.dumps(settings)
+    value = 123
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
+
+    # Act 
+
+    column_value.value = value
+
+
+def test_should_set_a_status_column_value_with_valid_integer_index_value():
+
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
+    settings_str = json.dumps(settings)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = 1
+
+    # Act
+    column_value.settings_str=settings_str
+    column_value.value = value
+
+    #Assert
+    eq_(column_value.value,'Done')
+
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_string_to_status_index_value():
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
+    settings_str = json.dumps(settings)
+    value = '123'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
+
+    # Act 
+    column_value.value = value
+
+
+def test_should_set_a_status_column_value_with_valid_integer_index_value():
+
+    # Arrange
+    id = 'status_1'
+    title = "status"
+    column_type = ColumnType.status
+    value = "1"
+    settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
+    settings_str = json.dumps(settings)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.settings_str=settings_str
+    column_value.value=value
+
+    #Assert
+    eq_(column_value.value,'Done')

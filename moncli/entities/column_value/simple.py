@@ -218,7 +218,47 @@ class PhoneValue(ComplexNullValue):
 
 class StatusValue(ComplexNullValue):
     """A status column value."""
+    native_type = str
+    allow_casts = (int, str)
 
+    def _convert(self, value):
+        settings = self.settings
+        labels = settings['labels']
+        index = str(value['index'])
+        value = labels[index]  
+        return value
+    
+    def _cast(self, value):
+        if isinstance(value,int):
+            index = str(value)
+            labels = self.settings['labels']
+            try:
+                value = labels[index]
+                return value
+            except KeyError:
+                raise ColumnValueError( 'invalid_status_index',self.id,
+                                        'Cannot find a status with the following index "{}"'.format(value)
+                 )
+        if isinstance(value,str):
+            labels = self.settings['labels']
+            try:
+                int(value)
+                label = labels[value]
+                return label
+            except (ValueError,KeyError):
+                if value in labels.values():
+                    return value
+                raise ColumnValueError( 'invalid_status_index',self.id,
+                                        'Cannot find a status with the following index "{}"'.format(value))
+        
+    def _format(self):
+        index = None
+        labels = self.settings['labels']
+        for key, value in labels.items():
+            if self.value == value:
+                index= int(key)
+                break
+        return dict(index=index)
 
 class TextValue(SimpleNullValue):
     """A text column value."""
