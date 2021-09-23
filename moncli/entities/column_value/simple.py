@@ -135,27 +135,28 @@ class StatusValue(ComplexNullValue):
                 value = labels[index]
                 return value
             except KeyError:
-                raise ColumnValueError( 'invalid_status_index',self.id )
+                raise ColumnValueError( 'invalid_status_index',self.id,
+                                        'Cannot find a status with the following index "{}"'.format(value)
+                 )
         if isinstance(value,str):
             labels = self.settings['labels']
             try:
-                int_value = int(value)
+                int(value)
                 label = labels[value]
                 return label
-            except ValueError:
+            except (ValueError,KeyError):
                 if value in labels.values():
                     return value
                 raise ColumnValueError( 'invalid_status_index',self.id,
-                                        'Cannot find a status with the following index "{}".format(value)' )
+                                        'Cannot find a status with the following index "{}"'.format(value))
         
     def _format(self):
-        if self.value == None:
-            return {}
         index = None
         labels = self.settings['labels']
         for key, value in labels.items():
-         if self.value == value:
-             index= int(key)
+            if self.value == value:
+                index= int(key)
+                break
         return dict(index=index)
 
 class TextValue(SimpleNullValue):
