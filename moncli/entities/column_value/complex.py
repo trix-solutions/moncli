@@ -90,17 +90,18 @@ class WeekValue(ComplexNullValue):
             return {}
         
     def _cast(self, value):
-        start = value['start']
-        end = value['end']
-        if start.tzinfo and end.tzinfo:
-            return Week(start=start,end=end)
-        else:
+        try:
+            start = value['start']
+            end = value['end']
+            if not (start.tzinfo and end.tzinfo):
+                return Week(start=start,end=end)
+        except (AttributeError,KeyError):
             raise ColumnValueError('invalid_week_data', self.id, 'Unable to convert "{}" to Week value of end date.'.format(value))
         
     def _format(self):
         try:
-            start_date = datetime.strftime(self.value['start'], DATE_FORMAT)
-            end_date = datetime.strftime(self.value['end'], DATE_FORMAT)
-            return {'startDate': str(start_date), 'endDate': str(end_date)}
-        except TypeError:
+            start_date = self.value.start.date()
+            end_date = self.value.end.date()
+            return {'startDate': str(start_date), 'endDate': str(end_date), 'week_number': self.value.week_number}
+        except (TypeError,AttributeError):
             return ComplexNullValue.null_value
