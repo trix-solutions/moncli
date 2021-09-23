@@ -76,7 +76,7 @@ class MondayType(BaseType):
     def _cast(self, value):
         return self.native_type(value)
 
-    def _extract_metadata(self, value: en.cv.ColumnValue):
+    def _set_metadata(self, value: en.cv.ColumnValue):
         pass
 
     def _export(self, value):
