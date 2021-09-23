@@ -1,8 +1,7 @@
-from schematics.exceptions import ConversionError
-from moncli.entities import column_value
 import pytz, json
 from datetime import datetime
 
+from schematics.exceptions import ConversionError
 from schematics.types import BaseType
 
 from . import entities as en
@@ -49,7 +48,7 @@ class MondayType(BaseType):
 
         if not isinstance(value, en.cv.ColumnValue):
             if isinstance(value, self.native_type):
-                return value
+                return self._process(value)
             if self.allow_casts and isinstance(value, self.allow_casts):
                 return self._cast(value)
             raise ConversionError("Couldn't interpret '{}' as type {}.".format(str(value), self.native_type.__name__))
@@ -71,8 +70,14 @@ class MondayType(BaseType):
         value = self.to_native(value)
         return self._export(value)
 
+    def _process(self, value):
+        return value
+
     def _cast(self, value):
         return self.native_type(value)
+
+    def _extract_metadata(self, value: en.cv.ColumnValue):
+        pass
 
     def _export(self, value):
         return value
