@@ -73,7 +73,48 @@ class DateValue(ComplexNullValue):
 
 class DropdownValue(ComplexNullValue):
     """A dropdown column value."""
-    pass
+    native_type = list
+    native_default = []
+
+    def _convert(self, value):
+        labels = self.settings['labels']
+        ids = value['ids']
+        label_list = []
+
+        for item in labels:
+            if item['id'] in ids:
+                label_list.append(item['name'])   
+        return label_list
+
+    def _format(self):
+        labels = self.settings['labels']
+        label_ids = [label['id'] for label in labels]
+        label_names = [label['name'] for label in labels]
+        ids = []
+        for value in self.value:
+            if isinstance(value,(int,str)):
+                try:
+                    value = int(value)
+                    if value in label_ids:
+                        ids.append(value)
+                    else:
+                        raise ColumnValueError(
+                                'invalid_dropdown_index',
+                                self.id,
+                                'Dropdown does not contain index "{}".'.format(value)
+                              )
+                except ValueError:
+                    if value in label_names:
+                        list_id = [label['id'] for label in labels if label['name']==value][0]
+                        ids.append(list_id)
+                    else:
+                        raise ColumnValueError(
+                                'invalid_dropdown_label',
+                                self.id,
+                                'Dropdown does not contain label "{}".'.format(value)
+                                   )
+        ids = list(set(ids))
+        return dict(ids=ids)    
 
 
 class EmailValue(ComplexNullValue):
