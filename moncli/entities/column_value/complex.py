@@ -1,5 +1,5 @@
 from moncli.error import ColumnValueError
-from .base import ColumnValue
+from .base import ColumnValue, ComplexNullValue
 
 class CheckboxValue(ColumnValue):
     """A checkbox column value."""
@@ -16,7 +16,7 @@ class HourValue(ColumnValue):
     pass
 
 
-class ItemLinkValue(ColumnValue):
+class ItemLinkValue(ComplexNullValue):
     """An item link column value."""
     native_type = list
     native_default = []

@@ -19,7 +19,7 @@ def test_should_item_link_column_with_no_api_data():
     format = column_value.format()
 
     # Assert 
-    eq_(format,None)
+    eq_(format,{})
 
 def test_should_item_link_column_with_api_data():
 
@@ -33,9 +33,9 @@ def test_should_item_link_column_with_api_data():
                 ]
                 }
     value = json.dumps(api_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
     format = column_value.format()
 
     # Assert 
@@ -96,3 +96,4 @@ def test_should_append_invalid_string_id_to_item_link_column_value():
 
     # Act
     column_value.value.append('not a valid string')
+    column_value.format()
