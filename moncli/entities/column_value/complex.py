@@ -1,10 +1,24 @@
 from moncli.error import ColumnValueError
-from .base import ColumnValue, ComplexNullValue
+from .base import ColumnValue, ComplexNullValue,COMPLEX_NULL_VALUE
 
-class CheckboxValue(ColumnValue):
+class CheckboxValue(ComplexNullValue):
     """A checkbox column value."""
-    pass
+    
+    native_type = bool
+    native_default = False
+    allow_casts = (int, str)
 
+    def _convert(self, value):
+        try:
+            if value['checked'] == 'true':
+                return True
+        except KeyError:
+            return False
+
+    def _format(self):
+        if self.value:
+            return {'checked': 'true'}
+        return COMPLEX_NULL_VALUE
 
 class CountryValue(ColumnValue):
     """A country column value."""

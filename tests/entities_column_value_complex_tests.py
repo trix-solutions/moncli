@@ -118,3 +118,94 @@ def test_should_item_link_column_with_api_data_with_no_linkedpulseid_key():
 
     # Assert 
     eq_(column_value.value,[])
+
+def test_should_set_checkbox_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'checkbox_1'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_set_checkbox_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'checkbox_2'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    value = json.dumps({'checked': 'true'})
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {'checked': 'true'})
+
+
+def test_should_return_checkbox_column_value_as_false_when_value_is_set_to_none():
+
+     # Arrange
+    id = 'checkbox_3'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = None
+
+    # Assert
+    eq_(column_value.value, False)
+    
+
+def test_should_set_checkbox_column_value_with_bool_value():
+
+     # Arrange
+    id = 'checkbox_4'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = True
+
+    # Assert
+    eq_(column_value.value, True)
+
+
+def test_should_set_checkbox_column_value_with_string_value():
+
+    # Arrange
+    id = 'checkbox_5'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = 'true'
+
+    # Assert
+    eq_(column_value.value, True)
+
+
+def test_should_set_checkbox_column_value_with_int_value():
+
+    # Arrange
+    id = 'checkbox_6'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = 1234
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, bool(value))
+
