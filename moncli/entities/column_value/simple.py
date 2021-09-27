@@ -1,12 +1,14 @@
-from moncli.error import ColumnValueError
-from moncli.entities.column_value.objects import PersonOrTeam
+import pytz
+
 from moncli import enums
+from moncli.entities.column_value import COMPLEX_NULL_VALUE
+from moncli.config import DATE_FORMAT,TIME_FORMAT
+from moncli.error import ColumnValueError
+from moncli.entities.column_value.objects import PersonOrTeam, Link
 from datetime import datetime, timedelta
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE
 from ...error import ColumnValueError
-from moncli.config import DATE_FORMAT,TIME_FORMAT
-import pytz
 
 class DateValue(ComplexNullValue):
     """A date column value."""
@@ -123,7 +125,40 @@ class EmailValue(ComplexNullValue):
 
 class LinkValue(ComplexNullValue):
     """A link column value."""
-    pass
+    
+    native_type = Link
+    allow_casts = (str, dict)
+
+    def _convert(self, value):
+        try: 
+            url = value['url']
+            text = value['text']
+            return Link(url=url, text=text)
+        except KeyError:
+            raise ColumnValueError('invalid_link_data', self.id, 'Unable to convert "{}" to Link value.'.format(value))
+
+    
+    def _cast(self, value):
+        try:
+            if isinstance(value, str):
+                url, text = value.split(' ',1)
+                return Link(url=url, text=text)
+
+            if isinstance(value, dict):
+                url = value['url']
+                text = value['text']
+                return Link(url=url, text=text)
+
+        except KeyError:
+            raise ColumnValueError('invalid_link_data', self.id, 'Unable to convert "{}" to Link value.'.format(value))
+
+
+    def _format(self):
+        if self.value.url == None:
+            return COMPLEX_NULL_VALUE
+        if self.value.url != None and self.value.text == None:
+            return {'url': self.value.url, 'text': self.value.url}
+        return {'url': self.value.url, 'text': self.value.text}
 
 
 class LongTextValue(ComplexNullValue):

@@ -28,3 +28,22 @@ class Person(PersonOrTeam):
 class Team(PersonOrTeam):
    def __init__(self,id):
         super(Team, self).__init__(id, kind=enums.PeopleKind.team)
+
+
+class Link(object):
+  def __init__(self, url: str = None, text: str = None):
+    self.url = url
+    if not text:
+      text = url
+    self._text = text
+    
+  @property
+  def text(self):
+    return self._text
+  
+  @text.setter
+  def text(self, value):
+    if not value:
+      self._text = self.url
+    else:
+      self._text = value

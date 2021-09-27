@@ -2,10 +2,10 @@ import collections
 import json
 from datetime import datetime
 from nose.tools import ok_, eq_, raises
-
+from moncli.entities.column_value.objects import Link
 from moncli import entities as en, error as e
 from moncli.enums import *
-
+from moncli.entities.column_value.constants import COMPLEX_NULL_VALUE
 
 def test_should_return_empty_text_column_value():
 
@@ -697,3 +697,166 @@ def test_should_set_a_status_column_value_with_valid_integer_index_value():
 
     #Assert
     eq_(column_value.value,'Done')
+
+
+def test_should_create_link_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'link_value_1'
+    title = "Link"
+    column_type = ColumnType.link
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_set_link_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'link_value_2'
+    title = "Link"
+    column_type = ColumnType.link
+    url = 'https://github.com'
+    text = 'The Control of all Sources'
+    value = json.dumps({'url': url, 'text': text})
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format['url'], url)
+    eq_(format['text'], text)
+
+
+def test_should_set_link_column_value_to_none():
+
+    # Arrange
+    id = 'link_value_3'
+    title = "Link"
+    column_type = ColumnType.link
+    value = None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, None)
+    
+
+def test_should_set_link_column_value_to_link_value():
+
+    # Arrange
+    id = 'link_value_4'
+    title = "Link"
+    column_type = ColumnType.link
+    url = 'https://github.com'
+    text = 'The Control of all Sources'
+    value = Link(url=url, text=text)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, value)
+
+
+def test_should_set_link_column_value_to_string_value():
+
+    # Arrange
+    id = 'link_value_5'
+    title = "Link"
+    column_type = ColumnType.link
+    url = 'https://github.com'
+    text = 'The Control of all Sources'
+    value = '{} {}'.format(url, text)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.url, url)
+    eq_(column_value.value.text, text)
+
+
+def test_should_set_link_column_value_to_valid_dict_value():
+
+    # Arrange
+    id = 'link_value_6'
+    title = "Link"
+    column_type = ColumnType.link
+    url = 'https://github.com'
+    text = 'The Control of all Sources'
+    value = {'url': url, 'text': text}
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.url, url)
+    eq_(column_value.value.text, text)
+
+
+@raises(e.ColumnValueError)
+def test_should_set_link_column_value_to_invalid_dict_value():
+
+    # Arrange
+    id = 'link_value_7'
+    title = "Link"
+    column_type = ColumnType.link
+    value = {'this': 'link is broken'}
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+
+def test_should_create_link_column_value_with_url_set_to_none():
+
+    # Arrange
+    id = 'link_value_8'
+    title = "Link"
+    column_type = ColumnType.link
+    url = None
+    text = 'The Control of all Sources'
+    value = Link(url=url, text=text)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_create_link_column_value_with_text_set_to_none():
+
+    # Arrange
+    id = 'link_value_9'
+    title = "Link"
+    column_type = ColumnType.link
+    url = 'https://github.com'
+    text = None
+    value = Link(url=url, text=text)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+    format = column_value.format()
+
+    # Assert
+    eq_(format['url'], url)
+    eq_(format['text'], url)
+    
+
+   
+    
