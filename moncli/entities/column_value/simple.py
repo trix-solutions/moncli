@@ -128,7 +128,15 @@ class LinkValue(ComplexNullValue):
 
 class LongTextValue(ComplexNullValue):
     """A long text column value."""
-    pass
+    
+    native_type = (str)
+    allow_casts = (int, float)
+    
+    def _convert(self, value): 
+        return value['text']            
+   
+    def _format(self):
+        return {'text': self._value}
 
 
 class NumberValue(SimpleNullValue):
