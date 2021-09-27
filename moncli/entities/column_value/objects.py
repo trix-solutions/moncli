@@ -28,3 +28,15 @@ class Person(PersonOrTeam):
 class Team(PersonOrTeam):
    def __init__(self,id):
         super(Team, self).__init__(id, kind=enums.PeopleKind.team)
+
+
+class Phone(object):
+  def __init__(self, phone: str, code: str):
+    self.phone = phone
+    self.code = code
+    
+  def __repr__(self):
+    return str({
+      'phone': self.phone,
+      'code': self.code
+    })
