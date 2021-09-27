@@ -1,4 +1,33 @@
+from datetime import timedelta
+
 from moncli import enums
+
+from .base import ComplexNullValue
+
+class Email(ComplexNullValue):
+
+    def __init__(self, email: str = None, text: str = None):
+        self.email = email
+        if not text:
+            text = email
+        self._text = text
+        
+    @property
+    def text(self):
+      return self._text
+    
+    @text.setter
+    def text(self, value):
+      if not value:
+        self._text = self.email
+      else:
+        self._text = value
+    
+    def __repr__(self):
+      return str({
+        'email': self.email,
+        'text': self.text
+      })
 
 class PersonOrTeam(object):
     """
@@ -28,3 +57,43 @@ class Person(PersonOrTeam):
 class Team(PersonOrTeam):
    def __init__(self,id):
         super(Team, self).__init__(id, kind=enums.PeopleKind.team)
+
+class Week(object):
+
+    def __init__(self, start = None, end = None):
+        self._start = start
+        self._end = end
+        self._calculate_dates(start)
+
+    @property
+    def start(self):
+        return self._start
+
+    @start.setter
+    def start(self, value):
+        self._calculate_dates(value)
+
+    @property
+    def end(self):
+        return self._end
+
+    @end.setter
+    def end(self, value):
+        return self._calculate_dates(value)
+
+    @property
+    def week_number(self):
+        return self._week_number
+
+    def _calculate_dates(self, value):
+        if not value:
+            return value   
+        self._start = value - timedelta(days=value.weekday())
+        self._end = self._start + timedelta(days=6)
+        self._week_number = self._start.isocalendar()[1]
+
+    def __repr__(self):
+        return str({
+            'startDate': self._start,
+            'endDate': self._end
+        })

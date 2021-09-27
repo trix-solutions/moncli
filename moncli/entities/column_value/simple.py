@@ -1,11 +1,13 @@
-from moncli.error import ColumnValueError
-from moncli.entities.column_value.objects import PersonOrTeam
-from moncli import enums
 from datetime import datetime, timedelta
-from .base import SimpleNullValue, ComplexNullValue
+
+from moncli import enums
+from moncli.error import ColumnValueError
+from moncli.config import DATE_FORMAT,TIME_FORMAT
+
+from .objects import PersonOrTeam, Email
+from .base import SimpleNullValue, ComplexNullValue, COMPLEX_NULL_VALUE
 from .constants import SIMPLE_NULL_VALUE
 from ...error import ColumnValueError
-from moncli.config import DATE_FORMAT,TIME_FORMAT
 import pytz
 
 class DateValue(ComplexNullValue):
@@ -119,7 +121,42 @@ class DropdownValue(ComplexNullValue):
 
 class EmailValue(ComplexNullValue):
     """An email column value."""
-    pass
+    
+    native_type = Email
+    allow_casts = (str, dict)
+
+    def _convert(self, value):
+        try:
+            email = value['email']
+            text = value['text']
+            return Email(email=email, text=text)
+        except KeyError:
+            raise ColumnValueError('invalid_email_data', self.id, 'Unable to convert "{}" to Email value.'.format(value))
+
+    
+    def _cast(self, value):
+        try:
+            if isinstance(value, str):
+                email, text = value.split(' ',1)
+                return Email(email=email, text=text)
+
+            if isinstance(value, dict):
+                email = value['email']
+                text = value['text']
+                return Email(email=email, text=text)
+
+        except KeyError:
+            raise ColumnValueError('invalid_email_data', self.id, 'Unable to convert "{}" to Email value.'.format(value))
+
+
+    def _format(self):
+        if self.value.email == None:
+            return COMPLEX_NULL_VALUE
+        if self.value.email != None and self.value.text == None:
+            return {'email': self.value.email, 'text': self.value.email}
+        
+        return {'email': self.value.email, 'text': self.value.text}
+
 
 class LinkValue(ComplexNullValue):
     """A link column value."""
