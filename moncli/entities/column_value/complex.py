@@ -1,15 +1,14 @@
+from datetime import datetime
+
+from moncli.config import DATE_FORMAT
+
+from .base import ColumnValue, ComplexNullValue
 from .objects import Week
 from .base import ColumnValue
 from datetime import datetime
-from moncli import enums
-from datetime import datetime, timedelta
-from .base import SimpleNullValue, ComplexNullValue
-from .constants import SIMPLE_NULL_VALUE
+from .constants import COMPLEX_NULL_VALUE
 from ...error import ColumnValueError
-from moncli.config import DATE_FORMAT,TIME_FORMAT
-import pytz
-from moncli.error import ColumnValueError
-from .base import ColumnValue, ComplexNullValue
+
 
 class CheckboxValue(ColumnValue):
     """A checkbox column value."""
@@ -26,7 +25,7 @@ class HourValue(ColumnValue):
     pass
 
 
-class ItemLinkValue(ComplexNullValue):
+class ItemLinkValue(ColumnValue):
     """An item link column value."""
     native_type = list
     native_default = []
@@ -87,21 +86,22 @@ class WeekValue(ComplexNullValue):
             end_date = datetime.strptime(value['endDate'], DATE_FORMAT)
             return Week(start=start_date, end=end_date)
         except (KeyError,ValueError):
-            return {}
+            return COMPLEX_NULL_VALUE
         
     def _cast(self, value):
         try:
             start = value['start']
             end = value['end']
-            if not (start.tzinfo and end.tzinfo):
-                return Week(start=start,end=end)
+            return Week(start=start,end=end)
         except (AttributeError,KeyError):
-            raise ColumnValueError('invalid_week_data', self.id, 'Unable to convert "{}" to Week value of end date.'.format(value))
+            raise ColumnValueError('invalid_week_data', self.id, 'Unable to convert "{}" to Week value.'.format(value))
         
     def _format(self):
         try:
             start_date = self.value.start.date()
             end_date = self.value.end.date()
+            start_date = datetime.strftime(start_date, DATE_FORMAT)
+            end_date = datetime.strftime(end_date, DATE_FORMAT)
             return {'startDate': str(start_date), 'endDate': str(end_date), 'week_number': self.value.week_number}
         except (TypeError,AttributeError):
-            return ComplexNullValue.null_value
+            return COMPLEX_NULL_VALUE

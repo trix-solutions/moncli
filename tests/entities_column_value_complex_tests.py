@@ -126,9 +126,10 @@ def test_should_week_column_with_no_api_data():
     id = 'week1'
     title="New Week"
     column_type = ColumnType.week
+    value = None
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
 
     # Act
-    column_value = en.cv.create_column_value(column_type,id=id,title=title)
     format = column_value.format()
 
     # Assert 
@@ -198,8 +199,8 @@ def test_should_set_dict_value_to_week_column_value():
     column_value.value = value
     
     # Assert
-    eq_(column_value.value.start, week.start)
-    eq_(column_value.value.end, week.end)
+    eq_(column_value.value.start, value['start'])
+    eq_(column_value.value.end, value['end'])
 
 @raises(e.ColumnValueError)
 def test_should_set_invalid_dict_value_to_week_column_value():
@@ -216,14 +217,11 @@ def test_should_set_none_start_value_to_week_column_value():
     id = 'week1'
     title="New Week"
     column_type = ColumnType.week
-    api_return_value =   {
-                'start': None,
-                'end': None
-            }
-    value=json.dumps(api_return_value)
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value = value)
+    value=Week(start=None,end=None)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
 
     # Act
+    column_value.value = value
     format = column_value.format()
     
     # Assert
