@@ -68,8 +68,8 @@ class TimelineValue(ComplexNullValue):
     allow_casts = (dict)
 
     def _convert(self,value):
-        from_date = value['from']
-        to_date = value['to']
+        from_date = datetime.strptime(value['from'], DATE_FORMAT)
+        to_date = datetime.strptime(value['to'], DATE_FORMAT)
         try:
             if value['visualization_type']:
                 is_milestone = True
@@ -79,8 +79,16 @@ class TimelineValue(ComplexNullValue):
     
     def _cast(self, value):
         try:
+            from_date = value['from']
+            to_date = value['to']
+            if isinstance(from_date, str):
+                from_date = datetime.strptime(from_date, DATE_FORMAT)
+            if isinstance(to_date, str):
+                to_date = datetime.strptime(to_date, DATE_FORMAT)
             if isinstance(value,dict):
-                return self._convert(value)
+                return Timeline(
+                    from_date,
+                    to_date)
         except KeyError:
             raise ColumnValueError(
                 'invalid_timeline_data',

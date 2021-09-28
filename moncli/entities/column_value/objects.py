@@ -35,9 +35,9 @@ class Team(PersonOrTeam):
 
 class Timeline(object):
   
-  def __init__(self, from_date: str, to_date: str, is_milestone: bool = False):
-    self._from_date = datetime.strptime(from_date, DATE_FORMAT)
-    self._to_date = datetime.strptime(to_date, DATE_FORMAT)
+  def __init__(self, from_date: datetime, to_date: datetime, is_milestone: bool = False):
+    self._from_date = from_date
+    self._to_date = to_date
     self._is_milestone = is_milestone
     
   @property
