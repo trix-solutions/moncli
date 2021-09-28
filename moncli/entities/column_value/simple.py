@@ -1,14 +1,13 @@
+import pytz
 from datetime import datetime, timedelta
 
-from moncli import enums
-from moncli.error import ColumnValueError
-from moncli.config import DATE_FORMAT,TIME_FORMAT
-
-from .objects import PersonOrTeam, Email
-from .base import SimpleNullValue, ComplexNullValue, COMPLEX_NULL_VALUE
-from .constants import SIMPLE_NULL_VALUE
+from ... import enums
+from ...config import DATE_FORMAT,TIME_FORMAT
 from ...error import ColumnValueError
-import pytz
+from .base import SimpleNullValue, ComplexNullValue
+from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
+from .objects import Email, PersonOrTeam
+
 
 class DateValue(ComplexNullValue):
     """A date column value."""
@@ -165,7 +164,15 @@ class LinkValue(ComplexNullValue):
 
 class LongTextValue(ComplexNullValue):
     """A long text column value."""
-    pass
+    
+    native_type = (str)
+    allow_casts = (int, float)
+    
+    def _convert(self, value): 
+        return value['text']            
+   
+    def _format(self):
+        return {'text': self._value}
 
 
 class NumberValue(SimpleNullValue):
