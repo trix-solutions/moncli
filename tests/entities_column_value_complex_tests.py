@@ -159,7 +159,11 @@ def test_should_create_timeline_column_value_with_api_data():
     }
     value = json.dumps(dict_value)
 
-        # Assert
+    # Act
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    format = column_value.format()
+
+    # Assert
     eq_(format['from'], from_date)
     eq_(format['to'], to_date)
 
