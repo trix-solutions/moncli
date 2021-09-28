@@ -2,7 +2,7 @@ from datetime import datetime
 
 from moncli.config import DATE_FORMAT
 from moncli import enums
-
+from datetime import timedelta
 class PersonOrTeam(object):
     """
     
@@ -65,3 +65,44 @@ class Timeline(object):
       'from': self.from_date,
       'to': self.to_date
     })
+
+
+class Week(object):
+
+    def __init__(self, start = None, end = None):
+        self._start = start
+        self._end = end
+        self._calculate_dates(start)
+
+    @property
+    def start(self):
+        return self._start
+
+    @start.setter
+    def start(self, value):
+        self._calculate_dates(value)
+
+    @property
+    def end(self):
+        return self._end
+
+    @end.setter
+    def end(self, value):
+        return self._calculate_dates(value)
+
+    @property
+    def week_number(self):
+        return self._week_number
+
+    def _calculate_dates(self, value):
+        if not value:
+            return value   
+        self._start = value - timedelta(days=value.weekday())
+        self._end = self._start + timedelta(days=6)
+        self._week_number = self._start.isocalendar()[1]
+
+    def __repr__(self):
+        return str({
+            'start': self._start,
+            'end': self._end
+        })
