@@ -603,13 +603,3 @@ def test_should_create_country_column_value_with_code_set_to_none():
     
     # Assert
     eq_(format, {})
-
-
-
-
-
-
-
-
-
-
