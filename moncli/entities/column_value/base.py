@@ -11,8 +11,11 @@ from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
 class _ColumnValue(en.BaseColumn):
     """Base column value model"""
 
-    text = StringType()
-    additional_info = StringType()
+    def __init__(self, **kwargs):
+        self.text = kwargs.pop('text', None)
+        self.additional_info = kwargs.pop('additional_info', None)
+        super().__init__(**kwargs)
+
 
 class ColumnValue(_ColumnValue):
     """The value of an items column.
