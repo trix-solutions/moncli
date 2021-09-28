@@ -67,7 +67,6 @@ class TimelineValue(ComplexNullValue):
     native_type = Timeline
     allow_casts = (dict)
 
-
     def _convert(self,value):
         from_date = value['from']
         to_date = value['to']
