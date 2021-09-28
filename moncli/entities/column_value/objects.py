@@ -1,8 +1,35 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from moncli.config import DATE_FORMAT
 from moncli import enums
-from datetime import timedelta
+
+from .base import ComplexNullValue
+
+
+class Email(ComplexNullValue):
+
+    def __init__(self, email: str = None, text: str = None):
+        self.email = email
+        if not text:
+            text = email
+        self._text = text
+        
+    @property
+    def text(self):
+      return self._text
+    
+    @text.setter
+    def text(self, value):
+      if not value:
+        self._text = self.email
+      else:
+        self._text = value
+    
+    def __repr__(self):
+      return str({
+        'email': self.email,
+        'text': self.text
+      })
+
 class PersonOrTeam(object):
     """
     

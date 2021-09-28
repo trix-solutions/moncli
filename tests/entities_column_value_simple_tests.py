@@ -6,6 +6,7 @@ from nose.tools import ok_, eq_, raises
 from moncli import entities as en, error as e
 from moncli.enums import *
 
+from moncli.entities.column_value.objects import Email
 
 def test_should_return_empty_text_column_value():
 
@@ -698,6 +699,165 @@ def test_should_set_a_status_column_value_with_valid_integer_index_value():
     #Assert
     eq_(column_value.value,'Done')
 
+
+def test_should_email_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'email_value_1'
+    title = "Email"
+    column_type = ColumnType.email
+
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_email_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'email_value_2'
+    title = "Email"
+    column_type = ColumnType.email
+    email = 'jdoe@somewhere.com'
+    text = 'John Doe'
+    value=json.dumps({'email': email, 'text': text})
+
+    # Act
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    format = column_value.format()
+
+    # Assert
+    eq_(format['email'], email)
+    eq_(format['text'], text)
+
+
+
+def test_should_set_email_value_to_none():
+
+    # Arrange
+    id = 'email_value_3'
+    title = "Email"
+    column_type = ColumnType.email
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = None
+
+    # Assert
+    eq_(column_value.value, None)
+
+
+def test_should_set_email_value_to_email_column_value():
+
+    # Arrange
+    id = 'email_value_4'
+    title = "Email"
+    column_type = ColumnType.email
+    email = 'jdoe@somewhere.com'
+    text = 'John Doe'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = Email(email=email, text=text)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value,value)    
+
+    
+def test_should_return_email_column_value_with_email_value_when_value_is_set_to_str():
+
+    # Arrange
+    id = 'email_value_5'
+    title = "Email"
+    column_type = ColumnType.email
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    email = 'jdoe@somewhere.com'
+    text = 'Back to the old Joe again...'
+    value ='{} {}'.format(email,text)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.email,email)
+    eq_(column_value.value.text,text)
+
+    
+def test_should_set_to_valid_dict_to_email_column_value():
+
+    # Arrange
+    id = 'email_value_6'
+    title = "Email"
+    column_type = ColumnType.email
+    email = 'jdoe@somewhere.com'
+    text = 'John Doe'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = {'email': email, 'text': text}
+
+
+    # Assert
+    eq_(column_value.value.email,email)
+    eq_(column_value.value.text,text)
+
+    
+@raises(e.ColumnValueError)
+def test_should_raise_column_value_error_when_value_is_set_to_invalid_dict():
+    
+    # Arrange
+    id = 'email_value_7'
+    title = "Email"
+    column_type = ColumnType.email
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = {'this': 'aint your average email'}
+
+    # Act
+    column_value.value = value
+
+
+def test_should_set_email_value_to_none_for_email_column_value():
+
+    # Arrange
+    id = 'email_value_8'
+    title = "Email"
+    column_type = ColumnType.email
+    email = None
+    text = 'John Doe'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = Email(email=email, text=text)
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_return_text_attribute_with_same_value_as_email_attribute_when_text_is_set_to_none():
+
+    # Arrange
+    id = 'email_value_9'
+    title = "Email"
+    column_type = ColumnType.email
+    email = 'jdoe@somewhere.com'
+    text = None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = Email(email=email, text=text)
+    format = column_value.format()
+
+    # Assert
+    eq_(format['email'], email )
+    eq_(format['text'], email)
+
+
 def test_should_create_long_text_value_with_no_input_data():
 
     # Arrange
@@ -711,6 +871,7 @@ def test_should_create_long_text_value_with_no_input_data():
 
     # Assert
     eq_(format, {})
+
 
 def test_should_create_long_text_value_with_api_input_data():
 
