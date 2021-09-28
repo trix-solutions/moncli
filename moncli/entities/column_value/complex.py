@@ -3,7 +3,7 @@ from datetime import datetime
 from moncli.config import DATE_FORMAT
 
 from .base import ColumnValue, ComplexNullValue
-from .objects import Week, Timeline, Hour
+from .objects import *
 from .base import ColumnValue
 from .constants import COMPLEX_NULL_VALUE
 from ...error import ColumnValueError
@@ -28,9 +28,37 @@ class CheckboxValue(ComplexNullValue):
             return {'checked': 'true'}
         return COMPLEX_NULL_VALUE
 
-class CountryValue(ColumnValue):
+class CountryValue(ComplexNullValue):
     """A country column value."""
-    pass
+    
+    native_type = Country
+    allow_casts = (dict)
+
+    def _convert(self, value):
+        try:
+            name = value['countryName']
+            code = value['countryCode']
+            return Country(name=name, code=code)
+        except KeyError:
+            raise ColumnValueError('invalid_country_data', self.id, 'Unable to convert "{}" to Country value.'.format(value))
+
+
+    def _cast(self, value):
+        try:
+            if isinstance(value, dict):
+                name = value['name']
+                code = value['code']
+                return Country(name=name, code=code)
+        except KeyError:
+            raise ColumnValueError('invalid_country_data', self.id, 'Unable to convert "{}" to Country value.'.format(value))
+
+
+    def _format(self):
+        if (self.value.name == None) or (self.value.code == None):
+            return COMPLEX_NULL_VALUE
+        return {'countryName': self.value.name, 'countryCode': self.value.code}
+
+
 
 
 class HourValue(ComplexNullValue):
@@ -85,11 +113,17 @@ class ItemLinkValue(ComplexNullValue):
                     'Invalid item ID "{}".'.format(list_value))
         return dict(item_ids=item_ids)
 
-class RatingValue(ColumnValue):
+class RatingValue(ComplexNullValue):
     """A rating column value."""
-    pass
+    native_type = int
+    allow_cast = (str)
 
-
+    def _convert(self, value):
+        return value['rating']
+    
+    def _format(self):
+        return { 'rating': self.value }
+        
 class TagsValue(ColumnValue):
     """A tags column value."""
     pass
