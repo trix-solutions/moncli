@@ -120,9 +120,24 @@ class RatingValue(ComplexNullValue):
     def _format(self):
         return { 'rating': self.value }
         
-class TagsValue(ColumnValue):
+class TagsValue(ComplexNullValue):
     """A tags column value."""
-    pass
+    
+    native_type = list
+    native_default = []
+
+    def _convert(self, value):
+        try:
+            return value['tag_ids']
+        except KeyError:
+            raise ColumnValueError('invalid_tag_id', self.id, 'Invalid tag ID "{}".'.format(value))
+
+    def _format(self):
+        try:
+            value = [int(tag_id) for tag_id in self.value]
+            return {'tag_ids': value}
+        except ValueError:
+            raise ColumnValueError('invalid_tag_id', self.id, 'Invalid tag ID "{}".'.format(self.value))
 
 
 class TimelineValue(ComplexNullValue):
