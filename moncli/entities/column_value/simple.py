@@ -1,5 +1,5 @@
 from moncli.error import ColumnValueError
-from moncli.entities.column_value.objects import PersonOrTeam
+from .objects import PersonOrTeam
 from moncli import enums
 from datetime import datetime, timedelta
 from .base import SimpleNullValue, ComplexNullValue
