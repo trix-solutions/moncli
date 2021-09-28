@@ -141,10 +141,12 @@ def test_should_week_column_with_api_data():
     id = 'week1'
     title="New Week"
     column_type = ColumnType.week
-    api_return_value = {
-                        'startDate': '2021-09-20',
-                        'endDate': '2021-09-26'
-                        }
+    api_return_value = { 
+        'week': {
+            'startDate': '2021-09-20',
+            'endDate': '2021-09-26'
+        }
+    }
     value = json.dumps(api_return_value)
     column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
 
@@ -152,7 +154,7 @@ def test_should_week_column_with_api_data():
     format = column_value.format()
 
     # Assert 
-    eq_(format['startDate'],'2021-09-20')
+    eq_(format['week']['startDate'],'2021-09-20')
 
 def test_should_set_none_value_to_week_column_value():
     id = 'week1'

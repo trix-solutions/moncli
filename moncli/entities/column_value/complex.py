@@ -5,7 +5,6 @@ from moncli.config import DATE_FORMAT
 from .base import ColumnValue, ComplexNullValue
 from .objects import Week
 from .base import ColumnValue
-from datetime import datetime
 from .constants import COMPLEX_NULL_VALUE
 from ...error import ColumnValueError
 
@@ -25,7 +24,7 @@ class HourValue(ColumnValue):
     pass
 
 
-class ItemLinkValue(ColumnValue):
+class ItemLinkValue(ComplexNullValue):
     """An item link column value."""
     native_type = list
     native_default = []
@@ -47,10 +46,9 @@ class ItemLinkValue(ColumnValue):
                 item_ids.append(value)
             except ValueError:
                 raise ColumnValueError(
-                                    'invalid_item_id',
-                                    self.id,
-                                    'Invalid item ID "{}".'.format(list_value)
-                                    )
+                    'invalid_item_id',
+                    self.id,
+                    'Invalid item ID "{}".'.format(list_value))
         return dict(item_ids=item_ids)
 
 class RatingValue(ColumnValue):
@@ -82,8 +80,8 @@ class WeekValue(ComplexNullValue):
     
     def _convert(self, value):
         try:
-            start_date = datetime.strptime(value['startDate'], DATE_FORMAT)
-            end_date = datetime.strptime(value['endDate'], DATE_FORMAT)
+            start_date = datetime.strptime(value['week']['startDate'], DATE_FORMAT)
+            end_date = datetime.strptime(value['week']['endDate'], DATE_FORMAT)
             return Week(start=start_date, end=end_date)
         except (KeyError,ValueError):
             return COMPLEX_NULL_VALUE
@@ -102,6 +100,6 @@ class WeekValue(ComplexNullValue):
             end_date = self.value.end.date()
             start_date = datetime.strftime(start_date, DATE_FORMAT)
             end_date = datetime.strftime(end_date, DATE_FORMAT)
-            return {'startDate': str(start_date), 'endDate': str(end_date), 'week_number': self.value.week_number}
+            return {'week': {'startDate': start_date, 'endDate': end_date}}
         except (TypeError,AttributeError):
             return COMPLEX_NULL_VALUE

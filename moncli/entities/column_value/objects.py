@@ -65,6 +65,6 @@ class Week(object):
 
     def __repr__(self):
         return str({
-            'startDate': self._start,
-            'endDate': self._end
+            'start': self._start,
+            'end': self._end
         })
