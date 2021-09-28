@@ -463,3 +463,59 @@ def test_should_set_none_start_value_to_week_column_value():
     
     # Assert
     eq_(format, {})
+
+
+def test_should_create_country_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'country_value_1'
+    title = "Country"
+    column_type = ColumnType.country
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+    
+    # Assert
+    eq_(format, {})
+
+
+def test_should_create_country_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'country_value_2'
+    title = "Country"
+    column_type = ColumnType.country
+    name = 'United States'
+    code = 'US'
+    value = json.dumps({'countryName': name, 'countryCode': code})
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format['countryName'], name)
+    eq_(format['countryCode'], code)
+
+
+def test_should_set_country_column_value_to_none():
+
+    # Arrange
+    id = 'country_value_3'
+    title = "Country"
+    column_type = ColumnType.country
+    value = None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, None)
+
+
+
+
+
+
