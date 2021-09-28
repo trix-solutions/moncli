@@ -3,7 +3,7 @@ from datetime import datetime
 from moncli.config import DATE_FORMAT
 
 from .base import ColumnValue, ComplexNullValue
-from .objects import Week, Timeline, Country
+from .objects import *
 from .base import ColumnValue
 from .constants import COMPLEX_NULL_VALUE
 from ...error import ColumnValueError
@@ -59,12 +59,28 @@ class CountryValue(ComplexNullValue):
         return {'countryName': self.value.name, 'countryCode': self.value.code}
 
 
-
-
-class HourValue(ColumnValue):
+class HourValue(ComplexNullValue):
     """An hour column value."""
-    pass
+    native_type = Hour
+    allow_casts = (dict)
 
+    def _convert(self, value):
+        return Hour(hour=value['hour'],minute=value['minute'])
+
+    def _cast(self, value):
+        try:
+            return Hour(hour=value['hour'],minute=value['minute'])               
+        except KeyError:
+            raise ColumnValueError(
+                'invalid_hour_data',
+                self.id,
+                'Unable to convert "{}" to Hour value.'.format(value)
+            )
+
+    def _format(self):
+        if self.value.hour:
+            return {'hour': self.value.hour, 'minute': self.value.minute}
+        return COMPLEX_NULL_VALUE
 
 class ItemLinkValue(ComplexNullValue):
     """An item link column value."""

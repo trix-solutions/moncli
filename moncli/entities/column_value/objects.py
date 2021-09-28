@@ -30,6 +30,22 @@ class Email(ComplexNullValue):
         'text': self.text
       })
 
+class Hour(object):
+  def __init__(self, hour: int, minute: int = 0):
+    self.hour = hour
+    self._minute = minute
+    
+  @property
+  def minute(self):
+    return self._minute
+  
+  @minute.setter
+  def minute(self, value):
+    if not value:
+      self._minute = 0
+    else: 
+      self._minute = value
+
 class PersonOrTeam(object):
     """
     
