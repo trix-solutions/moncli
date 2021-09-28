@@ -59,8 +59,6 @@ class CountryValue(ComplexNullValue):
         return {'countryName': self.value.name, 'countryCode': self.value.code}
 
 
-
-
 class HourValue(ComplexNullValue):
     """An hour column value."""
     native_type = Hour
@@ -71,8 +69,6 @@ class HourValue(ComplexNullValue):
 
     def _cast(self, value):
         try:
-            hour = value['hour']
-            minute = value['minute']
             return Hour(hour=value['hour'],minute=value['minute'])               
         except KeyError:
             raise ColumnValueError(
