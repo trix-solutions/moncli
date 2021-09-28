@@ -1,12 +1,17 @@
+import pytz
+from datetime import datetime, timedelta
+
 from moncli.error import ColumnValueError
 from moncli.entities.column_value.objects import PersonOrTeam, Phone
 from moncli import enums
-from datetime import datetime, timedelta
-from .base import SimpleNullValue, ComplexNullValue
-from .constants import SIMPLE_NULL_VALUE
+
+from ... import enums
+from ...config import DATE_FORMAT,TIME_FORMAT
 from ...error import ColumnValueError
-from moncli.config import DATE_FORMAT,TIME_FORMAT
-import pytz
+from .base import SimpleNullValue, ComplexNullValue
+from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
+from .objects import Email, PersonOrTeam
+
 
 class DateValue(ComplexNullValue):
     """A date column value."""
@@ -119,7 +124,42 @@ class DropdownValue(ComplexNullValue):
 
 class EmailValue(ComplexNullValue):
     """An email column value."""
-    pass
+    
+    native_type = Email
+    allow_casts = (str, dict)
+
+    def _convert(self, value):
+        try:
+            email = value['email']
+            text = value['text']
+            return Email(email=email, text=text)
+        except KeyError:
+            raise ColumnValueError('invalid_email_data', self.id, 'Unable to convert "{}" to Email value.'.format(value))
+
+    
+    def _cast(self, value):
+        try:
+            if isinstance(value, str):
+                email, text = value.split(' ',1)
+                return Email(email=email, text=text)
+
+            if isinstance(value, dict):
+                email = value['email']
+                text = value['text']
+                return Email(email=email, text=text)
+
+        except KeyError:
+            raise ColumnValueError('invalid_email_data', self.id, 'Unable to convert "{}" to Email value.'.format(value))
+
+
+    def _format(self):
+        if self.value.email == None:
+            return COMPLEX_NULL_VALUE
+        if self.value.email != None and self.value.text == None:
+            return {'email': self.value.email, 'text': self.value.email}
+        
+        return {'email': self.value.email, 'text': self.value.text}
+
 
 class LinkValue(ComplexNullValue):
     """A link column value."""
@@ -128,7 +168,15 @@ class LinkValue(ComplexNullValue):
 
 class LongTextValue(ComplexNullValue):
     """A long text column value."""
-    pass
+    
+    native_type = (str)
+    allow_casts = (int, float)
+    
+    def _convert(self, value): 
+        return value['text']            
+   
+    def _format(self):
+        return {'text': self._value}
 
 
 class NumberValue(SimpleNullValue):
@@ -225,18 +273,27 @@ class PhoneValue(ComplexNullValue):
             code = value['countryShortName']
             return Phone(phone=phone, code=code)
         except KeyError:
-            raise ColumnValueError
+            raise ColumnValueError('invalid_phone_data', self.id, 'Unable to convert "{}" to Phone value.'.format(value))
 
+    
     def _cast(self, value):
-        if isinstance(value, str):
-            phone, code = value.split(' ', 1)
-            return Phone(phone=phone, code=code)
+        try:
+            if isinstance(value, str):
+                phone, code = value.split(' ', 1)
+                return Phone(phone=phone, code=code)
 
-        if isinstance(value, dict):
-            phone = value['phone']
-            code = value['code']
-            return Phone(phone=phone, code=code)
+            if isinstance(value, dict):
+                phone = value['phone']
+                code = value['code']
+                return Phone(phone=phone, code=code)
+        except KeyError:
+            raise ColumnValueError('invalid_phone_data', self.id, 'Unable to convert "{}" to Phone value.'.format(value))
 
+
+    def _format(self):
+        if (self.value.phone == None) or (self.value.code == None):
+            return COMPLEX_NULL_VALUE
+        return {'phone': self.value.phone, 'countryShortName': self.value.code}
 
 class StatusValue(ComplexNullValue):
     """A status column value."""

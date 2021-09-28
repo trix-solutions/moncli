@@ -712,7 +712,6 @@ def test_should_create_phone_column_value_with_no_api_input_data():
 
     # Assert
     eq_(format, {})
-    
 
 def test_should_create_phone_column_value_with_api_input_data():
 
@@ -730,7 +729,6 @@ def test_should_create_phone_column_value_with_api_input_data():
     eq_(format['phone'], '+18637777777')
     eq_(format['countryShortName'], 'US')
 
-
 def test_should_set_phone_column_value_to_none():
 
     # Arrange
@@ -745,7 +743,6 @@ def test_should_set_phone_column_value_to_none():
 
     # Assert
     eq_(column_value.value, None)
-
 
 def test_should_set_phone_column_value_to_phone_value():
 
@@ -765,7 +762,6 @@ def test_should_set_phone_column_value_to_phone_value():
     eq_(column_value.value.phone, phone)
     eq_(column_value.value.code, code)
 
-
 def test_should_set_phone_column_value_to_string_value():
 
     # Arrange
@@ -783,7 +779,6 @@ def test_should_set_phone_column_value_to_string_value():
     # Assert
     eq_(column_value.value.phone, phone)
     eq_(column_value.value.code, code)
-
 
 def test_should_set_phone_column_value_to_valid_dict_value():
 
@@ -803,7 +798,6 @@ def test_should_set_phone_column_value_to_valid_dict_value():
     eq_(column_value.value.phone, phone)
     eq_(column_value.value.code, code)
 
-
 @raises(e.ColumnValueError)
 def test_should_set_phone_column_value_to_invalid_dict_value():
 
@@ -816,7 +810,7 @@ def test_should_set_phone_column_value_to_invalid_dict_value():
 
     # Act
     column_value.value = value
-
+    
 
 def test_should_create_phone_column_value_with_phone_set_to_none():
 
