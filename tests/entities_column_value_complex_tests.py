@@ -6,11 +6,11 @@ from nose.tools import eq_, raises
 from moncli import entities as en, error as e
 from moncli.entities.column_value.constants import COMPLEX_NULL_VALUE
 from moncli.config import DATE_FORMAT
-from moncli.entities.column_value.objects import Week
+from moncli.entities.column_value.objects import Week, Hour
 from moncli.enums import *
 
 
-def test_should_item_link_column_with_no_api_data():
+def test_should_create_item_link_column_value_with_no_api_data():
 
     # Arrange
     id = 'item_link'
@@ -26,7 +26,7 @@ def test_should_item_link_column_with_no_api_data():
     eq_(format,{})
 
 
-def test_should_item_link_column_with_api_data():
+def test_should_create_item_link_column_value_with_api_data():
 
     # Arrange
     id = 'item_link'
@@ -463,3 +463,129 @@ def test_should_set_none_start_value_to_week_column_value():
     
     # Assert
     eq_(format, {})
+
+def test_should_create_hour_column__value_with_no_api_data():
+
+    # Arrange
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+
+    # Act
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    format = column_value.format()
+
+    # Assert 
+    eq_(format,{})
+
+def test_should_create_hour_column__value_with_api_data():
+
+    # Arrange
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    hour_value = {
+                'hour': 23,
+                'minute': 59
+                }
+    value = json.dumps(hour_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert 
+    eq_(format, hour_value)
+
+def test_should_set_none_to_hour_column_value():
+
+    # Arrange
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+
+    # Act
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value.value = None
+
+    # Assert 
+    eq_(column_value.value, None)
+
+def test_should_set_hour_value_to_hour_column_value():
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    hour_value = Hour(hour=1,minute=1)
+
+    # Act
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value.value = hour_value
+
+    # Assert 
+    eq_(column_value.value, hour_value)
+
+def test_should_set_valid_dict_to_hour_column_value():
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    value = {
+                'hour': 23,
+                'minute': 59
+                }
+    hour_value = Hour(hour=23,minute=59)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    
+    # Act
+    column_value.value = value
+
+    # Assert 
+    eq_(column_value.value.hour, hour_value.hour)
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_dict_to_hour_column_value():
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    value = {
+            'this': 'clock looks messed up...'
+            }
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    column_value.value = value
+
+def test_should_set_hour_value_to_none_for_hour_column_value():
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    hour_value = {
+                'hour': 23,
+                'minute': 59
+                }
+    value = json.dumps(hour_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    
+    # Act
+    column_value.value.hour = None
+    format = column_value.format()
+
+    # Assert 
+    eq_(format,COMPLEX_NULL_VALUE)
+
+def test_should_set_minute_value_to_none_for_hour_column_value():
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    hour_value = {
+                'hour': 23,
+                'minute': 59
+                }
+    value = json.dumps(hour_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    
+    # Act
+    column_value.value.minute = None
+    format = column_value.format()
+
+    # Assert 
+    eq_(format['minute'],0)
