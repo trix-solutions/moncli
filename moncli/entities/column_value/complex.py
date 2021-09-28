@@ -193,9 +193,15 @@ class TimelineValue(ComplexNullValue):
         except TypeError:
             return COMPLEX_NULL_VALUE
 
-class TimezoneValue(ColumnValue):
+class TimezoneValue(ComplexNullValue):
     """A timezone column value."""
-    pass
+    native_type = str
+
+    def _convert(self, value):
+        return value['timezone']
+    
+    def _format(self):
+        return {'timezone': self.value}
 
 
 class WeekValue(ComplexNullValue):
