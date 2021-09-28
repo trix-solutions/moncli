@@ -6,7 +6,7 @@ from ...config import DATE_FORMAT,TIME_FORMAT
 from ...error import ColumnValueError
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
-from .objects import Email, PersonOrTeam
+from .objects import Email, Link, PersonOrTeam
 
 
 class DateValue(ComplexNullValue):
@@ -159,7 +159,40 @@ class EmailValue(ComplexNullValue):
 
 class LinkValue(ComplexNullValue):
     """A link column value."""
-    pass
+    
+    native_type = Link
+    allow_casts = (str, dict)
+
+    def _convert(self, value):
+        try: 
+            url = value['url']
+            text = value['text']
+            return Link(url=url, text=text)
+        except KeyError:
+            raise ColumnValueError('invalid_link_data', self.id, 'Unable to convert "{}" to Link value.'.format(value))
+
+    
+    def _cast(self, value):
+        try:
+            if isinstance(value, str):
+                url, text = value.split(' ',1)
+                return Link(url=url, text=text)
+
+            if isinstance(value, dict):
+                url = value['url']
+                text = value['text']
+                return Link(url=url, text=text)
+
+        except KeyError:
+            raise ColumnValueError('invalid_link_data', self.id, 'Unable to convert "{}" to Link value.'.format(value))
+
+
+    def _format(self):
+        if self.value.url == None:
+            return COMPLEX_NULL_VALUE
+        if self.value.url != None and self.value.text == None:
+            return {'url': self.value.url, 'text': self.value.url}
+        return {'url': self.value.url, 'text': self.value.text}
 
 
 class LongTextValue(ComplexNullValue):
