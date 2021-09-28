@@ -60,6 +60,25 @@ class Team(PersonOrTeam):
         super(Team, self).__init__(id, kind=enums.PeopleKind.team)
 
 
+class Link(object):
+  def __init__(self, url: str = None, text: str = None):
+    self.url = url
+    if not text:
+      text = url
+    self._text = text
+    
+  @property
+  def text(self):
+    return self._text
+  
+  @text.setter
+  def text(self, value):
+    if not value:
+      self._text = self.url
+    else:
+      self._text = value
+
+      
 class Timeline(object):
   
   def __init__(self, from_date: datetime, to_date: datetime, is_milestone: bool = False):
