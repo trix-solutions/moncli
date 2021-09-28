@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from moncli.config import DATE_FORMAT
 from moncli import enums
 from datetime import timedelta
 class PersonOrTeam(object):
@@ -28,6 +31,41 @@ class Person(PersonOrTeam):
 class Team(PersonOrTeam):
    def __init__(self,id):
         super(Team, self).__init__(id, kind=enums.PeopleKind.team)
+
+
+class Timeline(object):
+  
+  def __init__(self, from_date: datetime, to_date: datetime, is_milestone: bool = False):
+    self._from_date = from_date
+    self._to_date = to_date
+    self._is_milestone = is_milestone
+    
+  @property
+  def from_date(self):
+    return self._from_date
+  
+  @from_date.setter
+  def from_date(self, value):
+    self._from_date = value
+    if self._is_milestone:
+       self._to_date = value
+        
+  @property
+  def to_date(self):
+    return self._to_date
+  
+  @to_date.setter
+  def to_date(self, value):
+    self._to_date = value
+    if self._is_milestone:
+       self._from_date = value
+        
+  def __repr__(self):
+    return str({
+      'from': self.from_date,
+      'to': self.to_date
+    })
+
 
 class Week(object):
 

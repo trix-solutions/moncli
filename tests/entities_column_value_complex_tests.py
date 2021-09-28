@@ -1,11 +1,14 @@
-import collections
 import json
 from datetime import datetime
-from nose.tools import ok_, eq_, raises
-from moncli.entities.column_value.objects import Week
+
+from nose.tools import eq_, raises
+
 from moncli import entities as en, error as e
+from moncli.entities.column_value.constants import COMPLEX_NULL_VALUE
+from moncli.config import DATE_FORMAT
+from moncli.entities.column_value.objects import Week
 from moncli.enums import *
-from datetime import datetime
+
 
 def test_should_item_link_column_with_no_api_data():
 
@@ -21,6 +24,7 @@ def test_should_item_link_column_with_no_api_data():
 
     # Assert 
     eq_(format,{})
+
 
 def test_should_item_link_column_with_api_data():
 
@@ -42,6 +46,7 @@ def test_should_item_link_column_with_api_data():
     # Assert 
     eq_(format['item_ids'],[123456789])
 
+
 def test_should_set_null_item_link_column_value():
     id = 'item_link'
     title="Item Link"
@@ -53,6 +58,7 @@ def test_should_set_null_item_link_column_value():
 
     # Assert 
     eq_(column_value.value,[])
+
 
 def test_should_append_integer_id_to_item_link_column_value():
     id = 'item_link'
@@ -71,6 +77,7 @@ def test_should_append_integer_id_to_item_link_column_value():
     eq_(format,format_dict)
     eq_(format['item_ids'],[123456789])
 
+
 def test_should_append_string_id_to_item_link_column_value():
     id = 'item_link'
     title="Item Link"
@@ -87,6 +94,7 @@ def test_should_append_string_id_to_item_link_column_value():
     # Assert 
     eq_(format,format_dict)
     eq_(format['item_ids'],[123456789])
+
 
 @raises(e.ColumnValueError)
 def test_should_append_invalid_string_id_to_item_link_column_value():
@@ -120,13 +128,136 @@ def test_should_item_link_column_with_api_data_with_no_linkedpulseid_key():
     # Assert 
     eq_(column_value.value,[])
 
+
+def test_should_create_timeline_column_value_with_no_api_data():
+
+    # Arrange
+    id = 'timeline1'
+    title = 'timeline 1'
+    column_type = ColumnType.timeline
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=None)
+    
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+def test_should_create_timeline_column_value_with_api_data():
+
+    # Arrange
+    id = 'timeline'
+    title = 'timeline 2'
+    column_type = ColumnType.timeline
+    from_date=  '2021-01-01'
+    to_date = '2021-12-31'
+    type= 'milestone'
+    dict_value = {
+        'from': from_date,
+        'to': to_date,
+        'visualization_type': type
+    }
+    value = json.dumps(dict_value)
+
+    # Act
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    format = column_value.format()
+
+    # Assert
+    eq_(format['from'], from_date)
+    eq_(format['to'], to_date)
+
+def test_should_set_timeline_column_value_to_None():
+    
+    # Arrange
+    id = 'timeline1'
+    title = 'timeline 3'
+    column_type = ColumnType.timeline
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    column_value.value=None
+
+    # Assert
+    eq_(column_value.value,None)
+
+def test_should_set_timeline_column_value_with_valid_dict():
+    # Arrange
+    id = 'timeline1'
+    title = 'timeline 4'
+    column_type = ColumnType.timeline
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    from_date=  '2021-01-01'
+    to_date = '2021-12-31'
+    value = {
+              'from': '2021-12-31',
+               'to': '2021-12-31',
+               'visualization_type': 'milestone'
+            }
+    from_date = datetime.strptime(value['from'],DATE_FORMAT)
+    to_date = datetime.strptime(value['to'],DATE_FORMAT)
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.from_date,from_date) 
+    eq_(column_value.value.to_date,to_date)
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_dict_value_to_timeline_value():
+
+    # Arrange
+    id = 'timeline1'
+    title = 'timeline 4'
+    column_type = ColumnType.timeline
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    column_value.value = {'this': 'is an invalid dict'}
+
+def test_should_set_date_value_to_none_for_timeline_column_value():
+    id = 'timeline1'
+    title = 'timeline 4'
+    column_type = ColumnType.timeline
+    from_date=  '2021-01-01'
+    to_date = '2021-12-31'
+    dict_value = {
+    'from': from_date,
+    'to': to_date,
+    }
+    value = json.dumps(dict_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    
+    # Act
+    column_value.value.from_date = None
+    format = column_value.format()
+
+    # Assert
+    eq_(format,COMPLEX_NULL_VALUE)
+
+@raises(e.ColumnValueError)
+def test_should_set_from_date_greater_than_to_date_timeline_column_value():
+    id = 'timeline1'
+    title = 'timeline 4'
+    column_type = ColumnType.timeline
+    from_date=  '2021-12-31'
+    to_date = '2021-01-01'
+    dict_value = {
+    'from': from_date,
+    'to': to_date,
+    }
+    value = json.dumps(dict_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    
+    # Act
+    column_value.value = value
+
 def test_should_week_column_with_no_api_data():
 
     # Arrange
     id = 'week1'
     title="New Week"
     column_type = ColumnType.week
-    value = None
     column_value = en.cv.create_column_value(column_type,id=id,title=title)
 
     # Act
