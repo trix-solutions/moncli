@@ -6,7 +6,7 @@ from nose.tools import eq_, raises
 from moncli import entities as en, error as e
 from moncli.entities.column_value.constants import COMPLEX_NULL_VALUE
 from moncli.config import DATE_FORMAT
-from moncli.entities.column_value.objects import Week
+from moncli.entities.column_value.objects import Week, Country
 from moncli.enums import *
 
 
@@ -513,6 +513,100 @@ def test_should_set_country_column_value_to_none():
 
     # Assert
     eq_(column_value.value, None)
+
+
+def test_should_set_country_column_value_to_country_value():
+
+    # Arrange
+    id = 'country_value_4'
+    title = "Country"
+    column_type = ColumnType.country
+    name = 'United States'
+    code = 'US'
+    value = Country(name=name, code=code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.name, name)
+    eq_(column_value.value.code, code)
+
+
+def test_should_set_country_column_value_to_valid_dict_value():
+
+    # Arrange
+    id = 'country_value_5'
+    title = "Country"
+    column_type = ColumnType.country
+    name = 'United States'
+    code = 'US'
+    value = {'name': name, 'code': code}
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.name, name)
+    eq_(column_value.value.code, code)
+
+
+@raises(e.ColumnValueError)
+def test_should_set_country_column_value_to_invalid_dict_value():
+
+    # Arrange
+    id = 'country_value_6'
+    title = "Country"
+    column_type = ColumnType.country
+    value = {'this': 'No such Country'}
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+
+def test_should_create_country_column_value_with_name_set_to_none():
+
+    # Arrange
+    id = 'country_value_7'
+    title = "Country"
+    column_type = ColumnType.country
+    name = None
+    code = 'US'
+    value = Country(name=name, code=code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+    format = column_value.format()
+    
+    # Assert
+    eq_(format, {})
+
+
+def test_should_create_country_column_value_with_code_set_to_none():
+
+    # Arrange
+    id = 'country_value_7'
+    title = "Country"
+    column_type = ColumnType.country
+    name = 'United States'
+    code = None
+    value = Country(name=name, code=code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+    format = column_value.format()
+    
+    # Assert
+    eq_(format, {})
+
+
+
+
 
 
 
