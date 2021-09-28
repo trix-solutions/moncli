@@ -9,10 +9,24 @@ from .constants import COMPLEX_NULL_VALUE
 from ...error import ColumnValueError
 
 
-class CheckboxValue(ColumnValue):
+class CheckboxValue(ComplexNullValue):
     """A checkbox column value."""
-    pass
+    
+    native_type = bool
+    native_default = False
+    allow_casts = (int, str)
 
+    def _convert(self, value):
+        try:
+            if value['checked'] == 'true':
+                return True
+        except KeyError:
+            return False
+
+    def _format(self):
+        if self.value:
+            return {'checked': 'true'}
+        return COMPLEX_NULL_VALUE
 
 class CountryValue(ColumnValue):
     """A country column value."""

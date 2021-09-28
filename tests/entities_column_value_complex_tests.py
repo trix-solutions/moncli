@@ -129,6 +129,97 @@ def test_should_item_link_column_with_api_data_with_no_linkedpulseid_key():
     eq_(column_value.value,[])
 
 
+def test_should_set_checkbox_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'checkbox_1'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_set_checkbox_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'checkbox_2'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    value = json.dumps({'checked': 'true'})
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {'checked': 'true'})
+
+
+def test_should_return_checkbox_column_value_as_false_when_value_is_set_to_none():
+
+     # Arrange
+    id = 'checkbox_3'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = None
+
+    # Assert
+    eq_(column_value.value, False)
+    
+
+def test_should_set_checkbox_column_value_with_bool_value():
+
+     # Arrange
+    id = 'checkbox_4'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = True
+
+    # Assert
+    eq_(column_value.value, True)
+
+
+def test_should_set_checkbox_column_value_with_string_value():
+
+    # Arrange
+    id = 'checkbox_5'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = 'true'
+
+    # Assert
+    eq_(column_value.value, True)
+
+
+def test_should_set_checkbox_column_value_with_int_value():
+
+    # Arrange
+    id = 'checkbox_6'
+    column_type = ColumnType.checkbox
+    title = 'Checkbox'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = 1234
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, bool(value))
+
+
 def test_should_create_timeline_column_value_with_no_api_data():
 
     # Arrange
@@ -142,6 +233,7 @@ def test_should_create_timeline_column_value_with_no_api_data():
 
     # Assert
     eq_(format, {})
+
 
 def test_should_create_timeline_column_value_with_api_data():
 
@@ -167,6 +259,7 @@ def test_should_create_timeline_column_value_with_api_data():
     eq_(format['from'], from_date)
     eq_(format['to'], to_date)
 
+
 def test_should_set_timeline_column_value_to_None():
     
     # Arrange
@@ -180,6 +273,7 @@ def test_should_set_timeline_column_value_to_None():
 
     # Assert
     eq_(column_value.value,None)
+
 
 def test_should_set_timeline_column_value_with_valid_dict():
     # Arrange
@@ -203,6 +297,7 @@ def test_should_set_timeline_column_value_with_valid_dict():
     eq_(column_value.value.from_date,from_date) 
     eq_(column_value.value.to_date,to_date)
 
+
 @raises(e.ColumnValueError)
 def test_should_set_invalid_dict_value_to_timeline_value():
 
@@ -214,6 +309,7 @@ def test_should_set_invalid_dict_value_to_timeline_value():
 
     # Act
     column_value.value = {'this': 'is an invalid dict'}
+
 
 def test_should_set_date_value_to_none_for_timeline_column_value():
     id = 'timeline1'
@@ -235,6 +331,7 @@ def test_should_set_date_value_to_none_for_timeline_column_value():
     # Assert
     eq_(format,COMPLEX_NULL_VALUE)
 
+
 @raises(e.ColumnValueError)
 def test_should_set_from_date_greater_than_to_date_timeline_column_value():
     id = 'timeline1'
@@ -252,6 +349,7 @@ def test_should_set_from_date_greater_than_to_date_timeline_column_value():
     # Act
     column_value.value = value
 
+
 def test_should_week_column_with_no_api_data():
 
     # Arrange
@@ -265,6 +363,7 @@ def test_should_week_column_with_no_api_data():
 
     # Assert 
     eq_(format,{})
+
 
 def test_should_week_column_with_api_data():
 
@@ -287,6 +386,7 @@ def test_should_week_column_with_api_data():
     # Assert 
     eq_(format['week']['startDate'],'2021-09-20')
 
+
 def test_should_set_none_value_to_week_column_value():
     id = 'week1'
     title="New Week"
@@ -298,6 +398,7 @@ def test_should_set_none_value_to_week_column_value():
 
     # Assert 
     eq_(column_value.value,value)
+
 
 def test_should_test_week_value_to_week_column_value():
     id = 'week1'
@@ -314,6 +415,7 @@ def test_should_test_week_value_to_week_column_value():
     # Assert
     eq_(column_value.value.start, value.start)
     eq_(column_value.value.end, value.end)
+
 
 def test_should_set_dict_value_to_week_column_value():
     id = 'week1'
@@ -335,6 +437,7 @@ def test_should_set_dict_value_to_week_column_value():
     eq_(column_value.value.start, value['start'])
     eq_(column_value.value.end, value['end'])
 
+
 @raises(e.ColumnValueError)
 def test_should_set_invalid_dict_value_to_week_column_value():
     id = 'week1'
@@ -345,6 +448,7 @@ def test_should_set_invalid_dict_value_to_week_column_value():
 
     # Act
     column_value.value = value 
+
 
 def test_should_set_none_start_value_to_week_column_value():
     id = 'week1'
