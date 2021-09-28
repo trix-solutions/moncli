@@ -93,11 +93,17 @@ class ItemLinkValue(ComplexNullValue):
                     'Invalid item ID "{}".'.format(list_value))
         return dict(item_ids=item_ids)
 
-class RatingValue(ColumnValue):
+class RatingValue(ComplexNullValue):
     """A rating column value."""
-    pass
+    native_type = int
+    allow_cast = (str)
 
-
+    def _convert(self, value):
+        return value['rating']
+    
+    def _format(self):
+        return { 'rating': self.value }
+        
 class TagsValue(ColumnValue):
     """A tags column value."""
     pass

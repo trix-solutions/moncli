@@ -603,3 +603,65 @@ def test_should_create_country_column_value_with_code_set_to_none():
     
     # Assert
     eq_(format, {})
+
+
+def test_should_create_rating_column_value_with_no_api_input_data():
+    
+    # Arrange
+    id = 'rating'
+    title = 'rating 1'
+    column_type = ColumnType.rating
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format,{})
+
+
+def test_should_create_rating_column_value_with_api_input_data():
+    
+    # Arrange
+    id = 'rating'
+    title = 'rating 1'
+    column_type = ColumnType.rating
+    rating_value = { 'rating': 4 }
+    value = json.dumps(rating_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format,rating_value)
+
+
+def test_should_set_rating_column_value_with_none_value():
+    
+    # Arrange
+    id = 'rating'
+    title = 'rating 1'
+    column_type = ColumnType.rating
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    column_value.value=None
+
+    # Assert
+    eq_(column_value.value,None)
+
+
+def test_should_set_rating_column_value_with_int_value():
+    
+    # Arrange
+    id = 'rating'
+    title = 'rating 1'
+    column_type = ColumnType.rating
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    column_value.value=4
+
+    # Assert
+    eq_(column_value.value,4)
