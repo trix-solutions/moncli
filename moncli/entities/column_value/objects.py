@@ -152,3 +152,9 @@ class Week(object):
             'start': self._start,
             'end': self._end
         })
+
+
+class Country(object):
+  def __init__(self, name: str, code: str):
+    self.name = name
+    self.code = code
