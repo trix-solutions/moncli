@@ -463,3 +463,104 @@ def test_should_set_none_start_value_to_week_column_value():
     
     # Assert
     eq_(format, {})
+
+
+def test_should_create_tags_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'tags_value_1'
+    title = "Tags"
+    column_type = ColumnType.tags
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_create_tags_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'tags_value_2'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = json.dumps({'tag_ids': [12345, 12346]})
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format['tag_ids'], [12345, 12346])
+
+
+def test_should_set_tags_column_value_to_none():
+
+    # Arrange
+    id = 'tags_value_3'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, [])
+
+
+def test_should_append_tags_column_value_with_integer_id():
+
+    # Arrange
+    id = 'tags_value_4'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = 12347
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value.append(value)
+    format = column_value.format()
+
+    # Assert
+    eq_(format['tag_ids'], [12347])
+
+
+def test_should_append_tags_column_value_with_string_id():
+
+    # Arrange
+    id = 'tags_value_5'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = '12347'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value.append(value)
+    format = column_value.format()
+
+    # Assert
+    eq_(format['tag_ids'], [12347])
+
+
+@raises(e.ColumnValueError)
+def test_should_fail_to_append_invalid_string_id_to_tags_column_value():
+
+    # Arrange
+    id = 'tags_value_6'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = 'invalid_tag_id'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value.append(value)
+    format = column_value.format()
+
+
+
+
+
