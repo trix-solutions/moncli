@@ -697,3 +697,97 @@ def test_should_set_a_status_column_value_with_valid_integer_index_value():
 
     #Assert
     eq_(column_value.value,'Done')
+
+def test_should_create_long_text_value_with_no_input_data():
+
+    # Arrange
+    id = 'long_text_0'
+    column_type = ColumnType.long_text
+    title = 'Long Text'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+def test_should_create_long_text_value_with_api_input_data():
+
+    # Arrange
+    id = 'long_text_2'
+    column_type = ColumnType.long_text
+    title = 'Long Text'
+    text = 'Some long text'
+    value = json.dumps({'text': text})
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format['text'], text)
+
+
+def test_should_set_long_text_column_value_to_none():
+
+    # Arrange
+    id = 'long_text_3'
+    column_type = ColumnType.long_text
+    title = 'Long Text'
+    long_text = None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = long_text
+
+    # Assert
+    eq_(column_value.value, long_text)
+
+
+def test_should_set_string_value_to_long_text_value():
+
+    # Arrange
+    id = 'long_text_4'
+    column_type = ColumnType.long_text
+    title = 'Long Text'
+    long_text = 'Some long text'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = long_text
+
+    # Assert
+    eq_(column_value.value, long_text)
+
+
+def test_should_set_integer_value_to_long_text_value():
+
+     # Arrange
+    id = 'long_text_5'
+    column_type = ColumnType.long_text
+    title = 'Long Text'
+    long_text = 1234
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = long_text
+
+    # Assert
+    eq_(column_value.value, str(long_text))
+
+
+def test_should_set_float_value_to_long_text_value():
+
+     # Arrange
+    id = 'long_text_6'
+    column_type = ColumnType.long_text
+    title = 'Long Text'
+    long_text = 1234.1234
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = long_text
+
+    # Assert
+    eq_(column_value.value, str(long_text))
