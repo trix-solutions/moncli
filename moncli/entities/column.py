@@ -47,12 +47,8 @@ class Column(BaseColumn):
             Is the column archived or not.
         id : `str`
             The column's unique identifier.
-        pos : `str`
-            The column's position in the board. 
         settings_str : `str`
             The column's settings in a string form.
-        settings : `moncli.entities.Settings`
-            The settings in entity form (status / dropdown)
         title : `str`
             The column's title.
         type : `str`
@@ -66,7 +62,7 @@ class Column(BaseColumn):
     def __init__(self, **kwargs):
         self.archived = kwargs.pop('archived', None)
         self.type = kwargs.pop('type', None)
-        self.settings_str = kwargs.pop('width', None)
+        self.width = kwargs.pop('width', None)
         super().__init__(**kwargs)
     
     def __repr__(self):
@@ -76,6 +72,15 @@ class Column(BaseColumn):
     def column_type(self):
         # TODO - Find something else other than auto-number to default to.
         return COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
+
+    def to_primitive(self):
+        return dict(
+            id=self.id,
+            title=self.title,
+            type=self.type,
+            archived=self.archived,
+            settings_str=self.settings_str,
+            width=self.width)
 
 
 class BaseColumnCollection(en.BaseCollection):
