@@ -4,13 +4,11 @@ from datetime import datetime
 from nose.tools import eq_, raises
 
 from moncli import entities as en, error as e
-from moncli.entities.column_value.constants import COMPLEX_NULL_VALUE
 from moncli.config import DATE_FORMAT
-from moncli.entities.column_value.objects import Week
 from moncli.enums import *
 
 
-def test_should_item_link_column_with_no_api_data():
+def test_should_create_item_link_column_value_with_no_api_data():
 
     # Arrange
     id = 'item_link'
@@ -26,7 +24,7 @@ def test_should_item_link_column_with_no_api_data():
     eq_(format,{})
 
 
-def test_should_item_link_column_with_api_data():
+def test_should_create_item_link_column_value_with_api_data():
 
     # Arrange
     id = 'item_link'
@@ -329,7 +327,7 @@ def test_should_set_date_value_to_none_for_timeline_column_value():
     format = column_value.format()
 
     # Assert
-    eq_(format,COMPLEX_NULL_VALUE)
+    eq_(format, en.cv.COMPLEX_NULL_VALUE)
 
 
 @raises(e.ColumnValueError)
@@ -406,7 +404,7 @@ def test_should_test_week_value_to_week_column_value():
     column_type = ColumnType.week
     startDate = datetime(year=2021, month=9, day=27)
     endDate= datetime(year=2021, month=10, day=3)
-    value = Week(start=startDate,end=endDate)
+    value = en.cv.Week(start=startDate,end=endDate)
     column_value = en.cv.create_column_value(column_type,id=id,title=title)
 
     # Act
@@ -427,7 +425,7 @@ def test_should_set_dict_value_to_week_column_value():
             }
     startDate = datetime(year=2021, month=9, day=27)
     endDate= datetime(year=2021, month=10, day=3)
-    week = Week(start=startDate,end=endDate)
+    week = en.cv.Week(start=startDate,end=endDate)
     column_value = en.cv.create_column_value(column_type,id=id,title=title)
 
     # Act
@@ -454,7 +452,7 @@ def test_should_set_none_start_value_to_week_column_value():
     id = 'week1'
     title="New Week"
     column_type = ColumnType.week
-    value=Week(start=None,end=None)
+    value=en.cv.Week(start=None,end=None)
     column_value = en.cv.create_column_value(column_type,id=id,title=title)
 
     # Act
@@ -463,3 +461,500 @@ def test_should_set_none_start_value_to_week_column_value():
     
     # Assert
     eq_(format, {})
+    
+
+def test_should_create_country_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'country_value_1'
+    title = "Country"
+    column_type = ColumnType.country
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_create_country_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'country_value_2'
+    title = "Country"
+    column_type = ColumnType.country
+    name = 'United States'
+    code = 'US'
+    value = json.dumps({'countryName': name, 'countryCode': code})
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format['countryName'], name)
+    eq_(format['countryCode'], code)
+
+
+def test_should_set_country_column_value_to_none():
+
+    # Arrange
+    id = 'country_value_3'
+    title = "Country"
+    column_type = ColumnType.country
+    value = None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, None)
+    
+    
+def test_should_set_country_column_value_to_country_value():
+
+    # Arrange
+    id = 'country_value_4'
+    title = "Country"
+    column_type = ColumnType.country
+    name = 'United States'
+    code = 'US'
+    value = en.cv.Country(name=name, code=code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.name, name)
+    eq_(column_value.value.code, code)
+
+
+def test_should_set_country_column_value_to_valid_dict_value():
+
+    # Arrange
+    id = 'country_value_5'
+    title = "Country"
+    column_type = ColumnType.country
+    name = 'United States'
+    code = 'US'
+    value = {'name': name, 'code': code}
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.name, name)
+    eq_(column_value.value.code, code)
+
+
+@raises(e.ColumnValueError)
+def test_should_set_country_column_value_to_invalid_dict_value():
+
+    # Arrange
+    id = 'country_value_6'
+    title = "Country"
+    column_type = ColumnType.country
+    value = {'this': 'No such Country'}
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+
+def test_should_create_country_column_value_with_name_set_to_none():
+
+    # Arrange
+    id = 'country_value_7'
+    title = "Country"
+    column_type = ColumnType.country
+    name = None
+    code = 'US'
+    value = en.cv.Country(name=name, code=code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+    format = column_value.format()
+    
+    # Assert
+    eq_(format, {})
+
+
+def test_should_create_country_column_value_with_code_set_to_none():
+
+    # Arrange
+    id = 'country_value_7'
+    title = "Country"
+    column_type = ColumnType.country
+    name = 'United States'
+    code = None
+    value = en.cv.Country(name=name, code=code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+    format = column_value.format()
+    
+    # Assert
+    eq_(format, {})
+
+
+def test_should_create_tags_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'tags_value_1'
+    title = "Tags"
+    column_type = ColumnType.tags
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
+def test_should_create_tags_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'tags_value_2'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = json.dumps({'tag_ids': [12345, 12346]})
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format['tag_ids'], [12345, 12346])
+
+
+def test_should_set_tags_column_value_to_none():
+
+    # Arrange
+    id = 'tags_value_3'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, [])
+
+
+def test_should_append_tags_column_value_with_integer_id():
+
+    # Arrange
+    id = 'tags_value_4'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = 12347
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value.append(value)
+    format = column_value.format()
+
+    # Assert
+    eq_(format['tag_ids'], [12347])
+
+
+def test_should_append_tags_column_value_with_string_id():
+
+    # Arrange
+    id = 'tags_value_5'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = '12347'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value.append(value)
+    format = column_value.format()
+
+    # Assert
+    eq_(format['tag_ids'], [12347])
+
+
+@raises(e.ColumnValueError)
+def test_should_fail_to_append_invalid_string_id_to_tags_column_value():
+
+    # Arrange
+    id = 'tags_value_6'
+    title = "Tags"
+    column_type = ColumnType.tags
+    value = 'invalid_tag_id'
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value.append(value)
+    column_value.format()
+
+
+def test_should_create_hour_column_value_with_no_api_data():
+
+    # Arrange
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+
+    # Act
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    format = column_value.format()
+
+    # Assert 
+    eq_(format,{})
+
+
+def test_should_create_hour_column_value_with_api_data():
+
+    # Arrange
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    hour_value = {
+                'hour': 23,
+                'minute': 59
+                }
+    value = json.dumps(hour_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert 
+    eq_(format, hour_value)
+
+
+def test_should_set_none_to_hour_column_value():
+
+    # Arrange
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+
+    # Act
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value.value = None
+
+    # Assert 
+    eq_(column_value.value, None)
+
+
+def test_should_set_hour_value_to_hour_column_value():
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    hour_value = en.cv.Hour(hour=1,minute=1)
+
+    # Act
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value.value = hour_value
+
+    # Assert 
+    eq_(column_value.value, hour_value)
+
+
+def test_should_set_valid_dict_to_hour_column_value():
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    value = {
+                'hour': 23,
+                'minute': 59
+                }
+    hour_value = en.cv.Hour(hour=23,minute=59)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    
+    # Act
+    column_value.value = value
+
+    # Assert 
+    eq_(column_value.value.hour, hour_value.hour)
+
+
+@raises(e.ColumnValueError)
+def test_should_set_invalid_dict_to_hour_column_value():
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    value = {
+            'this': 'clock looks messed up...'
+            }
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act 
+    column_value.value = value
+
+
+def test_should_set_hour_value_to_none_for_hour_column_value():
+    
+    # Arrange
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    hour_value = {
+                'hour': 23,
+                'minute': 59
+                }
+    value = json.dumps(hour_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    
+    # Act
+    column_value.value.hour = None
+    format = column_value.format()
+
+    # Assert 
+    eq_(format, en.cv.COMPLEX_NULL_VALUE)
+
+
+def test_should_set_minute_value_to_none_for_hour_column_value():
+    id = 'hour'
+    title="hour"
+    column_type = ColumnType.hour
+    hour_value = {
+                'hour': 23,
+                'minute': 59
+                }
+    value = json.dumps(hour_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    
+    # Act
+    column_value.value.minute = None
+    format = column_value.format()
+
+    # Assert 
+    eq_(format['minute'],0)
+
+
+def test_should_create_rating_column_value_with_no_api_input_data():
+    
+    # Arrange
+    id = 'rating'
+    title = 'rating 1'
+    column_type = ColumnType.rating
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format,{})
+
+
+def test_should_create_rating_column_value_with_api_input_data():
+    
+    # Arrange
+    id = 'rating'
+    title = 'rating 1'
+    column_type = ColumnType.rating
+    rating_value = { 'rating': 4 }
+    value = json.dumps(rating_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format,rating_value)
+
+
+def test_should_set_rating_column_value_with_none_value():
+    
+    # Arrange
+    id = 'rating'
+    title = 'rating 1'
+    column_type = ColumnType.rating
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    column_value.value=None
+
+    # Assert
+    eq_(column_value.value,None)
+
+
+def test_should_set_rating_column_value_with_int_value():
+    
+    # Arrange
+    id = 'rating'
+    title = 'rating 1'
+    column_type = ColumnType.rating
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    column_value.value=4
+
+    # Assert
+    eq_(column_value.value,4)
+
+
+def test_should_timezone_column_value_with_no_api_data():
+
+    # Arrange
+    id = 'timezone1'
+    title="New timezone"
+    column_type = ColumnType.world_clock
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert 
+    eq_(format,{})
+
+
+def test_should_timezone_column_value_with_api_data():
+
+    # Arrange
+    id = 'timezone1'
+    title="New timezone"
+    column_type = ColumnType.world_clock
+    tz_value = {'timezone':'America/New_York'}
+    value = json.dumps(tz_value)
+    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert     
+    eq_(format,tz_value)
+
+
+def test_should_set_none_value_to_timezone_column_value():
+    id = 'timezone1'
+    title="New timezone"
+    column_type = ColumnType.world_clock
+    value = None
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value,value)
+
+
+def test_should_timezone_column_value_str_timezone_value():
+
+    # Arrange
+    id = 'timezone1'
+    title="New timezone"
+    column_type = ColumnType.world_clock
+
+    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+
+    # Act
+    column_value.value = 'Asia/Kolkata'
+    format = column_value.format()
+
+    # Assert 
+    eq_(format['timezone'],'Asia/Kolkata')

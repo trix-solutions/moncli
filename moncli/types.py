@@ -1,6 +1,7 @@
 import pytz, json
 from datetime import datetime
 
+from schematics.exceptions import ConversionError
 from schematics.types import BaseType
 
 from . import entities as en
@@ -8,6 +9,7 @@ from .config import *
 
 class MondayType(BaseType):
 
+    native_type = None
     null_value = None
     allow_casts = ()
     native_default = None
@@ -44,22 +46,19 @@ class MondayType(BaseType):
         if not value:
             return value
 
-        if not isinstance(value, en.ColumnValue):
+        if not isinstance(value, en.cv.ColumnValue):
+            if isinstance(value, self.native_type):
+                return self._process(value)
             if self.allow_casts and isinstance(value, self.allow_casts):
                 return self._cast(value)
-            return value
+            raise ConversionError("Couldn't interpret '{}' as type {}.".format(str(value), self.native_type.__name__))
 
         self.metadata['id'] = value.id
         self.metadata['title'] = value.title
         settings = json.loads(value.settings_str) if value.settings_str else {}
         for k, v in settings.items():
             self.metadata[k] = v
-
-        try:
-            additional_info = json.loads(value.additional_info)
-        except:
-            additional_info = value.additional_info
-        self.original_value = self._convert((value.text, value.value, additional_info))
+        self.original_value = value.value
         return self.original_value
 
     def to_primitive(self, value, context=None):
@@ -67,14 +66,18 @@ class MondayType(BaseType):
             return None
         if not value:
             return self.null_value
+        # Assume that conversions are necessary before exporting
+        value = self.to_native(value)
         return self._export(value)
+
+    def _process(self, value):
+        return value
 
     def _cast(self, value):
         return self.native_type(value)
 
-    def _convert(self, value: tuple):
-        _, data, _ = value
-        return data
+    def _set_metadata(self, value: en.cv.ColumnValue):
+        pass
 
     def _export(self, value):
         return value

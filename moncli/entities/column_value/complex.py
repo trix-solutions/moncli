@@ -3,7 +3,7 @@ from datetime import datetime
 from moncli.config import DATE_FORMAT
 
 from .base import ColumnValue, ComplexNullValue
-from .objects import Week, Timeline
+from .objects import *
 from .base import ColumnValue
 from .constants import COMPLEX_NULL_VALUE
 from ...error import ColumnValueError
@@ -28,15 +28,59 @@ class CheckboxValue(ComplexNullValue):
             return {'checked': 'true'}
         return COMPLEX_NULL_VALUE
 
-class CountryValue(ColumnValue):
+class CountryValue(ComplexNullValue):
     """A country column value."""
-    pass
+    
+    native_type = Country
+    allow_casts = (dict)
+
+    def _convert(self, value):
+        try:
+            name = value['countryName']
+            code = value['countryCode']
+            return Country(name=name, code=code)
+        except KeyError:
+            raise ColumnValueError('invalid_country_data', self.id, 'Unable to convert "{}" to Country value.'.format(value))
 
 
-class HourValue(ColumnValue):
+    def _cast(self, value):
+        try:
+            if isinstance(value, dict):
+                name = value['name']
+                code = value['code']
+                return Country(name=name, code=code)
+        except KeyError:
+            raise ColumnValueError('invalid_country_data', self.id, 'Unable to convert "{}" to Country value.'.format(value))
+
+
+    def _format(self):
+        if (self.value.name == None) or (self.value.code == None):
+            return COMPLEX_NULL_VALUE
+        return {'countryName': self.value.name, 'countryCode': self.value.code}
+
+
+class HourValue(ComplexNullValue):
     """An hour column value."""
-    pass
+    native_type = Hour
+    allow_casts = (dict)
 
+    def _convert(self, value):
+        return Hour(hour=value['hour'],minute=value['minute'])
+
+    def _cast(self, value):
+        try:
+            return Hour(hour=value['hour'],minute=value['minute'])               
+        except KeyError:
+            raise ColumnValueError(
+                'invalid_hour_data',
+                self.id,
+                'Unable to convert "{}" to Hour value.'.format(value)
+            )
+
+    def _format(self):
+        if self.value.hour:
+            return {'hour': self.value.hour, 'minute': self.value.minute}
+        return COMPLEX_NULL_VALUE
 
 class ItemLinkValue(ComplexNullValue):
     """An item link column value."""
@@ -65,14 +109,35 @@ class ItemLinkValue(ComplexNullValue):
                     'Invalid item ID "{}".'.format(list_value))
         return dict(item_ids=item_ids)
 
-class RatingValue(ColumnValue):
+class RatingValue(ComplexNullValue):
     """A rating column value."""
-    pass
+    native_type = int
+    allow_cast = (str)
 
-
-class TagsValue(ColumnValue):
+    def _convert(self, value):
+        return value['rating']
+    
+    def _format(self):
+        return { 'rating': self.value }
+        
+class TagsValue(ComplexNullValue):
     """A tags column value."""
-    pass
+    
+    native_type = list
+    native_default = []
+
+    def _convert(self, value):
+        try:
+            return value['tag_ids']
+        except KeyError:
+            raise ColumnValueError('invalid_tag_id', self.id, 'Invalid tag ID "{}".'.format(value))
+
+    def _format(self):
+        try:
+            value = [int(tag_id) for tag_id in self.value]
+            return {'tag_ids': value}
+        except ValueError:
+            raise ColumnValueError('invalid_tag_id', self.id, 'Invalid tag ID "{}".'.format(self.value))
 
 
 class TimelineValue(ComplexNullValue):
@@ -128,9 +193,15 @@ class TimelineValue(ComplexNullValue):
         except TypeError:
             return COMPLEX_NULL_VALUE
 
-class TimezoneValue(ColumnValue):
+class TimezoneValue(ComplexNullValue):
     """A timezone column value."""
-    pass
+    native_type = str
+
+    def _convert(self, value):
+        return value['timezone']
+    
+    def _format(self):
+        return {'timezone': self.value}
 
 
 class WeekValue(ComplexNullValue):

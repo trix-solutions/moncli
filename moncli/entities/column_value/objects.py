@@ -30,6 +30,22 @@ class Email(ComplexNullValue):
         'text': self.text
       })
 
+class Hour(object):
+  def __init__(self, hour: int, minute: int = 0):
+    self.hour = hour
+    self._minute = minute
+    
+  @property
+  def minute(self):
+    return self._minute
+  
+  @minute.setter
+  def minute(self, value):
+    if not value:
+      self._minute = 0
+    else: 
+      self._minute = value
+
 class PersonOrTeam(object):
     """
     
@@ -60,6 +76,25 @@ class Team(PersonOrTeam):
         super(Team, self).__init__(id, kind=enums.PeopleKind.team)
 
 
+class Link(object):
+  def __init__(self, url: str = None, text: str = None):
+    self.url = url
+    if not text:
+      text = url
+    self._text = text
+    
+  @property
+  def text(self):
+    return self._text
+  
+  @text.setter
+  def text(self, value):
+    if not value:
+      self._text = self.url
+    else:
+      self._text = value
+
+
 class Phone(object):
   def __init__(self, phone: str, code: str):
     self.phone = phone
@@ -70,6 +105,8 @@ class Phone(object):
       'phone': self.phone,
       'code': self.code
     })
+
+      
 class Timeline(object):
   
   def __init__(self, from_date: datetime, to_date: datetime, is_milestone: bool = False):
@@ -143,3 +180,9 @@ class Week(object):
             'start': self._start,
             'end': self._end
         })
+
+
+class Country(object):
+  def __init__(self, name: str, code: str):
+    self.name = name
+    self.code = code
