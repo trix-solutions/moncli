@@ -3,6 +3,7 @@ from schematics.types import StringType
 from .. import api, entities as en
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
+from moncli.error import MoncliError
 
 
 
@@ -300,13 +301,17 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, file_column: en.cv.FileValue, *args):
-        """Add a file to a column value.
+    def remove_files(self, id=None, title=None, file_value=None, *args):
+        """Removes a file from a column value.
 
             Parameters
 
-                file_column : moncli.entities.FileValue
-                    The file column value to be updated.
+                id : 'str'
+                    The id of the column to be updated.
+                title : 'str'
+                    The title of the column to be updated.
+                file_value : moncli.entities.column_value.FileValue
+                    The file value to be removed.
                 args : `tuple`
                     Optional file return fields.
 
@@ -336,15 +341,29 @@ class Item(_Item):
                 url_thumbnail : `str`
                     Url to view the asset in thumbnail mode. Only available for images.
         """
+        
+        if id or title:
+            item_data = api.change_column_value(
+              self.id,
+              file_value.id,
+              self.__board.id,
+              file_value.format(),
+              *args,
+              api_key=self.__creds.api_key_v2)
+            return Item(creds=self.__creds, **item_data)
 
-        item_data = api.change_column_value(
-            self.id,
-            file_column.id,
-            self.__board.id,
-            file_column.format(),
-            *args,
-            api_key=self.__creds.api_key_v2)
-        return Item(creds=self.__creds, **item_data)
+        if (id or title) and file_value:
+            item_data = api.change_column_value(
+              self.id,
+              file_value.id,
+              self.__board.id,
+              file_value.format(),
+              *args,
+              api_key=self.__creds.api_key_v2)
+            return Item(creds=self.__creds, **item_data)
+
+        return ItemError('clear_files_not_enough_parameters', self.id, 'Insufficient parameters for clearing files from column value.')
+
 
 
     def get_board(self, *args):
@@ -1500,3 +1519,8 @@ class NotEnoughChangeSimpleColumnValueParameters(Exception):
 class InvalidParameterError(Exception):
     def __init__(self):
         self.message = "New name must be present"
+
+class ItemError(MoncliError):
+    entity_type = 'Item'
+    def __init__(self, error_code, entity_type, message):
+        super().__init__(error_code, None, self.entity_type, message) 

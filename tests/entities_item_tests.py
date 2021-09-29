@@ -7,6 +7,7 @@ from schematics.common import NONEMPTY
 from moncli import client, entities as en
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
+from moncli.entities.item import ItemError
 
 
 @patch('moncli.api_v2.get_items')
@@ -626,3 +627,34 @@ def test_should_get_activity_logs(get_items, get_boards):
     ok_(activity_logs)
     eq_(activity_logs[0].id, id)
     eq_(activity_logs[0].account_id, account_id)
+
+
+@patch('moncli.api_v2.get_items')
+@raises(ItemError)
+def test_item_should_fail_to_remove_file(get_items):
+    
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    item = client.get_items()[0]
+    
+    # Act
+    item.remove_files()
+
+
+# @patch('moncli.api_v2.get_items')
+# def test_should_return_item_when_file_value_is_not_none(get_items):
+
+#     # Arrange
+#     id = 'column_1'
+#     title = 'Column 1'
+#     get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+#     item = client.get_items()[0]
+#     file_value = item.column_values['Column 1']
+
+    
+#     # Act
+#     item = item.remove_files(id=id, title=title, file_value=file_value)
+
+#     # Assert
+#     eq_(item.column_values['Column 4'], None)
+    
