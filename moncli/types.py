@@ -44,6 +44,7 @@ class MondayType(BaseType):
         if not value:
             return value
 
+
         if not isinstance(value, en.ColumnValue):
             if self.allow_casts and isinstance(value, self.allow_casts):
                 return self._cast(value)
@@ -78,3 +79,11 @@ class MondayType(BaseType):
 
     def _export(self, value):
         return value
+
+class TextType(MondayType):
+    native_type = str
+    allow_casts = (int, float)
+    null_value = ""
+
+    def _export(self, value):
+        return str(value)
