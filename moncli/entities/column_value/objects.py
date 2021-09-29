@@ -134,13 +134,3 @@ class Week(object):
             'end': self._end
         })
 
-class Phone(object):
-  def __init__(self, phone: str, code: str):
-    self.phone = phone
-    self.code = code
-    
-  def __repr__(self):
-    return str({
-      'phone': self.phone,
-      'code': self.code
-    })
