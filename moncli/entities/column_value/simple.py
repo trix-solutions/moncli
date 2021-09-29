@@ -6,7 +6,7 @@ from ...config import DATE_FORMAT,TIME_FORMAT
 from ...error import ColumnValueError
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
-from .objects import Email, PersonOrTeam
+from .objects import Email, PersonOrTeam, Phone
 
 
 class DateValue(ComplexNullValue):
@@ -258,6 +258,36 @@ class PeopleValue(ComplexNullValue):
 
 class PhoneValue(ComplexNullValue):
     """A phone column value."""
+
+    native_type = Phone
+    allow_casts = (str, dict)
+
+    def _convert(self, value):
+        try:
+            phone = value['phone']
+            code = value['countryShortName']
+            return Phone(phone=phone, code=code)
+        except KeyError:
+            raise ColumnValueError('invalid_phone_data', self.id, 'Unable to convert "{}" to Phone value.'.format(value))
+
+    def _cast(self, value):
+        try:
+            if isinstance(value, str):
+                phone, code = value.split(' ', 1)
+                return Phone(phone=phone, code=code)
+
+            if isinstance(value, dict):
+                phone = value['phone']
+                code = value['code']
+                return Phone(phone=phone, code=code)
+        except KeyError:
+            raise ColumnValueError('invalid_phone_data', self.id, 'Unable to convert "{}" to Phone value.'.format(value))
+
+    def _format(self):
+        if (self.value.phone == None) or (self.value.code == None):
+            return COMPLEX_NULL_VALUE
+        return {'phone': self.value.phone, 'countryShortName': self.value.code}
+
 
 
 class StatusValue(ComplexNullValue):
