@@ -67,6 +67,8 @@ class ColumnValue(_ColumnValue):
 
     @value.setter
     def value(self, value):
+        if self.read_only:
+            raise ColumnValueError('readonly_column_set', self.id, 'Cannot update value of read-only column "{}".'.format(self.title))
         if isinstance(value, self.allow_casts):
             self._value = self._cast(value)
         elif value == self.native_default or isinstance(value, self.native_type):
