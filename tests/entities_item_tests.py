@@ -229,6 +229,52 @@ def test_should_raise_error_when_id_and_title_are_not_none(get_board,get_items):
     item.change_column_value(id=id,title=title)
 
 @patch('moncli.api_v2.get_items')
+@raises(ItemError)
+def test_should_raise_item_error_for_invalid_column_value(get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    item = client.get_items()[0]
+    id = "item_id"
+    title = "item_title"
+    # Act
+    item.change_column_value(id=id,title=title,column_value=5)
+
+@patch.object(en.Item,'change_column_value')
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+def test_should_return_item_for_valid_column_value(get_board,get_items,change_column_value):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1', 'value': '{text: "Long Text"}'}
+    item = client.get_items()[0]
+    id = "long text"
+    new_value = en.cv.create_column_value(ColumnType.long_text,id=id,text="Long text")
+    # Act
+    new_item = item.change_column_value(column_value=new_value)
+
+    # Assert
+    ok_(new_item != None)
+    eq_(new_item['value'], '{text: "Long Text"}' )
+
+@patch.object(en.Item,'change_column_value')
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+def test_should_return_item_for_valid_column_value(get_board,get_items,change_column_value):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1', 'value': '{text: "Long Text"}'}
+    item = client.get_items()[0]
+    new_value = en.cv.create_column_value(ColumnType.long_text,id="long_text",text="Long text")
+    # Act
+    new_item = item.change_column_value(column_value=new_value)
+
+    # Assert
+    ok_(new_item != None)
+    eq_(new_item['value'], '{text: "Long Text"}' )
+
+@patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 @raises(ItemError)
 def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_board, get_items):
