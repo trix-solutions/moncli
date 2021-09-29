@@ -88,7 +88,9 @@ class ColumnValue(_ColumnValue):
     def format(self):
         if self.read_only:
             raise ColumnValueError(
-                'readonly_column', self.id, 'Cannot format value for read-only column "{}".'.format(self.title))
+                'readonly_column_format', 
+                self.id, 
+                'Cannot format value for read-only column "{}".'.format(self.title))
         if self.value == self.native_default:
             return self.null_value
         return self._format()
