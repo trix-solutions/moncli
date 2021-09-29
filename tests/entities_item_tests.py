@@ -239,25 +239,26 @@ def test_should_raise_item_error_for_invalid_column_value(get_items):
     # Act
     item.change_column_value(id=id,title=title,column_value=5)
 
-@patch.object(en.Item,'change_column_value')
+@patch('moncli.api_v2.change_column_value')
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 def test_should_return_item_for_valid_column_value(get_board,get_items,change_column_value):
     # Arrange
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
     get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
-    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1', 'value': '{text: "Long Text"}'}
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1'}
     item = client.get_items()[0]
     id = "long text"
-    new_value = en.cv.create_column_value(ColumnType.long_text,id=id,text="Long text")
+    value=json.dumps({'text': 'Long text'})
+    new_value = en.cv.create_column_value(ColumnType.long_text,id=id, value=value)
     # Act
-    new_item = item.change_column_value(column_value=new_value)
+    new_item = item.change_column_value(new_value)
 
     # Assert
     ok_(new_item != None)
-    eq_(new_item['value'], '{text: "Long Text"}' )
+    eq_(new_item['id'], 1 )
 
-@patch.object(en.Item,'change_column_value')
+@patch('moncli.api_v2.change_column_value')
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
 def test_should_return_item_for_valid_column_value(get_board,get_items,change_column_value):
@@ -266,7 +267,8 @@ def test_should_return_item_for_valid_column_value(get_board,get_items,change_co
     get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
     change_column_value.return_value = {'id': '1', 'name': 'Test Item 1', 'value': '{text: "Long Text"}'}
     item = client.get_items()[0]
-    new_value = en.cv.create_column_value(ColumnType.long_text,id="long_text",text="Long text")
+    value=json.dumps({'text': 'Long text'})
+    new_value = en.cv.create_column_value(ColumnType.long_text,id='long_text', value=value)
     # Act
     new_item = item.change_column_value(column_value=new_value)
 

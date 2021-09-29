@@ -1,11 +1,12 @@
-from moncli.entities.column_value.base import ColumnValue
 from schematics.models import Model
 from schematics.types import StringType
-from .. import api, entities as en
+
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
 from moncli.error import ColumnValueError, MoncliError
 
+from .. import api, entities as en
+from .column_value.base import ColumnValue
 
 class _Item(Model):
     """Item Base Model"""
@@ -749,8 +750,11 @@ class Item(_Item):
                 )
         if id or title:
             if isinstance(column_value,(dict,str)):
+                value = column_value
                 if title:
                     column_id= self.column_values[title].id
+                if id:
+                    column_id= id
             else: 
                 raise ItemError(
                     'invalid_column_value_entity',
@@ -760,10 +764,10 @@ class Item(_Item):
 
         if get_column_values:
             args = list(args)
-            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
-                if arg not in args:
-                    args.append(arg)
-            args.extend(['id', 'name'])
+            # for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
+            #     if arg not in args:
+            #         args.append(arg)
+            # args.extend(['id', 'name'])
 
         if column_value is None:
             raise ColumnValueRequired()
