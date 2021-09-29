@@ -749,8 +749,8 @@ class Item(_Item):
                     'Column value must be a properly formatted dict or str when using "id" or "title" parameters.'
                 )
         if id or title:
+            value = column_value
             if isinstance(column_value,(dict,str)):
-                value = column_value
                 if title:
                     column_id= self.column_values[title].id
                 if id:
@@ -764,18 +764,12 @@ class Item(_Item):
 
         if get_column_values:
             args = list(args)
-            # for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
-            #     if arg not in args:
-            #         args.append(arg)
-            # args.extend(['id', 'name'])
 
         if column_value is None:
             raise ColumnValueRequired()
-        if not isinstance(column_value, en.cv.ColumnValue):
-            raise en.board.InvalidColumnValue(type(column_value).__name__)
         else:
-            column_id = column_value.id
-            value = column_value.format()
+            column_id = id
+            value = column_value
 
         item_data = api.change_column_value(
             self.id,
