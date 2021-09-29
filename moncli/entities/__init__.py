@@ -10,3 +10,4 @@ from .board import Board, InvalidColumnValue
 from .item import Item, UpdateNotFound
 from .item import TooManyChangeSimpleColumnValueParameters,NotEnoughChangeSimpleColumnValueParameters
 from .client import MondayClient
+from .column_value.base import ColumnValue
