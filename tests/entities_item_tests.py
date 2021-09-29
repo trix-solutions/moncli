@@ -1,4 +1,5 @@
 import json
+from moncli.entities.item import ItemError
 
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
@@ -202,10 +203,34 @@ def test_item_should_get_column_value_with_extra_id(get_column_values, get_items
     eq_(column_value.value, 'Hello, Grandma')
     eq_(type(column_value), cv.LongTextValue)
 
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@raises(ItemError)
+def test_should_raise_error_when_id_and_title_and_column_value_are_none(get_board,get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    item = client.get_items()[0]
+
+    # Act
+    item.change_column_value(id=None,title=None,column_value = None)
 
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
-@raises(en.InvalidColumnValue)
+@raises(ItemError)
+def test_should_raise_error_when_id_and_title_are_not_none(get_board,get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    item = client.get_items()[0]
+    id = "item_id"
+    title = "item_title"
+    # Act
+    item.change_column_value(id=id,title=title)
+
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@raises(ItemError)
 def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_board, get_items):
 
     # Arrange
@@ -250,7 +275,7 @@ def test_should_update_item_name_if_new_name_parameter_contains_a_valid_value(ch
 
 
 @patch('moncli.api_v2.get_items')
-@raises(en.InvalidColumnValue)
+@raises(ItemError)
 def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_id(get_items):
 
     # Arrange
@@ -626,3 +651,4 @@ def test_should_get_activity_logs(get_items, get_boards):
     ok_(activity_logs)
     eq_(activity_logs[0].id, id)
     eq_(activity_logs[0].account_id, account_id)
+
