@@ -79,7 +79,7 @@ class MondayModel(Model):
         base_dict = super().to_primitive(role=role, app_data=app_data, **kwargs)
         result = {}
 
-        def value_changed(self, value, other):
+        def value_changed(value, other):
             return value != other
 
         for field, value in base_dict.items():
