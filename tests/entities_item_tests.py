@@ -2,7 +2,6 @@ import json
 
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
-from schematics.common import NONEMPTY
 
 from moncli import client, entities as en
 from moncli.entities import column_value as cv

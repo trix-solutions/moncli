@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 from nose.tools import ok_, eq_, raises
-
+from moncli.entities.column_value.objects import Phone, Email
 from moncli import entities as en, error as e
 from moncli.enums import *
 
@@ -697,6 +697,156 @@ def test_should_set_a_status_column_value_with_valid_integer_index_value():
 
     #Assert
     eq_(column_value.value,'Done')
+
+
+def test_should_create_phone_column_value_with_no_api_input_data():
+
+    # Arrange
+    id = 'phone_value_1'
+    title = "Phone"
+    column_type = ColumnType.phone
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+def test_should_create_phone_column_value_with_api_input_data():
+
+    # Arrange
+    id = 'phone_value_2'
+    title = "Phone"
+    column_type = ColumnType.phone
+    value = json.dumps({'phone': '+18637777777', 'countryShortName': 'US'})
+    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format['phone'], '+18637777777')
+    eq_(format['countryShortName'], 'US')
+
+def test_should_set_phone_column_value_to_none():
+
+    # Arrange
+    id = 'phone_value_3'
+    title = "Phone"
+    column_type = ColumnType.phone
+    value = None
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value, None)
+
+def test_should_set_phone_column_value_to_phone_value():
+
+    # Arrange
+    id = 'phone_value_4'
+    title = "Phone"
+    column_type = ColumnType.phone
+    phone = '+12397777777'
+    code = 'US'
+    value = Phone(phone=phone, code=code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.phone, phone)
+    eq_(column_value.value.code, code)
+
+def test_should_set_phone_column_value_to_string_value():
+
+    # Arrange
+    id = 'phone_value_5'
+    title = "Phone"
+    column_type = ColumnType.phone
+    phone = '+5087777777'
+    code = 'US'
+    value = '{} {}'.format(phone, code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.phone, phone)
+    eq_(column_value.value.code, code)
+
+def test_should_set_phone_column_value_to_valid_dict_value():
+
+    # Arrange
+    id = 'phone_value_6'
+    title = "Phone"
+    column_type = ColumnType.phone
+    phone = '+5087777777'
+    code = 'US'
+    value = {'phone': phone, 'code': code}
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+
+    # Assert
+    eq_(column_value.value.phone, phone)
+    eq_(column_value.value.code, code)
+
+@raises(e.ColumnValueError)
+def test_should_set_phone_column_value_to_invalid_dict_value():
+
+    # Arrange
+    id = 'phone_value_7'
+    title = "Phone"
+    column_type = ColumnType.phone
+    value = {'this': 'aint my phone number...'}
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+    
+
+def test_should_create_phone_column_value_with_phone_set_to_none():
+
+    # Arrange
+    id = 'phone_value_8'
+    title = "Phone"
+    column_type = ColumnType.phone
+    phone = None
+    code = 'US'
+    value = Phone(phone=phone, code=code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+def test_should_create_phone_column_value_with_code_set_to_none():
+
+    # Arrange
+    id = 'phone_value_9'
+    title = "Phone"
+    column_type = ColumnType.phone
+    phone = '+5087777777'
+    code = None
+    value = Phone(phone=phone, code=code)
+    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+
+    # Act
+    column_value.value = value
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
 
 
 def test_should_email_column_value_with_no_api_input_data():
