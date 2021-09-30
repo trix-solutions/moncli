@@ -44,6 +44,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passing_in_either_int_
     eq_(int_value,'1')
     eq_(float_value,"1.0")
 
+
 @patch('moncli.api_v2.get_items')
 def test_should_succeed_when_to_native_returns_none_when_passing_in_none(get_items):
 
@@ -127,7 +128,7 @@ def test_should_succeed_when_to_native_returns_none_when_passing_none():
     value = checkbox_type.to_native(None)
 
     # Assert
-    eq_(value, None)
+    eq_(value, False)
 
 
 def test_should_succeed_when_to_primitive_returns_an_empty_dict_when_passing_none():

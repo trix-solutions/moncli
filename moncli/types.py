@@ -44,7 +44,7 @@ class MondayType(BaseType):
 
     def to_native(self, value, context=None):
         if not value:
-            return value
+            return self.native_default
 
         if not isinstance(value, en.cv.ColumnValue):
             if isinstance(value, self.native_type):
