@@ -754,14 +754,14 @@ class Item(_Item):
             if isinstance(column_value,(dict,str)):
                 if title:
                     column_id= self.column_values[title].id
-                if id:
+                elif id:
                     column_id= id
+                value = column_value
             if not column_value:
-                column_value = self.column_values
                 if title:
-                    value = column_value[title]
-                if id:
-                    value = column_value[id]
+                    column_value = self.column_values[title]
+                elif id:
+                    column_value = self.column_values[id]
                 column_id = column_value.id
                 value  = column_value.null_value
         else: 
