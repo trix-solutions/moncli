@@ -2,12 +2,12 @@ import json
 
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
-from schematics.common import NONEMPTY
 
 from moncli import client, entities as en
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
-
+from moncli.models import MondayModel
+from moncli.types import TextType, MondayType
 
 @patch('moncli.api_v2.get_items')
 def test_item_should_get_board(get_items):
@@ -626,3 +626,4 @@ def test_should_get_activity_logs(get_items, get_boards):
     ok_(activity_logs)
     eq_(activity_logs[0].id, id)
     eq_(activity_logs[0].account_id, account_id)
+
