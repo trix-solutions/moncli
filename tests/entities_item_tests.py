@@ -253,6 +253,7 @@ def test_should_return_item_for_valid_column_value(get_board,get_items,change_co
     new_value = en.cv.create_column_value(ColumnType.long_text,id=id, value=value).format()
     # Act
     new_item = item.change_column_value(id=id,column_value=new_value)
+    
 
     # Assert
     ok_(new_item != None)
