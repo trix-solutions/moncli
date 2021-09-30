@@ -741,35 +741,43 @@ class Item(_Item):
             )
         if not (id or title):
             if isinstance(column_value, ColumnValue):
-                pass
+                column_id = column_value.id
+                value = column_value.format()
             else:
                 raise ItemError(
                     'invalid_column_value',
                     self.id,
                     'Column value must be a properly formatted dict or str when using "id" or "title" parameters.'
                 )
-        if id or title:
+        if id or title or column_value:
             value = column_value
             if isinstance(column_value,(dict,str)):
                 if title:
                     column_id= self.column_values[title].id
                 if id:
                     column_id= id
-            else: 
-                raise ItemError(
-                    'invalid_column_value_entity',
-                    self.id,
-                    'Column Value must be a valid entities.column_value.ColumnValue instance when not using "id" or "title" parameters.'
-                )
+            if not column_value:
+                column_value = self.column_values
+                if title:
+                    value = column_value[title]
+                if id:
+                    value = column_value[id]
+                column_id = column_value.id
+                value  = column_value.null_value
+        else: 
+            raise ItemError(
+                'invalid_column_value_entity',
+                self.id,
+                'Column Value must be a valid entities.column_value.ColumnValue instance when not using "id" or "title" parameters.'
+            )
 
         if get_column_values:
             args = list(args)
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
+                if arg not in args:
+                    args.append(arg)
+            args.extend(['id', 'name'])
 
-        if column_value is None:
-            raise ColumnValueRequired()
-        else:
-            column_id = id
-            value = column_value
 
         item_data = api.change_column_value(
             self.id,
