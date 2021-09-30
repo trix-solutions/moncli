@@ -1,5 +1,6 @@
 import pytz, json
 from datetime import datetime
+from schematics.exceptions import ConversionError
 
 from schematics.exceptions import ConversionError
 from schematics.types import BaseType
@@ -82,6 +83,22 @@ class MondayType(BaseType):
     def _export(self, value):
         return value
 
+class NumberType(MondayType):
+    native_type = (int, float)
+    allow_casts = (str, )
+    null_value = ""
+    
+    def _cast(self, value):
+        try:
+            number_value = int(value) if int(value) else float(value)
+            return number_value
+        except TypeError:
+            raise ConversionError('Couldn\'t interpret str {} as int or float.'.format(value))
+    
+    def _export(self, value):
+        return str(value)
+
+        
 class TextType(MondayType):
     native_type = str
     allow_casts = (int, float)
