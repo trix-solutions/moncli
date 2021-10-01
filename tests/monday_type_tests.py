@@ -1,8 +1,7 @@
 import json
 
 from unittest.mock import patch
-from nose.tools import ok_, eq_, raises
-from schematics.common import NONEMPTY
+from nose.tools import eq_
 
 from moncli import client, entities as en
 from moncli.entities import column_value as cv
@@ -10,9 +9,84 @@ from moncli.enums import ColumnType
 from moncli import types as t
 
 
+"""LongTextType"""
+def test_longtext_type_should_succeed_when_to_primitive_returns_export_dict_when_passing_string_value():
+
+     # Arrange
+    longtext_type = t.LongTextType(id='longtext_column_5')
+
+    # Act
+    value = longtext_type.to_primitive('longtext')
+
+    # Assert
+    eq_(value, {'text': 'longtext'})
+
+
+def test_number_type_should_succeed_when_to_native_returns_an_int_or_float_when_passed_a_numbervalue_value_with_api_data():
+    # Arrange
+    number_type = t.NumberType(id='number_1')
+    column_value = cv.create_column_value(ColumnType.numbers, id='number_1', value=json.dumps(1))
+
+    # Act
+    int_value = number_type.to_native(column_value)
+
+    # Assert 
+    eq_(int_value, 1)
+    
+
+def test_number_type_should_succeed_when_to_native_returns_a_int_or_float_when_passed_a_int_or_float_value():
+    # Arrange
+    number_type = t.NumberType(id=1)
+
+    # Act
+
+    int_value = number_type.to_native(1)
+    float_value  = number_type.to_native(1.0)
+
+    # Assert
+    eq_(int_value,1)
+    eq_(float_value,1.0)
+
+
+def test_number_type_should_succeed_when_to_native_returns_a_none_when_passed_a_none():
+    # Arrange
+    number_type = t.NumberType(id=1)
+
+    # Act
+
+    value = number_type.to_native(None)
+
+    # Assert
+    eq_(value,None)
+
+
+def test_number_type_should_succeed_when_to_primitive_returns_empty_str_when_passed_a_none():
+    # Arrange
+    number_type = t.NumberType(id=1)
+
+    # Act
+    value = number_type.to_primitive(None)
+
+    # Assert
+    eq_(value,'')
+
+
+def test_number_type_should_succeed_when_to_primitive_returns_export_string_when_passed_a_int_or_float_value():
+    # Arrange
+    number_type = t.NumberType(id=1)
+
+    # Act
+    int_value = number_type.to_primitive(1)
+    float_value = number_type.to_primitive(1.0)
+
+    # Assert
+    eq_(int_value,'1')
+    eq_(float_value,'1.0')
+
+
 @patch.object(en.Item,'get_column_values')
 @patch('moncli.api_v2.get_items') 
-def test_should_succeed_when_to_native_returns_a_str_when_passing_in_a_textvalue_value_with_api_get_itemdata(get_items,get_column_values):
+def test_text_type_should_succeed_when_to_native_returns_a_str_when_passing_in_a_textvalue_value_with_api_get_itemdata(get_items,get_column_values):
 
     # Arrange
     text_value = en.cv.create_column_value(ColumnType.text,id="text1",title="text")
@@ -30,7 +104,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passing_in_a_textvalue
     eq_(value,"new text")
 
 
-def test_should_succeed_when_to_native_returns_a_str_when_passing_in_either_int_or_floats():
+def test_text_type_should_succeed_when_to_native_returns_a_str_when_passing_in_either_int_or_floats():
 
     # Arrange
     
@@ -45,8 +119,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passing_in_either_int_
     eq_(float_value,"1.0")
 
 
-@patch('moncli.api_v2.get_items')
-def test_should_succeed_when_to_native_returns_none_when_passing_in_none(get_items):
+def test_text_type_should_succeed_when_to_native_returns_none_when_passing_in_none(get_items):
 
     # Arrange
     text_type = t.TextType(id=1)
@@ -59,7 +132,7 @@ def test_should_succeed_when_to_native_returns_none_when_passing_in_none(get_ite
     eq_(value,None)
 
 
-def test_should_succeed_when_to_primitive_returns_an_empty_str_when_passed_in_a_none():
+def test_text_type_should_succeed_when_to_primitive_returns_an_empty_str_when_passed_in_a_none():
 
     # Arrange
     text_type = t.TextType(id=1)
@@ -70,7 +143,8 @@ def test_should_succeed_when_to_primitive_returns_an_empty_str_when_passed_in_a_
     # Assert
     eq_(value,'')
 
-def test_should_succeed_when_to_primitive_returns_str_when_passed_in_an_int_float_or_str():
+
+def test_text_type_should_succeed_when_to_primitive_returns_str_when_passed_in_an_int_float_or_str():
 
     # Arrange
     text_type = t.TextType(id=1)
@@ -80,82 +154,75 @@ def test_should_succeed_when_to_primitive_returns_str_when_passed_in_an_int_floa
     float_value = text_type.to_primitive(1.0)
     str_value = text_type.to_primitive("text")
     
-
     # Assert
     eq_(int_value,'1')
     eq_(float_value,'1.0')
     eq_(str_value,'text')
 
 
-
-def test_checkbox_type_should_succeed_when_to_native_returns_a_bool_when_passing_a_checkboxvalue_value_with_api_data():
+def test_longtext_type_should_succeed_when_to_native_returns_a_str_when_passing_a_longtext_value_with_api_data():
 
     # Arrange
-    id = 'checkbox_1'
-    column_type = ColumnType.checkbox
-    title = 'Checkbox'
-    value = json.dumps({'checked': 'true'})
-    checkbox_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    id = 'long_text_1'
+    column_type = ColumnType.long_text
+    title = 'Long Text'
+    text = 'Some long text'
+    value = json.dumps({'text': text})
+    longtext_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
 
     # Act
-    checkbox_type = t.CheckboxType(id='check_1')
-    value = checkbox_type.to_native(checkbox_value)
+    longtext_type = t.LongTextType(id='longtext_column_1')
+    value = longtext_type.to_native(longtext_value)
 
     # Assert
-    eq_(value, checkbox_value.value)
+    eq_(value, text)
 
 
-def test_checkbox_type_should_succeed_when_to_native_returns_a_bool_when_passing_an_integer_or_string_value():
+def test_longtext_type_should_succeed_when_to_native_returns_a_str_when_passing_an_integer_or_float_value():
 
     # Arrange
-    checkbox_type = t.CheckboxType(id='check_2')
+    longtext_type = t.LongTextType(id='longtext_column_2')
 
     # Act
-    value_1 = checkbox_type.to_native(1)
-    value_2 = checkbox_type.to_native('check')
+    value_1 = longtext_type.to_native(1)
+    value_2 = longtext_type.to_native(420.69)
 
     # Assert
-    eq_(value_1, True)
-    eq_(value_2, True)
+    eq_(value_1, '1')
+    eq_(value_2, '420.69')
 
 
-def test_checkbox_type_should_succeed_when_to_native_returns_default_native_when_passing_none():
+def test_longtext_type_should_succeed_when_to_native_returns_none_when_passing_none():
 
     # Arrange
-    checkbox_type = t.CheckboxType(id='check_3')
+    longtext_type = t.LongTextType(id='longtext_column_3')
 
     # Act
-    value = checkbox_type.to_native(None)
+    value = longtext_type.to_native(None)
 
     # Assert
-    eq_(value, False)
+    eq_(value, None)
 
 
-def test_checkbox_type_should_succeed_when_to_primitive_returns_an_empty_dict_when_passing_none():
+def test_longtext_type_should_succeed_when_to_primitive_returns_empty_dict_when_passing_none():
 
     # Arrange
-    checkbox_type = t.CheckboxType(id='check_4')
+    longtext_type = t.LongTextType(id='longtext_column_4')
 
     # Act
-    value = checkbox_type.to_primitive(None)
+    value = longtext_type.to_primitive(None)
 
     # Assert
     eq_(value, {})
 
 
-def test_checkbox_type_should_succeed_when_to_primitive_returns_an_export_dict_when_passing_a_bool_value():
+def test_longtext_type_should_succeed_when_to_primitive_returns_export_dict_when_passing_string_value():
 
-    # Arrange
-    checkbox_type = t.CheckboxType(id='check_5')
+     # Arrange
+    longtext_type = t.LongTextType(id='longtext_column_5')
 
     # Act
-    value = checkbox_type.to_primitive(True)
+    value = longtext_type.to_primitive('longtext')
 
     # Assert
-    eq_(value, {'checked': 'true'})
-
-
-
-
-
-
+    eq_(value, {'text': 'longtext'})

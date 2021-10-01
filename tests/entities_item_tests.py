@@ -1,4 +1,5 @@
 import json
+from moncli.entities.item import ItemError
 
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
@@ -202,10 +203,83 @@ def test_item_should_get_column_value_with_extra_id(get_column_values, get_items
     eq_(column_value.value, 'Hello, Grandma')
     eq_(type(column_value), cv.LongTextValue)
 
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@raises(ItemError)
+def test_should_raise_error_when_id_and_title_and_column_value_are_none(get_board,get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    item = client.get_items()[0]
+
+    # Act
+    item.change_column_value(id=None,title=None,column_value = None)
 
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
-@raises(en.InvalidColumnValue)
+@raises(ItemError)
+def test_should_raise_error_when_id_and_title_are_not_none(get_board,get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    item = client.get_items()[0]
+    id = "item_id"
+    title = "item_title"
+    # Act
+    item.change_column_value(id=id,title=title)
+
+@patch('moncli.api_v2.get_items')
+@raises(ItemError)
+def test_should_raise_item_error_for_invalid_column_value(get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    item = client.get_items()[0]
+    id = "item_id"
+    title = "item_title"
+    # Act
+    item.change_column_value(id=id,title=title,column_value=5)
+
+@patch('moncli.api_v2.change_column_value')
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+def test_should_return_item_for_valid_column_value(get_board,get_items,change_column_value):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1'}
+    item = client.get_items()[0]
+    id = "long text"
+    value=json.dumps({'text': 'Long text'})
+    new_value = en.cv.create_column_value(ColumnType.long_text,id=id, value=value).format()
+    # Act
+    new_item = item.change_column_value(id=id,column_value=new_value)
+    
+
+    # Assert
+    ok_(new_item != None)
+    eq_(new_item['id'], "1" )
+
+@patch('moncli.api_v2.change_column_value')
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+def test_should_return_item_when_id_and_title_not_provided(get_board,get_items,change_column_value):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1'}
+    item = client.get_items()[0]
+    value=json.dumps({'text': 'Long text'})
+    new_value = en.cv.create_column_value(ColumnType.long_text,id='long_text', value=value)
+    # Act
+    new_item = item.change_column_value(column_value=new_value)
+
+    # Assert
+    ok_(new_item != None)
+    eq_(new_item['id'],"1" )
+
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@raises(ItemError)
 def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_board, get_items):
 
     # Arrange
@@ -250,7 +324,7 @@ def test_should_update_item_name_if_new_name_parameter_contains_a_valid_value(ch
 
 
 @patch('moncli.api_v2.get_items')
-@raises(en.InvalidColumnValue)
+@raises(ItemError)
 def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_id(get_items):
 
     # Arrange
