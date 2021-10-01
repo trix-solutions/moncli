@@ -1,8 +1,7 @@
 import pytz, json
 from datetime import datetime
-from schematics.exceptions import ConversionError
-
-from schematics.exceptions import ConversionError
+from pytz.exceptions import UnknownTimeZoneError
+from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 
 from . import entities as en
@@ -103,3 +102,16 @@ class TextType(MondayType):
     native_type = str
     allow_casts = (int, float)
     null_value = ""
+
+class WorldClockType(MondayType):
+    native_type = str
+    null_value = {}
+
+    def _export(self, value):
+        return value
+
+    def validate_timezone(self, value):
+        try:
+            pytz.timezone(value)
+        except (UnknownTimeZoneError):
+            raise ValidationError('Unknown time zone "{}".'.format(value))
