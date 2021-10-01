@@ -83,6 +83,7 @@ class MondayType(BaseType):
     def _export(self, value):
         return value
 
+
 class NumberType(MondayType):
     native_type = (int, float)
     allow_casts = (str, )
@@ -97,6 +98,15 @@ class NumberType(MondayType):
     
     def _export(self, value):
         return str(value)
+
+
+class LongTextType(MondayType):
+    native_type = str
+    allow_casts = (int, float)
+    null_value = {}
+
+    def _export(self, value):
+        return {'text': value}
 
         
 class TextType(MondayType):
