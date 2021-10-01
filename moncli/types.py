@@ -113,12 +113,12 @@ class TextType(MondayType):
     allow_casts = (int, float)
     null_value = ""
 
-class WorldClockType(MondayType):
+class TimeZoneType(MondayType):
     native_type = str
     null_value = {}
 
     def _export(self, value):
-        return value
+        return {'timezone': value}
 
     def validate_timezone(self, value):
         try:
