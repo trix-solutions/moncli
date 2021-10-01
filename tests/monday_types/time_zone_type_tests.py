@@ -12,9 +12,7 @@ from moncli.enums import ColumnType
 from moncli.models import MondayModel
 
 
-@patch.object(en.Item,'get_column_values')
-@patch('moncli.api_v2.get_items')
-def test_should_succeed_when_to_native_returns_a_str_when_passed_a_timezonevalue_value_with_api_data_to_world_clock_type(get_items,get_column_values):
+def test_should_succeed_when_to_native_returns_a_str_when_passed_a_timezonevalue_value_with_api_data_to_world_clock_type():
 
     # Arrange
     id = "timezone"
@@ -22,10 +20,6 @@ def test_should_succeed_when_to_native_returns_a_str_when_passed_a_timezonevalue
     column_type = ColumnType.world_clock
     column_value = en.cv.create_column_value(column_type,id=id,title=title)
     column_value.value = 'America/New_York'
-    get_items.return_value = [{'id': '1697598380', 'name': 'edited item'}]
-    get_column_values.return_value = [column_value]
-    item = client.get_items()[0]
-    column_value = item.get_column_values()[0]
 
     # Act
     timezone_type = t.TimeZoneType(title=title)
@@ -57,9 +51,7 @@ def test_should_succeed_when_to_primitive_returns_an_empty_dict_when_passed_a_no
     # Assert
     eq_(timezone_value,{})
 
-@patch.object(en.Item,'get_column_values')
-@patch('moncli.api_v2.get_items')
-def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_str_timezone_value_to_world_clock_type(get_items,get_column_values):
+def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_str_timezone_value_to_world_clock_type():
 
     # Arrange
     id = "timezone"
@@ -67,10 +59,6 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_s
     column_type = ColumnType.world_clock
     column_value = en.cv.create_column_value(column_type,id=id,title=title)
     column_value.value = 'America/New_York'
-    get_items.return_value = [{'id': '1697598380', 'name': 'edited item'}]
-    get_column_values.return_value = [column_value]
-    item = client.get_items()[0]
-    column_value = item.get_column_values()[0]
 
     # Act
     timezone_type = t.TimeZoneType(title=title)
@@ -79,31 +67,11 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_s
     # Assert
     eq_(value['timezone'],'America/New_York')
 
-@patch.object(en.Item,'get_column_values')
-@patch('moncli.api_v2.get_items')
-@raises(DataError)
-def test_should_fail_when_to_primitive_raises_a_validation_error_when_passed_a_str_timezone_that_is_invalid_to_world_clock_type(get_items,get_column_values):
+@raises(ValidationError)
+def test_timezone_type_should_raise_validation_error_when_validate_timezone_receives_invalid_timezone_str():
 
     # Arrange
-    id = "timezone"
-    title = 'Time Zone Column 1'
-    column_type = ColumnType.world_clock
-    column_value = en.cv.create_column_value(column_type,id=id,title=title)
-    column_value.value = 'Invalid/Timezone'
-    get_items.return_value = [{'id': '1697598380', 'name': 'edited item'}]
-    get_column_values.return_value = [column_value]
-    item = client.get_items()[0]
-    column_value = item.get_column_values()[0]
+    timezone_type = t.TimeZoneType(id='timezone_type_1')
 
     # Act
-    tz = TimeZoneModel(item)
-    tz.timezone = column_value.value
-    tz.validate()
-
-class TimeZoneModel(MondayModel):
-    timezone = t.TimeZoneType(title='Time Zone Column 1')
-    def validate_timezone(self, value):
-        try:
-            pytz.timezone(value)
-        except (UnknownTimeZoneError):
-            raise ValidationError('Unknown time zone "{}".'.format(value))
+    timezone_type.validate_timezone(value='Invalid/Timezone')

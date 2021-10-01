@@ -120,7 +120,7 @@ class TimeZoneType(MondayType):
     def _export(self, value):
         return {'timezone': value}
 
-    def validate_timezone(self, value):
+    def validate_timezone(value):
         try:
             pytz.timezone(value)
         except (UnknownTimeZoneError):
