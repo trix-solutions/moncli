@@ -86,7 +86,7 @@ def test_should_succeed_when_to_primitive_returns_str_when_passed_in_an_int_floa
     eq_(str_value,'text')
 
 
-def test_should_succeed_when_to_native_returns_a_str_when_passing_a_longtext_value_with_api_data():
+def test_longtext_type_should_succeed_when_to_native_returns_a_str_when_passing_a_longtext_value_with_api_data():
 
     # Arrange
     id = 'long_text_1'
@@ -103,7 +103,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passing_a_longtext_val
     # Assert
     eq_(value, text)
 
-def test_should_succeed_when_to_native_returns_a_str_when_passing_an_integer_or_float_value():
+def test_longtext_type_should_succeed_when_to_native_returns_a_str_when_passing_an_integer_or_float_value():
 
     # Arrange
     longtext_type = t.LongTextType(id='longtext_column_2')
@@ -116,7 +116,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passing_an_integer_or_
     eq_(value_1, '1')
     eq_(value_2, '420.69')
 
-def test_should_succeed_when_to_native_returns_none_when_passing_none():
+def test_longtext_type_should_succeed_when_to_native_returns_none_when_passing_none():
 
     # Arrange
     longtext_type = t.LongTextType(id='longtext_column_3')
@@ -128,7 +128,7 @@ def test_should_succeed_when_to_native_returns_none_when_passing_none():
     eq_(value, None)
 
 
-def test_should_succeed_when_to_primitive_returns_empty_dict_when_passing_none():
+def test_longtext_type_should_succeed_when_to_primitive_returns_empty_dict_when_passing_none():
 
     # Arrange
     longtext_type = t.LongTextType(id='longtext_column_4')
@@ -140,7 +140,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passing_none()
     eq_(value, {})
 
 
-def test_should_succeed_when_to_primitive_returns_export_dict_when_passing_string_value():
+def test_longtext_type_should_succeed_when_to_primitive_returns_export_dict_when_passing_string_value():
 
      # Arrange
     longtext_type = t.LongTextType(id='longtext_column_5')
