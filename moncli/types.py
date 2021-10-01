@@ -124,3 +124,18 @@ class CheckboxType(MondayType):
     def _export(self, value):
         if value == True:
             return {'checked': 'true'}
+
+
+class RatingType(MondayType):
+    native_type = int
+    allow_casts = (str,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            return int(value)
+        except ValueError:
+            raise ConversionError('Value "{}" is not a valid rating.'.format(value))
+    
+    def _export(self, value):
+        return { 'rating': value}
