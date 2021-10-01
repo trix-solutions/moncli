@@ -88,7 +88,7 @@ def test_should_succeed_when_to_primitive_returns_str_when_passed_in_an_int_floa
 
 
 
-def test_should_succeed_when_to_native_returns_a_bool_when_passing_a_checkboxvalue_value_with_api_data():
+def test_checkbox_type_should_succeed_when_to_native_returns_a_bool_when_passing_a_checkboxvalue_value_with_api_data():
 
     # Arrange
     id = 'checkbox_1'
@@ -105,7 +105,7 @@ def test_should_succeed_when_to_native_returns_a_bool_when_passing_a_checkboxval
     eq_(value, checkbox_value.value)
 
 
-def test_should_succeed_when_to_native_returns_a_bool_when_passing_an_integer_or_string_value():
+def test_checkbox_type_should_succeed_when_to_native_returns_a_bool_when_passing_an_integer_or_string_value():
 
     # Arrange
     checkbox_type = t.CheckboxType(id='check_2')
@@ -119,7 +119,7 @@ def test_should_succeed_when_to_native_returns_a_bool_when_passing_an_integer_or
     eq_(value_2, True)
 
 
-def test_should_succeed_when_to_native_returns_none_when_passing_none():
+def test_checkbox_type_should_succeed_when_to_native_returns_default_native_when_passing_none():
 
     # Arrange
     checkbox_type = t.CheckboxType(id='check_3')
@@ -131,7 +131,7 @@ def test_should_succeed_when_to_native_returns_none_when_passing_none():
     eq_(value, False)
 
 
-def test_should_succeed_when_to_primitive_returns_an_empty_dict_when_passing_none():
+def test_checkbox_type_should_succeed_when_to_primitive_returns_an_empty_dict_when_passing_none():
 
     # Arrange
     checkbox_type = t.CheckboxType(id='check_4')
@@ -143,10 +143,10 @@ def test_should_succeed_when_to_primitive_returns_an_empty_dict_when_passing_non
     eq_(value, {})
 
 
-def test_should_succeed_when_to_primitive_returns_an_export_dict_when_passing_a_bool_value():
+def test_checkbox_type_should_succeed_when_to_primitive_returns_an_export_dict_when_passing_a_bool_value():
 
     # Arrange
-    checkbox_type = t.CheckboxType(id='check_4')
+    checkbox_type = t.CheckboxType(id='check_5')
 
     # Act
     value = checkbox_type.to_primitive(True)
