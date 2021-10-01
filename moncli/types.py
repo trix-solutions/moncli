@@ -1,5 +1,5 @@
 import pytz, json
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from schematics.exceptions import ConversionError
 
 from schematics.exceptions import ConversionError
@@ -103,3 +103,38 @@ class TextType(MondayType):
     native_type = str
     allow_casts = (int, float)
     null_value = ""
+
+
+class DateType(MondayType):
+
+    native_type = datetime
+    allow_casts = (str, int)
+    null_value = {}
+    has_time = False
+
+    def __init__(self, id: str = None, title: str = None, has_time: bool = False, *args, **kwargs):
+        self.id = id
+        self.title = title
+        self.has_time = has_time
+        super().__init__(self.id, self.title, *args, **kwargs)
+
+    def _cast(self, value):
+        try:
+            if isinstance(value, int):
+                return datetime.fromtimestamp(value)
+            if isinstance(value, str):
+                date = datetime.strptime(value.split(' ', 1)[0], DATE_FORMAT)
+                if self.has_time == True:
+                    time = datetime.strptime(value.split(' ', 1)[1], TIME_FORMAT)
+                    date = date + timedelta(hours=time.hour, minutes=time.minute, seconds=time.second)
+                return date
+        except ValueError:
+            raise ConversionError('Invalid UNIX timestamp "{}".'.format(value))
+
+    def _export(self, value):
+        if self.has_time == True:
+            value = value.replace(tzinfo=timezone.utc)
+            date = value.date().strftime(DATE_FORMAT)
+            time = value.time().strftime(TIME_FORMAT)
+            return {'date': date, 'time': time}
+        return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
