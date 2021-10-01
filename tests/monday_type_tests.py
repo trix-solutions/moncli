@@ -144,6 +144,7 @@ def test_text_type_should_succeed_when_to_primitive_returns_an_empty_str_when_pa
     # Assert
     eq_(value,'')
 
+
 def test_text_type_should_succeed_when_to_primitive_returns_str_when_passed_in_an_int_float_or_str():
 
     # Arrange
@@ -214,3 +215,15 @@ def test_longtext_type_should_succeed_when_to_primitive_returns_empty_dict_when_
 
     # Assert
     eq_(value, {})
+
+
+def test_longtext_type_should_succeed_when_to_primitive_returns_export_dict_when_passing_string_value():
+
+     # Arrange
+    longtext_type = t.LongTextType(id='longtext_column_5')
+
+    # Act
+    value = longtext_type.to_primitive('longtext')
+
+    # Assert
+    eq_(value, {'text': 'longtext'})
