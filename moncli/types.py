@@ -83,6 +83,17 @@ class MondayType(BaseType):
         return value
 
 
+class CheckboxType(MondayType):
+    native_type = bool
+    native_default = False
+    allow_casts = (int, str)
+    null_value = {}
+
+    def _export(self, value):
+        if value == True:
+            return {'checked': 'true'}
+
+
 class NumberType(MondayType):
     native_type = (int, float)
     allow_casts = (str, )
@@ -113,6 +124,7 @@ class TextType(MondayType):
     allow_casts = (int, float)
     null_value = ""
 
+
 class TimeZoneType(MondayType):
     native_type = str
     null_value = {}
@@ -120,18 +132,8 @@ class TimeZoneType(MondayType):
     def _export(self, value):
         return {'timezone': value}
 
-    def validate_timezone(value):
+    def validate_timezone(self, value):
         try:
             pytz.timezone(value)
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
-
-class CheckboxType(MondayType):
-    native_type = bool
-    native_default = False
-    allow_casts = (int, str)
-    null_value = {}
-
-    def _export(self, value):
-        if value == True:
-            return {'checked': 'true'}
