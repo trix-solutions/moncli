@@ -11,6 +11,7 @@ class MoncliError(Exception):
 
 class MondayClientError(MoncliError):
     entity_type = 'MondayClient'
+
     def __init__(self, error_code, message):
         super().__init__(error_code, None, self.entity_type, message)
 

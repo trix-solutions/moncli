@@ -1,10 +1,12 @@
 from schematics.models import Model
 from schematics.types import StringType
-from .. import api, entities as en
+
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
+from moncli.error import ColumnValueError, MoncliError
 
-
+from .. import api, entities as en
+from .column_value.base import ColumnValue
 
 class _Item(Model):
     """Item Base Model"""
@@ -680,13 +682,18 @@ class Item(_Item):
 
         return en.Item(creds=self.__creds, **item_data)
 
-    def change_column_value(self, column_value = None, get_column_values: bool = None, *args):
+    def change_column_value(self,id = None, title = None, column_value = None, get_column_values: bool = None, *args):
         """Get an item's column value by ID or title.
 
             Parameters
-
-                column_value : `moncli.entities.ColumnValue`
-                    The column value to update.
+                id: str
+                    The ID of the column to be updated.  
+                    NOTE: This parameter is mutually exclusive and cannot be used with the 'title' parameter
+                title: str
+                    The title of the column value to be updated. 
+                    NOTE: This parameter is mutually exclusive and cannot be used with 'id'.
+                column_value : Type: moncli.entities.column_value.ColumnValue | dict | str
+                    The value to be updated for the column.
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
                 args : `tuple`
@@ -726,6 +733,43 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
+        if id and title : 
+            raise ItemError(
+                'change_column_value_too_many_parameters',
+                self.id,
+                'Cannot use both "id" and "title" parameters.'
+            )
+        if not (id or title):
+            if isinstance(column_value, ColumnValue):
+                column_id = column_value.id
+                value = column_value.format()
+            else:
+                raise ItemError(
+                    'invalid_column_value',
+                    self.id,
+                    'Column value must be a properly formatted dict or str when using "id" or "title" parameters.'
+                )
+        if id or title or column_value:
+            value = None
+            if isinstance(column_value,(dict,str)):
+                if title:
+                    column_id= self.column_values[title].id
+                elif id:
+                    column_id= id
+                value = column_value
+            if not column_value:
+                if title:
+                    column_value = self.column_values[title]
+                elif id:
+                    column_value = self.column_values[id]
+                column_id = column_value.id
+                value  = column_value.null_value
+        else: 
+            raise ItemError(
+                'invalid_column_value_entity',
+                self.id,
+                'Column Value must be a valid entities.column_value.ColumnValue instance when not using "id" or "title" parameters.'
+            )
 
         if get_column_values:
             args = list(args)
@@ -734,13 +778,6 @@ class Item(_Item):
                     args.append(arg)
             args.extend(['id', 'name'])
 
-        if column_value is None:
-            raise ColumnValueRequired()
-        if not isinstance(column_value, en.cv.ColumnValue):
-            raise en.board.InvalidColumnValue(type(column_value).__name__)
-        else:
-            column_id = column_value.id
-            value = column_value.format()
 
         item_data = api.change_column_value(
             self.id,
@@ -1500,3 +1537,7 @@ class NotEnoughChangeSimpleColumnValueParameters(Exception):
 class InvalidParameterError(Exception):
     def __init__(self):
         self.message = "New name must be present"
+class ItemError(MoncliError):
+    entity_type = 'Item'
+    def __init__(self, error_code, entity_type, message):
+        super().__init__(error_code, None, self.entity_type, message)
