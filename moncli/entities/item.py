@@ -1,3 +1,4 @@
+from os import error
 from schematics.models import Model
 from schematics.types import StringType
 from .. import api, entities as en
@@ -301,7 +302,7 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, id=None, title=None, file_value=None, *args):
+    def remove_files(self, id: str = None, title: str = None, file_value=None, *args):
         """Removes a file from a column value.
 
             Parameters
@@ -341,7 +342,6 @@ class Item(_Item):
                 url_thumbnail : `str`
                     Url to view the asset in thumbnail mode. Only available for images.
         """
-        
         if id or title:
             item_data = api.change_column_value(
               self.id,
@@ -352,7 +352,7 @@ class Item(_Item):
               api_key=self.__creds.api_key_v2)
             return Item(creds=self.__creds, **item_data)
 
-        if (id or title) and file_value:
+        if file_value:
             item_data = api.change_column_value(
               self.id,
               file_value.id,
@@ -362,7 +362,7 @@ class Item(_Item):
               api_key=self.__creds.api_key_v2)
             return Item(creds=self.__creds, **item_data)
 
-        return ItemError('clear_files_not_enough_parameters', self.id, 'Insufficient parameters for clearing files from column value.')
+        raise ItemError('clear_files_not_enough_parameters', self.id, 'Insufficient parameters for clearing files from column value.')
 
 
 

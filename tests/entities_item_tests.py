@@ -636,25 +636,45 @@ def test_item_should_fail_to_remove_file(get_items):
     # Arrange
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
     item = client.get_items()[0]
-    
+
     # Act
     item.remove_files()
 
 
-# @patch('moncli.api_v2.get_items')
-# def test_should_return_item_when_file_value_is_not_none(get_items):
+@patch('moncli.api_v2.get_items')
+def test_should_return_item_when_passing_file_value_only(get_items):
 
-#     # Arrange
-#     id = 'column_1'
-#     title = 'Column 1'
-#     get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
-#     item = client.get_items()[0]
-#     file_value = item.column_values['Column 1']
+    # Arrange
+    id = 'column_1'
+    title = 'Column 1'
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    item = client.get_items()[0]
+    file_value = item.column_values['Column 1']
 
-    
-#     # Act
-#     item = item.remove_files(id=id, title=title, file_value=file_value)
+    # Act
+    item = item.remove_files(file_value=file_value)
 
-#     # Assert
-#     eq_(item.column_values['Column 4'], None)
+    # Assert
+    eq_(item.column_values['Column 1'], None)
+
+
+@patch('moncli.api_v2.get_items')
+def test_should_return_item_when_passing_id_or_title(get_items):
+
+    # Arrange
+    id = 'column_2'
+    title = 'Column 2'
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    item = client.get_items()[0]
+    file_value = item.column_values['Column 2']
+
+    # Act
+    item = item.remove_files(id=id)
+    item = item.remove_files(title=title)
+
+
+    # Assert
+    eq_(item.column_values['Column 2'], None)
+    eq_(item.column_values['Column 2'], None)
+
     
