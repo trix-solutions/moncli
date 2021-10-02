@@ -1,8 +1,14 @@
 import pytz, json
+<<<<<<< HEAD
 from datetime import datetime, timedelta, timezone
 from schematics.exceptions import ConversionError
 
 from schematics.exceptions import ConversionError
+=======
+from datetime import datetime
+from pytz.exceptions import UnknownTimeZoneError
+from schematics.exceptions import ConversionError, ValidationError
+>>>>>>> v2.0-pre
 from schematics.types import BaseType
 
 from . import entities as en
@@ -45,7 +51,7 @@ class MondayType(BaseType):
 
     def to_native(self, value, context=None):
         if not value:
-            return value
+            return self.native_default
 
         if not isinstance(value, en.cv.ColumnValue):
             if isinstance(value, self.native_type):
@@ -83,6 +89,18 @@ class MondayType(BaseType):
     def _export(self, value):
         return value
 
+
+class CheckboxType(MondayType):
+    native_type = bool
+    native_default = False
+    allow_casts = (int, str)
+    null_value = {}
+
+    def _export(self, value):
+        if value == True:
+            return {'checked': 'true'}
+
+
 class NumberType(MondayType):
     native_type = (int, float)
     allow_casts = (str, )
@@ -97,6 +115,15 @@ class NumberType(MondayType):
     
     def _export(self, value):
         return str(value)
+
+
+class LongTextType(MondayType):
+    native_type = str
+    allow_casts = (int, float)
+    null_value = {}
+
+    def _export(self, value):
+        return {'text': value}
 
         
 class TextType(MondayType):
@@ -138,3 +165,15 @@ class DateType(MondayType):
             time = value.time().strftime(TIME_FORMAT)
             return {'date': date, 'time': time}
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
+class TimeZoneType(MondayType):
+    native_type = str
+    null_value = {}
+
+    def _export(self, value):
+        return {'timezone': value}
+
+    def validate_timezone(self, value):
+        try:
+            pytz.timezone(value)
+        except (UnknownTimeZoneError):
+            raise ValidationError('Unknown time zone "{}".'.format(value))
