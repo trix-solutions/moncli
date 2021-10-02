@@ -1,15 +1,10 @@
 import pytz, json
-<<<<<<< HEAD
-from datetime import datetime, timedelta, timezone
 from schematics.exceptions import ConversionError
-
-from schematics.exceptions import ConversionError
-=======
-from datetime import datetime
-from pytz.exceptions import UnknownTimeZoneError
 from schematics.exceptions import ConversionError, ValidationError
->>>>>>> v2.0-pre
 from schematics.types import BaseType
+from datetime import datetime
+from datetime import datetime, timedelta, timezone
+from pytz.exceptions import UnknownTimeZoneError
 
 from . import entities as en
 from .config import *
@@ -146,17 +141,23 @@ class DateType(MondayType):
         super().__init__(self.id, self.title, *args, **kwargs)
 
     def _cast(self, value):
-        try:
-            if isinstance(value, int):
+        if isinstance(value, int):
+            try:
                 return datetime.fromtimestamp(value)
-            if isinstance(value, str):
+            except ValueError:
+                raise ConversionError('Invalid UNIX timestamp "{}".'.format(value))
+        if isinstance(value, str):
+            try:
                 date = datetime.strptime(value.split(' ', 1)[0], DATE_FORMAT)
-                if self.has_time == True:
+            except ValueError:
+                raise ConversionError('Cannot convert value "{}" into Date.'.format(value))
+            if self.has_time == True:
+                try:
                     time = datetime.strptime(value.split(' ', 1)[1], TIME_FORMAT)
                     date = date + timedelta(hours=time.hour, minutes=time.minute, seconds=time.second)
-                return date
-        except ValueError:
-            raise ConversionError('Invalid UNIX timestamp "{}".'.format(value))
+                    return date
+                except ValueError:
+                    raise ConversionError('Cannot convert value "{}" into Time.'.format(value))
 
     def _export(self, value):
         if self.has_time == True:
