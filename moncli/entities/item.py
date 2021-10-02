@@ -1,6 +1,9 @@
 from os import error
+import json
 from schematics.models import Model
 from schematics.types import StringType
+
+from moncli.entities.asset import Asset
 from .. import api, entities as en
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
@@ -318,8 +321,8 @@ class Item(_Item):
 
             Returns
 
-                assets : `moncli.entities.Asset`
-                    The deleted file asset.
+                item : `moncli.entities.Item`
+                    The updated item.
 
             Return Fields
 
@@ -342,27 +345,26 @@ class Item(_Item):
                 url_thumbnail : `str`
                     Url to view the asset in thumbnail mode. Only available for images.
         """
-        if id or title:
-            item_data = api.change_column_value(
-              self.id,
-              file_value.id,
-              self.__board.id,
-              file_value.format(),
-              *args,
-              api_key=self.__creds.api_key_v2)
-            return Item(creds=self.__creds, **item_data)
+        value = json.dumps({ "clear_all": True} )
+        if (id or title or file_value):
+            if id:
+                column_id = id
+            if title:
+                column_id = self.column_values[title].id
+            if file_value:
+                    column_id=file_value.id
+        else:
+            raise ItemError('clear_files_not_enough_parameters', self.id, 'Insufficient parameters for clearing files from column value.')
 
-        if file_value:
-            item_data = api.change_column_value(
-              self.id,
-              file_value.id,
-              self.__board.id,
-              file_value.format(),
-              *args,
-              api_key=self.__creds.api_key_v2)
-            return Item(creds=self.__creds, **item_data)
+        item_data = api.change_column_value(
+            item_id=self.id,
+            board_id=self.board.id,
+            column_id=column_id,
+            value=value,
+            *args,
+            api_key=self.__creds.api_key_v2)
+        return Item(creds=self.__creds, **item_data)
 
-        raise ItemError('clear_files_not_enough_parameters', self.id, 'Insufficient parameters for clearing files from column value.')
 
 
 
