@@ -1,8 +1,7 @@
 import pytz, json
 from datetime import datetime
-from schematics.exceptions import ConversionError
-
-from schematics.exceptions import ConversionError
+from pytz.exceptions import UnknownTimeZoneError
+from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 
 from . import entities as en
@@ -84,6 +83,26 @@ class MondayType(BaseType):
         return value
 
 
+class CheckboxType(MondayType):
+    native_type = bool
+    native_default = False
+    allow_casts = (int, str)
+    null_value = {}
+
+    def _export(self, value):
+        if value == True:
+            return {'checked': 'true'}
+
+
+class LongTextType(MondayType):
+    native_type = str
+    allow_casts = (int, float)
+    null_value = {}
+
+    def _export(self, value):
+        return {'text': value}
+
+
 class NumberType(MondayType):
     native_type = (int, float)
     allow_casts = (str, )
@@ -100,32 +119,6 @@ class NumberType(MondayType):
         return str(value)
 
 
-class LongTextType(MondayType):
-    native_type = str
-    allow_casts = (int, float)
-    null_value = {}
-
-    def _export(self, value):
-        return {'text': value}
-
-        
-class TextType(MondayType):
-    native_type = str
-    allow_casts = (int, float)
-    null_value = ""
-
-
-class CheckboxType(MondayType):
-    native_type = bool
-    native_default = False
-    allow_casts = (int, str)
-    null_value = {}
-
-    def _export(self, value):
-        if value == True:
-            return {'checked': 'true'}
-
-
 class RatingType(MondayType):
     native_type = int
     allow_casts = (str,)
@@ -139,3 +132,23 @@ class RatingType(MondayType):
     
     def _export(self, value):
         return { 'rating': value}
+
+        
+class TextType(MondayType):
+    native_type = str
+    allow_casts = (int, float)
+    null_value = ""
+
+
+class TimeZoneType(MondayType):
+    native_type = str
+    null_value = {}
+
+    def _export(self, value):
+        return {'timezone': value}
+
+    def validate_timezone(self, value):
+        try:
+            pytz.timezone(value)
+        except (UnknownTimeZoneError):
+            raise ValidationError('Unknown time zone "{}".'.format(value))
