@@ -166,6 +166,8 @@ class DateType(MondayType):
             time = value.time().strftime(TIME_FORMAT)
             return {'date': date, 'time': time}
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
+
+
 class TimeZoneType(MondayType):
     native_type = str
     null_value = {}
