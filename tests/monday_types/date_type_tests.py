@@ -38,7 +38,7 @@ def test_date_type_should_succeed_when_to_native_returns_a_datetime_when_passing
     date_type = t.DateType(id='date_column_2', has_time=True)
 
     # Act
-    value_1 = date_type.to_native(1632917915)
+    value_1 = date_type.to_native(1632952115)
     value_2 = date_type.to_native('2021-09-29 17:48:35')
 
     # Assert

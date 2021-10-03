@@ -16,7 +16,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passed_a_timezonevalue
     column_value.value = 'America/New_York'
 
     # Act
-    timezone_type = t.TimeZoneType(title=title)
+    timezone_type = TimeZoneType(title=title)
     value = timezone_type.to_native(column_value)
 
     # Assert
@@ -25,7 +25,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passed_a_timezonevalue
 def test_should_succeed_when_to_native_returns_a_none_when_passed_a_none_to_world_clock_type():
 
     # Arrange
-    timezone_type = t.TimeZoneType(title='Time Zone Column 1')
+    timezone_type = TimeZoneType(title='Time Zone Column 1')
 
     # Act
     timezone_value = timezone_type.to_native(None)
