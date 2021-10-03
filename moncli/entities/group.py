@@ -208,14 +208,14 @@ class Group(_Group):
             **group_data)
 
 
-    def add_item(self, item_name: str,as_model: m.MondayModel = None, *args, **kwargs):
+    def add_item(self, item_name: str, as_model: type = None, *args, **kwargs):
         """Add item to this group.
 
             Parameters
 
                 item_name : `str`
                     The new item's name.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item fields to return.
@@ -281,14 +281,14 @@ class Group(_Group):
         else:
             return items
 
-    def get_items(self, as_model: m.MondayModel = None,get_column_values: bool = True, *args, **kwargs):
+    def get_items(self, as_model: type = None,get_column_values: bool = True, *args, **kwargs):
         """Get items from this group.
     
             Parameters
 
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item fields to return.

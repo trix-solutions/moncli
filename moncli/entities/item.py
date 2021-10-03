@@ -298,14 +298,14 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, file_column: en.cv.FileValue,as_model: m.MondayModel = None, *args):
+    def remove_files(self, file_column: en.cv.FileValue, as_model: type = None, *args):
         """Add a file to a column value.
 
             Parameters
 
                 file_column : moncli.entities.FileValue
                     The file column value to be updated.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional file return fields.
@@ -650,7 +650,7 @@ class Item(_Item):
 
                 nem_name : 'str'
                     The new name of the item.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
 
 
@@ -709,7 +709,7 @@ class Item(_Item):
         else:
             return items
 
-    def change_column_value(self,id = None, title = None,as_model: m.MondayModel = None, column_value = None, get_column_values: bool = None, *args):
+    def change_column_value(self,id = None, title = None,as_model: type = None, column_value = None, get_column_values: bool = None, *args):
         """Get an item's column value by ID or title.
 
             Parameters
@@ -723,7 +723,7 @@ class Item(_Item):
                     The value to be updated for the column.
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
@@ -895,7 +895,7 @@ class Item(_Item):
 
         return Item(creds=self.__creds, **item_data)
 
-    def change_multiple_column_values(self, column_values, get_column_values: bool = False,as_model: m.MondayModel = None, *args):
+    def change_multiple_column_values(self, column_values, get_column_values: bool = False,as_model: type = None, *args):
         """Change the item's column values.
 
             Parameters
@@ -905,7 +905,7 @@ class Item(_Item):
                     NOTE: This value can either be a list of moncli.entities.ColumnValue objects or a formatted dictionary.
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
@@ -977,14 +977,14 @@ class Item(_Item):
             return items
 
 
-    def create_subitem(self, item_name: str, *args,as_model: m.MondayModel = None, **kwargs):
+    def create_subitem(self, item_name: str, as_model: type = None, *args, **kwargs):
         """Create subitem.
 
             Parameters
             
                 item_name : `str`
                     The new item's name.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item return fields.
@@ -1050,7 +1050,7 @@ class Item(_Item):
             return items
 
 
-    def move_to_group(self, group_id: str, get_column_values = False,as_model: m.MondayModel = None, *args):
+    def move_to_group(self, group_id: str, get_column_values = False, as_model: type = None, *args):
         """Move item to a different group.
 
             Parameters
@@ -1059,7 +1059,7 @@ class Item(_Item):
                     The group's unique identifier.
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
@@ -1124,14 +1124,14 @@ class Item(_Item):
             return items
 
 
-    def archive(self,as_model: m.MondayModel = None, *args):
+    def archive(self,as_model: type = None, *args):
         """Archive this item.
 
             Parameters
 
                 args : `tuple`
                     Optional item return fields.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
 
 
@@ -1187,14 +1187,14 @@ class Item(_Item):
             return items
 
 
-    def delete(self,as_model: m.MondayModel = None, *args):
+    def delete(self, as_model: type = None, *args):
         """Delete this item.
 
             Parameters
 
                 args : `tuple`
                     Optional item return fields.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
 
 
@@ -1250,14 +1250,14 @@ class Item(_Item):
             return items
 
 
-    def duplicate(self,as_model: m.MondayModel = None, *args, **kwargs):
+    def duplicate(self, as_model: type = None, *args, **kwargs):
         """Duplicate this item.
 
             Parameters
 
                 args : `tuple`
                     The list of item return fields.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
 
                 kwargs : `dict`
@@ -1480,14 +1480,14 @@ class Item(_Item):
         return target_update[0].delete()
 
 
-    def clear_updates(self,as_model: m.MondayModel = None, *args):
+    def clear_updates(self, as_model: type = None, *args):
         """Clear item's updates.
 
             Parameters
 
                 args : `tuple`
                     The list of optional fields to return.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
 
 
@@ -1639,7 +1639,7 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
-        item_data =  api.get_items(
+        item_data = api.get_items(
             *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'parent_item', *args),
             ids=[self.id]
         )[0]['parent_item']

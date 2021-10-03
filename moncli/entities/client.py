@@ -626,7 +626,7 @@ class MondayClient():
         return [en.asset.Asset(**data) for data in assets_data]
 
 
-    def get_items(self,as_model: MondayModel=None, get_column_values = None, *args, **kwargs):
+    def get_items(self, get_column_values = None, as_model: type = None, *args, **kwargs):
         """Get a collection of items.
 
             Parameters
@@ -635,7 +635,7 @@ class MondayClient():
                     The list of item return fields.
                 get_column_values: `bool`
                     Flag used to include column values with the returned items.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
                 kwargs : `dict`
                     Optional keyword arguments for querying items.
@@ -810,14 +810,14 @@ class MondayClient():
         return en.Update(creds=self.__creds, **update_data)
 
 
-    def clear_item_updates(self, item_id: str,as_model: MondayModel = None, *args):
+    def clear_item_updates(self, item_id: str, as_model: type = None, *args):
         """Clear an item's updates.
 
             Parameters
 
                 item_id : `str`
                     The item's unique identifier.
-                as_model: `moncli.models.MondayModel`
+                as_model: `type`
                     The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of optional fields to return.
