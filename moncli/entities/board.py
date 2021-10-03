@@ -1004,10 +1004,10 @@ class Board(_Board):
 
                 args : `tuple`
                     The list of item return fields.
-                as_model: `type`
-                    The MondayModel subclass to be returned.
                 get_column_values: `bool`
                     Returns column values with items if set to `True`.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 kwargs : `dict`
                     The optional keyword arguments for getting items.
 
@@ -1088,17 +1088,17 @@ class Board(_Board):
  
 
 
-    def get_items_by_column_values(self, column_value: en.cv.ColumnValue,as_model: type = None, get_column_values: bool = False, *args, **kwargs):
+    def get_items_by_column_values(self, column_value: en.cv.ColumnValue, get_column_values: bool = False, as_model: type = None, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters
 
                 column_value : `moncli.entites.ColumnValue`
                     The column value to search on.
-                as_model: `type`
-                    The MondayModel subclass to be returned.
                 get_column_values: `bool`
                     Flag used to include column values with the returned items.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item return fields.
                 kwargs : `dict`
@@ -1189,7 +1189,7 @@ class Board(_Board):
 
 
     
-    def get_items_by_multiple_column_values(self, column: en.Column, column_values: list,as_model: type = None, get_column_values: bool = False, *args, **kwargs):
+    def get_items_by_multiple_column_values(self, column: en.Column, column_values: list, get_column_values: bool = False, as_model: type = None, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters
@@ -1198,10 +1198,10 @@ class Board(_Board):
                     The column to search on.
                 column_values : `list[str]`
                     The list of values to search on.
-                as_model: `type`
-                    The MondayModel subclass to be returned.
                 get_column_values: `bool`
                     Retrieves all item column values if set to `True`.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item return fields.
                 kwargs : `dict`

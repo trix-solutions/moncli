@@ -281,7 +281,7 @@ class Group(_Group):
         else:
             return items
 
-    def get_items(self, as_model: type = None,get_column_values: bool = True, *args, **kwargs):
+    def get_items(self, get_column_values: bool = True, as_model: type = None, *args, **kwargs):
         """Get items from this group.
     
             Parameters

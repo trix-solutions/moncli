@@ -631,12 +631,12 @@ class MondayClient():
 
             Parameters
 
-                args : `tuple`
-                    The list of item return fields.
                 get_column_values: `bool`
                     Flag used to include column values with the returned items.
                 as_model: `type`
                     The MondayModel subclass to be returned.
+                args : `tuple`
+                    The list of item return fields.
                 kwargs : `dict`
                     Optional keyword arguments for querying items.
 

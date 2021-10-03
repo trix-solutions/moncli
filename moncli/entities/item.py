@@ -709,7 +709,7 @@ class Item(_Item):
         else:
             return items
 
-    def change_column_value(self,id = None, title = None,as_model: type = None, column_value = None, get_column_values: bool = None, *args):
+    def change_column_value(self,id = None, title = None, column_value = None, get_column_values: bool = None, as_model: type = None, *args):
         """Get an item's column value by ID or title.
 
             Parameters
@@ -895,7 +895,7 @@ class Item(_Item):
 
         return Item(creds=self.__creds, **item_data)
 
-    def change_multiple_column_values(self, column_values, get_column_values: bool = False,as_model: type = None, *args):
+    def change_multiple_column_values(self, column_values, get_column_values: bool = False, as_model: type = None, *args):
         """Change the item's column values.
 
             Parameters
@@ -1124,15 +1124,15 @@ class Item(_Item):
             return items
 
 
-    def archive(self,as_model: type = None, *args):
+    def archive(self, as_model: type = None, *args):
         """Archive this item.
 
             Parameters
 
-                args : `tuple`
-                    Optional item return fields.
                 as_model: `type`
                     The MondayModel subclass to be returned.
+                args : `tuple`
+                    Optional item return fields.
 
 
             Returns
@@ -1192,10 +1192,10 @@ class Item(_Item):
 
             Parameters
 
-                args : `tuple`
-                    Optional item return fields.
                 as_model: `type`
                     The MondayModel subclass to be returned.
+                args : `tuple`
+                    Optional item return fields.
 
 
             Returns
@@ -1255,11 +1255,10 @@ class Item(_Item):
 
             Parameters
 
-                args : `tuple`
-                    The list of item return fields.
                 as_model: `type`
                     The MondayModel subclass to be returned.
-
+                args : `tuple`
+                    The list of item return fields.
                 kwargs : `dict`
                     Optional keyword arguments for duplicating item.
 
@@ -1485,10 +1484,10 @@ class Item(_Item):
 
             Parameters
 
-                args : `tuple`
-                    The list of optional fields to return.
                 as_model: `type`
                     The MondayModel subclass to be returned.
+                args : `tuple`
+                    The list of optional fields to return.
 
 
             Returns
