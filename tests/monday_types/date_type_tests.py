@@ -57,13 +57,15 @@ def test_date_type_should_succeed_when_to_native_returns_none_when_passing_none_
     # Assert
     eq_(value, None)
 
+
 @raises(ConversionError)
 def test_should_succeed_when_to_native_raisies_a_conversionerror_when_passed_a_str_with_an_invalid_date_format():
     # Arrange
     date_type = t.DateType(id='date_column_2')
 
     # Act
-    value_1 = date_type.to_native(999999999999)
+    date_type.to_native('999999999999')
+
 
 @raises(ConversionError)
 def test_should_succeed_when_to_native_raises_a_conversionerror_when_passed_a_str_with_an_invalid_time_format():
@@ -71,7 +73,7 @@ def test_should_succeed_when_to_native_raises_a_conversionerror_when_passed_a_st
     date_type = t.DateType(id='date_column_2', has_time=True)
 
     # Act
-    value_2 = date_type.to_native('2021-09-29 not:a:string')
+    date_type.to_native('2021-09-29 not:a:string')
 
 
 def test_date_type_should_succeed_when_to_primitive_returns_empty_dict_when_passing_none_to_date_type():
