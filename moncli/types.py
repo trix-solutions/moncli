@@ -94,6 +94,15 @@ class CheckboxType(MondayType):
             return {'checked': 'true'}
 
 
+class LongTextType(MondayType):
+    native_type = str
+    allow_casts = (int, float)
+    null_value = {}
+
+    def _export(self, value):
+        return {'text': value}
+
+
 class NumberType(MondayType):
     native_type = (int, float)
     allow_casts = (str, )
@@ -110,13 +119,19 @@ class NumberType(MondayType):
         return str(value)
 
 
-class LongTextType(MondayType):
-    native_type = str
-    allow_casts = (int, float)
+class RatingType(MondayType):
+    native_type = int
+    allow_casts = (str,)
     null_value = {}
 
+    def _cast(self, value):
+        try:
+            return int(value)
+        except ValueError:
+            raise ConversionError('Value "{}" is not a valid rating.'.format(value))
+    
     def _export(self, value):
-        return {'text': value}
+        return { 'rating': value}
 
         
 class TextType(MondayType):

@@ -2,6 +2,7 @@ import json
 
 from nose.tools import eq_
 
+
 from moncli import entities as en
 from moncli.enums import ColumnType
 from moncli.types import CheckboxType
