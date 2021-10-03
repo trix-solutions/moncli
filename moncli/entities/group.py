@@ -1,9 +1,8 @@
 from schematics.models import Model
 from schematics import types
 
-from .. import api, entities as en
-from ..models import MondayModel
-from .item import ItemError
+from .. import api, entities as en, models as m
+from ..error import ItemError
 
 class _Group(Model):
     """Group base model"""
@@ -209,7 +208,7 @@ class Group(_Group):
             **group_data)
 
 
-    def add_item(self, item_name: str,as_model: MondayModel = None, *args, **kwargs):
+    def add_item(self, item_name: str,as_model: m.MondayModel = None, *args, **kwargs):
         """Add item to this group.
 
             Parameters
@@ -272,7 +271,7 @@ class Group(_Group):
             **kwargs)
         items = en.Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
+            if not issubclass(as_model, m.MondayModel):
                 raise ItemError(
                     'invalid_as_model_parameter',
                     self.id,
@@ -282,7 +281,7 @@ class Group(_Group):
         else:
             return items
 
-    def get_items(self, as_model: MondayModel = None,get_column_values: bool = True, *args, **kwargs):
+    def get_items(self, as_model: m.MondayModel = None,get_column_values: bool = True, *args, **kwargs):
         """Get items from this group.
     
             Parameters
@@ -358,7 +357,7 @@ class Group(_Group):
             **group_kwargs)[0]['groups'][0]['items']
         items = [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
         if as_model:
-            if not issubclass(as_model, MondayModel):
+            if not issubclass(as_model, m.MondayModel):
                 raise ItemError(
                     'invalid_as_model_parameter',
                     self.id,

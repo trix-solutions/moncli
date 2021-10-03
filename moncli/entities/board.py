@@ -3,8 +3,8 @@ from schematics.types import StringType, IntType
 
 from .. import api, entities as en
 from ..enums import *
+from ..error import ItemError
 from ..models import MondayModel
-from .item import ItemError
 
 
 class _Board(Model):

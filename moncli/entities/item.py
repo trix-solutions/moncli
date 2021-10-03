@@ -1,13 +1,7 @@
 from schematics.models import Model
 from schematics.types import StringType
 
-from moncli.entities import column_value as cv
-from moncli.enums import ColumnType
-from moncli.error import ColumnValueError, MoncliError
-
-from .. import api, entities as en
-from .column_value.base import ColumnValue
-from ..models import MondayModel
+from .. import api, entities as en, models as m, error as e
 
 
 class _Item(Model):
@@ -304,7 +298,7 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, file_column: en.cv.FileValue,as_model: MondayModel = None, *args):
+    def remove_files(self, file_column: en.cv.FileValue,as_model: m.MondayModel = None, *args):
         """Add a file to a column value.
 
             Parameters
@@ -360,8 +354,8 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         items = Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -649,7 +643,7 @@ class Item(_Item):
         return self.column_values[id]
 
 
-    def change_item_name(self, new_name: str,as_model: MondayModel = None):
+    def change_item_name(self, new_name: str,as_model: m.MondayModel = None):
         """Change the name of an item.
 
             Parameters
@@ -705,8 +699,8 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         items = Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -715,7 +709,7 @@ class Item(_Item):
         else:
             return items
 
-    def change_column_value(self,id = None, title = None,as_model: MondayModel = None, column_value = None, get_column_values: bool = None, *args):
+    def change_column_value(self,id = None, title = None,as_model: m.MondayModel = None, column_value = None, get_column_values: bool = None, *args):
         """Get an item's column value by ID or title.
 
             Parameters
@@ -769,17 +763,17 @@ class Item(_Item):
                     The item's updates.
         """
         if id and title : 
-            raise ItemError(
+            raise e.ItemError(
                 'change_column_value_too_many_parameters',
                 self.id,
                 'Cannot use both "id" and "title" parameters.'
             )
         if not (id or title):
-            if isinstance(column_value, ColumnValue):
+            if isinstance(column_value, en.cv.ColumnValue):
                 column_id = column_value.id
                 value = column_value.format()
             else:
-                raise ItemError(
+                raise e.ItemError(
                     'invalid_column_value',
                     self.id,
                     'Column value must be a properly formatted dict or str when using "id" or "title" parameters.'
@@ -800,7 +794,7 @@ class Item(_Item):
                 column_id = column_value.id
                 value  = column_value.null_value
         else: 
-            raise ItemError(
+            raise e.ItemError(
                 'invalid_column_value_entity',
                 self.id,
                 'Column Value must be a valid entities.column_value.ColumnValue instance when not using "id" or "title" parameters.'
@@ -823,8 +817,8 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         items = Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -901,7 +895,7 @@ class Item(_Item):
 
         return Item(creds=self.__creds, **item_data)
 
-    def change_multiple_column_values(self, column_values, get_column_values: bool = False,as_model: MondayModel = None, *args):
+    def change_multiple_column_values(self, column_values, get_column_values: bool = False,as_model: m.MondayModel = None, *args):
         """Change the item's column values.
 
             Parameters
@@ -972,8 +966,8 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         items = Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -983,7 +977,7 @@ class Item(_Item):
             return items
 
 
-    def create_subitem(self, item_name: str, *args,as_model: MondayModel = None, **kwargs):
+    def create_subitem(self, item_name: str, *args,as_model: m.MondayModel = None, **kwargs):
         """Create subitem.
 
             Parameters
@@ -1045,8 +1039,8 @@ class Item(_Item):
             **kwargs)
         items = Item(creds=self.__creds, **subitem_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -1056,7 +1050,7 @@ class Item(_Item):
             return items
 
 
-    def move_to_group(self, group_id: str, get_column_values = False,as_model: MondayModel = None, *args):
+    def move_to_group(self, group_id: str, get_column_values = False,as_model: m.MondayModel = None, *args):
         """Move item to a different group.
 
             Parameters
@@ -1119,8 +1113,8 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         items = Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -1130,7 +1124,7 @@ class Item(_Item):
             return items
 
 
-    def archive(self,as_model: MondayModel = None, *args):
+    def archive(self,as_model: m.MondayModel = None, *args):
         """Archive this item.
 
             Parameters
@@ -1182,8 +1176,8 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         items = Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -1193,7 +1187,7 @@ class Item(_Item):
             return items
 
 
-    def delete(self,as_model: MondayModel = None, *args):
+    def delete(self,as_model: m.MondayModel = None, *args):
         """Delete this item.
 
             Parameters
@@ -1245,8 +1239,8 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         items = Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -1256,7 +1250,7 @@ class Item(_Item):
             return items
 
 
-    def duplicate(self,as_model: MondayModel = None, *args, **kwargs):
+    def duplicate(self,as_model: m.MondayModel = None, *args, **kwargs):
         """Duplicate this item.
 
             Parameters
@@ -1317,8 +1311,8 @@ class Item(_Item):
             *kwargs)
         items = Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -1486,7 +1480,7 @@ class Item(_Item):
         return target_update[0].delete()
 
 
-    def clear_updates(self,as_model: MondayModel = None, *args):
+    def clear_updates(self,as_model: m.MondayModel = None, *args):
         """Clear item's updates.
 
             Parameters
@@ -1538,8 +1532,8 @@ class Item(_Item):
             api_key=self.__creds.api_key_v2)
         items = Item(creds=self.__creds, **item_data)
         if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
+            if not issubclass(as_model, m.MondayModel):
+                raise e.ItemError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"
@@ -1670,7 +1664,3 @@ class NotEnoughChangeSimpleColumnValueParameters(Exception):
 class InvalidParameterError(Exception):
     def __init__(self):
         self.message = "New name must be present"
-class ItemError(MoncliError):
-    entity_type = 'Item'
-    def __init__(self, error_code, entity_type, message):
-        super().__init__(error_code, None, self.entity_type, message)

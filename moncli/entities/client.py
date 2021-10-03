@@ -1,8 +1,7 @@
 from .. import api, entities as en
 from ..enums import *
-from ..error import MondayClientError
+from ..error import MondayClientError, ItemError
 from ..models import MondayModel
-from .item import ItemError
 
 
 class MondayClient():
@@ -701,16 +700,15 @@ class MondayClient():
             api_key=self.__creds.api_key_v2, 
             **kwargs)
         items = [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
-        if as_model:
-            if not issubclass(as_model, MondayModel):
-                raise ItemError(
-                    'invalid_as_model_parameter',
-                    self.id,
-                    "as_model parameter must be of MondayModel Type"
-                )
-            return [as_model(item) for item in items]
-        else:
+        if not as_model:
             return items
+        if not issubclass(as_model, MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                "as_model parameter must be of MondayModel Type"
+            )
+        return [as_model(item) for item in items]
             
 
     def get_updates(self, *args, **kwargs):
