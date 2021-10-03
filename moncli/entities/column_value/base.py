@@ -30,8 +30,6 @@ class ColumnValue(_ColumnValue):
             The column's textual value in string form.
         title : `str`
             The columns title.
-        type : `str`
-            The column's type.
         value : `any`
             The column's value in a Python native format.
         settings_str: `str`
@@ -96,6 +94,16 @@ class ColumnValue(_ColumnValue):
         if self.value == self.native_default:
             return self.null_value
         return self._format()
+
+
+    def to_primitive(self):
+        return dict(
+            id=self.id,
+            title=self.title,
+            text=self.text,
+            additional_info=self.additional_info,
+            value=self.value)
+
 
     def __repr__(self):
         return str({
