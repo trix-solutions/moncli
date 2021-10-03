@@ -636,7 +636,7 @@ class MondayClient():
                 get_column_values: `bool`
                     Flag used to include column values with the returned items.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 kwargs : `dict`
                     Optional keyword arguments for querying items.
 
@@ -818,7 +818,7 @@ class MondayClient():
                 item_id : `str`
                     The item's unique identifier.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of optional fields to return.
 

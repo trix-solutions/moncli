@@ -216,7 +216,7 @@ class Group(_Group):
                 item_name : `str`
                     The new item's name.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item fields to return.
                 kwargs : `dict`
@@ -289,7 +289,7 @@ class Group(_Group):
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item fields to return.
         

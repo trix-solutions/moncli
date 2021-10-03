@@ -1006,7 +1006,7 @@ class Board(_Board):
                 args : `tuple`
                     The list of item return fields.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 get_column_values: `bool`
                     Returns column values with items if set to `True`.
                 kwargs : `dict`
@@ -1097,7 +1097,7 @@ class Board(_Board):
                 column_value : `moncli.entites.ColumnValue`
                     The column value to search on.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 get_column_values: `bool`
                     Flag used to include column values with the returned items.
                 args : `tuple`
@@ -1200,7 +1200,7 @@ class Board(_Board):
                 column_values : `list[str]`
                     The list of values to search on.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 get_column_values: `bool`
                     Retrieves all item column values if set to `True`.
                 args : `tuple`

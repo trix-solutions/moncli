@@ -306,7 +306,7 @@ class Item(_Item):
                 file_column : moncli.entities.FileValue
                     The file column value to be updated.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional file return fields.
 
@@ -651,7 +651,7 @@ class Item(_Item):
                 nem_name : 'str'
                     The new name of the item.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
 
 
             Returns
@@ -724,7 +724,7 @@ class Item(_Item):
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
 
@@ -906,7 +906,7 @@ class Item(_Item):
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
 
@@ -985,7 +985,7 @@ class Item(_Item):
                 item_name : `str`
                     The new item's name.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item return fields.
                 kwargs : `dict`
@@ -1060,7 +1060,7 @@ class Item(_Item):
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
 
@@ -1132,7 +1132,7 @@ class Item(_Item):
                 args : `tuple`
                     Optional item return fields.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
 
 
             Returns
@@ -1195,7 +1195,7 @@ class Item(_Item):
                 args : `tuple`
                     Optional item return fields.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
 
 
             Returns
@@ -1258,7 +1258,7 @@ class Item(_Item):
                 args : `tuple`
                     The list of item return fields.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
 
                 kwargs : `dict`
                     Optional keyword arguments for duplicating item.
@@ -1488,7 +1488,7 @@ class Item(_Item):
                 args : `tuple`
                     The list of optional fields to return.
                 as_model: `moncli.models.MondayModel`
-                    the MondayModel subclass to be returned.
+                    The MondayModel subclass to be returned.
 
 
             Returns
