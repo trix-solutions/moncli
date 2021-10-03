@@ -2,6 +2,8 @@ from schematics.models import Model
 from schematics import types
 
 from .. import api, entities as en
+from ..models import MondayModel
+from .item import ItemError
 
 class _Group(Model):
     """Group base model"""
@@ -207,13 +209,15 @@ class Group(_Group):
             **group_data)
 
 
-    def add_item(self, item_name: str, *args, **kwargs):
+    def add_item(self, item_name: str,as_model: MondayModel = None, *args, **kwargs):
         """Add item to this group.
 
             Parameters
 
                 item_name : `str`
                     The new item's name.
+                as_model: `moncli.models.MondayModel`
+                    the MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item fields to return.
                 kwargs : `dict`
@@ -266,16 +270,27 @@ class Group(_Group):
             api_key=self.__creds.api_key_v2,
             group_id=self.id,
             **kwargs)
-        return en.Item(creds=self.__creds, **item_data)
+        items = en.Item(creds=self.__creds, **item_data)
+        if as_model:
+            if not issubclass(as_model, MondayModel):
+                raise ItemError(
+                    'invalid_as_model_parameter',
+                    self.id,
+                    "as_model parameter must be of MondayModel Type"
+                )
+            return [as_model(item) for item in items]
+        else:
+            return items
 
-
-    def get_items(self, get_column_values: bool = True, *args, **kwargs):
+    def get_items(self, as_model: MondayModel = None,get_column_values: bool = True, *args, **kwargs):
         """Get items from this group.
     
             Parameters
 
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
+                as_model: `moncli.models.MondayModel`
+                    the MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item fields to return.
         
@@ -341,4 +356,14 @@ class Group(_Group):
             ids=[int(self.__board.id)],
             limit=1,
             **group_kwargs)[0]['groups'][0]['items']
-        return [en.Item(creds=self.__creds, **item_data) for item_data in items_data]
+        items = [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
+        if as_model:
+            if not issubclass(as_model, MondayModel):
+                raise ItemError(
+                    'invalid_as_model_parameter',
+                    self.id,
+                    "as_model parameter must be of MondayModel Type"
+                )
+            return [as_model(item) for item in items]
+        else:
+            return items

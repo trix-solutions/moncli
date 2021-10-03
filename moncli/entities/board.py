@@ -3,6 +3,8 @@ from schematics.types import StringType, IntType
 
 from .. import api, entities as en
 from ..enums import *
+from ..models import MondayModel
+from .item import ItemError
 
 
 class _Board(Model):
@@ -996,13 +998,15 @@ class Board(_Board):
         return en.Item(creds=self.__creds, __board=self, **item_data)
 
 
-    def get_items(self, get_column_values: bool = False, *args, **kwargs):
+    def get_items(self, get_column_values: bool = False,as_model: MondayModel = None, *args, **kwargs):
         """Get the board's items (rows).
 
             Parameters
 
                 args : `tuple`
                     The list of item return fields.
+                as_model: `moncli.models.MondayModel`
+                    the MondayModel subclass to be returned.
                 get_column_values: `bool`
                     Returns column values with items if set to `True`.
                 kwargs : `dict`
@@ -1071,16 +1075,29 @@ class Board(_Board):
             ids=[int(self.id)],
             **item_kwargs)[0]['items']
 
-        return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data] 
+        items = [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
+        if as_model:
+            if not issubclass(as_model, MondayModel):
+                raise ItemError(
+                    'invalid_as_model_parameter',
+                    self.id,
+                    "as_model parameter must be of MondayModel Type"
+                )
+            return [as_model(item) for item in items]
+        else:
+            return items
+ 
 
 
-    def get_items_by_column_values(self, column_value: en.cv.ColumnValue, get_column_values: bool = False, *args, **kwargs):
+    def get_items_by_column_values(self, column_value: en.cv.ColumnValue,as_model: MondayModel = None, get_column_values: bool = False, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters
 
                 column_value : `moncli.entites.ColumnValue`
                     The column value to search on.
+                as_model: `moncli.models.MondayModel`
+                    the MondayModel subclass to be returned.
                 get_column_values: `bool`
                     Flag used to include column values with the returned items.
                 args : `tuple`
@@ -1159,10 +1176,21 @@ class Board(_Board):
             api_key=self.__creds.api_key_v2, 
             **kwargs)
 
-        return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data]
+        items = [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
+        if as_model:
+            if not issubclass(as_model, MondayModel):
+                raise ItemError(
+                    'invalid_as_model_parameter',
+                    self.id,
+                    "as_model parameter must be of MondayModel Type"
+                )
+            return [as_model(item) for item in items]
+        else:
+            return items
+
 
     
-    def get_items_by_multiple_column_values(self, column: en.Column, column_values: list, get_column_values: bool = False, *args, **kwargs):
+    def get_items_by_multiple_column_values(self, column: en.Column, column_values: list,as_model: MondayModel = None, get_column_values: bool = False, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters
@@ -1171,6 +1199,8 @@ class Board(_Board):
                     The column to search on.
                 column_values : `list[str]`
                     The list of values to search on.
+                as_model: `moncli.models.MondayModel`
+                    the MondayModel subclass to be returned.
                 get_column_values: `bool`
                     Retrieves all item column values if set to `True`.
                 args : `tuple`
@@ -1247,7 +1277,17 @@ class Board(_Board):
             api_key=self.__creds.api_key_v2, 
             **kwargs)
 
-        return [en.Item(creds=self.__creds, __board=self, **item_data) for item_data in items_data]
+        items = [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
+        if as_model:
+            if not issubclass(as_model, MondayModel):
+                raise ItemError(
+                    'invalid_as_model_parameter',
+                    self.id,
+                    "as_model parameter must be of MondayModel Type"
+                )
+            return [as_model(item) for item in items]
+        else:
+            return items
 
 
     def get_column_values(self):
