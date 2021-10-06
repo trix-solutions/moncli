@@ -159,15 +159,12 @@ class TagsType(MondayType):
     null_value = {}
 
     def _process(self, value):
-        error_value =None
-        return_value = []
-        try:
-            for tag in value:
-                error_value = tag
-                return_value.append(int(tag))
-            return return_value
-        except ValueError:
-            raise ConversionError('Invalid Tag ID "{}".'.format(error_value))
+        for tag in value:
+            try:
+                return_value = [int(tag) for tag in value]
+            except ValueError:
+                raise ConversionError('Invalid Tag ID "{}".'.format(tag))
+        return return_value
     
     def _export(self, value):
         return {'tag_ids': value}
