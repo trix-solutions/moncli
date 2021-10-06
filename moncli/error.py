@@ -14,6 +14,12 @@ class MondayClientError(MoncliError):
 
     def __init__(self, error_code, message):
         super().__init__(error_code, None, self.entity_type, message)
+        
+        
+class ItemError(MoncliError):
+    entity_type = 'Item'
+    def __init__(self, error_code, entity_type, message):
+        super().__init__(error_code, None, self.entity_type, message)
 
 
 class ColumnValueError(MoncliError):

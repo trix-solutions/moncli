@@ -1,12 +1,10 @@
+import json
+
 from schematics.models import Model
 from schematics.types import StringType
 
-from moncli.entities import column_value as cv
-from moncli.enums import ColumnType
-from moncli.error import ColumnValueError, MoncliError
-
 from .. import api, entities as en
-from .column_value.base import ColumnValue
+from ..error import MoncliError,ItemError
 
 class _Item(Model):
     """Item Base Model"""
@@ -302,20 +300,24 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, file_column: en.cv.FileValue, *args):
-        """Add a file to a column value.
+    def remove_files(self, id: str = None, title: str = None, file_value=None, *args):
+        """Removes a file from a column value.
 
             Parameters
 
-                file_column : moncli.entities.FileValue
-                    The file column value to be updated.
+                id : 'str'
+                    The id of the column to be updated.
+                title : 'str'
+                    The title of the column to be updated.
+                file_value : moncli.entities.column_value.FileValue
+                    The file value to be removed.
                 args : `tuple`
                     Optional file return fields.
 
             Returns
 
-                assets : `moncli.entities.Asset`
-                    The deleted file asset.
+                item : `moncli.entities.Item`
+                    The updated item.
 
             Return Fields
 
@@ -338,15 +340,27 @@ class Item(_Item):
                 url_thumbnail : `str`
                     Url to view the asset in thumbnail mode. Only available for images.
         """
+        
+        if (id or title or file_value):
+            if id:
+                column_id = id
+            if title:
+                column_id = self.column_values[title].id
+            if file_value:
+                    column_id=file_value.id
+        else:
+            raise ItemError('clear_files_not_enough_parameters', self.id, 'Insufficient parameters for clearing files from column value.')
 
         item_data = api.change_column_value(
-            self.id,
-            file_column.id,
-            self.__board.id,
-            file_column.format(),
+            item_id=self.id,
+            board_id=self.board.id,
+            column_id=column_id,
+            value={'clear_all': True},
             *args,
             api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
+
+
 
 
     def get_board(self, *args):
@@ -740,7 +754,7 @@ class Item(_Item):
                 'Cannot use both "id" and "title" parameters.'
             )
         if not (id or title):
-            if isinstance(column_value, ColumnValue):
+            if isinstance(column_value, en.cv.ColumnValue):
                 column_id = column_value.id
                 value = column_value.format()
             else:
@@ -1537,7 +1551,4 @@ class NotEnoughChangeSimpleColumnValueParameters(Exception):
 class InvalidParameterError(Exception):
     def __init__(self):
         self.message = "New name must be present"
-class ItemError(MoncliError):
-    entity_type = 'Item'
-    def __init__(self, error_code, entity_type, message):
-        super().__init__(error_code, None, self.entity_type, message)
+
