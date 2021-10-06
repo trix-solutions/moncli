@@ -1,6 +1,7 @@
 import pytz, json
-from datetime import datetime
 from pytz.exceptions import UnknownTimeZoneError
+from datetime import datetime, timedelta, timezone
+
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 
@@ -94,6 +95,48 @@ class CheckboxType(MondayType):
             return {'checked': 'true'}
 
 
+class DateType(MondayType):
+
+    native_type = datetime
+    allow_casts = (str, int)
+    null_value = {}
+    has_time = False
+
+    def __init__(self, id: str = None, title: str = None, has_time: bool = False, *args, **kwargs):
+        self.id = id
+        self.title = title
+        self.has_time = has_time
+        super().__init__(self.id, self.title, *args, **kwargs)
+
+    def _cast(self, value):
+        if isinstance(value, int):
+            try:
+                return datetime.fromtimestamp(value)
+            except ValueError:
+                raise ConversionError('Invalid UNIX timestamp "{}".'.format(value))
+        if isinstance(value, str):
+            try:
+                date = datetime.strptime(value.split(' ', 1)[0], DATE_FORMAT)
+            except ValueError:
+                raise ConversionError('Cannot convert value "{}" into Date.'.format(value))
+            if self.has_time == True:
+                try:
+                    time = datetime.strptime(value.split(' ', 1)[1], TIME_FORMAT)
+                    date = date + timedelta(hours=time.hour, minutes=time.minute, seconds=time.second)
+                    return date
+                except ValueError:
+                    raise ConversionError('Cannot convert value "{}" into Time.'.format(value))
+            return date
+
+    def _export(self, value):
+        if self.has_time == True:
+            value = value.astimezone(timezone.utc)
+            date = value.date().strftime(DATE_FORMAT)
+            time = value.time().strftime(TIME_FORMAT)
+            return {'date': date, 'time': time}
+        return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
+
+
 class LongTextType(MondayType):
     native_type = str
     allow_casts = (int, float)
@@ -140,19 +183,6 @@ class TextType(MondayType):
     null_value = ""
 
 
-class TimeZoneType(MondayType):
-    native_type = str
-    null_value = {}
-
-    def _export(self, value):
-        return {'timezone': value}
-
-    def validate_timezone(self, value):
-        try:
-            pytz.timezone(value)
-        except (UnknownTimeZoneError):
-            raise ValidationError('Unknown time zone "{}".'.format(value))
-
 class TagsType(MondayType):
     native_type = list
     native_default = []
@@ -168,3 +198,17 @@ class TagsType(MondayType):
     
     def _export(self, value):
         return {'tag_ids': value}
+
+
+class TimeZoneType(MondayType):
+    native_type = str
+    null_value = {}
+
+    def _export(self, value):
+        return {'timezone': value}
+
+    def validate_timezone(self, value):
+        try:
+            pytz.timezone(value)
+        except (UnknownTimeZoneError):
+            raise ValidationError('Unknown time zone "{}".'.format(value))

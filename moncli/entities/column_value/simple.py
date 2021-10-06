@@ -29,7 +29,7 @@ class DateValue(ComplexNullValue):
             date_value = new_date.astimezone(datetime.now().astimezone().tzinfo) 
             return date_value
 
-        except KeyError:
+        except (KeyError, TypeError):
             new_date = datetime.strptime(value['date'], DATE_FORMAT)
             return new_date
         

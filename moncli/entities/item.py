@@ -1,12 +1,12 @@
+import json
+
 from schematics.models import Model
 from schematics.types import StringType
 
-from moncli.entities import column_value as cv
-from moncli.enums import ColumnType
-from moncli.error import ColumnValueError, MoncliError
+from .. import api, entities as en, models as m, error as e
+from ..error import ItemError
+from ..models import MondayModel
 
-from .. import api, entities as en
-from .column_value.base import ColumnValue
 
 class _Item(Model):
     """Item Base Model"""
@@ -302,51 +302,87 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, file_column: en.cv.FileValue, *args):
-        """Add a file to a column value.
+    def remove_files(self, id: str = None, title: str = None, file_value=None, as_model: type = None, *args):
+        """Removes a file from a column value.
 
             Parameters
 
-                file_column : moncli.entities.FileValue
-                    The file column value to be updated.
+                id : 'str'
+                    The id of the column to be updated.
+                title : 'str'
+                    The title of the column to be updated.
+                file_value : moncli.entities.column_value.FileValue
+                    The file value to be removed.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional file return fields.
 
             Returns
 
-                assets : `moncli.entities.Asset`
-                    The deleted file asset.
+                item : `moncli.entities.Item`
+                    The updated item.
 
             Return Fields
 
+                assets : `list[moncli.entities.asset.Asset]`
+                    The item's assets/files.
+                board : `moncli.entities.board.Board`
+                    The board that contains this item.
+                column_values : `list[moncli.entities.column_value.ColumnValue]`
+                    The item's column values.
                 created_at : `str`
-                    The file's creation date.
-                file_extension : `str`
-                    The file's extension.
-                file_size : `int`
-                    The file's size in bytes.
+                    The item's create date.
+                creator : `moncli.entities.user.User`
+                    The item's creator.
+                creator_id : `str`
+                    The item's unique identifier.
+                group : `moncli.entities.group.Group`
+                    The group that contains this item.
                 id : `str`
-                    The file's unique identifier.
+                    The item's unique identifier.
                 name : `str`
-                    The file's name.
-                public_url : `str`
-                    Public url to the asset, valid for 1 hour.
-                uploaded_by : `moncli.entities.user.User`
-                    The user who uploaded the file
-                url : `str`
-                    The user who uploaded the file
-                url_thumbnail : `str`
-                    Url to view the asset in thumbnail mode. Only available for images.
+                    The item's name.
+                state : `str`
+                    The board's state (all / active / archived / deleted)
+                subscriber : `moncli.entities.user.User`
+                    The pulse's subscribers.
+                updated_at : `str`
+                    The item's last update date.
+                updates : `moncli.entities.update.Update`
+                    The item's updates.
         """
+        
+        if (id or title or file_value):
+            if id:
+                column_id = id
+            if title:
+                column_id = self.column_values[title].id
+            if file_value:
+                    column_id=file_value.id
+        else:
+            raise ItemError('clear_files_not_enough_parameters', self.id, 'Insufficient parameters for clearing files from column value.')
 
         item_data = api.change_column_value(
-            self.id,
-            file_column.id,
-            self.__board.id,
-            file_column.format(),
+            item_id=self.id,
+            board_id=self.board.id,
+            column_id=column_id,
+            value={'clear_all': True},
             *args,
             api_key=self.__creds.api_key_v2)
-        return Item(creds=self.__creds, **item_data)
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
+
+
+
+
 
 
     def get_board(self, *args):
@@ -627,13 +663,16 @@ class Item(_Item):
         return self.column_values[id]
 
 
-    def change_name(self, new_name: str):
+    def change_item_name(self, new_name: str,as_model: m.MondayModel = None):
         """Change the name of an item.
 
             Parameters
 
                 nem_name : 'str'
                     The new name of the item.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
+
 
             Returns
 
@@ -678,11 +717,17 @@ class Item(_Item):
             self.board.id,
             item_name,
             api_key=self.__creds.api_key_v2)
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
 
-
-        return en.Item(creds=self.__creds, **item_data)
-
-    def change_column_value(self,id = None, title = None, column_value = None, get_column_values: bool = None, *args):
+    def change_column_value(self,id = None, title = None, column_value = None, get_column_values: bool = None, as_model: type = None, *args):
         """Get an item's column value by ID or title.
 
             Parameters
@@ -696,6 +741,8 @@ class Item(_Item):
                     The value to be updated for the column.
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
 
@@ -734,17 +781,17 @@ class Item(_Item):
                     The item's updates.
         """
         if id and title : 
-            raise ItemError(
+            raise e.ItemError(
                 'change_column_value_too_many_parameters',
                 self.id,
                 'Cannot use both "id" and "title" parameters.'
             )
         if not (id or title):
-            if isinstance(column_value, ColumnValue):
+            if isinstance(column_value, en.cv.ColumnValue):
                 column_id = column_value.id
                 value = column_value.format()
             else:
-                raise ItemError(
+                raise e.ItemError(
                     'invalid_column_value',
                     self.id,
                     'Column value must be a properly formatted dict or str when using "id" or "title" parameters.'
@@ -765,7 +812,7 @@ class Item(_Item):
                 column_id = column_value.id
                 value  = column_value.null_value
         else: 
-            raise ItemError(
+            raise e.ItemError(
                 'invalid_column_value_entity',
                 self.id,
                 'Column Value must be a valid entities.column_value.ColumnValue instance when not using "id" or "title" parameters.'
@@ -786,10 +833,17 @@ class Item(_Item):
             value,
             *args,
             api_key=self.__creds.api_key_v2)
-        return Item(creds=self.__creds, **item_data)
-    
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
 
-    def change_simple_column_value(self, id = None, title = None, value = None, *args):
+    def change_simple_column_value(self, id = None, title = None, value = None,as_model: type = None, *args):
         """Change the item's column values using simple values.
 
             Parameters
@@ -798,6 +852,8 @@ class Item(_Item):
                     The id value of the column 
                 title: str 
                     The title of the column
+                as_model: type
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
 
@@ -854,9 +910,17 @@ class Item(_Item):
             *args,
             api_key=self.__creds.api_key_v2)        
 
-        return Item(creds=self.__creds, **item_data)
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
 
-    def change_multiple_column_values(self, column_values, get_column_values: bool = False, *args):
+    def change_multiple_column_values(self, column_values, get_column_values: bool = False, as_model: type = None, *args):
         """Change the item's column values.
 
             Parameters
@@ -866,6 +930,8 @@ class Item(_Item):
                     NOTE: This value can either be a list of moncli.entities.ColumnValue objects or a formatted dictionary.
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
 
@@ -923,16 +989,26 @@ class Item(_Item):
             values,
             *args,
             api_key=self.__creds.api_key_v2)
-        return Item(creds=self.__creds, **item_data)
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
 
 
-    def create_subitem(self, item_name: str, *args, **kwargs):
+    def create_subitem(self, item_name: str, as_model: type = None, *args, **kwargs):
         """Create subitem.
 
             Parameters
             
                 item_name : `str`
                     The new item's name.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item return fields.
                 kwargs : `dict`
@@ -984,10 +1060,19 @@ class Item(_Item):
             *args,
             api_key=self.__creds.api_key_v2,
             **kwargs)
-        return Item(creds=self.__creds, **subitem_data)
+        items = Item(creds=self.__creds, **subitem_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
 
 
-    def move_to_group(self, group_id: str, get_column_values = False, *args):
+
+    def move_to_group(self, group_id: str, get_column_values = False, as_model: type = None, *args):
         """Move item to a different group.
 
             Parameters
@@ -996,6 +1081,8 @@ class Item(_Item):
                     The group's unique identifier.
                 get_column_values: `bool`:
                     Retrieves item column values if set to `True`.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
 
@@ -1046,16 +1133,28 @@ class Item(_Item):
             group_id,
             *args,
             api_key=self.__creds.api_key_v2)
-        return Item(creds=self.__creds, **item_data)
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
 
 
-    def archive(self, *args):
+
+    def archive(self, as_model: type = None, *args):
         """Archive this item.
 
             Parameters
 
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
+
 
             Returns
 
@@ -1096,16 +1195,28 @@ class Item(_Item):
             self.id,
             *args,
             api_key=self.__creds.api_key_v2)
-        return Item(creds=self.__creds, **item_data)
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
 
 
-    def delete(self, *args):
+
+    def delete(self, as_model: type = None, *args):
         """Delete this item.
 
             Parameters
 
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
+
 
             Returns
 
@@ -1146,14 +1257,25 @@ class Item(_Item):
             self.id,
             *args,
             api_key=self.__creds.api_key_v2)
-        return Item(creds=self.__creds, **item_data)
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
 
 
-    def duplicate(self, *args, **kwargs):
+
+    def duplicate(self, as_model: type = None, *args, **kwargs):
         """Duplicate this item.
 
             Parameters
 
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of item return fields.
                 kwargs : `dict`
@@ -1205,7 +1327,16 @@ class Item(_Item):
             *args,
             api_key=self.__creds.api_key_v2,
             *kwargs)
-        return Item(creds=self.__creds, **item_data)
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
+
 
 
     def add_update(self, body: str, *args, **kwargs):
@@ -1366,13 +1497,16 @@ class Item(_Item):
         return target_update[0].delete()
 
 
-    def clear_updates(self, *args):
+    def clear_updates(self, as_model: type = None, *args):
         """Clear item's updates.
 
             Parameters
 
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of optional fields to return.
+
 
             Returns
 
@@ -1413,7 +1547,16 @@ class Item(_Item):
             self.id,
             *args,
             api_key=self.__creds.api_key_v2)
-        return Item(creds=self.__creds, **item_data)
+        items = Item(creds=self.__creds, **item_data)
+        if not as_model:
+            return items
+        if not issubclass(type(as_model), MondayModel):
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
+        return [as_model(item) for item in items]
+
 
     
     def get_activity_logs(self, *args, **kwargs):
@@ -1512,7 +1655,7 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
-        item_data =  api.get_items(
+        item_data = api.get_items(
             *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'parent_item', *args),
             ids=[self.id]
         )[0]['parent_item']
@@ -1537,7 +1680,4 @@ class NotEnoughChangeSimpleColumnValueParameters(Exception):
 class InvalidParameterError(Exception):
     def __init__(self):
         self.message = "New name must be present"
-class ItemError(MoncliError):
-    entity_type = 'Item'
-    def __init__(self, error_code, entity_type, message):
-        super().__init__(error_code, None, self.entity_type, message)
+
