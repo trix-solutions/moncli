@@ -42,7 +42,7 @@ def test_date_type_should_succeed_when_to_native_returns_a_datetime_when_passing
     value_2 = date_type.to_native('2021-09-29 17:48:35')
 
     # Assert
-    eq_(value_1, datetime(2021, 9, 29, 17, 48, 35))
+    eq_(value_1, datetime(2021, 9, 30, 3, 18, 35))
     eq_(value_2, datetime(2021, 9, 29, 17, 48, 35))
 
 
@@ -106,11 +106,12 @@ def test_date_type_should_succeed_when_to_primitive_returns_export_dict_with_tim
 
     # Arrange
     date_type = t.DateType(id='date_column_6', has_time=True)
-    value = datetime(2021, 9, 29, 17, 48, 35)
+    value = datetime(2021, 9, 30, 3, 18, 35)
 
     # Act
-    value = date_type.to_primitive(value)
+    date_value = date_type.to_primitive(value)
 
     # Assert
-    eq_(value['date'], '2021-09-29')
-    eq_(value['time'], '17:48:35')
+
+    eq_(date_value['date'], '2021-09-29')
+    eq_(date_value['time'], '21:48:35')

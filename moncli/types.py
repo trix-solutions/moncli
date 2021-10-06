@@ -158,10 +158,11 @@ class DateType(MondayType):
                     return date
                 except ValueError:
                     raise ConversionError('Cannot convert value "{}" into Time.'.format(value))
+            return date
 
     def _export(self, value):
         if self.has_time == True:
-            value = value.replace(tzinfo=timezone.utc)
+            value = value.astimezone(timezone.utc)
             date = value.date().strftime(DATE_FORMAT)
             time = value.time().strftime(TIME_FORMAT)
             return {'date': date, 'time': time}
