@@ -1,6 +1,6 @@
 from .. import api, entities as en
 from ..enums import *
-from ..error import MondayClientError, ItemError
+from ..error import MondayClientError
 from ..models import MondayModel
 
 
@@ -703,7 +703,7 @@ class MondayClient():
         if not as_model:
             return items
         if not issubclass(as_model, MondayModel):
-            raise ItemError(
+            raise MondayClientError(
                 'invalid_as_model_parameter',
                 self.id,
                 "as_model parameter must be of MondayModel Type"
@@ -864,7 +864,7 @@ class MondayClient():
         items= en.Item(creds=self.__creds, **item_data)
         if as_model:
             if not issubclass(as_model, MondayModel):
-                raise ItemError(
+                raise MondayClientError(
                     'invalid_as_model_parameter',
                     self.id,
                     "as_model parameter must be of MondayModel Type"

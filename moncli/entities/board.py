@@ -3,7 +3,7 @@ from schematics.types import StringType, IntType
 
 from .. import api, entities as en, models as m
 from ..enums import *
-from ..error import MondayClientError
+from ..error import BoardError
 from ..models import MondayModel
 
 
@@ -1001,7 +1001,7 @@ class Board(_Board):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
+            raise BoardError(
             'invalid_as_model_parameter',
             self.id,
             "as_model parameter must be of MondayModel Type")
@@ -1089,7 +1089,7 @@ class Board(_Board):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
+            raise BoardError(
             'invalid_as_model_parameter',
             self.id,
             "as_model parameter must be of MondayModel Type")
@@ -1188,7 +1188,7 @@ class Board(_Board):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
+            raise BoardError(
             'invalid_as_model_parameter',
             self.id,
             "as_model parameter must be of MondayModel Type")
@@ -1287,7 +1287,7 @@ class Board(_Board):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
+            raise BoardError(
             'invalid_as_model_parameter',
             self.id,
             "as_model parameter must be of MondayModel Type")
