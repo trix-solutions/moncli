@@ -183,6 +183,23 @@ class TextType(MondayType):
     null_value = ""
 
 
+class TagsType(MondayType):
+    native_type = list
+    native_default = []
+    null_value = {}
+
+    def _process(self, value):
+        for tag in value:
+            try:
+                return_value = [int(tag) for tag in value]
+            except ValueError:
+                raise ConversionError('Invalid Tag ID "{}".'.format(tag))
+        return return_value
+    
+    def _export(self, value):
+        return {'tag_ids': value}
+
+
 class TimeZoneType(MondayType):
     native_type = str
     null_value = {}
