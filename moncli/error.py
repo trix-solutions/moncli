@@ -16,6 +16,18 @@ class MondayClientError(MoncliError):
         super().__init__(error_code, None, self.entity_type, message)
         
         
+class BoardError(MoncliError):
+    entity_type = 'Board'
+    def __init__(self, error_code, entity_type, message):
+        super().__init__(error_code, None, self.entity_type, message)
+        
+        
+class GroupError(MoncliError):
+    entity_type = 'Group'
+    def __init__(self, error_code, entity_type, message):
+        super().__init__(error_code, None, self.entity_type, message)
+
+
 class ItemError(MoncliError):
     entity_type = 'Item'
     def __init__(self, error_code, entity_type, message):
