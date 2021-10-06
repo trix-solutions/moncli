@@ -1,15 +1,12 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
-from unittest.mock import patch
-from nose.tools import eq_
-from nose.tools.nontrivial import raises
+from nose.tools import eq_, raises
 from schematics.exceptions import ConversionError
 
-from moncli import client, entities as en
-from moncli.entities import column_value as cv
+from moncli import entities as en, types as t
+from moncli.config import DATE_FORMAT, TIME_FORMAT
 from moncli.enums import ColumnType
-from moncli import types as t
 
 
 
@@ -36,13 +33,14 @@ def test_date_type_should_succeed_when_to_native_returns_a_datetime_when_passing
 
     # Arrange
     date_type = t.DateType(id='date_column_2', has_time=True)
-
+    ts = 1632952115
+    simple_date = '2021-09-29 17:48:35'
     # Act
-    value_1 = date_type.to_native(1632952115)
-    value_2 = date_type.to_native('2021-09-29 17:48:35')
+    value_1 = date_type.to_native(ts)
+    value_2 = date_type.to_native(simple_date)
 
     # Assert
-    eq_(value_1, datetime(2021, 9, 30, 3, 18, 35))
+    eq_(value_1, datetime(2021, 9, 29, 17, 48, 35))
     eq_(value_2, datetime(2021, 9, 29, 17, 48, 35))
 
 
@@ -106,12 +104,12 @@ def test_date_type_should_succeed_when_to_primitive_returns_export_dict_with_tim
 
     # Arrange
     date_type = t.DateType(id='date_column_6', has_time=True)
-    value = datetime(2021, 9, 30, 3, 18, 35)
+    value = datetime(2021, 9, 30, 3, 30, 0) # Assume EST is TZ
 
     # Act
     date_value = date_type.to_primitive(value)
 
     # Assert
 
-    eq_(date_value['date'], '2021-09-29')
-    eq_(date_value['time'], '21:48:35')
+    eq_(date_value['date'], value.astimezone(timezone.utc).strftime(DATE_FORMAT))
+    eq_(date_value['time'], value.astimezone(timezone.utc).strftime(TIME_FORMAT))
