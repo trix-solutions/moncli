@@ -1,8 +1,10 @@
-from schematics.exceptions import ValidationError
+from nose.tools.trivial import ok_
+from schematics.exceptions import DataError
 from nose.tools import eq_,raises
 
 from moncli import entities as en
 from moncli.enums import ColumnType
+from moncli.models import MondayModel
 from moncli.types import TimeZoneType
 
 
@@ -61,11 +63,21 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_s
     # Assert
     eq_(value['timezone'],'America/New_York')
 
-@raises(ValidationError)
+
 def test_timezone_type_should_raise_validation_error_when_validate_timezone_receives_invalid_timezone_str():
 
     # Arrange
-    timezone_type = TimeZoneType(id='timezone_type_1')
+    class TestModel(MondayModel):
+        value = TimeZoneType(id='tz_1')
+    test = TestModel(id='12345', name='Test Item')
 
     # Act
-    timezone_type.validate_timezone('Invalid/Timezone')
+    test.value = 'Invalid/Timezone'
+    error = None
+    try:
+        test.validate()
+    except DataError as ex:
+        error = ex
+
+    # Assert
+    ok_('value' in error.messages)
