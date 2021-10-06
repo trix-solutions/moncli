@@ -3,11 +3,9 @@ import importlib, json, pickle
 from schematics.exceptions import DataError
 from schematics.models import Model
 
-from .entities import Item, Board, Group
-
 class MondayModel(Model):
 
-    def __init__(self, item: Item = None, raw_data: dict = None, id: str = None, name: str = None, board: Board = None, *args, **kwargs):
+    def __init__(self, item = None, raw_data: dict = None, id: str = None, name: str = None, board = None, *args, **kwargs):
         
         self._item = item
         self._board = board
@@ -109,7 +107,7 @@ class MondayModel(Model):
             raise KeyError('Model field does not contain metadata key: ({}).'.format(key))
         
 
-    def save(self, group: Group = None, archive: bool = False):
+    def save(self, group = None, archive: bool = False):
         if not self._item and not self._board:
             raise TypeError('Unable to save model without monday.com item/board information.')
 

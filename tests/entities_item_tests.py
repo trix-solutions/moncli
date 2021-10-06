@@ -300,7 +300,7 @@ def test_should_fail_to_update_item_name_if_input_new_name_parameter_is_none(get
     item = client.get_items()[0]
 
     # Act
-    item.change_name(None)
+    item.change_item_name(None)
 
 @patch.object(en.Item,'get_board')
 @patch('moncli.api_v2.get_items')
@@ -316,7 +316,7 @@ def test_should_update_item_name_if_new_name_parameter_contains_a_valid_value(ch
 
 
     # Act
-    new_item = item.change_name(new_name)
+    new_item = item.change_item_name(new_name)
 
     # Assert
     ok_(item != None)

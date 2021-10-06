@@ -1,6 +1,7 @@
 from .. import api, entities as en
 from ..enums import *
 from ..error import MondayClientError
+from ..models import MondayModel
 
 
 class MondayClient():
@@ -625,15 +626,17 @@ class MondayClient():
         return [en.asset.Asset(**data) for data in assets_data]
 
 
-    def get_items(self, get_column_values = None, *args, **kwargs):
+    def get_items(self, get_column_values = None, as_model: type = None, *args, **kwargs):
         """Get a collection of items.
 
             Parameters
 
-                args : `tuple`
-                    The list of item return fields.
                 get_column_values: `bool`
                     Flag used to include column values with the returned items.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
+                args : `tuple`
+                    The list of item return fields.
                 kwargs : `dict`
                     Optional keyword arguments for querying items.
 
@@ -696,8 +699,17 @@ class MondayClient():
             *args,
             api_key=self.__creds.api_key_v2, 
             **kwargs)
-        return [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
-        
+        items = [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
+        if not as_model:
+            return items
+        if not issubclass(as_model, MondayModel):
+            raise MondayClientError(
+                'invalid_as_model_parameter',
+                self.id,
+                "as_model parameter must be of MondayModel Type"
+            )
+        return [as_model(item) for item in items]
+            
 
     def get_updates(self, *args, **kwargs):
         """Get a collection of updates.
@@ -798,13 +810,15 @@ class MondayClient():
         return en.Update(creds=self.__creds, **update_data)
 
 
-    def clear_item_updates(self, item_id: str, *args):
+    def clear_item_updates(self, item_id: str, as_model: type = None, *args):
         """Clear an item's updates.
 
             Parameters
 
                 item_id : `str`
                     The item's unique identifier.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     The list of optional fields to return.
 
@@ -847,7 +861,17 @@ class MondayClient():
             item_id,
             *args,
             api_key=self.__creds.api_key_v2)
-        return en.Item(creds=self.__creds, **item_data)
+        items= en.Item(creds=self.__creds, **item_data)
+        if as_model:
+            if not issubclass(as_model, MondayModel):
+                raise MondayClientError(
+                    'invalid_as_model_parameter',
+                    self.id,
+                    "as_model parameter must be of MondayModel Type"
+                )
+            return [as_model(item) for item in items]
+        else:
+            return items
 
 
     def create_notification(self, text: str, user_id: str, target_id: str, target_type: NotificationTargetType, *args, **kwargs):
