@@ -1002,9 +1002,9 @@ class Board(_Board):
             return items
         if not issubclass(type(as_model), MondayModel):
             raise BoardError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
@@ -1090,9 +1090,9 @@ class Board(_Board):
             return items
         if not issubclass(type(as_model), MondayModel):
             raise BoardError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
  
 
@@ -1189,9 +1189,9 @@ class Board(_Board):
             return items
         if not issubclass(type(as_model), MondayModel):
             raise BoardError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
@@ -1288,9 +1288,9 @@ class Board(_Board):
             return items
         if not issubclass(type(as_model), MondayModel):
             raise BoardError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
