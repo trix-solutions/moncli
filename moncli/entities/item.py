@@ -1,3 +1,5 @@
+import json
+
 from schematics.models import Model
 from schematics.types import StringType
 
@@ -5,6 +7,8 @@ from .. import api, entities as en, models as m, error as e
 from ..error import MondayClientError,ItemError
 from ..models import MondayModel
 
+from .. import api, entities as en
+from ..error import MoncliError,ItemError
 
 class _Item(Model):
     """Item Base Model"""
@@ -300,22 +304,26 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, file_column: en.cv.FileValue, as_model: type = None, *args):
-        """Add a file to a column value.
+    def remove_files(self, id: str = None, title: str = None,as_model: type = None, file_value=None, *args):
+        """Removes a file from a column value.
 
             Parameters
 
-                file_column : moncli.entities.FileValue
-                    The file column value to be updated.
+                id : 'str'
+                    The id of the column to be updated.
+                title : 'str'
+                    The title of the column to be updated.
                 as_model: `type`
                     The MondayModel subclass to be returned.
+                file_value : moncli.entities.column_value.FileValue
+                    The file value to be removed.
                 args : `tuple`
                     Optional file return fields.
 
             Returns
 
-                item: `moncli.entites.item.Item`
-                    The item to be returned
+                item : `moncli.entities.Item`
+                    The updated item.
 
             Return Fields
 
@@ -346,12 +354,22 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
+        
+        if (id or title or file_value):
+            if id:
+                column_id = id
+            if title:
+                column_id = self.column_values[title].id
+            if file_value:
+                    column_id=file_value.id
+        else:
+            raise ItemError('clear_files_not_enough_parameters', self.id, 'Insufficient parameters for clearing files from column value.')
 
         item_data = api.change_column_value(
-            self.id,
-            file_column.id,
-            self.__board.id,
-            file_column.format(),
+            item_id=self.id,
+            board_id=self.board.id,
+            column_id=column_id,
+            value={'clear_all': True},
             *args,
             api_key=self.__creds.api_key_v2)
         items = Item(creds=self.__creds, **item_data)
@@ -363,6 +381,8 @@ class Item(_Item):
             self.id,
             "as_model parameter must be of MondayModel Type")
         return [as_model(item) for item in items]
+
+
 
 
     def get_board(self, *args):
@@ -1660,3 +1680,4 @@ class NotEnoughChangeSimpleColumnValueParameters(Exception):
 class InvalidParameterError(Exception):
     def __init__(self):
         self.message = "New name must be present"
+

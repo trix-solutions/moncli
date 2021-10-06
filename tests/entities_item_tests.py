@@ -7,8 +7,8 @@ from nose.tools import ok_, eq_, raises
 from moncli import client, entities as en
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
-from moncli.models import MondayModel
-from moncli.types import TextType, MondayType
+from moncli.entities.item import ItemError
+
 
 @patch('moncli.api_v2.get_items')
 def test_item_should_get_board(get_items):
@@ -701,3 +701,64 @@ def test_should_get_activity_logs(get_items, get_boards):
     eq_(activity_logs[0].id, id)
     eq_(activity_logs[0].account_id, account_id)
 
+
+@patch('moncli.api_v2.get_items')
+@raises(ItemError)
+def test_item_should_fail_to_remove_file(get_items):
+    
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    item = client.get_items()[0]
+
+    # Act
+    item.remove_files()
+
+@patch.object(en.Item,'get_column_values')
+@patch('moncli.api_v2.change_column_value')
+@patch('moncli.api_v2.get_items')
+def test_should_return_item_when_passing_file_value_only(get_items,change_column_value,get_column_values):
+
+    # Arrange
+    id= 'files_1',
+    title= 'Files 1'
+    value = {'files': [{'fileType': 'ASSET', 'assetId': 303639397, 'name': 'test.py'}]}
+
+    file_cv = en.cv.create_column_value(ColumnType.file,id=id,title=title,value=json.dumps(value))
+    board = {'id': '1','name': "new board"}
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
+    get_column_values.return_value = [file_cv]
+
+    item = client.get_items()[0]
+    column_value = item.get_column_values()[0]
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1','board': board}
+
+    # Act
+    file = item.remove_files(file_value=column_value)
+
+    # Assert
+    eq_(item.id, '1')
+
+@patch.object(en.Item,'get_column_values')
+@patch('moncli.api_v2.change_column_value')
+@patch('moncli.api_v2.get_items')
+def test_should_return_item_when_passing_id_or_title(get_items,change_column_value,get_column_values):
+
+    # Arrange
+    id= 'files_1',
+    title= 'Files 1'
+    value = {'files': [{'fileType': 'ASSET', 'assetId': 303639397, 'name': 'test.py'}]}
+
+    file_cv = en.cv.create_column_value(ColumnType.file,id=id,title=title,value=json.dumps(value))
+    board = {'id': '1','name': "new board"}
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
+    get_column_values.return_value = [file_cv]
+
+    item = client.get_items()[0]
+    column_value = item.get_column_values()[0]
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1','board': board}
+
+    # Act
+    file = item.remove_files(id=id)
+
+    # Assert
+    eq_(item.id, '1')
