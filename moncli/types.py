@@ -1,9 +1,9 @@
 import pytz, json
 from datetime import datetime
 from pytz.exceptions import UnknownTimeZoneError
-
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
+from enum import Enum
 
 from . import entities as en
 from .config import *
@@ -180,7 +180,41 @@ class StatusType(MondayType):
             return value
 
     def _cast(self, value):
-        return super()._cast(value)
+        labels = self.metadata['labels']
+        label = str(value)
+        if isinstance(self.native_type,str) and isinstance(value,int):
+            if not (label in labels.keys()):
+                raise ConversionError('Cannot find status label with index "{}".'.format(value))
+            return labels[label]
+        if isinstance(self.native_type,Enum) and isinstance(value,str):
+            try:
+                value = int(value)
+                if not (label in labels.keys()):
+                    raise ConversionError('Cannot find status label with index "{}".'.format(value))
+                return labels[label]
+            except ValueError:
+                if not (label in labels.values()):
+                    raise ConversionError('Cannot find status label with index "{}".'.format(value))
+                return self._data_mapping[label]
+        if isinstance(self.native_type,Enum) and isinstance(value,int):
+            if not (label in labels.keys()):
+                    raise ConversionError('Cannot find status label with index "{}".'.format(value))
+            return self._data_mapping[label]
+
+    def _export(self, value):
+        labels = self.metadata['labels']
+        label = str(value)
+        index  = None
+        if isinstance(self.native_type,str):
+            index = labels[label]
+        if isinstance(self.native_type,Enum):
+            label = self._data_mapping[value]
+            index = label[label]
+        return {'index': int(index)} 
+
+
+
+
 
 
 
