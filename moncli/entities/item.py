@@ -4,11 +4,9 @@ from schematics.models import Model
 from schematics.types import StringType
 
 from .. import api, entities as en, models as m, error as e
-from ..error import MondayClientError,ItemError
+from ..error import ItemError
 from ..models import MondayModel
 
-from .. import api, entities as en
-from ..error import MoncliError,ItemError
 
 class _Item(Model):
     """Item Base Model"""
@@ -304,7 +302,7 @@ class Item(_Item):
         return [en.Asset(**asset_data) for asset_data in assets_data]
 
 
-    def remove_files(self, id: str = None, title: str = None,as_model: type = None, file_value=None, *args):
+    def remove_files(self, id: str = None, title: str = None, file_value=None, as_model: type = None, *args):
         """Removes a file from a column value.
 
             Parameters
@@ -313,10 +311,10 @@ class Item(_Item):
                     The id of the column to be updated.
                 title : 'str'
                     The title of the column to be updated.
-                as_model: `type`
-                    The MondayModel subclass to be returned.
                 file_value : moncli.entities.column_value.FileValue
                     The file value to be removed.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional file return fields.
 
@@ -376,11 +374,13 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
+
+
 
 
 
@@ -721,10 +721,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
     def change_column_value(self,id = None, title = None, column_value = None, get_column_values: bool = None, as_model: type = None, *args):
@@ -837,10 +837,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
     def change_simple_column_value(self, id = None, title = None, value = None,as_model: type = None, *args):
@@ -914,10 +914,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
     def change_multiple_column_values(self, column_values, get_column_values: bool = False, as_model: type = None, *args):
@@ -993,10 +993,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
@@ -1064,10 +1064,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
@@ -1137,10 +1137,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
@@ -1199,10 +1199,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
@@ -1261,10 +1261,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
@@ -1331,10 +1331,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
@@ -1551,10 +1551,10 @@ class Item(_Item):
         if not as_model:
             return items
         if not issubclass(type(as_model), MondayModel):
-            raise MondayClientError(
-            'invalid_as_model_parameter',
-            self.id,
-            "as_model parameter must be of MondayModel Type")
+            raise ItemError(
+                'invalid_as_model_parameter',
+                self.id,
+                'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
 
