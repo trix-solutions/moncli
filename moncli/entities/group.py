@@ -2,7 +2,8 @@ from schematics.models import Model
 from schematics import types
 
 from .. import api, entities as en, models as m
-from ..error import ItemError
+from ..error import MondayClientError
+from ..models import MondayModel
 
 class _Group(Model):
     """Group base model"""
@@ -270,16 +271,14 @@ class Group(_Group):
             group_id=self.id,
             **kwargs)
         items = en.Item(creds=self.__creds, **item_data)
-        if as_model:
-            if not issubclass(as_model, m.MondayModel):
-                raise ItemError(
-                    'invalid_as_model_parameter',
-                    self.id,
-                    "as_model parameter must be of MondayModel Type"
-                )
-            return [as_model(item) for item in items]
-        else:
+        if not as_model:
             return items
+        if not issubclass(type(as_model), MondayModel):
+            raise MondayClientError(
+            'invalid_as_model_parameter',
+            self.id,
+            "as_model parameter must be of MondayModel Type")
+        return [as_model(item) for item in items]
 
     def get_items(self, get_column_values: bool = True, as_model: type = None, *args, **kwargs):
         """Get items from this group.
@@ -356,13 +355,11 @@ class Group(_Group):
             limit=1,
             **group_kwargs)[0]['groups'][0]['items']
         items = [en.Item(creds=self.__creds, **item_data) for item_data in items_data] 
-        if as_model:
-            if not issubclass(as_model, m.MondayModel):
-                raise ItemError(
-                    'invalid_as_model_parameter',
-                    self.id,
-                    "as_model parameter must be of MondayModel Type"
-                )
-            return [as_model(item) for item in items]
-        else:
+        if not as_model:
             return items
+        if not issubclass(type(as_model), MondayModel):
+            raise MondayClientError(
+            'invalid_as_model_parameter',
+            self.id,
+            "as_model parameter must be of MondayModel Type")
+        return [as_model(item) for item in items]
