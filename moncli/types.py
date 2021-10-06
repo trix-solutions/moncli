@@ -1,10 +1,9 @@
 import pytz, json
-from schematics.exceptions import ConversionError
+from pytz.exceptions import UnknownTimeZoneError
+from datetime import datetime, timedelta, timezone
+
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
-from datetime import datetime
-from datetime import datetime, timedelta, timezone
-from pytz.exceptions import UnknownTimeZoneError
 
 from . import entities as en
 from .config import *
@@ -96,37 +95,6 @@ class CheckboxType(MondayType):
             return {'checked': 'true'}
 
 
-class NumberType(MondayType):
-    native_type = (int, float)
-    allow_casts = (str, )
-    null_value = ""
-    
-    def _cast(self, value):
-        try:
-            number_value = int(value) if int(value) else float(value)
-            return number_value
-        except TypeError:
-            raise ConversionError('Couldn\'t interpret str {} as int or float.'.format(value))
-    
-    def _export(self, value):
-        return str(value)
-
-
-class LongTextType(MondayType):
-    native_type = str
-    allow_casts = (int, float)
-    null_value = {}
-
-    def _export(self, value):
-        return {'text': value}
-
-        
-class TextType(MondayType):
-    native_type = str
-    allow_casts = (int, float)
-    null_value = ""
-
-
 class DateType(MondayType):
 
     native_type = datetime
@@ -167,6 +135,52 @@ class DateType(MondayType):
             time = value.time().strftime(TIME_FORMAT)
             return {'date': date, 'time': time}
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
+
+
+class LongTextType(MondayType):
+    native_type = str
+    allow_casts = (int, float)
+    null_value = {}
+
+    def _export(self, value):
+        return {'text': value}
+
+
+class NumberType(MondayType):
+    native_type = (int, float)
+    allow_casts = (str, )
+    null_value = ""
+    
+    def _cast(self, value):
+        try:
+            number_value = int(value) if int(value) else float(value)
+            return number_value
+        except TypeError:
+            raise ConversionError('Couldn\'t interpret str {} as int or float.'.format(value))
+    
+    def _export(self, value):
+        return str(value)
+
+
+class RatingType(MondayType):
+    native_type = int
+    allow_casts = (str,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            return int(value)
+        except ValueError:
+            raise ConversionError('Value "{}" is not a valid rating.'.format(value))
+    
+    def _export(self, value):
+        return { 'rating': value}
+
+        
+class TextType(MondayType):
+    native_type = str
+    allow_casts = (int, float)
+    null_value = ""
 
 
 class TimeZoneType(MondayType):
