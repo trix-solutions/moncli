@@ -340,7 +340,7 @@ class Item(_Item):
                 url_thumbnail : `str`
                     Url to view the asset in thumbnail mode. Only available for images.
         """
-        value = json.dumps({} )
+        
         if (id or title or file_value):
             if id:
                 column_id = id
@@ -355,7 +355,7 @@ class Item(_Item):
             item_id=self.id,
             board_id=self.board.id,
             column_id=column_id,
-            value=value,
+            value={'clear_all': True},
             *args,
             api_key=self.__creds.api_key_v2)
         return Item(creds=self.__creds, **item_data)
