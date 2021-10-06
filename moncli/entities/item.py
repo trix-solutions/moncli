@@ -4,7 +4,7 @@ from schematics.models import Model
 from schematics.types import StringType
 
 from .. import api, entities as en
-from ..error import MoncliError
+from ..error import MoncliError,ItemError
 
 class _Item(Model):
     """Item Base Model"""
@@ -340,7 +340,7 @@ class Item(_Item):
                 url_thumbnail : `str`
                     Url to view the asset in thumbnail mode. Only available for images.
         """
-        value = json.dumps({ "clear_all": True} )
+        value = json.dumps({} )
         if (id or title or file_value):
             if id:
                 column_id = id
@@ -1551,7 +1551,4 @@ class NotEnoughChangeSimpleColumnValueParameters(Exception):
 class InvalidParameterError(Exception):
     def __init__(self):
         self.message = "New name must be present"
-class ItemError(MoncliError):
-    entity_type = 'Item'
-    def __init__(self, error_code, entity_type, message):
-        super().__init__(error_code, None, self.entity_type, message)
+
