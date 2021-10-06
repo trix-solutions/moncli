@@ -133,6 +133,8 @@ class RatingType(MondayType):
     def _export(self, value):
         return { 'rating': value}
 
+
+
         
 class TextType(MondayType):
     native_type = str
@@ -152,3 +154,34 @@ class TimeZoneType(MondayType):
             pytz.timezone(value)
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
+class StatusType(MondayType):
+    def __init__(self, id: str = None, title: str = None,  *args, **kwargs):
+        data_mapping = { v: int(k) for k,v in self.settings['labels'] }
+        if data_mapping:
+            values= [data_mapping]        
+            self.to_native = values[0].__class__
+            values = self.choices
+        data_mapping =  self.field_data_mapping 
+        super().__init__(id=id, title=title, *args, **kwargs)
+    
+    def _process(self, value):
+        labels = self.metadata['labels']
+        if isinstance(self.native_type,str):
+            try:
+                if isinstance(int(value),int):
+                    if value in labels.values():
+                        return value
+            except ValueError:
+                    raise ConversionError('Cannot find status label with index "{}".'.format(value))
+            if isinstance(value,int):
+                if value in labels.values():
+                    return value
+            return value
+
+    def _cast(self, value):
+        return super()._cast(value)
+
+
+
+
+
