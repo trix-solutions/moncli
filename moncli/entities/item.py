@@ -363,7 +363,9 @@ class Item(_Item):
             if file_value:
                     column_id=file_value.id
         else:
-            raise ItemError('clear_files_not_enough_parameters', self.id, 'Insufficient parameters for clearing files from column value.')
+            raise ItemError('clear_files_not_enough_parameters',
+             self.id,
+             'Insufficient parameters for clearing files from column value.')
 
         item_data = api.change_column_value(
             item_id=self.id,
