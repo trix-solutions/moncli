@@ -178,48 +178,11 @@ class RatingType(MondayType):
         return { 'rating': value}
 
 
-
-        
-class TextType(MondayType):
-    native_type = str
-    allow_casts = (int, float)
-    null_value = ""
-
-
-class TagsType(MondayType):
-    native_type = list
-    native_default = []
-    null_value = {}
-
-    def _process(self, value):
-        for tag in value:
-            try:
-                return_value = [int(tag) for tag in value]
-            except ValueError:
-                raise ConversionError('Invalid Tag ID "{}".'.format(tag))
-        return return_value
-    
-    def _export(self, value):
-        return {'tag_ids': value}
-
-
-class TimeZoneType(MondayType):
-    native_type = str
-    null_value = {}
-
-    def _export(self, value):
-        return {'timezone': value}
-
-    def validate_timezone(self, value):
-        try:
-            pytz.timezone(value)
-        except (UnknownTimeZoneError):
-            raise ValidationError('Unknown time zone "{}".'.format(value))
-
 class StatusType(MondayType):
     native_type = str
     allow_casts = (int, str)
     null_value = {}
+
     def __init__(self, id: str = None, title: str = None,data_mapping:dict =None ,  *args, **kwargs):
         if data_mapping:
             values= [value for value in data_mapping.values()]        
@@ -280,6 +243,43 @@ class StatusType(MondayType):
                 if v==key:
                     index = k
         return {'index': int(index)} 
+
+ 
+class TextType(MondayType):
+    native_type = str
+    allow_casts = (int, float)
+    null_value = ""
+
+
+class TagsType(MondayType):
+    native_type = list
+    native_default = []
+    null_value = {}
+
+    def _process(self, value):
+        for tag in value:
+            try:
+                return_value = [int(tag) for tag in value]
+            except ValueError:
+                raise ConversionError('Invalid Tag ID "{}".'.format(tag))
+        return return_value
+    
+    def _export(self, value):
+        return {'tag_ids': value}
+
+
+class TimeZoneType(MondayType):
+    native_type = str
+    null_value = {}
+
+    def _export(self, value):
+        return {'timezone': value}
+
+    def validate_timezone(self, value):
+        try:
+            pytz.timezone(value)
+        except (UnknownTimeZoneError):
+            raise ValidationError('Unknown time zone "{}".'.format(value))
 
 
 
