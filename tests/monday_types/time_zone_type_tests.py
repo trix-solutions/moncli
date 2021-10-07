@@ -1,4 +1,3 @@
-from nose.tools.trivial import ok_
 from schematics.exceptions import DataError
 from nose.tools import eq_,raises
 
@@ -64,20 +63,14 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_s
     eq_(value['timezone'],'America/New_York')
 
 
+@raises(DataError)
 def test_timezone_type_should_raise_validation_error_when_validate_timezone_receives_invalid_timezone_str():
 
     # Arrange
     class TestModel(MondayModel):
         value = TimeZoneType(id='tz_1')
-    test = TestModel(id='12345', name='Test Item')
+    test = TestModel(id='item_id', name='Item Name')
 
     # Act
     test.value = 'Invalid/Timezone'
-    error = None
-    try:
-        test.validate()
-    except DataError as ex:
-        error = ex
-
-    # Assert
-    ok_('value' in error.messages)
+    test.validate()

@@ -706,7 +706,7 @@ class MondayClient():
             raise MondayClientError(
                 'invalid_as_model_parameter',
                 self.id,
-                "as_model parameter must be of MondayModel Type"
+                'as_model parameter must be of MondayModel Type'
             )
         return [as_model(item) for item in items]
             
@@ -867,7 +867,7 @@ class MondayClient():
                 raise MondayClientError(
                     'invalid_as_model_parameter',
                     self.id,
-                    "as_model parameter must be of MondayModel Type"
+                    'as_model parameter must be of MondayModel Type'
                 )
             return [as_model(item) for item in items]
         else:
