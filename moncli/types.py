@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
-from enum import Enum
+from enum import Enum,EnumMeta
 
 from . import entities as en
 from .config import *
@@ -217,7 +217,9 @@ class TimeZoneType(MondayType):
             raise ValidationError('Unknown time zone "{}".'.format(value))
 
 class StatusType(MondayType):
-    allow_casts = (int,str,Enum)
+    native_type = str
+    allow_casts = (int, str)
+    null_value = {}
     def __init__(self, id: str = None, title: str = None,data_mapping:dict =None ,  *args, **kwargs):
         if data_mapping:
             values= [value for value in data_mapping.values()]        
@@ -228,7 +230,7 @@ class StatusType(MondayType):
     
     def _process(self, value):
         labels = self.metadata['labels']
-        if isinstance(self.native_type,str):
+        if self.native_type == str:
             try:
                 if isinstance(int(value),int):
                     if value in labels.values():
@@ -238,17 +240,17 @@ class StatusType(MondayType):
             if isinstance(value,int):
                 if value in labels.values():
                     return value
-            return value
+        return value
 
     def _cast(self, value):
         labels = self.metadata['labels']
         label = str(value)
-        if isinstance(self.native_type,str) and isinstance(value,int):
+        if self.native_type == str and isinstance(value,int):
             if not (label in labels.keys()):
                 raise ConversionError('Cannot find status label with index "{}".'.format(value))
-            return_value = labels[label]
-            return self._data_mapping(return_value)
-        if isinstance(self.native_type,Enum) and isinstance(value,str):
+            return labels[label]
+            
+        if isinstance(self.native_type,EnumMeta) and isinstance(value,str):
             try:
                 value = int(value)
                 if not (label in labels.keys()):
@@ -258,10 +260,10 @@ class StatusType(MondayType):
                 if not (label in labels.values()):
                     raise ConversionError('Cannot find status label with index "{}".'.format(value))
                 return self._data_mapping[label]
-        if isinstance(self.native_type,Enum) and isinstance(value,int):
+        if isinstance(self.native_type,EnumMeta) and isinstance(value,int):
             if not (label in labels.keys()):
                     raise ConversionError('Cannot find status label with index "{}".'.format(value))
-            return self._data_mapping[label]
+            return self._data_mapping[labels[label]]
 
     def _export(self, value):
         labels = self.metadata['labels']
@@ -269,9 +271,14 @@ class StatusType(MondayType):
         index  = None
         if isinstance(self.native_type,str):
             index = labels[label]
-        if isinstance(self.native_type,Enum):
-            label = self._data_mapping[value]
-            index = label[label]
+        if isinstance(self.native_type,EnumMeta):
+            key = None
+            for k,v in self._data_mapping.items():
+                if v == value:
+                    key = k
+            for k,v in labels.items():
+                if v==key:
+                    index = k
         return {'index': int(index)} 
 
 
