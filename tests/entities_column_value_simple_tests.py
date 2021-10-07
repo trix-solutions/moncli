@@ -570,9 +570,9 @@ def test_should_create_a_status_column_value_with_api_input_data():
     index_value = {
         'index': 1,
     }
+    value = json.dumps(index_value)
     settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
     settings_str = json.dumps(settings)
-    value = json.dumps(index_value)
     column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value,settings_str=settings_str)
 
     # Act

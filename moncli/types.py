@@ -215,14 +215,15 @@ class TimeZoneType(MondayType):
             pytz.timezone(value)
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
+
 class StatusType(MondayType):
-    def __init__(self, id: str = None, title: str = None,  *args, **kwargs):
-        data_mapping = { v: int(k) for k,v in self.settings['labels'] }
+    allow_casts = (int,str,Enum)
+    def __init__(self, id: str = None, title: str = None,data_mapping:dict =None ,  *args, **kwargs):
         if data_mapping:
-            values= [data_mapping]        
-            self.to_native = values[0].__class__
-            values = self.choices
-        data_mapping =  self.field_data_mapping 
+            values= [value for value in data_mapping.values()]        
+            self.native_type = values[0].__class__
+            self.choices = values
+        self._data_mapping =  data_mapping 
         super().__init__(id=id, title=title, *args, **kwargs)
     
     def _process(self, value):
@@ -245,7 +246,8 @@ class StatusType(MondayType):
         if isinstance(self.native_type,str) and isinstance(value,int):
             if not (label in labels.keys()):
                 raise ConversionError('Cannot find status label with index "{}".'.format(value))
-            return labels[label]
+            return_value = labels[label]
+            return self._data_mapping(return_value)
         if isinstance(self.native_type,Enum) and isinstance(value,str):
             try:
                 value = int(value)
