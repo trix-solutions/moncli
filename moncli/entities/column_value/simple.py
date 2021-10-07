@@ -337,8 +337,9 @@ class StatusValue(ComplexNullValue):
         settings = self.settings
         labels = settings['labels']
         index = str(value['index'])
-        value = labels[index]  
-        return value
+        if not self.text and index not in labels:
+            return None
+        return labels[index]
     
     def _cast(self, value):
         if isinstance(value,int):
