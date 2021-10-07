@@ -1,12 +1,14 @@
-import pytz, json
+import pytz, json,re
 from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
 
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 
+from moncli.entities.column_value import Email
 from . import entities as en
 from .config import *
+
 
 class MondayType(BaseType):
 
@@ -212,3 +214,22 @@ class TimeZoneType(MondayType):
             pytz.timezone(value)
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
+
+class EmailType(MondayType):
+    native_type = Email
+    null_value = {}
+    allow_casts = (dict, )
+
+    def _cast(self, value):
+        try:
+            return Email(value['email'],value['text'])
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" to Email.'.format(value))
+
+    def _export(self, value):
+        return {'email': value.email, 'minute': value.email}
+
+    def validate_email(self, value):
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        if value.email and not re.fullmatch(regex, value.email):
+            raise ValidationError('Value "{}" is not a valid email address.'.format(value))
