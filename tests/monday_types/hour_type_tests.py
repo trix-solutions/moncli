@@ -96,21 +96,28 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_an_hou
     eq_(value['hour'],12)
     eq_(value['minute'],0)
 
-@raises(ValidationError)
+@raises(DataError)
 def test_should_succeed_when_validate_hour_raises_a_validation_exception_when_passed_an_hour_with_hour_less_than_0_or_hour_greater_than_23_to_hour_type():
     
-    # Arrange
-    hour_type = HourType(title='hour 1')
+    class TestModel(MondayModel):
+        value = HourType(id='hour 1')
+    model = TestModel(id='item_id', name='Item Name')
 
     # Act
+    model.value = Hour(12,0)
+    model.value.hour = 99
 
-    hour_type.validate_hour(value=Hour(25,0))
+    model.validate()
 
-@raises(ValidationError)
+@raises(DataError)
 def test_should_succeed_when_validate_hour_raises_a_validation_exception_when_passed_an_hour_with_minute_less_than_0_or_minute_greater_than_59_to_hour_type():
     # Arrange
-    hour_type = HourType(title='hour 1')
+    class TestModel(MondayModel):
+        value = HourType(id='hour 1')
+    model = TestModel(id='item_id', name='Item Name')
 
     # Act
-    
-    hour_type.validate_hour(value=Hour(1,99))
+    model.value = Hour(12,0)
+    model.value.minute = 99
+
+    model.validate()

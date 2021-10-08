@@ -227,7 +227,7 @@ class HourType(MondayType):
     def _export(self, value):
         return {'hour': value.hour, 'minute': value.minute}
 
-    def validate_hour(value):
+    def validate_hour(self,value):
         if (value.hour > 23) or (value.hour < 0):
             raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
         if (value.minute > 59) or (value.minute < 0):
