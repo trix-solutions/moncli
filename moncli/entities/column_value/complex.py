@@ -251,16 +251,13 @@ class DependencyValue(ComplexNullValue):
             return []
     
     def _format(self):
-        try:
-            list_value = None
-            return_list = []
-            for id in self.value:
-                list_value = id
+        return_list = []
+        for id in self.value:
+            try:
                 return_list.append(int(id))
-            return {'item_ids': return_list }
-        except ValueError:
-            raise ColumnValueError(
-                'invalid_item_id',
-                self.id,
-                'Invalid item ID "{}".'.format(list_value)
-            )
+            except ValueError:
+                raise ColumnValueError(
+                    'invalid_item_id',
+                    self.id,
+                    'Invalid item ID "{}".'.format(id))
+        return {'item_ids': return_list }
