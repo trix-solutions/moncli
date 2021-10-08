@@ -7,6 +7,7 @@ from schematics.types import BaseType
 
 from . import entities as en
 from .config import *
+from .entities.column_value import Week
 
 class MondayType(BaseType):
 
@@ -212,3 +213,22 @@ class TimeZoneType(MondayType):
             pytz.timezone(value)
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
+
+class WeekType(MondayType):
+    
+    native_type = Week
+    null_value = {}
+    allow_casts = (dict,)
+
+    def _cast(self, value):
+        try:
+            return Week(value['start'],value['end'])
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" to Week.'.format(value))
+    
+    def _export(self, value):
+        if not (value.start and value.end) :
+            return self.null_value
+        start =  value.start.strftime(DATE_FORMAT) 
+        end  = value.end.strftime(DATE_FORMAT)
+        return {'start': start, 'end': end}
