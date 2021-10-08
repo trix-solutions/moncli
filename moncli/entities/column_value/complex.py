@@ -236,3 +236,31 @@ class WeekValue(ComplexNullValue):
             return {'week': {'startDate': start_date, 'endDate': end_date}}
         except (TypeError,AttributeError):
             return COMPLEX_NULL_VALUE
+
+class DependencyValue(ComplexNullValue):
+    """An item link column value."""
+
+    native_type = list
+    native_default = []
+
+    def _convert(self, value):
+        try:
+            list_ids = value['linkedPulseIds']
+            return [int(value['linkedPulseId']) for value in list_ids ]
+        except IndexError:
+            return []
+    
+    def _format(self):
+        try:
+            list_value = None
+            return_list = []
+            for id in self.value:
+                list_value = id
+                return_list.append(int(id))
+            return {'item_ids': return_list }
+        except ValueError:
+            raise ColumnValueError(
+                'invalid_item_id',
+                self.id,
+                'Invalid item ID "{}".'.format(list_value)
+            )

@@ -8,6 +8,7 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.checkbox: 'CheckboxValue',
     ColumnType.country: 'CountryValue',
     ColumnType.date: 'DateValue',
+    ColumnType.dependency: 'DependencyValue',
     ColumnType.dropdown: 'DropdownValue',
     ColumnType.email: 'EmailValue',
     ColumnType.hour: 'HourValue',
