@@ -89,4 +89,4 @@ def test_should_succeed_when_validate_email_raises_a_validation_error_when_passe
 
     # Act
     test.value = Email(email='this.isnot.an.email...',text='not a valid email')
-    test.validate(test.value)
+    test.validate()
