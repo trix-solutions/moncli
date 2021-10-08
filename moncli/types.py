@@ -221,7 +221,7 @@ class HourType(MondayType):
 
     def _cast(self, value):
         try:
-            return Hour(value['hour'],value['minute'])
+            return Hour(value['hour'],value.get('minute', 0))
         except KeyError:
             raise ConversionError('Cannot convert value "{}" into Hour.'.format(value))
     def _export(self, value):
