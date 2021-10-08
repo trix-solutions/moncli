@@ -1,13 +1,13 @@
-import pytz, json
+import pytz, json,re
 from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
 
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 
-from .entities.column_value import Hour
 from . import entities as en
 from .config import *
+
 
 class MondayType(BaseType):
 
@@ -138,6 +138,46 @@ class DateType(MondayType):
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
 
 
+class EmailType(MondayType):
+    native_type = en.cv.Email
+    null_value = {}
+    allow_casts = (dict, )
+
+    def _cast(self, value):
+        try:
+            return en.cv.Email(value['email'],value.get('text', value['email']))
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" to Email.'.format(value))
+
+    def _export(self, value):
+        return {'email': value.email, 'text': value.text}
+
+    def validate_email(self, value):
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        if value.email and not re.fullmatch(regex, value.email):
+            raise ValidationError('Value "{}" is not a valid email address.'.format(value))
+
+
+class HourType(MondayType):
+    native_type = en.cv.Hour
+    null_value = {}
+    allow_casts = (dict, )
+
+    def _cast(self, value):
+        try:
+            return en.cv.Hour(value['hour'],value.get('minute', 0))
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" into Hour.'.format(value))
+    def _export(self, value):
+        return {'hour': value.hour, 'minute': value.minute}
+
+    def validate_hour(self,value):
+        if (value.hour > 23) or (value.hour < 0):
+            raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
+        if (value.minute > 59) or (value.minute < 0):
+            raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
+
+
 class LongTextType(MondayType):
     native_type = str
     allow_casts = (int, float)
@@ -213,25 +253,3 @@ class TimeZoneType(MondayType):
             pytz.timezone(value)
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
-
-class HourType(MondayType):
-    native_type = Hour
-    null_value = {}
-    allow_casts = (dict, )
-
-    def _cast(self, value):
-        try:
-            return Hour(value['hour'],value.get('minute', 0))
-        except KeyError:
-            raise ConversionError('Cannot convert value "{}" into Hour.'.format(value))
-    def _export(self, value):
-        return {'hour': value.hour, 'minute': value.minute}
-
-    def validate_hour(self,value):
-        if (value.hour > 23) or (value.hour < 0):
-            raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
-        if (value.minute > 59) or (value.minute < 0):
-            raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
-        
-
-
