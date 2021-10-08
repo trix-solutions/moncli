@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 
+from .entities.column_value import Hour
 from . import entities as en
 from .config import *
 
@@ -212,3 +213,25 @@ class TimeZoneType(MondayType):
             pytz.timezone(value)
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
+
+class HourType(MondayType):
+    native_type = Hour
+    null_value = {}
+    allow_casts = (dict, )
+
+    def _cast(self, value):
+        try:
+            return Hour(value['hour'],value.get('minute', 0))
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" into Hour.'.format(value))
+    def _export(self, value):
+        return {'hour': value.hour, 'minute': value.minute}
+
+    def validate_hour(self,value):
+        if (value.hour > 23) or (value.hour < 0):
+            raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
+        if (value.minute > 59) or (value.minute < 0):
+            raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
+        
+
+
