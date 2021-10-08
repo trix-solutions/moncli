@@ -8,6 +8,8 @@ from enum import Enum,EnumMeta
 
 from . import entities as en
 from .config import *
+from .entities.column_value import Phone
+
 
 class MondayType(BaseType):
 
@@ -295,3 +297,21 @@ class TimeZoneType(MondayType):
 
 
 
+class PhoneType(MondayType):
+
+    native_type = Phone 
+    allow_casts = (dict,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            return Phone(phone=value['phone'],code= value['code'])
+        except KeyError
+    def _export(self, value):
+        return {'timezone': value}
+
+    def validate_timezone(self, value):
+        try:
+            pytz.timezone(value)
+        except (UnknownTimeZoneError):
+            raise ValidationError('Unknown time zone "{}".'.format(value))
