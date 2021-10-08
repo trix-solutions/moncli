@@ -71,14 +71,15 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_emai
     email_type = EmailType(title='email 1')
 
     # Act
-    email = Email('someone@me.com', 'That is me!')
+    email = Email(email='someone@me.com', text='That is me!')
     value = email_type.to_primitive(email)
 
     # Assert
+
     eq_(value['email'],'someone@me.com')
     eq_(value['text'], 'That is me!')
 
-# @raises(ValidationError)
+@raises(DataError)
 def test_should_succeed_when_validate_email_raises_a_validation_error_when_passed_an_invalid_email_value_to_email_type():
 
    # Arrange
@@ -87,7 +88,5 @@ def test_should_succeed_when_validate_email_raises_a_validation_error_when_passe
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.email_field = Email()
-    test.email_field.email = 'this.isnot.an.email...'
-    test.validate()
-    
+    test.value = Email(email='this.isnot.an.email...',text='not a valid email')
+    test.validate(test.value)

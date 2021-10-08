@@ -227,7 +227,7 @@ class EmailType(MondayType):
             raise ConversionError('Cannot convert value "{}" to Email.'.format(value))
 
     def _export(self, value):
-        return {'email': value.email, 'minute': value.email}
+        return {'email': value.email, 'text': value.text}
 
     def validate_email(self, value):
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
