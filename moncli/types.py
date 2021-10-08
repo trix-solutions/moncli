@@ -255,6 +255,7 @@ class TimeZoneType(MondayType):
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
 
+
 class WeekType(MondayType):
     
     native_type = Week
