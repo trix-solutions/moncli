@@ -1,14 +1,10 @@
 import json
-from schematics.exceptions import ConversionError, DataError
+from schematics.exceptions import ConversionError
 from nose.tools import eq_,raises
-from unittest.mock import patch
 from enum import Enum
 
 from moncli import entities as en
-from moncli import client
-from moncli.entities import board
 from moncli.enums import ColumnType
-from moncli.models import MondayModel
 from moncli.types import StatusType
 
 # default class and data mapping declaration for common use

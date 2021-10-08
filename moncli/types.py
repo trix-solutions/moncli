@@ -193,17 +193,21 @@ class StatusType(MondayType):
     
     def _process(self, value):
         labels = self.metadata['labels']
-        if self.native_type == str:
+        label = str(value)
+        if self.native_type != str:
+            return value
+        try:
+            value = int(value)
             try:
-                if isinstance(int(value),int):
-                    if value in labels.values():
-                        return value
-            except ValueError:
-                    raise ConversionError('Cannot find status label with index "{}".'.format(value))
-            if isinstance(value,int):
-                if value in labels.values():
-                    return value
-        return value
+                return labels[label]
+            except KeyError:
+                raise ConversionError('Cannot find status label with index "{}".'.format(value))
+        except ValueError:
+            if value in labels.values():
+                return value
+            raise ConversionError('Cannot find status label "{}".'.format(value))
+                
+        
 
     def _cast(self, value):
         labels = self.metadata['labels']
@@ -232,16 +236,18 @@ class StatusType(MondayType):
         labels = self.metadata['labels']
         label = str(value)
         index  = None
-        if isinstance(self.native_type,str):
-            index = labels[label]
-        if isinstance(self.native_type,EnumMeta):
+        if isinstance(value,str):
+            index = self._data_mapping[value].value
+        elif isinstance(value,Enum):
             key = None
             for k,v in self._data_mapping.items():
                 if v == value:
                     key = k
+                    break
             for k,v in labels.items():
                 if v==key:
                     index = k
+                    break
         return {'index': int(index)} 
 
  
