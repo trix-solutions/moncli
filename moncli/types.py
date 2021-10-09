@@ -61,6 +61,7 @@ class MondayType(BaseType):
         settings = json.loads(value.settings_str) if value.settings_str else {}
         for k, v in settings.items():
             self.metadata[k] = v
+        self._process_column_value(value)
         self.original_value = value.value
         return self.original_value
 
@@ -79,7 +80,7 @@ class MondayType(BaseType):
     def _cast(self, value):
         return self.native_type(value)
 
-    def _set_metadata(self, value: en.cv.ColumnValue):
+    def _process_column_value(self, value: en.cv.ColumnValue):
         pass
 
     def _export(self, value):
