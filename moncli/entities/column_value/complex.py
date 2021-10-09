@@ -216,8 +216,8 @@ class WeekValue(ComplexNullValue):
             start_date = datetime.strptime(value['week']['startDate'], DATE_FORMAT)
             end_date = datetime.strptime(value['week']['endDate'], DATE_FORMAT)
             return Week(start=start_date, end=end_date)
-        except (KeyError,ValueError):
-            return COMPLEX_NULL_VALUE
+        except (KeyError,ValueError, TypeError):
+            return self.native_default
         
     def _cast(self, value):
         try:
