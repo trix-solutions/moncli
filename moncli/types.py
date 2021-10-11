@@ -1,14 +1,14 @@
-import pytz, json,re
+import pytz, json, re
 from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
 
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
+from enum import EnumMeta
 
-from .entities.column_value import Link
 from . import entities as en
 from .config import *
-from .entities.column_value import Week
+
 
 
 class MondayType(BaseType):
@@ -61,6 +61,7 @@ class MondayType(BaseType):
         settings = json.loads(value.settings_str) if value.settings_str else {}
         for k, v in settings.items():
             self.metadata[k] = v
+        self._process_column_value(value)
         self.original_value = value.value
         return self.original_value
 
@@ -79,7 +80,7 @@ class MondayType(BaseType):
     def _cast(self, value):
         return self.native_type(value)
 
-    def _set_metadata(self, value: en.cv.ColumnValue):
+    def _process_column_value(self, value: en.cv.ColumnValue):
         pass
 
     def _export(self, value):
@@ -200,13 +201,13 @@ class HourType(MondayType):
 
 class LinkType(MondayType):
     
-    native_type = Link
+    native_type = en.cv.Link
     null_value = {}
     allow_casts = (dict,)
 
     def _cast(self, value):
         try:
-            return Link(value['url'],value['text'])
+            return en.cv.Link(value['url'],value['text'])
         except KeyError:
             raise ConversionError('Cannot convert value "{}" to Link.'.format(value))
     
@@ -220,6 +221,7 @@ class LinkType(MondayType):
         if not (str_value.startswith('https://') or str_value.startswith('http://')):
             raise ValidationError('Value "{}" is not a valid URL link.'.format(value))
         return str_value
+
 
 
 class LongTextType(MondayType):
@@ -261,7 +263,70 @@ class RatingType(MondayType):
     def _export(self, value):
         return { 'rating': value}
 
-        
+
+class StatusType(MondayType):
+    native_type = str
+    allow_casts = (int,)
+    null_value = {}
+
+    def __init__(self, id: str = None, title: str = None, as_enum: type = None ,  *args, **kwargs):
+        if as_enum:
+            if not isinstance(as_enum, EnumMeta):
+                raise TypeError('Invalid type "{}" for status Enum.'.format(as_enum.__name__))
+            self.choices = list(as_enum)
+            for value in self.choices:
+                if not isinstance(value.value, str):
+                    raise TypeError('Invalid value "{}" for status Enum "{}".'.format(value.value, value.__class__.__name__))
+            self.native_type =  as_enum
+            self.allow_casts = (str,)
+            
+        super().__init__(id=id, title=title, *args, **kwargs)
+    
+    def _process(self, value):
+        labels = self.metadata['labels']
+        if self.native_type != str:
+            return value
+        try:
+            int(value)
+            try:
+                return labels[value]
+            except KeyError:
+                raise ConversionError('Cannot find status label with index "{}".'.format(value))
+        except ValueError:
+            if value in labels.values():
+                return value
+            raise ConversionError('Cannot find status label "{}".'.format(value))
+                
+    def _cast(self, value):
+        labels = self.metadata['labels']
+        label = str(value)
+        if self.native_type == str and isinstance(value,int):
+            try:    
+                return labels[label]
+            except KeyError:
+                raise ConversionError('Cannot find status label with index "{}".'.format(value))
+            
+        if isinstance(self.native_type, EnumMeta) and isinstance(value,str):
+            try:
+                return self.native_type(label)
+            except ValueError:
+                    raise ConversionError('Cannot find status label with index "{}".'.format(value))
+    
+    def _process_column_value(self, column_value: en.cv.ColumnValue):
+        if self.native_type == str:
+            self.choices = [value for value in self.metadata['labels'].values()]
+                      
+    def _export(self, value):
+            labels = self.metadata['labels']
+            if self.native_type == str:
+                label = value
+            elif isinstance(self.native_type, EnumMeta):
+                label = value.value
+            for index, value in labels.items():
+                if value == label:
+                    return {'index': int(index)}
+
+ 
 class TextType(MondayType):
     native_type = str
     allow_casts = (int, float)
@@ -301,13 +366,13 @@ class TimeZoneType(MondayType):
 
 class WeekType(MondayType):
     
-    native_type = Week
+    native_type = en.cv.Week
     null_value = {}
     allow_casts = (dict,)
 
     def _cast(self, value):
         try:
-            return Week(value['start'],value['end'])
+            return en.cv.Week(value['start'],value['end'])
         except KeyError:
             raise ConversionError('Cannot convert value "{}" to Week.'.format(value))
     
@@ -317,3 +382,4 @@ class WeekType(MondayType):
         start =  value.start.strftime(DATE_FORMAT) 
         end  = value.end.strftime(DATE_FORMAT)
         return  {'week': {'startDate': start, 'endDate': end}}
+
