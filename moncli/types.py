@@ -145,15 +145,13 @@ class DependencyType(MondayType):
     null_value = {}
 
     def _process(self, value):
-        value_data = None
         value_list = []
-        try:
-            for data in value:
-                value_data = data
-                value_list.append(value_data)
-            return value_list
-        except ValueError:
-            raise ConversionError('Invalid item ID: "{}".'.format(value_data))
+        for data in value:
+            try:
+                value_list.append(int(data))
+            except ValueError:
+                raise ConversionError('Invalid item ID: "{}".'.format(data))
+        return value_list
     
     def _export(self, value):
         return { 'item_ids': [data for data in value]}
