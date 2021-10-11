@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 
+from .entities.column_value import Link
 from . import entities as en
 from .config import *
 from .entities.column_value import Week
@@ -176,6 +177,30 @@ class HourType(MondayType):
             raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
         if (value.minute > 59) or (value.minute < 0):
             raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
+
+
+class LinkType(MondayType):
+    
+    native_type = Link
+    null_value = {}
+    allow_casts = (dict,)
+
+    def _cast(self, value):
+        try:
+            return Link(value['url'],value['text'])
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" to Link.'.format(value))
+    
+    def _export(self, value):
+        if value.url != None:
+            return {'url': value.url, 'text': value.text}
+        return self.null_value
+
+    def validate_link(self,value):
+        str_value = value.url
+        if not (str_value.startswith('https://') or str_value.startswith('http://')):
+            raise ValidationError('Value "{}" is not a valid URL link.'.format(value))
+        return str_value
 
 
 class LongTextType(MondayType):
