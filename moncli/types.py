@@ -32,7 +32,6 @@ class MondayType(BaseType):
         default = kwargs.pop('default', None)
         if not default:
             default = self.native_default
-
         super(MondayType, self).__init__(*args, default=default, metadata=metadata, **kwargs)
 
     @property
@@ -273,4 +272,4 @@ class WeekType(MondayType):
             return self.null_value
         start =  value.start.strftime(DATE_FORMAT) 
         end  = value.end.strftime(DATE_FORMAT)
-        return {'start': start, 'end': end}
+        return  {'week': {'startDate': start, 'endDate': end}}
