@@ -1,4 +1,4 @@
-import pytz, json,re
+import pytz, json
 from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
 
@@ -8,7 +8,6 @@ from enum import Enum,EnumMeta
 
 from . import entities as en
 from .config import *
-from .entities.column_value import Phone
 
 
 
@@ -63,7 +62,6 @@ class MondayType(BaseType):
         settings = json.loads(value.settings_str) if value.settings_str else {}
         for k, v in settings.items():
             self.metadata[k] = v
-        self._process_column_value(value)
         self.original_value = value.value
         return self.original_value
 
@@ -82,7 +80,7 @@ class MondayType(BaseType):
     def _cast(self, value):
         return self.native_type(value)
 
-    def _process_column_value(self, value: en.cv.ColumnValue):
+    def _set_metadata(self, value: en.cv.ColumnValue):
         pass
 
     def _export(self, value):
@@ -142,46 +140,6 @@ class DateType(MondayType):
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
 
 
-class EmailType(MondayType):
-    native_type = en.cv.Email
-    null_value = {}
-    allow_casts = (dict, )
-
-    def _cast(self, value):
-        try:
-            return en.cv.Email(value['email'],value.get('text', value['email']))
-        except KeyError:
-            raise ConversionError('Cannot convert value "{}" to Email.'.format(value))
-
-    def _export(self, value):
-        return {'email': value.email, 'text': value.text}
-
-    def validate_email(self, value):
-        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        if value.email and not re.fullmatch(regex, value.email):
-            raise ValidationError('Value "{}" is not a valid email address.'.format(value))
-
-
-class HourType(MondayType):
-    native_type = en.cv.Hour
-    null_value = {}
-    allow_casts = (dict, )
-
-    def _cast(self, value):
-        try:
-            return en.cv.Hour(value['hour'],value.get('minute', 0))
-        except KeyError:
-            raise ConversionError('Cannot convert value "{}" into Hour.'.format(value))
-    def _export(self, value):
-        return {'hour': value.hour, 'minute': value.minute}
-
-    def validate_hour(self,value):
-        if (value.hour > 23) or (value.hour < 0):
-            raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
-        if (value.minute > 59) or (value.minute < 0):
-            raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
-
-
 class LongTextType(MondayType):
     native_type = str
     allow_casts = (int, float)
@@ -224,15 +182,22 @@ class RatingType(MondayType):
 
 class StatusType(MondayType):
     native_type = str
-    allow_casts = (int, str)
+    allow_casts = (int,)
     null_value = {}
 
-    def __init__(self, id: str = None, title: str = None,data_mapping:dict =None ,  *args, **kwargs):
-        if data_mapping:
-            values= [value for value in data_mapping.values()]        
-            self.native_type = values[0].__class__
-            self.choices = values
-        self._data_mapping =  data_mapping 
+    def __init__(self, id: str = None, title: str = None, as_enum: type = None ,  *args, **kwargs):
+        if as_enum:
+            try:
+                enum_value = None
+                for value in list(as_enum):
+                    enum_value = value.name
+                    str(enum_value)
+                self._as_enum =  as_enum
+                self.native_type = Enum
+                self.allow_casts = str
+                self.choices = list(as_enum)
+            except TypeError:
+                raise ConversionError('Invalid value "{}" for status Enum "{}".'.format(enum_value, enum_value.__class__))    
         super().__init__(id=id, title=title, *args, **kwargs)
     
     def _process(self, value):
@@ -257,40 +222,36 @@ class StatusType(MondayType):
         labels = self.metadata['labels']
         label = str(value)
         if self.native_type == str and isinstance(value,int):
-            if not (label in labels.keys()):
-                raise ConversionError('Cannot find status label with index "{}".'.format(value))
-            return labels[label]
-            
-        if isinstance(self.native_type,EnumMeta) and isinstance(value,str):
-            try:
-                value = int(value)
-                if not (label in labels.keys()):
-                    raise ConversionError('Cannot find status label with index "{}".'.format(value))
+            try:    
                 return labels[label]
+            except KeyError:
+                raise ConversionError('Cannot find status label with index "{}".'.format(value))
+            
+        if self.native_type == Enum and isinstance(value,str):
+            try:
+                return self._as_enum(label)
             except ValueError:
-                if not (label in labels.values()):
                     raise ConversionError('Cannot find status label with index "{}".'.format(value))
-                return self._data_mapping[label]
-        if isinstance(self.native_type,EnumMeta) and isinstance(value,int):
-            if not (label in labels.keys()):
-                    raise ConversionError('Cannot find status label with index "{}".'.format(value))
-            return self._data_mapping[labels[label]]
+    
+    def _process_column_value(self):
+        if self.native_type == str:
+            self.choices = [value for value in self.metadata['labels'].values()]
+            
 
+                
     def _export(self, value):
         labels = self.metadata['labels']
         label = str(value)
         index  = None
-        if isinstance(value,str):
-            index = self._data_mapping[value].value
-        elif isinstance(value,Enum):
-            key = None
-            for k,v in self._data_mapping.items():
-                if v == value:
-                    key = k
+        if self.native_type == str:
+            for key, value in labels.items():
+                if value == label:
+                    index = key
                     break
-            for k,v in labels.items():
-                if v==key:
-                    index = k
+        elif self.native_type == Enum:
+            for key, v in labels.items():
+                if v == value.value:
+                    index = key
                     break
         return {'index': int(index)} 
 
@@ -322,33 +283,6 @@ class TimeZoneType(MondayType):
     native_type = str
     null_value = {}
 
-    def _export(self, value):
-        return {'timezone': value}
-
-    def validate_timezone(self, value):
-        try:
-            pytz.timezone(value)
-        except (UnknownTimeZoneError):
-            raise ValidationError('Unknown time zone "{}".'.format(value))
-
-
-
-
-
-
-
-
-
-class PhoneType(MondayType):
-
-    native_type = Phone 
-    allow_casts = (dict,)
-    null_value = {}
-
-    def _cast(self, value):
-        try:
-            return Phone(phone=value['phone'],code= value['code'])
-        except KeyError
     def _export(self, value):
         return {'timezone': value}
 
