@@ -8,6 +8,7 @@ from schematics.types import BaseType
 from .entities.column_value import Link
 from . import entities as en
 from .config import *
+from .entities.column_value import Week
 
 
 class MondayType(BaseType):
@@ -32,7 +33,6 @@ class MondayType(BaseType):
         default = kwargs.pop('default', None)
         if not default:
             default = self.native_default
-
         super(MondayType, self).__init__(*args, default=default, metadata=metadata, **kwargs)
 
     @property
@@ -179,6 +179,30 @@ class HourType(MondayType):
             raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
 
 
+class LinkType(MondayType):
+    
+    native_type = Link
+    null_value = {}
+    allow_casts = (dict,)
+
+    def _cast(self, value):
+        try:
+            return Link(value['url'],value['text'])
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" to Link.'.format(value))
+    
+    def _export(self, value):
+        if value.url != None:
+            return {'url': value.url, 'text': value.text}
+        return self.null_value
+
+    def validate_link(self,value):
+        str_value = value.url
+        if not (str_value.startswith('https://') or str_value.startswith('http://')):
+            raise ValidationError('Value "{}" is not a valid URL link.'.format(value))
+        return str_value
+
+
 class LongTextType(MondayType):
     native_type = str
     allow_casts = (int, float)
@@ -255,26 +279,22 @@ class TimeZoneType(MondayType):
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
 
-class LinkType(MondayType):
+
+class WeekType(MondayType):
     
-    native_type = Link
+    native_type = Week
     null_value = {}
     allow_casts = (dict,)
 
     def _cast(self, value):
         try:
-            return Link(value['url'],value['text'])
+            return Week(value['start'],value['end'])
         except KeyError:
-            raise ConversionError('Cannot convert value "{}" to Link.'.format(value))
+            raise ConversionError('Cannot convert value "{}" to Week.'.format(value))
     
     def _export(self, value):
-        if value.url != None:
-            return {'url': value.url, 'text': value.text}
-        return self.null_value
-
-    def validate_link(self,value):
-        str_value = value.url
-        if not (str_value.startswith('https://') or str_value.startswith('http://')):
-            raise ValidationError('Value "{}" is not a valid URL link.'.format(value))
-        return str_value
-
+        if not (value.start and value.end) :
+            return self.null_value
+        start =  value.start.strftime(DATE_FORMAT) 
+        end  = value.end.strftime(DATE_FORMAT)
+        return  {'week': {'startDate': start, 'endDate': end}}
