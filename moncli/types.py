@@ -138,6 +138,27 @@ class DateType(MondayType):
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
 
 
+class DependencyType(MondayType):
+
+    native_type = list
+    native_default = []
+    null_value = {}
+
+    def _process(self, value):
+        value_data = None
+        value_list = []
+        try:
+            for data in value:
+                value_data = data
+                value_list.append(value_data)
+            return value_list
+        except ValueError:
+            raise ConversionError('Invalid item ID: "{}".'.format(value_data))
+    
+    def _export(self, value):
+        return { 'item_ids': [data for data in value]}
+
+
 class EmailType(MondayType):
     native_type = en.cv.Email
     null_value = {}
@@ -253,23 +274,3 @@ class TimeZoneType(MondayType):
             pytz.timezone(value)
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
-
-class DependencyType(MondayType):
-
-    native_type = list
-    native_default = []
-    null_value = {}
-
-    def _process(self, value):
-        value_data = None
-        value_list = []
-        try:
-            for data in value:
-                value_data = data
-                value_list.append(value_data)
-            return value_list
-        except ValueError:
-            raise ConversionError('Invalid item ID: "{}".'.format(value_data))
-    
-    def _export(self, value):
-        return { 'item_ids': [data for data in value]}

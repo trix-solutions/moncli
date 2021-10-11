@@ -43,7 +43,7 @@ def test_should_succeed_when_to_native_raises_a_conversion_error_when_passed_a_l
     dependency_type = DependencyType(id='dependency')
 
     # Act
-    format =  dependency_type.to_native({'items': ["invalid value",124]})
+    dependency_type.to_native({'items': ["invalid value",124]})
 
 
 def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_in_a_none_to_dependency_type():
@@ -51,7 +51,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_in_a_no
     dependency_type = DependencyType(id='dependency')
 
     # Act
-    format =  dependency_type.to_primitive(None)
+    format = dependency_type.to_primitive(None)
 
     # Assert
     eq_(format,{})
