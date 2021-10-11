@@ -2,10 +2,10 @@ from datetime import datetime, timedelta
 
 from moncli import enums
 
-from .base import ComplexNullValue
+from .base import ColumnValue, ComplexNullValue
 
 
-class Email(ComplexNullValue):
+class Email(object):
 
     def __init__(self, email: str = None, text: str = None):
         self.email = email
