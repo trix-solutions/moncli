@@ -15,7 +15,7 @@ def test_should_succeed_when_to_native_returns_a_list_when_passing_in_a_dependen
     id = "dependency"
     title = "Dependency 1"
     column_type = ColumnType.dependency
-    value = json.dumps({'items': [123,124]})
+    value =  json.dumps({'linkedPulseIds' : [{'linkedPulseId': 123456789 }]})
     column_value =  en.cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
@@ -23,50 +23,35 @@ def test_should_succeed_when_to_native_returns_a_list_when_passing_in_a_dependen
     format =  dependency_type.to_native(column_value)
 
     # Assert
-    eq_(format['items'],[123,124])
+    eq_(format,[123456789])
 
 
 def test_should_succeed_when_to_native_returns_empty_list_when_passed_none_to_dependency_type():
     # Arrange
-
-    id = "dependency"
-    title = "Dependency 1"
-    column_type = ColumnType.dependency
-    value = None
-    column_value =  en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    dependency_type = DependencyType(id='dependency')
 
     # Act
-    dependency_type = DependencyType(id='dependency')
-    format =  dependency_type.to_native(column_value.value)
+    format =  dependency_type.to_native(None)
 
     # Assert
     eq_(format,[])
 
 @raises(ConversionError)
 def test_should_succeed_when_to_native_raises_a_conversion_error_when_passed_a_list_containing_invalid_int_values_to_dependency_type():
-    id = "dependency"
-    title = "Dependency 1"
-    column_type = ColumnType.dependency
-    value = json.dumps({'items': ["invalid value",124]})
-    column_value =  en.cv.create_column_value(column_type,id=id,title=title,value=value)
+
+    # Arrange
+    dependency_type = DependencyType(id='dependency')
 
     # Act
-    dependency_type = DependencyType(id='dependency')
-    format =  dependency_type.to_native(column_value.value)
+    format =  dependency_type.to_native({'items': ["invalid value",124]})
 
 
 def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_in_a_none_to_dependency_type():
     # Arrange
-
-    id = "dependency"
-    title = "Dependency 1"
-    column_type = ColumnType.dependency
-    value = None
-    column_value =  en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    dependency_type = DependencyType(id='dependency')
 
     # Act
-    dependency_type = DependencyType(id='dependency')
-    format =  dependency_type.to_primitive(column_value.value)
+    format =  dependency_type.to_primitive(None)
 
     # Assert
     eq_(format,{})
@@ -79,7 +64,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_l
     dependency_type = DependencyType(id='dependency')
     
     # Act
-    format =  dependency_type.to_primitive([12345, 67890])
+    format =  dependency_type.to_primitive([12345, 67890])['item_ids']
 
     # Assert
-    eq_(format,[123,124])
+    eq_(format,[12345, 67890])
