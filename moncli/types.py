@@ -1,4 +1,4 @@
-import pytz, json
+import pytz, json,re
 from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
 
@@ -9,6 +9,7 @@ from enum import Enum,EnumMeta
 from . import entities as en
 from .config import *
 from .entities.column_value import Phone
+
 
 
 class MondayType(BaseType):
@@ -62,6 +63,7 @@ class MondayType(BaseType):
         settings = json.loads(value.settings_str) if value.settings_str else {}
         for k, v in settings.items():
             self.metadata[k] = v
+        self._process_column_value(value)
         self.original_value = value.value
         return self.original_value
 
@@ -80,7 +82,7 @@ class MondayType(BaseType):
     def _cast(self, value):
         return self.native_type(value)
 
-    def _set_metadata(self, value: en.cv.ColumnValue):
+    def _process_column_value(self, value: en.cv.ColumnValue):
         pass
 
     def _export(self, value):
@@ -138,6 +140,46 @@ class DateType(MondayType):
             time = value.time().strftime(TIME_FORMAT)
             return {'date': date, 'time': time}
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
+
+
+class EmailType(MondayType):
+    native_type = en.cv.Email
+    null_value = {}
+    allow_casts = (dict, )
+
+    def _cast(self, value):
+        try:
+            return en.cv.Email(value['email'],value.get('text', value['email']))
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" to Email.'.format(value))
+
+    def _export(self, value):
+        return {'email': value.email, 'text': value.text}
+
+    def validate_email(self, value):
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        if value.email and not re.fullmatch(regex, value.email):
+            raise ValidationError('Value "{}" is not a valid email address.'.format(value))
+
+
+class HourType(MondayType):
+    native_type = en.cv.Hour
+    null_value = {}
+    allow_casts = (dict, )
+
+    def _cast(self, value):
+        try:
+            return en.cv.Hour(value['hour'],value.get('minute', 0))
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" into Hour.'.format(value))
+    def _export(self, value):
+        return {'hour': value.hour, 'minute': value.minute}
+
+    def validate_hour(self,value):
+        if (value.hour > 23) or (value.hour < 0):
+            raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
+        if (value.minute > 59) or (value.minute < 0):
+            raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
 
 
 class LongTextType(MondayType):

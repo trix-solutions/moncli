@@ -958,3 +958,4 @@ def test_should_timezone_column_value_str_timezone_value():
 
     # Assert 
     eq_(format['timezone'],'Asia/Kolkata')
+
