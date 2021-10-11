@@ -6,8 +6,10 @@ from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 from enum import Enum,EnumMeta
 
+from .entities.column_value import Link
 from . import entities as en
 from .config import *
+from .entities.column_value import Week
 
 
 
@@ -33,7 +35,6 @@ class MondayType(BaseType):
         default = kwargs.pop('default', None)
         if not default:
             default = self.native_default
-
         super(MondayType, self).__init__(*args, default=default, metadata=metadata, **kwargs)
 
     @property
@@ -139,6 +140,72 @@ class DateType(MondayType):
             time = value.time().strftime(TIME_FORMAT)
             return {'date': date, 'time': time}
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
+
+
+
+class EmailType(MondayType):
+    native_type = en.cv.Email
+    null_value = {}
+    allow_casts = (dict, )
+
+    def _cast(self, value):
+        try:
+            return en.cv.Email(value['email'],value.get('text', value['email']))
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" to Email.'.format(value))
+
+    def _export(self, value):
+        return {'email': value.email, 'text': value.text}
+
+    def validate_email(self, value):
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        if value.email and not re.fullmatch(regex, value.email):
+            raise ValidationError('Value "{}" is not a valid email address.'.format(value))
+
+
+class HourType(MondayType):
+    native_type = en.cv.Hour
+    null_value = {}
+    allow_casts = (dict, )
+
+    def _cast(self, value):
+        try:
+            return en.cv.Hour(value['hour'],value.get('minute', 0))
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" into Hour.'.format(value))
+    def _export(self, value):
+        return {'hour': value.hour, 'minute': value.minute}
+
+    def validate_hour(self,value):
+        if (value.hour > 23) or (value.hour < 0):
+            raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
+        if (value.minute > 59) or (value.minute < 0):
+            raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
+
+
+class LinkType(MondayType):
+    
+    native_type = Link
+    null_value = {}
+    allow_casts = (dict,)
+
+    def _cast(self, value):
+        try:
+            return Link(value['url'],value['text'])
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" to Link.'.format(value))
+    
+    def _export(self, value):
+        if value.url != None:
+            return {'url': value.url, 'text': value.text}
+        return self.null_value
+
+    def validate_link(self,value):
+        str_value = value.url
+        if not (str_value.startswith('https://') or str_value.startswith('http://')):
+            raise ValidationError('Value "{}" is not a valid URL link.'.format(value))
+        return str_value
+
 
 
 class LongTextType(MondayType):
@@ -281,3 +348,24 @@ class TimeZoneType(MondayType):
             pytz.timezone(value)
         except (UnknownTimeZoneError):
             raise ValidationError('Unknown time zone "{}".'.format(value))
+
+
+class WeekType(MondayType):
+    
+    native_type = Week
+    null_value = {}
+    allow_casts = (dict,)
+
+    def _cast(self, value):
+        try:
+            return Week(value['start'],value['end'])
+        except KeyError:
+            raise ConversionError('Cannot convert value "{}" to Week.'.format(value))
+    
+    def _export(self, value):
+        if not (value.start and value.end) :
+            return self.null_value
+        start =  value.start.strftime(DATE_FORMAT) 
+        end  = value.end.strftime(DATE_FORMAT)
+        return  {'week': {'startDate': start, 'endDate': end}}
+
