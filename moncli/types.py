@@ -271,27 +271,25 @@ class StatusType(MondayType):
 
     def __init__(self, id: str = None, title: str = None, as_enum: type = None ,  *args, **kwargs):
         if as_enum:
-            try:
-                enum_value = None
-                for value in list(as_enum):
-                    if not isinstance(value.value, str):
-                        raise TypeError('Invalid value "{}" for status Enum "{}".'.format(value.value, value.__class__.__name__))
-                self.native_type=  as_enum
-                self.allow_casts = (str,)
-                self.choices = list(as_enum)
-            except TypeError:
-                raise ConversionError('Invalid value "{}" for status Enum "{}".'.format(enum_value, enum_value.__class__))    
+            if not isinstance(as_enum, EnumMeta):
+                raise TypeError('Invalid type "{}" for status Enum.'.format(as_enum.__name__))
+            self.choices = list(as_enum)
+            for value in self.choices:
+                if not isinstance(value.value, str):
+                    raise TypeError('Invalid value "{}" for status Enum "{}".'.format(value.value, value.__class__.__name__))
+            self.native_type =  as_enum
+            self.allow_casts = (str,)
+            
         super().__init__(id=id, title=title, *args, **kwargs)
     
     def _process(self, value):
         labels = self.metadata['labels']
-        label = str(value)
         if self.native_type != str:
             return value
         try:
             int(value)
             try:
-                return labels[label]
+                return labels[value]
             except KeyError:
                 raise ConversionError('Cannot find status label with index "{}".'.format(value))
         except ValueError:
