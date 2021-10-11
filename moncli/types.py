@@ -235,4 +235,5 @@ class LinkType(MondayType):
         str_value = value.url
         if not (str_value.startswith('https://') or str_value.startswith('http://')):
             raise ValidationError('Value "{}" is not a valid URL link.'.format(value))
+        return str_value
 
