@@ -191,11 +191,10 @@ class StatusType(MondayType):
             try:
                 enum_value = None
                 for value in list(as_enum):
-                    enum_value = value.name
-                    str(enum_value)
-                self._as_enum =  as_enum
-                self.native_type = Enum
-                self.allow_casts = str
+                    if not isinstance(value.value, str):
+                        raise TypeError('Invalid value "{}" for status Enum "{}".'.format(value.value, value.__class__.__name__))
+                self.native_type=  as_enum
+                self.allow_casts = (str,)
                 self.choices = list(as_enum)
             except TypeError:
                 raise ConversionError('Invalid value "{}" for status Enum "{}".'.format(enum_value, enum_value.__class__))    
@@ -207,7 +206,7 @@ class StatusType(MondayType):
         if self.native_type != str:
             return value
         try:
-            value = int(value)
+            int(value)
             try:
                 return labels[label]
             except KeyError:
@@ -226,9 +225,9 @@ class StatusType(MondayType):
             except KeyError:
                 raise ConversionError('Cannot find status label with index "{}".'.format(value))
             
-        if self.native_type == Enum and isinstance(value,str):
+        if isinstance(self.native_type, EnumMeta) and isinstance(value,str):
             try:
-                return self._as_enum(label)
+                return self.native_type(label)
             except ValueError:
                     raise ConversionError('Cannot find status label with index "{}".'.format(value))
     
@@ -237,20 +236,14 @@ class StatusType(MondayType):
             self.choices = [value for value in self.metadata['labels'].values()]
                       
     def _export(self, value):
-        labels = self.metadata['labels']
-        label = str(value)
-        index  = None
-        if self.native_type == str:
-            for key, value in labels.items():
+            labels = self.metadata['labels']
+            if self.native_type == str:
+                label = value
+            elif isinstance(self.native_type, EnumMeta):
+                label = value.value
+            for index, value in labels.items():
                 if value == label:
-                    index = key
-                    break
-        elif self.native_type == Enum:
-            for key, v in labels.items():
-                if v == value.value:
-                    index = key
-                    break
-        return {'index': int(index)} 
+                    return {'index': int(index)}
 
  
 class TextType(MondayType):
