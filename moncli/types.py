@@ -1,15 +1,13 @@
-import pytz, json
+import pytz, json, re
 from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
 
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
-from enum import Enum,EnumMeta
+from enum import EnumMeta
 
-from .entities.column_value import Link
 from . import entities as en
 from .config import *
-from .entities.column_value import Week
 
 
 
@@ -142,6 +140,24 @@ class DateType(MondayType):
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
 
 
+class DependencyType(MondayType):
+
+    native_type = list
+    native_default = []
+    null_value = {}
+
+    def _process(self, value):
+        value_list = []
+        for data in value:
+            try:
+                value_list.append(int(data))
+            except ValueError:
+                raise ConversionError('Invalid item ID: "{}".'.format(data))
+        return value_list
+    
+    def _export(self, value):
+        return { 'item_ids': [data for data in value]}
+
 
 class EmailType(MondayType):
     native_type = en.cv.Email
@@ -185,13 +201,13 @@ class HourType(MondayType):
 
 class LinkType(MondayType):
     
-    native_type = Link
+    native_type = en.cv.Link
     null_value = {}
     allow_casts = (dict,)
 
     def _cast(self, value):
         try:
-            return Link(value['url'],value['text'])
+            return en.cv.Link(value['url'],value['text'])
         except KeyError:
             raise ConversionError('Cannot convert value "{}" to Link.'.format(value))
     
@@ -352,13 +368,13 @@ class TimeZoneType(MondayType):
 
 class WeekType(MondayType):
     
-    native_type = Week
+    native_type = en.cv.Week
     null_value = {}
     allow_casts = (dict,)
 
     def _cast(self, value):
         try:
-            return Week(value['start'],value['end'])
+            return en.cv.Week(value['start'],value['end'])
         except KeyError:
             raise ConversionError('Cannot convert value "{}" to Week.'.format(value))
     
