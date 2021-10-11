@@ -139,6 +139,25 @@ class DateType(MondayType):
         return {'date': value.date().strftime(DATE_FORMAT), 'time': None}
 
 
+class DependencyType(MondayType):
+
+    native_type = list
+    native_default = []
+    null_value = {}
+
+    def _process(self, value):
+        value_list = []
+        for data in value:
+            try:
+                value_list.append(int(data))
+            except ValueError:
+                raise ConversionError('Invalid item ID: "{}".'.format(data))
+        return value_list
+    
+    def _export(self, value):
+        return { 'item_ids': [data for data in value]}
+
+
 class EmailType(MondayType):
     native_type = en.cv.Email
     null_value = {}
