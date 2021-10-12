@@ -103,7 +103,7 @@ class Phone(object):
   def __repr__(self):
     return str({
       'phone': self.phone,
-      'code': self.code
+      'countryShortName': self.code
     })
 
       

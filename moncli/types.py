@@ -1,13 +1,18 @@
 import pytz, json, re
 from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
+from pycountry import countries
 
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 from enum import EnumMeta
 
+from moncli.entities.column_value.base import ComplexNullValue
+from moncli.entities.column_value.constants import COMPLEX_NULL_VALUE
+
 from . import entities as en
 from .config import *
+from  .entities.column_value import Phone
 
 
 
@@ -247,6 +252,28 @@ class NumberType(MondayType):
     
     def _export(self, value):
         return str(value)
+
+class PhoneType(MondayType):
+
+    native_type = Phone
+    allow_casts = (dict,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            return Phone(phone=value['phone'],code=value['countryShortName'])
+        except KeyError:
+            raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
+
+    def _export(self, value):
+        if value.phone and value.code:
+            return {'phone': value.phone, 'countryShortName': value.code}
+        return self.null_value
+    
+    def validate_country_code(self, value):
+        country = countries.get(alpha_2=value.code)
+        if not country:
+            raise ValidationError('Value "{}" is not a valid alpha 2 country code.'.format(value.code))
 
 
 class RatingType(MondayType):
