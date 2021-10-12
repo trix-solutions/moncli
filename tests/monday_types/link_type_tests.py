@@ -8,7 +8,6 @@ from moncli.models import MondayModel
 from moncli.types import LinkType
 
 
-
 def test_should_succeed_when_to_native_returns_a_link_when_passed_a_link_value_value_with_api_data_to_link_type():
     
     # Arrange
@@ -27,7 +26,6 @@ def test_should_succeed_when_to_native_returns_a_link_when_passed_a_link_value_v
     eq_(value.text, 'Google')
 
 
-
 def test_should_succeed_when_to_native_returns_a_link_when_passed_a_dict_value_to_link_type():
 
     # Arrange
@@ -37,7 +35,6 @@ def test_should_succeed_when_to_native_returns_a_link_when_passed_a_dict_value_t
     value = link_type.to_native({'url': 'https://www.google.com', 'text': 'Google'})
 
     # Assert
-
     eq_(value.url, 'https://www.google.com',)
     eq_(value.text, 'Google')
 
@@ -85,7 +82,6 @@ def test_should_succeed_when_to_primitive_returns_an_empty_dict_when_passed_a_li
     link_type = LinkType(title='link 1')
     
     # Act
-
     value = link_type.to_primitive(en.cv.Link(text= 'Google'))
 
     # Assert

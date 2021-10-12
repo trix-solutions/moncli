@@ -14,6 +14,7 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.hour: 'HourValue',
     ColumnType.link: 'LinkValue',
     ColumnType.long_text: 'LongTextValue',
+    ColumnType.location: 'LocationValue',
     ColumnType.name: 'NameValue',
     ColumnType.numbers: 'NumberValue',
     ColumnType.people: 'PeopleValue',

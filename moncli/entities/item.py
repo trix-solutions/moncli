@@ -796,7 +796,7 @@ class Item(_Item):
                     self.id,
                     'Column value must be a properly formatted dict or str when using "id" or "title" parameters.'
                 )
-        if id or title or column_value:
+        elif id or title or column_value:
             value = None
             if isinstance(column_value,(dict,str)):
                 if title:

@@ -83,12 +83,13 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_w
     
     # Arrange
     week_type = WeekType(title='week 1')
-    week = en.cv.Week(start = datetime(2021, 9, 20, 0, 0),
-                                        end = datetime(2021, 9, 26, 0, 0))
+    week = en.cv.Week(
+        start = datetime(2021, 9, 20, 0, 0),
+        end = datetime(2021, 9, 26, 0, 0))
+
     # Act
     value = week_type.to_primitive(week)['week']
                                         
-
     # Assert
     eq_(value['startDate'], '2021-09-20'),
     eq_(value['endDate'], '2021-09-26')
