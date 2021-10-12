@@ -1,6 +1,7 @@
 import pytz, json, re
 from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
+from pycountry import countries
 
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
@@ -8,6 +9,7 @@ from enum import EnumMeta
 
 from . import entities as en
 from .config import *
+from .entities.column_value import Country
 
 
 
@@ -97,7 +99,32 @@ class CheckboxType(MondayType):
         if value == True:
             return {'checked': 'true'}
 
+class CountryType(MondayType):
 
+    native_type = Country
+    allow_casts = (dict,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            return Country(name = value['country'], code = value['code'])
+        except KeyError:
+            raise ConversionError('Unable to convert value "{}" to Country.'.format(value))
+        
+    def _export(self, value):
+        if value.name and value.code:
+            return {'countryName': value.name, 'countryCode': value.code}
+        return self.null_value
+    
+    def validate_country(self, value): 
+        country = countries.get(name=value.name)
+        if not country:
+            raise ValidationError('Value "{}" is not a valid country.'.format(value.name))
+        code = countries.get(alpha_2=value.code)
+        if not code:
+            raise ValidationError('Value "{}" is not a valid alpha 2 country code.'.format(value.code))
+
+    
 class DateType(MondayType):
 
     native_type = datetime
