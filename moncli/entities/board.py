@@ -144,7 +144,7 @@ class Board(_Board):
         if columns and not self.__columns:
             self.__columns = en.BaseColumnCollection([en.Column(column) for column in columns])
         if groups and not self.__groups:
-            self.__groups = [en.Group(creds=self.__creds, **group) for group in groups]
+            self.__groups = [en.Group(creds=self.__creds, __board=self, **group) for group in groups]
         if items and not self.__items:
             self.__items = [en.Item(creds=self.__creds, __board=self, **item) for item in items]
         if subscribers and not self.__subscribers:
