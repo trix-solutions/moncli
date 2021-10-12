@@ -73,8 +73,8 @@ class Link(object):
 
 class Location(object):
   def __init__(self, lat: float = 0, lng: float = 0, address: str = None):
-    self._lat = 0
-    self._lng = 0
+    self._lat = lat
+    self._lng = lng
     self.address = address
     
   @property

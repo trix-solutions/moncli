@@ -221,39 +221,38 @@ class LocationValue(ComplexNullValue):
         return Location(lat=value['lat'],lng=value['lng'],address=value['address'])
 
     def _cast(self, value):
-        return_value = None
-        if isinstance(value,dict):
+
+        if isinstance(value, dict):
             try:
-                lat = float(value['lat']) if value['lat'] else 0.0
-                lng = float(value['lng']) if value['lng'] else 0.0
-                address = value['address'] if value['address'] else None
-                return_value = Location(lat=lat,lng=lng,address=address)
+                return Location(
+                    value['lat'],
+                    value['lng'],
+                    value.get('address', None))
             except KeyError:
                 raise ColumnValueError(
                     'invalid_location_data',
                     self.id,
                     'Unable to convert "{}" to Location value.'.format(value)
                 )
-        elif isinstance(value,str):
+        elif isinstance(value, str):
+            values = value.split(' ', 3)
+            if len(values) < 2:
+                raise ColumnValueError(
+                    'invalid_location_data',
+                    self.id,
+                    'Both a latitude and longitude are required for a Location value.')
             try:
-                lat = float(value.split(" ")[0])
-                lng = float(value.split(" ")[1])
-                address = " ".join(value.split(" ")[2:])
-                return_value = Location(lat=lat,lng=lng,address=address)
+                location = Location(float(values[0]), float(values[1])) # The lat and lng values must be cast into floats
+                try:
+                    location.address = " ".join(values[2:]) 
+                except IndexError:
+                    pass 
+                return location
             except ValueError:
                 raise ColumnValueError(
                     'invalid_location_data',
                     self.id,
-                    'Both a latitude and longitude are required for a Location value.'
-                )
-            except IndexError:
-                raise ColumnValueError(
-                    'invalid_location_data',
-                    self.id,
-                     'Input str value "{}" contains invalid coordinates.'.format(value) 
-                )
-        
-        return return_value
+                    'Input str value "{}" contains invalid coordinates.'.format(value))
     
     def _format(self):
         return {'lat': self.value.lat, 'lng': self.value.lng, 'address': self.value.address}
