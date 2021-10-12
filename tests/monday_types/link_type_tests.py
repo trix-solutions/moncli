@@ -90,6 +90,8 @@ def test_should_succeed_when_to_primitive_returns_an_empty_dict_when_passed_a_li
 
 @raises(DataError)
 def test_should_succeed_when_validate_link_raises_a_validationerror_when_passed_a_link_with_an_invalid_url_value_to_link_type():
+    
+    # Arrange
     class TestModel(MondayModel):
         value = LinkType(id='link')
     test = TestModel(id='item_id', name='Item Name')

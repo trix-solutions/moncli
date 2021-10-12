@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from schematics.exceptions import ConversionError, DataError
+from schematics.exceptions import ConversionError
 from nose.tools import eq_,raises
 
 from moncli import entities as en
@@ -9,6 +9,7 @@ from moncli.types import WeekType
 
 
 def test_should_succeed_when_to_native_returns_a_week_when_passing_in_a_weekvalue_value_with_api_data_to_week_value():
+    
     # Arrange
     id = "week"
     title = 'week 1'
@@ -42,6 +43,7 @@ def test_should_succeed_when_to_native_returns_a_week_when_passed_an_import_dict
     # Assert
     eq_(value.start, datetime(2021, 9, 20, 0, 0))
     eq_(value.end, datetime(2021, 9, 26, 0, 0))
+
 
 @raises(ConversionError)
 def test_should_succeed_when_to_native_raises_a_conversion_error_when_passed_an_invalid_import_dict_to_week_value():
@@ -78,15 +80,16 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_in_a_no
 
 
 def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_week_value_to_week_value():
+    
     # Arrange
     week_type = WeekType(title='week 1')
     week = en.cv.Week(
         start = datetime(2021, 9, 20, 0, 0),
         end = datetime(2021, 9, 26, 0, 0))
+
     # Act
     value = week_type.to_primitive(week)['week']
                                         
-
     # Assert
     eq_(value['startDate'], '2021-09-20'),
     eq_(value['endDate'], '2021-09-26')
