@@ -46,6 +46,30 @@ class Hour(object):
     else: 
       self._minute = value
 
+class Location(object):
+  def __init__(self, lat: float = 0, lng: float = 0, address: str = None):
+    self._lat = 0
+    self._lng = 0
+    self.address = address
+    
+  @property
+  def lat(self):
+    if not self._lat:
+      return 0
+    return self._lat
+  
+  @property
+  def lng(self):
+    if not self._lng:
+      return 0
+    return self._lng
+  
+  def __repr__(self):
+    return str({
+      'lat': self.lat,
+      'lng': self.lng,
+      'address': self.address
+    })
 class PersonOrTeam(object):
     """
     

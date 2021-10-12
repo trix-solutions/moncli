@@ -10,7 +10,7 @@ from ...config import DATE_FORMAT,TIME_FORMAT
 from ...error import ColumnValueError
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
-from .objects import Email, Link, PersonOrTeam
+from .objects import Email, Link, PersonOrTeam, Location
 
 
 class DateValue(ComplexNullValue):
@@ -210,6 +210,55 @@ class LongTextValue(ComplexNullValue):
    
     def _format(self):
         return {'text': self._value}
+
+class LocationValue(ComplexNullValue):
+    """A location column value."""
+
+    native_type = Location
+    allow_casts = (dict, str)
+
+    def _convert(self, value):
+        return Location(lat=value['lat'],lng=value['lng'],address=value['address'])
+
+    def _cast(self, value):
+        return_value = None
+        if isinstance(value,dict):
+            try:
+                lat = float(value['lat']) if value['lat'] else 0.0
+                lng = float(value['lng']) if value['lng'] else 0.0
+                address = value['address'] if value['address'] else None
+                return_value = Location(lat=lat,lng=lng,address=address)
+            except KeyError:
+                raise ColumnValueError(
+                    'invalid_location_data',
+                    self.id,
+                    'Unable to convert "{}" to Location value.'.format(value)
+                )
+        elif isinstance(value,str):
+            try:
+                lat = float(value.split(" ")[0])
+                lng = float(value.split(" ")[1])
+                address = " ".join(value.split(" ")[2:])
+                return_value = Location(lat=lat,lng=lng,address=address)
+            except ValueError:
+                raise ColumnValueError(
+                    'invalid_location_data',
+                    self.id,
+                    'Both a latitude and longitude are required for a Location value.'
+                )
+            except IndexError:
+                raise ColumnValueError(
+                    'invalid_location_data',
+                    self.id,
+                     'Input str value "{}" contains invalid coordinates.'.format(value) 
+                )
+        
+        return return_value
+    
+    def _format(self):
+        return {'lat': self.value.lat, 'lng': self.value.lng, 'address': self.value.address}
+ 
+
 
 
 class NumberValue(SimpleNullValue):
