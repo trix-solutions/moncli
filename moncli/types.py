@@ -8,7 +8,7 @@ from enum import EnumMeta
 
 from . import entities as en
 from .config import *
-
+from .entities.column_value import Locati
 
 
 class MondayType(BaseType):
@@ -197,6 +197,13 @@ class HourType(MondayType):
             raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
         if (value.minute > 59) or (value.minute < 0):
             raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
+
+
+class LocationType(MondayType):
+
+    native_type = Location
+    allow_casts = (dict,)
+    null_value = {}
 
 
 class LinkType(MondayType):
