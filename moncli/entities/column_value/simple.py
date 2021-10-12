@@ -10,7 +10,7 @@ from ...config import DATE_FORMAT,TIME_FORMAT
 from ...error import ColumnValueError
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
-from .objects import Email, Link, PersonOrTeam
+from .objects import Email, Link, PersonOrTeam, Location
 
 
 class DateValue(ComplexNullValue):
@@ -210,6 +210,54 @@ class LongTextValue(ComplexNullValue):
    
     def _format(self):
         return {'text': self._value}
+
+class LocationValue(ComplexNullValue):
+    """A location column value."""
+
+    native_type = Location
+    allow_casts = (dict, str)
+
+    def _convert(self, value):
+        return Location(lat=value['lat'],lng=value['lng'],address=value['address'])
+
+    def _cast(self, value):
+
+        if isinstance(value, dict):
+            try:
+                return Location(
+                    value['lat'],
+                    value['lng'],
+                    value.get('address', None))
+            except KeyError:
+                raise ColumnValueError(
+                    'invalid_location_data',
+                    self.id,
+                    'Unable to convert "{}" to Location value.'.format(value)
+                )
+        elif isinstance(value, str):
+            values = value.split(' ', 2)
+            if len(values) < 2:
+                raise ColumnValueError(
+                    'invalid_location_data',
+                    self.id,
+                    'Both a latitude and longitude are required for a Location value.')
+            try:
+                location = Location(float(values[0]), float(values[1])) # The lat and lng values must be cast into floats
+                try:
+                    location.address = values[2] 
+                except IndexError:
+                    pass 
+                return location
+            except ValueError:
+                raise ColumnValueError(
+                    'invalid_location_data',
+                    self.id,
+                    'Input str value "{}" contains invalid coordinates.'.format(value))
+    
+    def _format(self):
+        return {'lat': self.value.lat, 'lng': self.value.lng, 'address': self.value.address}
+ 
+
 
 
 class NumberValue(SimpleNullValue):
