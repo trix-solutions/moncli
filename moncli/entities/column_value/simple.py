@@ -235,7 +235,7 @@ class LocationValue(ComplexNullValue):
                     'Unable to convert "{}" to Location value.'.format(value)
                 )
         elif isinstance(value, str):
-            values = value.split(' ', 3)
+            values = value.split(' ', 2)
             if len(values) < 2:
                 raise ColumnValueError(
                     'invalid_location_data',
@@ -244,7 +244,7 @@ class LocationValue(ComplexNullValue):
             try:
                 location = Location(float(values[0]), float(values[1])) # The lat and lng values must be cast into floats
                 try:
-                    location.address = " ".join(values[2:]) 
+                    location.address = values[2] 
                 except IndexError:
                     pass 
                 return location
