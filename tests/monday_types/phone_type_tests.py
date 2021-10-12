@@ -34,7 +34,7 @@ def test_should_succeed_when_to_native_returns_a_phone_when_passed_a_valid_impor
     phone_type = t.PhoneType(title='phone 1')
     
     # Act
-    value = phone_type.to_native({'phone': '+15083658469', 'countryShortName': 'US'})
+    value = phone_type.to_native({'phone': '+15083658469', 'code': 'US'})
 
     # Assert
     eq_(value.phone,'+15083658469')

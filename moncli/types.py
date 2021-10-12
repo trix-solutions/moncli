@@ -261,7 +261,7 @@ class PhoneType(MondayType):
 
     def _cast(self, value):
         try:
-            return Phone(phone=value['phone'],code=value['countryShortName'])
+            return Phone(phone=value['phone'],code=value['code'])
         except KeyError:
             raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
 
