@@ -5,8 +5,7 @@ from nose.tools import eq_,raises
 
 from moncli import entities as en
 from moncli.enums import ColumnType
-from moncli.models import MondayModel
-from moncli.types import Week,WeekType
+from moncli.types import WeekType
 
 
 def test_should_succeed_when_to_native_returns_a_week_when_passing_in_a_weekvalue_value_with_api_data_to_week_value():
@@ -47,17 +46,16 @@ def test_should_succeed_when_to_native_returns_a_week_when_passed_an_import_dict
 @raises(ConversionError)
 def test_should_succeed_when_to_native_raises_a_conversion_error_when_passed_an_invalid_import_dict_to_week_value():
    
-   # Arrange
-
+    # Arrange
     week_type = WeekType(title='week 1')
 
-   # Act
-    # week_type.to_native({'invalid':'dict'})
+    # Act
+    week_type.to_native({'invalid':'dict'})
 
 
 def test_should_succeed_when_to_native_returns_none_when_passed_a_none_to_week_value():
+    
     # Arrange
-
     week_type = WeekType(title='week 1')
 
    # Act
@@ -68,8 +66,8 @@ def test_should_succeed_when_to_native_returns_none_when_passed_a_none_to_week_v
 
 
 def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_in_a_none_to_week_value():
+    
     # Arrange
-
     week_type = WeekType(title='week 1')
 
    # Act
@@ -82,8 +80,9 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_in_a_no
 def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_week_value_to_week_value():
     # Arrange
     week_type = WeekType(title='week 1')
-    week = Week(start = datetime(2021, 9, 20, 0, 0),
-                                        end = datetime(2021, 9, 26, 0, 0))
+    week = en.cv.Week(
+        start = datetime(2021, 9, 20, 0, 0),
+        end = datetime(2021, 9, 26, 0, 0))
     # Act
     value = week_type.to_primitive(week)['week']
                                         
@@ -99,7 +98,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_week_
     week_type = WeekType(title='week 1')
 
    # Act
-    value = week_type.to_primitive(Week(start = None,end = datetime(2021, 9, 26, 0, 0)))
+    value = week_type.to_primitive(en.cv.Week(start = None,end = datetime(2021, 9, 26, 0, 0)))
 
      # Assert
     eq_(value, {})

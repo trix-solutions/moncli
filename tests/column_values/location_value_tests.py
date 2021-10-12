@@ -12,7 +12,6 @@ from moncli.entities.column_value import Location
 def test_should_create_a_location_column_with_no_api_input_data():
 
     # Arrange
-
     id = 'location_1'
     title = 'Location'
     column_type = ColumnType.location
@@ -20,17 +19,15 @@ def test_should_create_a_location_column_with_no_api_input_data():
     column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
-
     location = column_value.format()
 
     # Assert
-
     eq_(location,COMPLEX_NULL_VALUE)
+
 
 def test_should_create_a_location_column_with_api_input_data():
 
     # Arrange
-
     id = 'location_1'
     title = 'Location'
     column_type = ColumnType.location
@@ -42,11 +39,9 @@ def test_should_create_a_location_column_with_api_input_data():
     column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
-
     location = column_value.format()
 
     # Assert
-
     eq_(location['lat'],0.0)
     eq_(location['lng'],0.0)
     eq_(location['address'],'Origin of Earth')
@@ -55,7 +50,6 @@ def test_should_create_a_location_column_with_api_input_data():
 def test_should_return_none_when_location_value_set_to_none():
 
     # Arrange
-
     id = 'location_1'
     title = 'Location'
     column_type = ColumnType.location
@@ -63,24 +57,21 @@ def test_should_return_none_when_location_value_set_to_none():
     column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
-
     column_value.value = None
 
     # Assert
-
     eq_(column_value.value, None)
+
 
 def test_should_return_location_value_when_location_value_set_to_location_value():
 
     # Arrange
-
     id = 'location_1'
     title = 'Location'
     column_type = ColumnType.location
     column_value = en.cv.create_column_value(column_type,id=id,title=title)
 
     # Act
-
     column_value.value = Location(50.0,50.0,'Some place')
     location_value = Location(50.0,50.0,'Some place')
 
@@ -88,6 +79,7 @@ def test_should_return_location_value_when_location_value_set_to_location_value(
     eq_(column_value.value.lat, location_value.lat )
     eq_(column_value.value.lng, location_value.lng )
     eq_(column_value.value.address, location_value.address )
+
 
 def test_should_return_location_value_when_location_value_set_to_dict_value():
 
@@ -113,20 +105,18 @@ def test_should_return_location_value_when_location_value_set_to_dict_value():
 def test_should_fail_to_set_location_value_when_invalid_dict_is_passed():
 
     # Arrange
-
     id = 'location_1'
     title = 'Location'
     column_type = ColumnType.location
     column_value = en.cv.create_column_value(column_type,id=id,title=title)
 
     # Act
-
     column_value.value = {'lat': 50.0}
+
 
 def test_should_return_null_value_when_none_is_set_to_location_value():
 
     # Arrange
-
     id = 'location_1'
     title = 'Location'
     column_type = ColumnType.location
@@ -138,18 +128,16 @@ def test_should_return_null_value_when_none_is_set_to_location_value():
     column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
-
     column_value.value = None
     location = column_value.format()
 
     # Assert
-
     eq_(location,COMPLEX_NULL_VALUE)
+
 
 def test_should_return_dict_value_when_location_value_is_set_to_location_column_value():
 
     # Arrange
-
     id = 'location_1'
     title = 'Location'
     column_type = ColumnType.location
@@ -165,7 +153,6 @@ def test_should_return_dict_value_when_location_value_is_set_to_location_column_
     location = column_value.format()
 
     # Assert
-
     eq_(location['lat'],0.0)
     eq_(location['lng'],0.0)
     eq_(location['address'],'Origin of Earth') 
