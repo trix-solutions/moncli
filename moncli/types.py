@@ -53,6 +53,8 @@ class MondayType(BaseType):
             return self.native_default
 
         if not isinstance(value, en.cv.ColumnValue):
+            if self.is_readonly:
+                return value
             if isinstance(value, self.native_type):
                 return self._process(value)
             if self.allow_casts and isinstance(value, self.allow_casts):
