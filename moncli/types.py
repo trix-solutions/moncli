@@ -5,7 +5,7 @@ from pycountry import countries
 
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
-from enum import EnumMeta
+from enum import EnumMeta,Enum
 
 from . import entities as en
 from .config import *
@@ -19,6 +19,7 @@ class MondayType(BaseType):
     null_value = None
     allow_casts = ()
     native_default = None
+    is_readonly = False
 
     def __init__(self, id: str = None, title: str = None, *args, **kwargs):
         self.original_value = None
@@ -52,6 +53,8 @@ class MondayType(BaseType):
             return self.native_default
 
         if not isinstance(value, en.cv.ColumnValue):
+            if self.is_readonly:
+                return value
             if isinstance(value, self.native_type):
                 return self._process(value)
             if self.allow_casts and isinstance(value, self.allow_casts):
@@ -353,7 +356,15 @@ class StatusType(MondayType):
                 if value == label:
                     return {'index': int(index)}
 
+
+class SubItemType(MondayType):
+
+    native_type = list
+    native_default = []
+    null_value = {}
+    is_readonly = True
  
+
 class TextType(MondayType):
     native_type = str
     allow_casts = (int, float)
