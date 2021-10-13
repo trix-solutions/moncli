@@ -19,6 +19,7 @@ class MondayType(BaseType):
     null_value = None
     allow_casts = ()
     native_default = None
+    is_readonly = False
 
     def __init__(self, id: str = None, title: str = None, *args, **kwargs):
         self.original_value = None
@@ -406,7 +407,15 @@ class StatusType(MondayType):
                 if value == label:
                     return {'index': int(index)}
 
+
+class SubItemType(MondayType):
+
+    native_type = list
+    native_default = []
+    null_value = {}
+    is_readonly = True
  
+
 class TextType(MondayType):
     native_type = str
     allow_casts = (int, float)
