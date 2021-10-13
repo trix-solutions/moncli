@@ -281,14 +281,22 @@ class NumberType(MondayType):
 class PhoneType(MondayType):
 
     native_type = en.cv.Phone
-    allow_casts = (dict,)
+    allow_casts = (dict,str)
     null_value = {}
 
     def _cast(self, value):
-        try:
-            return en.cv.Phone(phone=value['phone'],code=value['code'])
-        except KeyError:
-            raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
+        
+        if isinstance(value,dict):
+            try:
+                return en.cv.Phone(phone=value['phone'],code=value['code'])
+            except KeyError:
+                raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
+        
+        elif isinstance(value,dict):
+            values = value.split(" ",1)
+            return en.cv.Phone(phone=values[0],code=values[1])
+
+
 
     def _export(self, value):
         if value.phone and value.code:
