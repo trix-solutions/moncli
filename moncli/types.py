@@ -415,7 +415,7 @@ class WeekType(MondayType):
 class TimelineType(MondayType):
 
     native_type = en.cv.Timeline
-    allow_casts = dict
+    allow_casts = (dict,)
     null_value = {}
 
     def _cast(self, value):
