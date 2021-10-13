@@ -1,8 +1,12 @@
 from datetime import datetime, timedelta
 
-from moncli import enums
+from ... import enums
 
-from .base import ColumnValue, ComplexNullValue
+
+class Country(object):
+  def __init__(self, name: str, code: str):
+    self.name = name
+    self.code = code
 
 
 class Email(object):
@@ -30,6 +34,7 @@ class Email(object):
         'text': self.text
       })
 
+
 class Hour(object):
   def __init__(self, hour: int, minute: int = 0):
     self.hour = hour
@@ -45,6 +50,52 @@ class Hour(object):
       self._minute = 0
     else: 
       self._minute = value
+
+
+class Link(object):
+  def __init__(self, url: str = None, text: str = None):
+    self.url = url
+    if not text:
+      text = url
+    self._text = text
+    
+  @property
+  def text(self):
+    return self._text
+  
+  @text.setter
+  def text(self, value):
+    if not value:
+      self._text = self.url
+    else:
+      self._text = value
+
+
+class Location(object):
+  def __init__(self, lat: float = 0, lng: float = 0, address: str = None):
+    self._lat = lat
+    self._lng = lng
+    self.address = address
+    
+  @property
+  def lat(self):
+    if not self._lat:
+      return 0
+    return self._lat
+  
+  @property
+  def lng(self):
+    if not self._lng:
+      return 0
+    return self._lng
+  
+  def __repr__(self):
+    return str({
+      'lat': self.lat,
+      'lng': self.lng,
+      'address': self.address
+    })
+
 
 class PersonOrTeam(object):
     """
@@ -66,6 +117,7 @@ class PersonOrTeam(object):
             'kind': self.kind.name
         })
 
+
 class Person(PersonOrTeam):
    def __init__(self, id):
         super(Person, self).__init__(id,kind=enums.PeopleKind.person)
@@ -74,25 +126,6 @@ class Person(PersonOrTeam):
 class Team(PersonOrTeam):
    def __init__(self,id):
         super(Team, self).__init__(id, kind=enums.PeopleKind.team)
-
-
-class Link(object):
-  def __init__(self, url: str = None, text: str = None):
-    self.url = url
-    if not text:
-      text = url
-    self._text = text
-    
-  @property
-  def text(self):
-    return self._text
-  
-  @text.setter
-  def text(self, value):
-    if not value:
-      self._text = self.url
-    else:
-      self._text = value
 
 
 class Phone(object):
@@ -180,9 +213,3 @@ class Week(object):
             'start': self._start,
             'end': self._end
         })
-
-
-class Country(object):
-  def __init__(self, name: str, code: str):
-    self.name = name
-    self.code = code

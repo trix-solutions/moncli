@@ -12,7 +12,7 @@ from moncli.entities.column_value.constants import COMPLEX_NULL_VALUE
 
 from . import entities as en
 from .config import *
-from  .entities.column_value import Phone
+
 
 
 
@@ -102,7 +102,32 @@ class CheckboxType(MondayType):
         if value == True:
             return {'checked': 'true'}
 
+class CountryType(MondayType):
 
+    native_type = en.cv.Country
+    allow_casts = (dict,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            return en.cv.Country(name = value['country'], code = value['code'])
+        except KeyError:
+            raise ConversionError('Unable to convert value "{}" to Country.'.format(value))
+        
+    def _export(self, value):
+        if value.name and value.code:
+            return {'countryName': value.name, 'countryCode': value.code}
+        return self.null_value
+    
+    def validate_country(self, value): 
+        country = countries.get(name=value.name)
+        if not country:
+            raise ValidationError('Value "{}" is not a valid country.'.format(value.name))
+        code = countries.get(alpha_2=value.code)
+        if not code:
+            raise ValidationError('Value "{}" is not a valid alpha 2 country code.'.format(value.code))
+
+    
 class DateType(MondayType):
 
     native_type = datetime
@@ -255,13 +280,13 @@ class NumberType(MondayType):
 
 class PhoneType(MondayType):
 
-    native_type = Phone
+    native_type = en.cv.Phone
     allow_casts = (dict,)
     null_value = {}
 
     def _cast(self, value):
         try:
-            return Phone(phone=value['phone'],code=value['code'])
+            return en.cv.Phone(phone=value['phone'],code=value['code'])
         except KeyError:
             raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
 
