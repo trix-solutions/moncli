@@ -84,6 +84,8 @@ class MondayModel(Model):
 
         for field, value in base_dict.items():
             model_field = self._fields[field]
+            if model_field.is_readonly:
+                continue      
             if not value:
                 value = model_field.null_value
             new_value = pickle.dumps(getattr(self, field))
