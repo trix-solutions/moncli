@@ -253,7 +253,6 @@ class LinkType(MondayType):
         return str_value
 
 
-
 class LongTextType(MondayType):
     native_type = str
     allow_casts = (int, float)
@@ -277,6 +276,7 @@ class NumberType(MondayType):
     
     def _export(self, value):
         return str(value)
+
 
 class PhoneType(MondayType):
 
