@@ -189,6 +189,79 @@ class DependencyType(MondayType):
         return { 'item_ids': [data for data in value]}
 
 
+class DropdownType(MondayType):
+    native_type = list
+    native_default = []
+    null_value = {}
+    element_type = str
+
+    def __init__(self, id: str = None, title: str = None, as_enum: Enum = None, *args, **kwargs):
+        if as_enum:
+            self.element_type = as_enum
+        super().__init__(id=id, title=title, *args, **kwargs)
+
+    def _process(self, value):
+        labels = {}
+        for data in self.metadata['labels']:
+            k,v = data.values()
+            labels[k] = v
+        return_list = []
+
+        if self.element_type == str:
+            for data in value:
+                if str(data).isdigit():
+                    try:
+                        return_list.append(labels[int(data)])
+                    except KeyError:
+                        raise ConversionError('Value "{}" is not a valid dropdown index.'.format(data))
+                elif isinstance(data,str):
+                    if not (data in labels.values()):
+                        raise ConversionError('Value "{}" is not a valid dropdown label.'.format(data))
+                    return_list.append(data)
+
+        elif isinstance(self.element_type,EnumMeta):
+            for data in value:
+                if str(data).isdigit():
+                    try:
+                        return_list.append(self.element_type(labels[int(data)]))
+                    except KeyError:
+                        raise ConversionError('Value "{}" is not a valid dropdown index.'.format(data))
+                elif isinstance(data,str):
+                        if not (data in labels.values()):
+                            raise ConversionError('Value "{}" is not a valid dropdown label.'.format(data))
+                        return_list.append(self.element_type(data))
+                elif isinstance(data,Enum):
+                    return_list.append(data)
+
+        return return_list
+
+    def _export(self, value):
+        return_list = []
+        labels = {}
+        for data in self.metadata['labels']:
+            k,v = data.values()
+            labels[k] = v
+        
+            return_list = []
+
+            for key,name in labels.items():
+                for data in value:
+                    if isinstance(data,str):
+                        if data == name:
+                            return_list.append(key)
+                            break
+                    elif isinstance(data,Enum):
+                        if data.value == name:
+                            return_list.append(key)
+                            break
+                if len(return_list) == len(value):
+                    break
+
+        return { 'ids': return_list}
+
+
+
+
 class EmailType(MondayType):
     native_type = en.cv.Email
     null_value = {}
