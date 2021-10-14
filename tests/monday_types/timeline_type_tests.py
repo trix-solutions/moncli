@@ -20,7 +20,7 @@ def test_should_succeed_when_to_native_returns_a_timeline_when_passed_a_timeline
     from_date = '2021-09-01'
     to_date = '2021-10-01'
     value = json.dumps({'from': from_date, 'to': to_date})
-    timeline_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    timeline_value = en.cv.create_column_value(column_type, id=id, title=title, value=value, settings_str='{}')
 
     # Act
     timeline_type = TimelineType(title='Timeline Column 1')
