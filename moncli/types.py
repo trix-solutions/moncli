@@ -1,16 +1,14 @@
 import pytz, json, re
-from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
-from pycountry import countries
+from enum import EnumMeta
+from pytz.exceptions import UnknownTimeZoneError
 
+from pycountry import countries
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
-from enum import EnumMeta
 
 from . import entities as en
 from .config import *
-
-
 
 
 class MondayType(BaseType):
@@ -19,6 +17,7 @@ class MondayType(BaseType):
     null_value = None
     allow_casts = ()
     native_default = None
+    is_readonly = False
 
     def __init__(self, id: str = None, title: str = None, *args, **kwargs):
         self.original_value = None
@@ -52,6 +51,8 @@ class MondayType(BaseType):
             return self.native_default
 
         if not isinstance(value, en.cv.ColumnValue):
+            if self.is_readonly:
+                return value
             if isinstance(value, self.native_type):
                 return self._process(value)
             if self.allow_casts and isinstance(value, self.allow_casts):
@@ -273,6 +274,29 @@ class LinkType(MondayType):
         return str_value
 
 
+class LocationType(MondayType):
+
+    native_type = en.cv.Location
+    allow_casts = (dict,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            return en.cv.Location(lat=value['lat'],lng=value['lng'])
+        except KeyError:
+            raise ConversionError('Cannot convert "{}" to Location.'.format(value))
+
+    def _export(self, value):
+        if value.lat and value.lng:
+            return { 'lat': value.lat,'lng': value.lng }
+        return self.null_value
+    
+    def validate_location(self,value):
+        if not (-90 < value.lat < 90):
+            raise ValidationError('Value "{}" is not a valid Latitude.'.format(value))
+        if not (-180 < value.lng < 180):
+            raise ValidationError('Value "{}" is not a valid Longitude.'.format(value))
+
 
 class LongTextType(MondayType):
     native_type = str
@@ -297,6 +321,36 @@ class NumberType(MondayType):
     
     def _export(self, value):
         return str(value)
+
+
+class PhoneType(MondayType):
+
+    native_type = en.cv.Phone
+    allow_casts = (dict,str)
+    null_value = {}
+
+    def _cast(self, value):
+        if isinstance(value, dict):
+            try:
+                return en.cv.Phone(phone=value['phone'],code=value['code'])
+            except KeyError:
+                raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
+        elif isinstance(value, str):
+            values = value.split(" ",1)
+            try:
+                return en.cv.Phone(phone=values[0],code=values[1])
+            except IndexError:
+                raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
+
+    def _export(self, value):
+        if value.phone and value.code:
+            return {'phone': value.phone, 'countryShortName': value.code}
+        return self.null_value
+    
+    def validate_country_code(self, value):
+        country = countries.get(alpha_2=value.code)
+        if not country:
+            raise ValidationError('Value "{}" is not a valid alpha 2 country code.'.format(value.code))
 
 
 class RatingType(MondayType):
@@ -376,7 +430,15 @@ class StatusType(MondayType):
                 if value == label:
                     return {'index': int(index)}
 
+
+class SubItemType(MondayType):
+
+    native_type = list
+    native_default = []
+    null_value = {}
+    is_readonly = True
  
+
 class TextType(MondayType):
     native_type = str
     allow_casts = (int, float)
