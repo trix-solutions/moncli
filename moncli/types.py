@@ -292,7 +292,7 @@ class PhoneType(MondayType):
             except KeyError:
                 raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
         
-        elif isinstance(value,dict):
+        elif isinstance(value,str):
             values = value.split(" ",1)
             return en.cv.Phone(phone=values[0],code=values[1])
 

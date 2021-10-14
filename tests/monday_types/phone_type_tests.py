@@ -62,6 +62,17 @@ def test_should_succeed_when_to_native_raises_a_conversionerror_when_passed_an_i
     # Act
     phone_type.to_native({'invalid': 'phone'})
 
+def test_should_return_phone_value_when_passed_simple_string_for_to_native_to_phone_type():
+
+    # Arrange
+    phone_type = t.PhoneType(title='phone 1')
+    
+    # Act
+    value = phone_type.to_native('+15083658469 US')
+
+    # Assert
+    eq_(value.phone,'+15083658469')
+    eq_(value.code, 'US')
 
 def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_none_to_phone_type():
 
@@ -81,7 +92,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_phon
     phone_type = t.PhoneType(title='phone 1')
     
     # Act
-    value = phone_type.to_primitive(t.Phone(phone = '+15083658469', code= 'US'))
+    value = phone_type.to_primitive(en.cv.Phone(phone = '+15083658469', code= 'US'))
 
     # Assert
     eq_(value['phone'],'+15083658469')
@@ -94,7 +105,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_phone
     phone_type = t.PhoneType(title='phone 1')
     
     # Act
-    value = phone_type.to_primitive(t.Phone(phone = '+15083658469', code= None))
+    value = phone_type.to_primitive(en.cv.Phone(phone = '+15083658469', code= None))
 
     # Assert
     eq_(value,{})
@@ -109,5 +120,5 @@ def test_should_succeed_when_validate_country_code_raises_a_validation_error_whe
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.value = 'zz'
+    test.value = '1234 zz'
     test.validate()
