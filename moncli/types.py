@@ -1,16 +1,14 @@
 import pytz, json, re
-from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
-from pycountry import countries
+from enum import EnumMeta
+from pytz.exceptions import UnknownTimeZoneError
 
+from pycountry import countries
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
-from enum import EnumMeta,Enum
 
 from . import entities as en
 from .config import *
-from .entities.column_value import Country
-
 
 
 class MondayType(BaseType):
@@ -104,13 +102,13 @@ class CheckboxType(MondayType):
 
 class CountryType(MondayType):
 
-    native_type = Country
+    native_type = en.cv.Country
     allow_casts = (dict,)
     null_value = {}
 
     def _cast(self, value):
         try:
-            return Country(name = value['country'], code = value['code'])
+            return en.cv.Country(name = value['country'], code = value['code'])
         except KeyError:
             raise ConversionError('Unable to convert value "{}" to Country.'.format(value))
         
@@ -313,7 +311,6 @@ class LinkType(MondayType):
         return str_value
 
 
-
 class LongTextType(MondayType):
     native_type = str
     allow_casts = (int, float)
@@ -337,6 +334,36 @@ class NumberType(MondayType):
     
     def _export(self, value):
         return str(value)
+
+
+class PhoneType(MondayType):
+
+    native_type = en.cv.Phone
+    allow_casts = (dict,str)
+    null_value = {}
+
+    def _cast(self, value):
+        if isinstance(value, dict):
+            try:
+                return en.cv.Phone(phone=value['phone'],code=value['code'])
+            except KeyError:
+                raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
+        elif isinstance(value, str):
+            values = value.split(" ",1)
+            try:
+                return en.cv.Phone(phone=values[0],code=values[1])
+            except IndexError:
+                raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
+
+    def _export(self, value):
+        if value.phone and value.code:
+            return {'phone': value.phone, 'countryShortName': value.code}
+        return self.null_value
+    
+    def validate_country_code(self, value):
+        country = countries.get(alpha_2=value.code)
+        if not country:
+            raise ValidationError('Value "{}" is not a valid alpha 2 country code.'.format(value.code))
 
 
 class RatingType(MondayType):
@@ -446,6 +473,37 @@ class TagsType(MondayType):
     
     def _export(self, value):
         return {'tag_ids': value}
+        
+        
+class TimelineType(MondayType):
+
+    native_type = en.cv.Timeline
+    allow_casts = (dict,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            from_date = value['from']
+            to_date = value['to']
+            return en.cv.Timeline(from_date=from_date, to_date=to_date)
+        except KeyError:
+            raise ConversionError('Could not convert value "{}" to Timeline.'.format(value))
+
+    def  _process_column_value(self, value):
+        try:
+            if value.settings['visualization_type']:
+                self.metadata['is_milestone'] = True
+        except KeyError:
+            self.metadata['is_milestone'] = False
+
+    def _export(self, value):
+        if value.from_date == None or value.to_date == None:
+            return {}
+        return {'from': value.from_date.strftime(DATE_FORMAT), 'to': value.to_date.strftime(DATE_FORMAT)}
+        
+    def validate_timeline(self,value):
+         if value.from_date > value.to_date:
+            raise ValidationError('Timeline from date cannot be after to date.')
 
 
 class TimeZoneType(MondayType):
@@ -480,4 +538,3 @@ class WeekType(MondayType):
         start =  value.start.strftime(DATE_FORMAT) 
         end  = value.end.strftime(DATE_FORMAT)
         return  {'week': {'startDate': start, 'endDate': end}}
-
