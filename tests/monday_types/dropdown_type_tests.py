@@ -50,9 +50,10 @@ column_value = en.cv.create_column_value(
     
 def test_should_succeed_when_to_native_returns_a_list_when_passed_a_dropdownvalue_value_with_api_data_to_dropdown_type():
 
+    # Arrange
+    dropdown_type = t.DropdownType(title='Dropdown')
 
     # Act 
-    dropdown_type = t.DropdownType(title='Dropdown')
     format = dropdown_type.to_native(column_value)[0]
 
     # Assert    
@@ -74,32 +75,26 @@ def test_should_succeed_when_to_native_returns_an_empty_list_when_passed_a_none_
 def test_should_succeed_when_to_native_returns_a_list_of_str_labels_when_passed_a_list_of_str_or_int_index_or_label_values_and_element_type_is_str_to_dropdown_type():
 
     # Arrange
-
     dropdown_type = t.DropdownType(title='Dropdown')
     dropdown_type.to_native(column_value)
 
     # Act 
-
     format = dropdown_type.to_native([1,2,3])
 
     # Assert
-
     eq_(format,['Date', 'Datetime', 'Text'])
 
 
 def test_should_succeed_when_to_native_returns_a_list_of_mapped_values_when_passed_a_list_of_str_or_int_index_or_label_values_and_element_type_is_an_enum_class_to_dropdown_type():
 
-    # Arrange
-    
+    # Arrange    
     dropdown_type = t.DropdownType(title='Dropdown',as_enum=DropdownEnum)
     dropdown_type.to_native(column_value)
 
-    # Act 
-
+    # Act
     format = dropdown_type.to_native([1,'Text'])
 
     # Assert
-
     eq_(format,[DropdownEnum.date,DropdownEnum.text])
 
 
@@ -117,28 +112,25 @@ def test_should_succeed_when_to_primitive_returns_an_empty_dict_when_passed_a_no
 
 def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_list_value_containing_str_labels_and_element_type_is_str_to_dropdown_type():
 
+    # Arrange
     dropdown_type = t.DropdownType(title='Dropdown',as_enum=DropdownEnum)
     dropdown_type.to_native(column_value)
 
     # Act 
-
     format = dropdown_type.to_primitive(['Date','Text'])
 
     # Assert
-
-
     eq_(format['ids'],[1,3])
 
 
 def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_list_of_values_containing_mapped_data_when_element_type_is_enum_class_to_dropdown_type():
 
+    # Arrange
     dropdown_type = t.DropdownType(title='Dropdown',as_enum=DropdownEnum)
     dropdown_type.to_native(column_value)
 
     # Act 
-
     format = dropdown_type.to_primitive([DropdownEnum.date,DropdownEnum.text])
 
     # Assert
-
     eq_(format['ids'],[1,3])

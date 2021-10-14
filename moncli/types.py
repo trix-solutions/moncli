@@ -236,30 +236,17 @@ class DropdownType(MondayType):
         return return_list
 
     def _export(self, value):
-        return_list = []
         labels = {}
         for data in self.metadata['labels']:
             k,v = data.values()
-            labels[k] = v
+            labels[v] = k
         
-            return_list = []
+        labels_str = value
+        if isinstance(self.element_type,EnumMeta):
+            labels_str = [data.value for data in value]
 
-            for key,name in labels.items():
-                for data in value:
-                    if isinstance(data,str):
-                        if data == name:
-                            return_list.append(key)
-                            break
-                    elif isinstance(data,Enum):
-                        if data.value == name:
-                            return_list.append(key)
-                            break
-                if len(return_list) == len(value):
-                    break
-
+        return_list =  [labels[label] for label in labels_str]
         return { 'ids': return_list}
-
-
 
 
 class EmailType(MondayType):
