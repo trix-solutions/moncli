@@ -1,16 +1,14 @@
 import pytz, json, re
-from pytz.exceptions import UnknownTimeZoneError
 from datetime import datetime, timedelta, timezone
-from pycountry import countries
+from enum import EnumMeta
+from pytz.exceptions import UnknownTimeZoneError
 
+from pycountry import countries
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
-from enum import EnumMeta
 
 from . import entities as en
 from .config import *
-from .entities.column_value import Country
-
 
 
 class MondayType(BaseType):
@@ -19,6 +17,7 @@ class MondayType(BaseType):
     null_value = None
     allow_casts = ()
     native_default = None
+    is_readonly = False
 
     def __init__(self, id: str = None, title: str = None, *args, **kwargs):
         self.original_value = None
@@ -52,6 +51,8 @@ class MondayType(BaseType):
             return self.native_default
 
         if not isinstance(value, en.cv.ColumnValue):
+            if self.is_readonly:
+                return value
             if isinstance(value, self.native_type):
                 return self._process(value)
             if self.allow_casts and isinstance(value, self.allow_casts):
@@ -101,13 +102,13 @@ class CheckboxType(MondayType):
 
 class CountryType(MondayType):
 
-    native_type = Country
+    native_type = en.cv.Country
     allow_casts = (dict,)
     null_value = {}
 
     def _cast(self, value):
         try:
-            return Country(name = value['country'], code = value['code'])
+            return en.cv.Country(name = value['country'], code = value['code'])
         except KeyError:
             raise ConversionError('Unable to convert value "{}" to Country.'.format(value))
         
@@ -250,7 +251,6 @@ class LinkType(MondayType):
         return str_value
 
 
-
 class LongTextType(MondayType):
     native_type = str
     allow_casts = (int, float)
@@ -274,6 +274,36 @@ class NumberType(MondayType):
     
     def _export(self, value):
         return str(value)
+
+
+class PhoneType(MondayType):
+
+    native_type = en.cv.Phone
+    allow_casts = (dict,str)
+    null_value = {}
+
+    def _cast(self, value):
+        if isinstance(value, dict):
+            try:
+                return en.cv.Phone(phone=value['phone'],code=value['code'])
+            except KeyError:
+                raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
+        elif isinstance(value, str):
+            values = value.split(" ",1)
+            try:
+                return en.cv.Phone(phone=values[0],code=values[1])
+            except IndexError:
+                raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
+
+    def _export(self, value):
+        if value.phone and value.code:
+            return {'phone': value.phone, 'countryShortName': value.code}
+        return self.null_value
+    
+    def validate_country_code(self, value):
+        country = countries.get(alpha_2=value.code)
+        if not country:
+            raise ValidationError('Value "{}" is not a valid alpha 2 country code.'.format(value.code))
 
 
 class RatingType(MondayType):
@@ -353,7 +383,15 @@ class StatusType(MondayType):
                 if value == label:
                     return {'index': int(index)}
 
+
+class SubItemType(MondayType):
+
+    native_type = list
+    native_default = []
+    null_value = {}
+    is_readonly = True
  
+
 class TextType(MondayType):
     native_type = str
     allow_casts = (int, float)
