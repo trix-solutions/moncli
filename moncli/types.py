@@ -292,7 +292,10 @@ class PhoneType(MondayType):
                 raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
         elif isinstance(value, str):
             values = value.split(" ",1)
-            return en.cv.Phone(phone=values[0],code=values[1])
+            try:
+                return en.cv.Phone(phone=values[0],code=values[1])
+            except IndexError:
+                raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
 
     def _export(self, value):
         if value.phone and value.code:
