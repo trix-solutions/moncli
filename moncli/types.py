@@ -413,6 +413,37 @@ class TagsType(MondayType):
     
     def _export(self, value):
         return {'tag_ids': value}
+        
+        
+class TimelineType(MondayType):
+
+    native_type = en.cv.Timeline
+    allow_casts = (dict,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            from_date = value['from']
+            to_date = value['to']
+            return en.cv.Timeline(from_date=from_date, to_date=to_date)
+        except KeyError:
+            raise ConversionError('Could not convert value "{}" to Timeline.'.format(value))
+
+    def  _process_column_value(self, value):
+        try:
+            if value.settings['visualization_type']:
+                self.metadata['is_milestone'] = True
+        except KeyError:
+            self.metadata['is_milestone'] = False
+
+    def _export(self, value):
+        if value.from_date == None or value.to_date == None:
+            return {}
+        return {'from': value.from_date.strftime(DATE_FORMAT), 'to': value.to_date.strftime(DATE_FORMAT)}
+        
+    def validate_timeline(self,value):
+         if value.from_date > value.to_date:
+            raise ValidationError('Timeline from date cannot be after to date.')
 
 
 class TimeZoneType(MondayType):
@@ -447,4 +478,3 @@ class WeekType(MondayType):
         start =  value.start.strftime(DATE_FORMAT) 
         end  = value.end.strftime(DATE_FORMAT)
         return  {'week': {'startDate': start, 'endDate': end}}
-

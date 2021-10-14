@@ -1,6 +1,5 @@
 import json
 from nose.tools import eq_,raises
-from unittest.mock import patch
 from schematics.exceptions import ConversionError, DataError
 
 from moncli import *
@@ -80,7 +79,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_coun
     country_type = t.CountryType(title='Country')
 
     # Act
-    format  = country_type.to_primitive(t.Country('India', 'IN'))
+    format = country_type.to_primitive(en.cv.Country('India', 'IN'))
 
     # Assert
     eq_(format['countryName'],'India')
@@ -93,7 +92,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_count
     country_type = t.CountryType(title='Country')
 
     # Act
-    format  = country_type.to_primitive(t.Country(name=None, code='IN'))
+    format = country_type.to_primitive(en.cv.Country(name=None, code='IN'))
 
     # Assert
     eq_(format,{})
@@ -103,7 +102,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_count
 def test_should_succeed_when_validate_country_raises_a_validationerror_when_passed_a_country_with_an_invalid_name_to_country_type():
     
     # Arrange
-    test.country_value= t.Country('IINDA','IN')
+    test.country_value= en.cv.Country('IINDA','IN')
     test.country_value.name = ''
 
     # Act
@@ -114,7 +113,7 @@ def test_should_succeed_when_validate_country_raises_a_validationerror_when_pass
 def test_should_succeed_when_validate_country_raises_a_validationerror_when_passed_a_country_with_an_invalid_code_to_country_type():
 
     # Arrange
-    test.country_value= t.Country('INDIA','INDYA')
+    test.country_value= en.cv.Country('INDIA','INDYA')
 
     # Act
     test.validate()
