@@ -117,7 +117,7 @@ def test_should_succeed_when_validate_timeline_raises_a_validationerror_when_pas
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.timeline_type = 'Timeline from date cannot be after to date.'
+    test.timeline_type = Timeline(datetime(2021, 10, 13), datetime(2021, 10, 12))
     test.validate()
     
     
