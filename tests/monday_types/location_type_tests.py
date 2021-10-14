@@ -13,7 +13,6 @@ from moncli import types as t
 def test_should_succeed_when_to_native_returns_a_location_when_passed_a_locationvalue_value_with_api_data():
     
     # Arrange
-
     id = 'location_1'
     title = 'Location'
     column_type = ColumnType.location
@@ -21,7 +20,6 @@ def test_should_succeed_when_to_native_returns_a_location_when_passed_a_location
     column_value =  en.cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
-
     location_type = t.LocationType(title='Location')
     value = location_type.to_native(column_value)
 
@@ -33,11 +31,9 @@ def test_should_succeed_when_to_native_returns_a_location_when_passed_a_location
 def test_should_succeed_when_to_native_returns_a_location_when_passed_an_import_dict_value():
     
     # Arrange
-
     location_type = t.LocationType(title='Location')
 
     # Act
-
     value = location_type.to_native({'lat': 26.930101, 'lng': -80.790198, 'address': "Home address"})
 
     # Assert
@@ -49,22 +45,18 @@ def test_should_succeed_when_to_native_returns_a_location_when_passed_an_import_
 def test_should_succeed_when_to_native_raises_a_conversionerror_when_passed_an_invalid_import_dict():
     
     # Arrange
-
     location_type = t.LocationType(title='Location')
 
     # Act
-
-    value = location_type.to_native({'latitude': 26.930101, 'longitude': -80.790198, 'address': "Home address"})
+    location_type.to_native({'latitude': 26.930101, 'longitude': -80.790198, 'address': "Home address"})
 
 
 def test_should_succeed_when_to_native_returns_none_when_passed_a_none():
     
     # Arrange
-
     location_type = t.LocationType(title='Location')
 
     # Act
-
     value = location_type.to_native(None)
 
     # Assert
@@ -74,11 +66,9 @@ def test_should_succeed_when_to_native_returns_none_when_passed_a_none():
 def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_none():
 
     # Arrange
-
     location_type = t.LocationType(title='Location')
 
     # Act
-
     value = location_type.to_primitive(None)
 
     # Assert
@@ -88,11 +78,9 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_none(
 def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_location_value_():
     
     # Arrange
-
     location_type = t.LocationType(title='Location')
 
     # Act
-
     value = location_type.to_primitive(en.cv.Location(lat = 26.930101, lng= -80.790198, address = "Home address"))
 
     # Assert
@@ -103,11 +91,9 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_loca
 def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_location_value_with_a_lat_or_lng_as_none():
     
     # Arrange
-
     location_type = t.LocationType(title='Location')
 
     # Act
-
     value = location_type.to_primitive(en.cv.Location(lat = 26.930101))
 
     # Assert
@@ -122,7 +108,7 @@ def test_should_succeed_when_validate_location_raises_a_validation_error_when_pa
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.value = en.cv.Location(-99,123.234)
+    test.value = en.cv.Location(lat=-99,lng=123.234)
     test.validate()
 
 @raises(DataError)
@@ -134,5 +120,5 @@ def test_should_succeed_when_validate_location_raises_a_validationerror_when_pas
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.value = en.cv.Location(-23,223.234)
+    test.value = en.cv.Location(lat=-23,lng=223.234)
     test.validate()

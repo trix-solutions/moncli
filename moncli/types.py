@@ -234,19 +234,19 @@ class LocationType(MondayType):
 
     def _cast(self, value):
         try:
-            return en.cv.Location(lat=value['lat'],lng=value['lng'])
+            return en.cv.Location(lat=value['lat'],lng=value['lng'],])
         except KeyError:
             raise ConversionError('Cannot convert "{}" to Location.'.format(value))
 
     def _export(self, value):
-        if value.lat and value.lng:
-            return { 'lat': value.lat,'lng': value.lng }
+        if value.lat and value.lng and value.address:
+            return { 'lat': value.lat,'lng': value.lng, 'address':value.address }
         return self.null_value
     
     def validate_location(self,value):
-        if not (-90 < value.lat < 90):
+        if not (-90 <= value.lat <= 90):
             raise ValidationError('Value "{}" is not a valid Latitude.'.format(value))
-        if not (-180 < value.lng < 180):
+        if not (-180 <= value.lng <= 180):
             raise ValidationError('Value "{}" is not a valid Longitude.'.format(value))
 
 class LinkType(MondayType):
