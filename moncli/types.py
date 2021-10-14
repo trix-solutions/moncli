@@ -426,10 +426,12 @@ class TimelineType(MondayType):
         except KeyError:
             raise ConversionError('Could not convert value "{}" to Timeline.'.format(value))
 
-    def _set_metadate(self, value):
-        if value.settings['visualization_type']:
-            self.metadata['is_milestone'] = True
-        self.metadata['is_milestone'] = False
+    def  _process_column_value(self, value):
+        try:
+            if value.settings['visualization_type']:
+                self.metadata['is_milestone'] = True
+        except KeyError:
+            self.metadata['is_milestone'] = False
 
     def _export(self, value):
         if value.from_date == None or value.to_date == None:
