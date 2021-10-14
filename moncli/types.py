@@ -227,29 +227,6 @@ class HourType(MondayType):
             raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
 
 
-class LocationType(MondayType):
-
-    native_type = en.cv.Location
-    allow_casts = (dict,)
-    null_value = {}
-
-    def _cast(self, value):
-        try:
-            return en.cv.Location(lat=value['lat'],lng=value['lng'])
-        except KeyError:
-            raise ConversionError('Cannot convert "{}" to Location.'.format(value))
-
-    def _export(self, value):
-        if value.lat and value.lng:
-            return { 'lat': value.lat,'lng': value.lng }
-        return self.null_value
-    
-    def validate_location(self,value):
-        if not (-90 < value.lat < 90):
-            raise ValidationError('Value "{}" is not a valid Latitude.'.format(value))
-        if not (-180 < value.lng < 180):
-            raise ValidationError('Value "{}" is not a valid Longitude.'.format(value))
-
 class LinkType(MondayType):
     
     native_type = en.cv.Link
@@ -272,6 +249,30 @@ class LinkType(MondayType):
         if not (str_value.startswith('https://') or str_value.startswith('http://')):
             raise ValidationError('Value "{}" is not a valid URL link.'.format(value))
         return str_value
+
+
+class LocationType(MondayType):
+
+    native_type = en.cv.Location
+    allow_casts = (dict,)
+    null_value = {}
+
+    def _cast(self, value):
+        try:
+            return en.cv.Location(lat=value['lat'],lng=value['lng'])
+        except KeyError:
+            raise ConversionError('Cannot convert "{}" to Location.'.format(value))
+
+    def _export(self, value):
+        if value.lat and value.lng:
+            return { 'lat': value.lat,'lng': value.lng }
+        return self.null_value
+    
+    def validate_location(self,value):
+        if not (-90 < value.lat < 90):
+            raise ValidationError('Value "{}" is not a valid Latitude.'.format(value))
+        if not (-180 < value.lng < 180):
+            raise ValidationError('Value "{}" is not a valid Longitude.'.format(value))
 
 
 class LongTextType(MondayType):
