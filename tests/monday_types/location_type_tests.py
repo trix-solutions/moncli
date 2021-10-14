@@ -102,7 +102,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_locat
 @raises(DataError)
 def test_should_succeed_when_validate_location_raises_a_validation_error_when_passed_a_location_value_with_an_invalid_lat():
     
-    # Arrange
+    # Arrange    
     class TestModel(MondayModel):
         value = t.LocationType(id='location_1')
     test = TestModel(id='item_id', name='Item Name')
