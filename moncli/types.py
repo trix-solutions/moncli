@@ -259,7 +259,7 @@ class LocationType(MondayType):
 
     def _cast(self, value):
         try:
-            return en.cv.Location(lat=value['lat'],lng=value['lng'])
+            return en.cv.Location(lat=value['lat'],lng=value['lng'], address=value.get('address', None))
         except KeyError:
             raise ConversionError('Cannot convert "{}" to Location.'.format(value))
 
