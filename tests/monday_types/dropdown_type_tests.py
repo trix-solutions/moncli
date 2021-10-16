@@ -1,4 +1,4 @@
-from schematics.exceptions import ConversionError, DataError, ValidationError
+from schematics.exceptions import ConversionError
 from nose.tools import eq_,raises
 from enum import Enum
 import json
@@ -134,3 +134,26 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_list
 
     # Assert
     eq_(format['ids'],[1,3])
+
+
+@raises(ConversionError)
+def test_should_raise_a_conversionerror_when_passed_a_list_containing_an_invalid_int_or_str_index_value():
+
+    # Arrange
+    dropdown_type = t.DropdownType(title='Dropdown',as_enum=DropdownEnum)
+    dropdown_type.to_native(column_value)
+
+    # Act 
+    dropdown_type.to_primitive([23])
+
+
+@raises(ConversionError)
+def test_should_raise_conversionerror_when_passed_a_list_containing_an_invalid_str_label_value():
+
+    # Arrange
+    dropdown_type = t.DropdownType(title='Dropdown',as_enum=DropdownEnum)
+    dropdown_type.to_native(column_value)
+
+    # Act 
+    dropdown_type.to_primitive(['Data','Table'])
+
