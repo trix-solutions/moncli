@@ -223,7 +223,8 @@ class DropdownType(MondayType):
     
     def _process_column_value(self, value: en.cv.ColumnValue):
         if isinstance(self.element_type,EnumMeta):
-            return [self.element_type(data) for data in value.value ]
+            return [self.element_type(data) for data in value.value]
+        return super()._process_column_value(value)
 
 
     def _export(self, value):
