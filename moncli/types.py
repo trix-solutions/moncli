@@ -64,9 +64,7 @@ class MondayType(BaseType):
         settings = json.loads(value.settings_str) if value.settings_str else {}
         for k, v in settings.items():
             self.metadata[k] = v
-        self._process_column_value(value)
-        self.original_value = value.value
-        return self.original_value
+        return self._process_column_value(value)
 
     def to_primitive(self, value, context=None):
         if self.null_value == None:
@@ -84,7 +82,7 @@ class MondayType(BaseType):
         return self.native_type(value)
 
     def _process_column_value(self, value: en.cv.ColumnValue):
-        pass
+        return value.value
 
     def _export(self, value):
         return value
@@ -223,9 +221,9 @@ class DropdownType(MondayType):
         return return_list
 
     
-    def _process_column_value(self, column_value: en.cv.ColumnValue):
+    def _process_column_value(self, value: en.cv.ColumnValue):
         if isinstance(self.element_type,EnumMeta):
-            column_value.value = [self.element_type(data) for data in column_value.value ]
+            return [self.element_type(data) for data in value.value ]
 
 
     def _export(self, value):
@@ -315,12 +313,15 @@ class ItemLinkType(MondayType):
                     raise ConversionError('Invalid item ID "{}".'.format(data))
             return return_list
             
-    def _process_column_value(self, value):
+    def _process_column_value(self, value: en.cv.ColumnValue):
         try:
-            if value.settings['allowMultipleValues']:
-                self.multiple_values = value.settings['allowMultipleValues']
+            if value.settings['allowMultipleItems']:
+                self.multiple_values = value.settings['allowMultipleItems']
+            if not self.multiple_values:
+                return value.value[0] if value.value else self.native_default
         except KeyError:
             self.multiple_values = True
+        return super()._process_column_value(value)
 
     def _export(self, value):
         if not self.multiple_values:
@@ -495,9 +496,10 @@ class StatusType(MondayType):
             except ValueError:
                     raise ConversionError('Cannot find status label with index "{}".'.format(value))
     
-    def _process_column_value(self, column_value: en.cv.ColumnValue):
+    def _process_column_value(self, value: en.cv.ColumnValue):
         if self.native_type == str:
             self.choices = [value for value in self.metadata['labels'].values()]
+        return super()._process_column_value(value)
                       
     def _export(self, value):
             labels = self.metadata['labels']
@@ -555,12 +557,13 @@ class TimelineType(MondayType):
         except KeyError:
             raise ConversionError('Could not convert value "{}" to Timeline.'.format(value))
 
-    def  _process_column_value(self, value):
+    def  _process_column_value(self, value: en.cv.ColumnValue):
         try:
             if value.settings['visualization_type']:
                 self.metadata['is_milestone'] = True
         except KeyError:
             self.metadata['is_milestone'] = False
+        return super()._process_column_value(value)
 
     def _export(self, value):
         if value.from_date == None or value.to_date == None:
