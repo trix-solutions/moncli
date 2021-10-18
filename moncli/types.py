@@ -64,9 +64,7 @@ class MondayType(BaseType):
         settings = json.loads(value.settings_str) if value.settings_str else {}
         for k, v in settings.items():
             self.metadata[k] = v
-        self._process_column_value(value)
-        self.original_value = value.value
-        return self.original_value
+        return self._process_column_value(value)
 
     def to_primitive(self, value, context=None):
         if self.null_value == None:
@@ -84,7 +82,7 @@ class MondayType(BaseType):
         return self.native_type(value)
 
     def _process_column_value(self, value: en.cv.ColumnValue):
-        pass
+        return value.value
 
     def _export(self, value):
         return value
@@ -223,9 +221,10 @@ class DropdownType(MondayType):
         return return_list
 
     
-    def _process_column_value(self, column_value: en.cv.ColumnValue):
+    def _process_column_value(self, value: en.cv.ColumnValue):
         if isinstance(self.element_type,EnumMeta):
-            column_value.value = [self.element_type(data) for data in column_value.value ]
+            return [self.element_type(data) for data in value.value]
+        return super()._process_column_value(value)
 
 
     def _export(self, value):
@@ -280,6 +279,55 @@ class HourType(MondayType):
             raise ValidationError('Hour values must be between 0-23, not "{}".'.format(value.hour))
         if (value.minute > 59) or (value.minute < 0):
             raise ValidationError('Minute values must be between 0-59, not "{}".'.format(value.minute))
+
+
+class ItemLinkType(MondayType):
+
+    native_type = list
+    native_default = []
+    null_value = {}
+    multiple_values = True
+    element_type = int
+
+    def __init__(self, id: str = None, title: str = None, multiple_values: bool = True, *args, **kwargs):
+        self.multiple_values = multiple_values
+        if not multiple_values:
+            self.native_type = int
+            self.native_default = None
+            self.element_type = None
+            self.allow_casts = (str,)
+        super().__init__(id, title, *args, **kwargs)
+
+    def _process(self, value):
+        if not self.multiple_values:
+            return value
+        elif self.multiple_values:
+            return_list = []   
+            for data in value:
+                try:
+                    return_list.append(int(data))
+                except ValueError:
+                    raise ConversionError('Invalid item ID "{}".'.format(data))
+            return return_list
+            
+    def _process_column_value(self, value: en.cv.ItemLinkValue):
+        try:
+            self.multiple_values = value.settings['allowMultipleItems']
+        except KeyError:
+            self.multiple_values = True
+        if not self.multiple_values:
+            self.native_type = int
+            self.native_default = None
+            self.element_type = None
+            self.allow_casts = (str,)
+            return value.value[0]
+        return super()._process_column_value(value)
+
+    def _export(self, value):
+        if not self.multiple_values:
+            return_value = int(value) if isinstance(value,int) else int(value[0])
+            return {'item_ids': [return_value] }
+        return {'item_ids': [int(data) for data in value ] }
 
 
 class LinkType(MondayType):
@@ -448,9 +496,10 @@ class StatusType(MondayType):
             except ValueError:
                     raise ConversionError('Cannot find status label with index "{}".'.format(value))
     
-    def _process_column_value(self, column_value: en.cv.ColumnValue):
+    def _process_column_value(self, value: en.cv.ColumnValue):
         if self.native_type == str:
             self.choices = [value for value in self.metadata['labels'].values()]
+        return super()._process_column_value(value)
                       
     def _export(self, value):
             labels = self.metadata['labels']
@@ -508,12 +557,13 @@ class TimelineType(MondayType):
         except KeyError:
             raise ConversionError('Could not convert value "{}" to Timeline.'.format(value))
 
-    def  _process_column_value(self, value):
+    def  _process_column_value(self, value: en.cv.ColumnValue):
         try:
             if value.settings['visualization_type']:
                 self.metadata['is_milestone'] = True
         except KeyError:
             self.metadata['is_milestone'] = False
+        return super()._process_column_value(value)
 
     def _export(self, value):
         if value.from_date == None or value.to_date == None:
