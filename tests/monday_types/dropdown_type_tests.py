@@ -14,7 +14,7 @@ from moncli import types as t
 id = 'dropdown_1'
 column_type = ColumnType.dropdown
 title = 'Dropdown'
-api_value = {
+dropdown_value = {
     'ids': [1],
     'changed_at': '2021-09-19T21:51:49.093Z'
 }
@@ -42,7 +42,7 @@ class DropdownEnum(Enum):
     boolean='Boolean'
     user_email='User Email'
 
-value = json.dumps(api_value)
+value = json.dumps(dropdown_value)
 settings_str = json.dumps(settings)
 column_value = en.cv.create_column_value(
     column_type, id=id, title=title, value=value, settings_str=settings_str)
