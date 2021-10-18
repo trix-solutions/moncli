@@ -300,15 +300,9 @@ class ItemLinkType(MondayType):
 
     def _process(self, value):
         if not self.multiple_values:
-            try:
-                return_value =  int(value) if isinstance(value,(int,str)) else int(value[0])
-                return return_value
-            except ValueError:
-                raise ConversionError('Invalid item ID "{}".'.format(value))
+            return value
         elif self.multiple_values:
-            return_list = []
-            if not isinstance(value,list):
-                return_list = int(value)     
+            return_list = []   
             for data in value:
                 try:
                     return_list.append(int(data))
@@ -318,8 +312,7 @@ class ItemLinkType(MondayType):
             
     def _process_column_value(self, value: en.cv.ItemLinkValue):
         try:
-            if value.settings['allowMultipleItems']:
-                self.multiple_values = value.settings['allowMultipleItems']
+            self.multiple_values = value.settings['allowMultipleItems']
         except KeyError:
             self.multiple_values = True
         if not self.multiple_values:
@@ -327,6 +320,8 @@ class ItemLinkType(MondayType):
             self.native_default = None
             self.element_type = None
             self.allow_casts = (str,)
+            return value.value[0]
+        return super()._process_column_value(value)
 
     def _export(self, value):
         if not self.multiple_values:
