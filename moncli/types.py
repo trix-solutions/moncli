@@ -287,13 +287,15 @@ class ItemLinkType(MondayType):
     native_default = []
     null_value = {}
     multiple_values = True
-    allow_casts = (int,str)
+    element_type = int
 
     def __init__(self, id: str = None, title: str = None, multiple_values: bool = True, *args, **kwargs):
         self.multiple_values = multiple_values
         if not multiple_values:
             self.native_type = int
             self.native_default = None
+            self.element_type = None
+            self.allow_casts = (str,)
         super().__init__(id, title, *args, **kwargs)
 
     def _process(self, value):
@@ -314,15 +316,17 @@ class ItemLinkType(MondayType):
                     raise ConversionError('Invalid item ID "{}".'.format(data))
             return return_list
             
-    def _process_column_value(self, value: en.cv.ColumnValue):
+    def _process_column_value(self, value: en.cv.ItemLinkValue):
         try:
             if value.settings['allowMultipleItems']:
                 self.multiple_values = value.settings['allowMultipleItems']
-            if not self.multiple_values:
-                return value.value[0] if value.value else self.native_default
         except KeyError:
             self.multiple_values = True
-        return super()._process_column_value(value)
+        if not self.multiple_values:
+            self.native_type = int
+            self.native_default = None
+            self.element_type = None
+            self.allow_casts = (str,)
 
     def _export(self, value):
         if not self.multiple_values:
