@@ -187,6 +187,61 @@ class DependencyType(MondayType):
         return { 'item_ids': [data for data in value]}
 
 
+class DropdownType(MondayType):
+    native_type = list
+    native_default = []
+    null_value = {}
+    element_type = str
+
+    def __init__(self, id: str = None, title: str = None, as_enum: type = None, *args, **kwargs):
+        if as_enum:
+            self.element_type = as_enum
+        super().__init__(id=id, title=title, *args, **kwargs)
+
+
+    def _process(self, value):
+        labels = {}
+        return_list = []
+        
+        [labels.__setitem__(data['id'], data['name']) for data in self.metadata['labels']]
+        for val in value:
+            if isinstance(self.element_type, EnumMeta) and isinstance(val, self.element_type):
+                return_list.append(val)
+                continue
+            try:
+                label = labels[int(val)]
+            except KeyError:
+                raise ConversionError('Value "{}" is not a valid dropdown index.'.format(val))
+            except ValueError:
+                label = str(val)
+                if not (label in labels.values()):
+                    raise ConversionError('Value "{}" is not a valid dropdown label.'.format(val))
+            if isinstance(self.element_type, EnumMeta):
+                return_list.append(self.element_type(label))
+            else:
+                return_list.append(label)
+        return return_list
+
+    
+    def _process_column_value(self, column_value: en.cv.ColumnValue):
+        if isinstance(self.element_type,EnumMeta):
+            column_value.value = [self.element_type(data) for data in column_value.value ]
+
+
+    def _export(self, value):
+        labels = {}
+        for data in self.metadata['labels']:
+            k,v = data.values()
+            labels[v] = k
+        
+        labels_str = value
+        if isinstance(self.element_type,EnumMeta):
+            labels_str = [data.value for data in value]
+
+        return_list =  [labels[label] for label in labels_str]
+        return { 'ids': return_list}
+
+
 class EmailType(MondayType):
     native_type = en.cv.Email
     null_value = {}
