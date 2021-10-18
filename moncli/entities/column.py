@@ -27,7 +27,8 @@ COLUMN_TYPE_MAPPINGS = {
     'timezone': ColumnType.world_clock,
     'file': ColumnType.file,
     'board-relation': ColumnType.board_relation,
-    'subtasks': ColumnType.subitems
+    'subtasks': ColumnType.subitems,
+    'pulse-log': ColumnType.creation_log
 }
 
 
