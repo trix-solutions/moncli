@@ -193,45 +193,40 @@ class DropdownType(MondayType):
     null_value = {}
     element_type = str
 
-    def __init__(self, id: str = None, title: str = None, as_enum: Enum = None, *args, **kwargs):
+    def __init__(self, id: str = None, title: str = None, as_enum: type = None, *args, **kwargs):
         if as_enum:
             self.element_type = as_enum
         super().__init__(id=id, title=title, *args, **kwargs)
 
+
     def _process(self, value):
         labels = {}
-        for data in self.metadata['labels']:
-            k,v = data.values()
-            labels[k] = v
         return_list = []
-
-        if self.element_type == str:
-            for data in value:
-                if str(data).isdigit():
-                    try:
-                        return_list.append(labels[int(data)])
-                    except KeyError:
-                        raise ConversionError('Value "{}" is not a valid dropdown index.'.format(data))
-                elif isinstance(data,str):
-                    if not (data in labels.values()):
-                        raise ConversionError('Value "{}" is not a valid dropdown label.'.format(data))
-                    return_list.append(data)
-
-        elif isinstance(self.element_type,EnumMeta):
-            for data in value:
-                if str(data).isdigit():
-                    try:
-                        return_list.append(self.element_type(labels[int(data)]))
-                    except KeyError:
-                        raise ConversionError('Value "{}" is not a valid dropdown index.'.format(data))
-                elif isinstance(data,str):
-                        if not (data in labels.values()):
-                            raise ConversionError('Value "{}" is not a valid dropdown label.'.format(data))
-                        return_list.append(self.element_type(data))
-                elif isinstance(data,Enum):
-                    return_list.append(data)
-
+        
+        [labels.__setitem__(data['id'], data['name']) for data in self.metadata['labels']]
+        for val in value:
+            if isinstance(self.element_type, EnumMeta) and isinstance(val, self.element_type):
+                return_list.append(val)
+                continue
+            try:
+                label = labels[int(val)]
+            except KeyError:
+                raise ConversionError('Value "{}" is not a valid dropdown index.'.format(val))
+            except ValueError:
+                label = str(val)
+                if not (label in labels.values()):
+                    raise ConversionError('Value "{}" is not a valid dropdown label.'.format(val))
+            if isinstance(self.element_type, EnumMeta):
+                return_list.append(self.element_type(label))
+            else:
+                return_list.append(label)
         return return_list
+
+    
+    def _process_column_value(self, column_value: en.cv.ColumnValue):
+        if isinstance(self.element_type,EnumMeta):
+            column_value.value = [self.element_type(data) for data in column_value.value ]
+
 
     def _export(self, value):
         labels = {}

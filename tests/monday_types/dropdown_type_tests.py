@@ -1,4 +1,4 @@
-from schematics.exceptions import ConversionError, DataError, ValidationError
+from schematics.exceptions import ConversionError
 from nose.tools import eq_,raises
 from enum import Enum
 import json
@@ -14,7 +14,7 @@ from moncli import types as t
 id = 'dropdown_1'
 column_type = ColumnType.dropdown
 title = 'Dropdown'
-api_value = {
+dropdown_value = {
     'ids': [1],
     'changed_at': '2021-09-19T21:51:49.093Z'
 }
@@ -42,7 +42,7 @@ class DropdownEnum(Enum):
     boolean='Boolean'
     user_email='User Email'
 
-value = json.dumps(api_value)
+value = json.dumps(dropdown_value)
 settings_str = json.dumps(settings)
 column_value = en.cv.create_column_value(
     column_type, id=id, title=title, value=value, settings_str=settings_str)
@@ -134,3 +134,26 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_list
 
     # Assert
     eq_(format['ids'],[1,3])
+
+
+@raises(ConversionError)
+def test_should_raise_a_conversionerror_when_passed_a_list_containing_an_invalid_int_or_str_index_value():
+
+    # Arrange
+    dropdown_type = t.DropdownType(title='Dropdown',as_enum=DropdownEnum)
+    dropdown_type.to_native(column_value)
+
+    # Act 
+    dropdown_type.to_primitive([23])
+
+
+@raises(ConversionError)
+def test_should_raise_conversionerror_when_passed_a_list_containing_an_invalid_str_label_value():
+
+    # Arrange
+    dropdown_type = t.DropdownType(title='Dropdown',as_enum=DropdownEnum)
+    dropdown_type.to_native(column_value)
+
+    # Act 
+    dropdown_type.to_primitive(['Data','Table'])
+
