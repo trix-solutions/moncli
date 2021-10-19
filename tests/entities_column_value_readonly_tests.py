@@ -1,7 +1,11 @@
-from nose.tools import ok_, eq_, raises
+import json
+from nose.tools import eq_, raises
+
 from moncli import entities as en, error as e
 from moncli.enums import *
-import json
+
+
+
 def test_should_create_file_column_value_with_empty_list_value_using_no_input_api_data():
     
     # Arrange
