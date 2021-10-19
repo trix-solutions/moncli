@@ -14,6 +14,7 @@ COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.email: 'EmailValue',
     ColumnType.hour: 'HourValue',
     ColumnType.link: 'LinkValue',
+    ColumnType.last_updated: 'LastUpdatedValue',
     ColumnType.long_text: 'LongTextValue',
     ColumnType.location: 'LocationValue',
     ColumnType.name: 'NameValue',

@@ -5,7 +5,6 @@ from moncli import entities as en, error as e
 from moncli.enums import *
 
 
-
 def test_should_create_file_column_value_with_empty_list_value_using_no_input_api_data():
     
     # Arrange
