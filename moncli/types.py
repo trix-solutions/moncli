@@ -124,6 +124,33 @@ class CountryType(MondayType):
             raise ValidationError('Value "{}" is not a valid alpha 2 country code.'.format(value.code))
 
     
+class CreationLogType(MondayType):
+
+    native_type = datetime
+    native_default = None
+    is_readonly = True
+
+    def _cast(self, value):
+        try:
+            if isinstance(value,int):
+                return value.astimezone(datetime.now().astimezone().tzinfo)
+        except (TypeError,ValueError):
+            raise ConversionError('Invalid UNIX timestamp "{}".'.format(value))
+        
+        date_str = value.split(" ")[0]
+        time_str = value.split(" ")[1]           
+        try:
+            date_format =  datetime.strptime(date_str,DATE_FORMAT)
+        except ValueError:
+            raise ConversionError('Cannot convert value "{}" into Date.'.format(value))
+        try:
+            time_format = datetime.strptime(time_str,TIME_FORMAT)
+        except ValueError:
+            raise ConversionError('Cannot convert value "{}" into Time.'.format(value))
+        date_time_format =  "{} {}".format(date_format,time_format)
+        return datetime.strptime(value,date_time_format)
+                    
+
 class DateType(MondayType):
 
     native_type = datetime
