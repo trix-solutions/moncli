@@ -1,5 +1,3 @@
-import json
-
 from nose.tools import ok_, raises
 
 from moncli import entities as en, error as e
