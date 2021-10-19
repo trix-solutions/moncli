@@ -1,4 +1,6 @@
-from nose.tools import ok_, raises
+from datetime import datetime, timezone
+
+from nose.tools import eq_, raises
 
 from moncli import entities as en, error as e
 from moncli.enums import *
@@ -7,17 +9,18 @@ from moncli.enums import *
 def test_should_create_creation_log_column_value_with_datetime_value_using_input_api_data():
 
     # Arrange
+    value = datetime(2021, 10, 4, 19, 20, 32, tzinfo=timezone.utc)
     column_value_data = {
         'id': 'creation_log_1',
         'title': 'Created',
-        'text': '2021-10-04 19:20:32 UTC',
+        'text': datetime.strftime(value, '%Y-%m-%d %H:%M:%S %Z'),
         'value': None
         }
     column_type = ColumnType.creation_log
     column_value = en.cv.create_column_value(column_type,**column_value_data)
 
     # Assert
-    ok_(column_value.value)
+    eq_(column_value.value, value.astimezone(datetime.now().tzinfo))
 
 
 @raises(e.ColumnValueError)
