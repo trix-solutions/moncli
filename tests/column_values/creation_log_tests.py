@@ -1,6 +1,6 @@
 import json
 
-from nose.tools import eq_, raises
+from nose.tools import ok_, raises
 
 from moncli import entities as en, error as e
 from moncli.enums import *
@@ -18,11 +18,8 @@ def test_should_create_creation_log_column_value_with_datetime_value_using_input
     column_type = ColumnType.creation_log
     column_value = en.cv.create_column_value(column_type,**column_value_data)
 
-    # Act
-    format = str(column_value.value)
-
     # Assert
-    eq_(format,'2021-10-04 19:20:32+05:30')
+    ok_(column_value.value)
 
 
 @raises(e.ColumnValueError)
