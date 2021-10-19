@@ -17,6 +17,7 @@ COLUMN_TYPE_MAPPINGS = {
     'numeric': ColumnType.numbers,
     'multiple-person': ColumnType.people,
     'phone': ColumnType.phone,
+    'pulse-updated': ColumnType.last_updated,
     'rating': ColumnType.rating,
     'color': ColumnType.status,
     'tag': ColumnType.tags,

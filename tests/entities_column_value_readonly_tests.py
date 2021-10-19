@@ -89,3 +89,57 @@ def test_shoucl_raise_column_value_error_when_calling_format_for_a_file_column_v
 
     # Act
     column_value.format()
+
+
+def test_should_create_last_updated_column_value_with_datetime_value_using_input_api_data():
+
+    # Arrange
+    column_value_data = {
+                        'id': 'last_updated_1',
+                        'title': 'Last Updated',
+                        'text': '2021-10-04 19:45:20 UTC',
+                        'value': None
+                        }
+    column_type = ColumnType.last_updated
+    column_value = en.cv.create_column_value(column_type,**column_value_data)
+
+    # Act
+    format = str(column_value.value)
+
+    # Assert
+    eq_(format,'2021-10-04 19:45:20+05:30')
+
+@raises(e.ColumnValueError)
+def test_should_raise_columnvalueerror_when_trying_to_set_a_valuet_to_create_last_updated():
+
+    # Arrange
+    column_value_data = {
+                        'id': 'last_updated_1',
+                        'title': 'Last Updated',
+                        'text': '2021-10-04 19:45:20 UTC',
+                        'value': None
+                        }
+    column_type = ColumnType.last_updated
+    column_value = en.cv.create_column_value(column_type,**column_value_data)
+
+    # Act
+    column_value.value = None
+
+
+@raises(e.ColumnValueError)
+def test_shoucl_raise_columnvalueerror_when_calling_to_format_create_last_updated():
+
+    # Arrange
+    column_value_data = {
+                        'id': 'last_updated_1',
+                        'title': 'Last Updated',
+                        'text': '2021-10-04 19:45:20 UTC',
+                        'value': None
+                        }
+    column_type = ColumnType.last_updated
+    column_value = en.cv.create_column_value(column_type,**column_value_data)
+
+
+    # Act 
+    column_value.format() 
+
