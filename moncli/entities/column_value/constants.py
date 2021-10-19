@@ -7,6 +7,7 @@ COMPLEX_NULL_VALUE = {}
 COLUMN_TYPE_VALUE_MAPPINGS = {
     ColumnType.checkbox: 'CheckboxValue',
     ColumnType.country: 'CountryValue',
+    ColumnType.creation_log: 'CreationLogValue',
     ColumnType.date: 'DateValue',
     ColumnType.dependency: 'DependencyValue',
     ColumnType.dropdown: 'DropdownValue',
