@@ -423,25 +423,25 @@ class PeopleType(MondayType):
         super().__init__(id, title, *args, **kwargs)
 
     def _process(self, value):
-        try:
-            return_list = []
-            if isinstance(value,en.cv.PersonOrTeam):
-                return_list.append(value)
-            elif isinstance(value,list):
-                for data in value:
-                    if isinstance(data, dict):
-                        id = int(data['id'])
-                        kind = enums.PeopleKind[data['kind']]
-                        return_list.append(en.cv.PersonOrTeam(id=id,kind=kind))               
-                    elif isinstance(data, (str,int)):
-                        return_list.append(en.cv.Person(int(data)))
-                    if isinstance(data,en.cv.PersonOrTeam):
-                        return_list.append(data)
-                if self.max_allowed == 1: 
-                    return return_list[0]
-            return return_list
-        except (ValueError, KeyError):
-            raise ConversionError('Cannot convert value "{}" to Person or Team.'.format(data))
+        if isinstance(value,en.cv.PersonOrTeam):
+            return value
+        return_list = []
+        for data in value:
+            if isinstance(data,en.cv.PersonOrTeam):
+                return_list.append(data)
+                continue
+            try:
+                if isinstance(data, dict):
+                    id = int(data['id'])
+                    kind = enums.PeopleKind[data['kind']]
+                    return_list.append(en.cv.PersonOrTeam(id=id,kind=kind))               
+                elif isinstance(data, (str,int)):
+                    return_list.append(en.cv.Person(int(data)))
+                else:
+                    raise ValueError('')
+            except (ValueError, KeyError):
+                raise ConversionError('Cannot convert value "{}" to Person or Team.'.format(data))
+        return return_list
 
 
     def _cast(self, value):
@@ -456,12 +456,22 @@ class PeopleType(MondayType):
 
     def _process_column_value(self, value: en.cv.ColumnValue):
         if 'max_people_allowed' in self.metadata:
-            self.max_allowed =  int(self.metadata['max_people_allowed'])
+            self.max_allowed = int(self.metadata['max_people_allowed'])
+        if self.max_allowed == 1:
+            self.native_type = en.cv.PersonOrTeam
+            self.native_default = None
+            self.allow_casts = (dict, int, str)
+            self.element_type = None
+            try:
+                return value.value[0]
+            except IndexError:
+                return self.native_default
+        return super()._process_column_value(value)
 
     def _export(self, value):
         if self.max_allowed == 1:
-            return {'personsAndTeams': [{'id': value[0].id, 'kind': value[0].kind}]}
-        personsAndTeams = [{'id': data.id, 'kind': data.kind} for data in value]
+            return {'personsAndTeams': [{'id': value.id, 'kind': value.kind.name}]}
+        personsAndTeams = [{'id': data.id, 'kind': data.kind.name} for data in value]
         return {'personsAndTeams': personsAndTeams}
         
     def validate_people(self, value):

@@ -35,7 +35,7 @@ def test_should_suceed_when_to_native_returns_a_personorteam_when_passing_in_a_p
     people_type = PeopleType(title='Assignee',max_allowed=1)
 
     # Act
-    value = people_type.to_native(en.cv.PersonOrTeam(id=12345,kind=PeopleKind.person))[0]
+    value = people_type.to_native(en.cv.PersonOrTeam(id=12345,kind=PeopleKind.person))
 
     # Assert
     eq_(value.id, 12345)
@@ -103,7 +103,15 @@ def test_should_suceed_when_to_native_raises_a_conversionerror_when_passed_a_lis
 
 
 def test_should_suceed_when_to_primitive_returns_an_empty_dict_when_passed_in_a_none_and_max_allowed_is_1_to_people_type():
-    pass
+    
+    # Arrange
+    people_type = PeopleType(title='Assignee',max_allowed=1)
+
+    # Act
+    value = people_type.to_primitive(None)
+
+    # Assert
+    eq_(value,{})
 
 
 def test_should_suceed_when_to_primitive_returns_an_empty_dict_when_passed_an_empty_list_and_max_allowed_is_not_1_to_people_type():
@@ -130,7 +138,7 @@ def test_should_suceed_when_to_primitive_returns_export_dict_when_passed_in_a_li
 
     # Assert
     eq_(value1['id'],12345)
-    eq_(value1['kind'],PeopleKind.person)
+    eq_(value1['kind'],PeopleKind.person.name)
 
 
 def test_should_suceed_when_to_primitive_returns_export_dict_when_passed_a_personorteam_value_and_max_allowed_is_1_to_people_type():
@@ -145,7 +153,7 @@ def test_should_suceed_when_to_primitive_returns_export_dict_when_passed_a_perso
 
     # Assert
     eq_(value1['id'],12345)
-    eq_(value1['kind'],PeopleKind.person)
+    eq_(value1['kind'],PeopleKind.person.name)
 
 
 @raises(DataError)
