@@ -7,6 +7,8 @@ from pycountry import countries
 from schematics.exceptions import ConversionError, ValidationError
 from schematics.types import BaseType
 
+from . import enums
+
 from . import entities as en
 from .config import *
 
@@ -401,6 +403,84 @@ class NumberType(MondayType):
     
     def _export(self, value):
         return str(value)
+
+
+class PeopleType(MondayType):
+
+    native_type = list
+    native_default = []
+    null_value = {}
+    element_type = en.cv.PersonOrTeam
+    max_allowed = 0
+
+    def __init__(self, id: str = None, title: str = None, max_allowed: int = 0, *args, **kwargs):
+        self.max_allowed = max_allowed
+        if max_allowed > 4 or max_allowed < 0:
+            self.max_allowed = 0
+        if max_allowed == 1:
+            self.native_type = en.cv.PersonOrTeam
+            self.native_default = None
+            self.allow_casts = (dict, int, str)
+            self.element_type = None
+        super().__init__(id, title, *args, **kwargs)
+
+    def _process(self, value):
+        if isinstance(value,en.cv.PersonOrTeam):
+            return value
+        return_list = []
+        for data in value:
+            if isinstance(data,en.cv.PersonOrTeam):
+                return_list.append(data)
+                continue
+            try:
+                if isinstance(data, dict):
+                    id = int(data['id'])
+                    kind = enums.PeopleKind[data['kind']]
+                    return_list.append(en.cv.PersonOrTeam(id=id,kind=kind))               
+                elif isinstance(data, (str,int)):
+                    return_list.append(en.cv.Person(int(data)))
+                else:
+                    raise ValueError('')
+            except (ValueError, KeyError):
+                raise ConversionError('Cannot convert value "{}" to Person or Team.'.format(data))
+        return return_list
+
+
+    def _cast(self, value):
+        try:
+            if isinstance(value, dict):
+                return en.cv.PersonOrTeam(value['id'],enums.PeopleKind[value['kind']])
+            if isinstance(value, (int,str)):
+                return en.cv.Person(int(value))
+        except (ValueError, KeyError):
+            raise ConversionError('Cannot convert value "{}" to Person or Team.'.format(value))
+
+
+    def _process_column_value(self, value: en.cv.ColumnValue):
+        if 'max_people_allowed' in self.metadata:
+            self.max_allowed = int(self.metadata['max_people_allowed'])
+        if self.max_allowed == 1:
+            self.native_type = en.cv.PersonOrTeam
+            self.native_default = None
+            self.allow_casts = (dict, int, str)
+            self.element_type = None
+            try:
+                return value.value[0]
+            except IndexError:
+                return self.native_default
+        return super()._process_column_value(value)
+
+    def _export(self, value):
+        if self.max_allowed == 1:
+            return {'personsAndTeams': [{'id': value.id, 'kind': value.kind.name}]}
+        personsAndTeams = [{'id': data.id, 'kind': data.kind.name} for data in value]
+        return {'personsAndTeams': personsAndTeams}
+        
+    def validate_people(self, value):
+        if self.max_allowed == 1 and not isinstance(value, en.cv.PersonOrTeam):
+            raise ValidationError('Value contains too many Person or Team values: "{}".'.format(len(value)))
+        if self.max_allowed in [2, 3] and len(value) > 4:
+            raise ValidationError('Value contains too many Person or Team values: "{}".'.format(len(value)))
 
 
 class PhoneType(MondayType):
