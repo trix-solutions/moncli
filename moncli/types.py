@@ -409,8 +409,8 @@ class PeopleType(MondayType):
 
     native_type = list
     native_default = []
-    allow_casts = (int, str, dict)
     null_value = {}
+    element_type = en.cv.PersonOrTeam
     max_allowed = 0
 
     def __init__(self, id: str = None, title: str = None, max_allowed: int = 0, *args, **kwargs):
@@ -420,6 +420,8 @@ class PeopleType(MondayType):
         if max_allowed == 1:
             self.native_type = en.cv.PersonOrTeam
             self.native_default = None
+            self.allow_casts = (dict, int, str)
+            self.element_type = None
         super().__init__(id, title, *args, **kwargs)
 
     def _process(self, value):
@@ -475,9 +477,9 @@ class PeopleType(MondayType):
         return {'personsAndTeams': personsAndTeams}
         
     def validate_people(self, value):
-        if self.max_allowed == 1 and len(value) > 1:
+        if self.max_allowed == 1 and not isinstance(value, en.cv.PersonOrTeam):
             raise ValidationError('Value contains too many Person or Team values: "{}".'.format(len(value)))
-        if 2<= self.max_allowed <=3 and len(value) > 4:
+        if self.max_allowed in [2, 3] and len(value) > 4:
             raise ValidationError('Value contains too many Person or Team values: "{}".'.format(len(value)))
 
 
