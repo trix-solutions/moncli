@@ -125,6 +125,13 @@ class CountryType(MondayType):
         if not code:
             raise ValidationError('Value "{}" is not a valid alpha 2 country code.'.format(value.code))
 
+
+class CreationLogType(MondayType):
+
+    native_type = datetime
+    native_default = None
+    is_readonly = True
+
     
 class DateType(MondayType):
 
