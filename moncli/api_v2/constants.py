@@ -112,6 +112,7 @@ DEFAULT_ITEM_QUERY_FIELDS = [
     'name',
     'created_at',
     'creator_id',
+    'updated_at',
     'state'
 ]
 
@@ -244,6 +245,7 @@ FIELD_MAP = {
     'owner': DEFAULT_USER_QUERY_FIELDS,
     'replies': DEFAULT_REPLY_QUERY_FIELDS,
     'subscribers': DEFAULT_USER_QUERY_FIELDS,
+    'subitems': DEFAULT_ITEM_QUERY_FIELDS,
     'tags': DEFAULT_TAG_QUERY_FIELDS,
     'teams': DEFAULT_TEAM_QUERY_FIELDS,
     'top_group': DEFAULT_GROUP_QUERY_FIELDS,

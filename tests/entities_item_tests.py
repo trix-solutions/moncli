@@ -762,3 +762,34 @@ def test_should_return_item_when_passing_id_or_title(get_items,change_column_val
 
     # Assert
     eq_(item.id, '1')
+
+
+@patch('moncli.api_v2.get_items')
+def test_should_return_an_empty_list_when_parent_item_contains_no_subitems(get_items):
+
+    # Arrange
+    board = {'id': '1','name': "new board"}
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
+    item = client.get_items(ids=[1])[0]
+    get_items.return_value = [{'id': 12345, 'subitems': None}]
+
+    # Act
+    subitems = item.get_subitems()
+
+    # Assert
+    eq_(subitems,[])
+
+@patch('moncli.api_v2.get_items')
+def test_should_return_a_list_when_parent_item_passed_with_subitems_data(get_items):
+
+    # Arrange
+    board = {'id': '1','name': "new board"}
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
+    item = client.get_items(ids=[1])[0]
+    get_items.return_value = [{'id': 12345, 'subitems': [{'id': 67890}]}]
+
+    # Act
+    subitems = item.get_subitems()[0]
+
+    # Assert
+    eq_(subitems['id'],'67890')
