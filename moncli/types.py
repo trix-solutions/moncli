@@ -339,6 +339,13 @@ class ItemLinkType(MondayType):
         return {'item_ids': [int(data) for data in value ] }
 
 
+class LastUpdatedType(MondayType):
+
+    native_type = datetime
+    native_default = None
+    is_readonly = True
+
+
 class LinkType(MondayType):
     
     native_type = en.cv.Link
