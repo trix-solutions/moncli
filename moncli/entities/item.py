@@ -107,8 +107,8 @@ class Item(_Item):
         self.__creator = kwargs.pop('__creator', None)
         self.__column_values = en.BaseColumnCollection()
         self.__updates = kwargs.pop('__updates', None)
-        self. __parent_item = kwargs.pop(' __parent_item',None)
-        self. __subitems = kwargs.pop(' __subitems',None)
+        self. __parent_item = kwargs.pop('__parent_item',None)
+        self. __subitems = kwargs.pop('__subitems',None)
 
         assets = kwargs.pop('assets', None)
         board = kwargs.pop('board', None)
@@ -116,8 +116,8 @@ class Item(_Item):
         creator = kwargs.pop('creator', None)
         column_values = kwargs.pop('column_values', None)
         updates = kwargs.pop('updates', None)
-        parent_item = kwargs.pop(' __parent_item',None)
-        subitems = kwargs.pop(' __subitems',None)
+        parent_item = kwargs.pop('__parent_item',None)
+        subitems = kwargs.pop('__subitems',None)
 
         super(Item, self).__init__(kwargs)
 
@@ -139,7 +139,7 @@ class Item(_Item):
             self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
         if parent_item and not self.__parent_item: 
             self.__parent_item = en.Item(creds=self.__creds, **parent_item)
-        if self.__subitems == None and isinstance(subitems,dict):
+        if sub_item and not self.__sub_item:
             self.__subitems = [en.Item(creds = self.__creds, **value) for value in subitems]
 
 
@@ -216,8 +216,8 @@ class Item(_Item):
 
     @property
     def subitems(self):
-        """The parent item ."""
-        if self.__subitems == None or self.__subitems == []:
+        """The nested subitems."""
+        if not sub_items:
             self.__subitems = self.subitems()
         return self.__subitems
 
@@ -693,7 +693,7 @@ class Item(_Item):
 
             Returns
 
-                subitems : `moncli.entities.Item`
+                subitems : `list[moncli.entities.Item]`
                     The item's nested subitems
 
             Return Fields
@@ -726,7 +726,7 @@ class Item(_Item):
                     The item's updates.
         """
         subitems_data = api.get_items(
-            *api.get_field_list(api.DEFAULT_GROUP_QUERY_FIELDS, 'subitems', *args),
+            *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'subitems', *args),
             api_key=self.__creds.api_key_v2,
             ids=[int(self.id)])[0]['subitems']
 
