@@ -44,6 +44,8 @@ class Item(_Item):
                 The item's name.
             state : `str`
                 The board's state (all / active / archived / deleted)
+            subitems: list[moncli.entities.Item]
+                The item's nested subitems.
             subscriber : `moncli.entities.User`
                 The pulse's subscribers.
             updated_at : `str`
@@ -69,6 +71,8 @@ class Item(_Item):
                 Get the item's column values.
             get_column_value : `moncli.entities.ColumnValue`
                 Get an item's column value by ID or title.
+            get_subitems: list[moncli.entities.Item]
+                Get the item's nested subitems
             change_item_name: `moncli.entities.Item`
                 change an Item's column name
             change_column_value : `moncli.entities.Item`
@@ -103,7 +107,8 @@ class Item(_Item):
         self.__creator = kwargs.pop('__creator', None)
         self.__column_values = en.BaseColumnCollection()
         self.__updates = kwargs.pop('__updates', None)
-        self. __parent_item = kwargs.pop(' __parent_item',None)
+        self. __parent_item = kwargs.pop('__parent_item',None)
+        self. __subitems = kwargs.pop('__subitems',None)
 
         assets = kwargs.pop('assets', None)
         board = kwargs.pop('board', None)
@@ -111,7 +116,8 @@ class Item(_Item):
         creator = kwargs.pop('creator', None)
         column_values = kwargs.pop('column_values', None)
         updates = kwargs.pop('updates', None)
-        parent_item = kwargs.pop(' __parent_item',None)
+        parent_item = kwargs.pop('parent_item',None)
+        subitems = kwargs.pop('subitems',None)
 
         super(Item, self).__init__(kwargs)
 
@@ -133,6 +139,10 @@ class Item(_Item):
             self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
         if parent_item and not self.__parent_item: 
             self.__parent_item = en.Item(creds=self.__creds, **parent_item)
+        if subitems and not self.__subitems:
+            self.__subitems = [en.Item(creds = self.__creds, **value) for value in subitems]
+
+
 
     def __repr__(self):
         o = self.to_primitive()
@@ -150,6 +160,9 @@ class Item(_Item):
             o['updates'] = [value.to_primitive() for value in self.__updates]
         if self.__parent_item:
             o['parent_item'] = self.__parent_item.to_primitive
+        if self.__subitems:
+            o['subitems'] = [value.to_primitive() for value in self.__subitems]
+
         return str(o)
 
     @property
@@ -200,6 +213,13 @@ class Item(_Item):
         if self.__parent_item == None: 
             self.__parent_item = self.get_parent_item()
         return self.__parent_item
+
+    @property
+    def subitems(self):
+        """The nested subitems."""
+        if not self.__subitems:
+            self.__subitems = self.get_subitems()
+        return self.__subitems
 
 
     def add_file(self, file_column: en.cv.FileValue, file_path: str, *args):
@@ -661,6 +681,58 @@ class Item(_Item):
             return self.column_values[title]
 
         return self.column_values[id]
+
+
+    def get_subitems(self, *args):
+        """Get the subitems of an item.
+
+            Parameters
+
+                args: list
+                    list of return field arguments
+
+            Returns
+
+                subitems : `list[moncli.entities.Item]`
+                    The item's nested subitems
+
+            Return Fields
+
+                assets : `list[moncli.entities.asset.Asset]`
+                    The item's assets/files.
+                board : `moncli.entities.board.Board`
+                    The board that contains this item.
+                column_values : `list[moncli.entities.column_value.ColumnValue]`
+                    The item's column values.
+                created_at : `str`
+                    The item's create date.
+                creator : `moncli.entities.user.User`
+                    The item's creator.
+                creator_id : `str`
+                    The item's unique identifier.
+                group : `moncli.entities.group.Group`
+                    The group that contains this item.
+                id : `str`
+                    The item's unique identifier.
+                name : `str`
+                    The item's name.
+                state : `str`
+                    The board's state (all / active / archived / deleted)
+                subscriber : `moncli.entities.user.User`
+                    The pulse's subscribers.
+                updated_at : `str`
+                    The item's last update date.
+                updates : `moncli.entities.update.Update`
+                    The item's updates.
+        """
+        subitems_data = api.get_items(
+            *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'subitems', *args),
+            api_key=self.__creds.api_key_v2,
+            ids=[int(self.id)])[0]['subitems']
+
+        if not subitems_data:
+            subitems_data = []
+        return [en.Item(creds=self.__creds, **subitems) for subitems in subitems_data]
 
 
     def change_item_name(self, new_name: str,as_model: m.MondayModel = None):
