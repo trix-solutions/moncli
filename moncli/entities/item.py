@@ -116,8 +116,8 @@ class Item(_Item):
         creator = kwargs.pop('creator', None)
         column_values = kwargs.pop('column_values', None)
         updates = kwargs.pop('updates', None)
-        parent_item = kwargs.pop('__parent_item',None)
-        subitems = kwargs.pop('__subitems',None)
+        parent_item = kwargs.pop('parent_item',None)
+        subitems = kwargs.pop('subitems',None)
 
         super(Item, self).__init__(kwargs)
 
@@ -139,7 +139,7 @@ class Item(_Item):
             self.__updates = [en.Update(creds=self.__creds, **update_data) for update_data in updates]
         if parent_item and not self.__parent_item: 
             self.__parent_item = en.Item(creds=self.__creds, **parent_item)
-        if sub_item and not self.__sub_item:
+        if subitems and not self.__subitems:
             self.__subitems = [en.Item(creds = self.__creds, **value) for value in subitems]
 
 
@@ -217,8 +217,8 @@ class Item(_Item):
     @property
     def subitems(self):
         """The nested subitems."""
-        if not sub_items:
-            self.__subitems = self.subitems()
+        if not self.__subitems:
+            self.__subitems = self.get_subitems()
         return self.__subitems
 
 
