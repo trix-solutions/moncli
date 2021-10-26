@@ -4,7 +4,7 @@ from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
 from moncli import client, entities as en
-from moncli.entities import column_value as cv
+from moncli.entities import cv
 from moncli.enums import ColumnType, BoardKind, WebhookEventType
 
 USERNAME = 'test.user@foobar.org' 
@@ -160,7 +160,7 @@ def test_should_change_column_title(get_boards,get_columns,change_column_title )
 
     title = 'new title'
     get_boards.return_value = [{'id': '1', 'name': 'Test Board 1'}]
-    get_columns.return_value = en.BaseColumnCollection([en.Column({'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})])
+    get_columns.return_value = en.BaseColumnCollection([en.Column(**{'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})])
     change_column_title.return_value = {'id': 'text_column_01', 'title': 'new title'}
     board = client.get_boards()[0]
     column = board.get_columns()[0]
@@ -470,7 +470,7 @@ def test_should_get_column_value_by_title(get_columns, create_board):
 
     # Arrange
     create_board.return_value = {'id': '1', 'name': 'Test Board 1'}
-    get_columns.return_value = [en.Column({'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})]
+    get_columns.return_value = [en.Column(**{'id': 'text_column_01', 'title': 'Text Column 01', 'type': 'text'})]
     board = client.create_board('Test Board 1', BoardKind.public)
 
     # Act 

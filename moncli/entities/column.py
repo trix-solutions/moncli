@@ -1,8 +1,3 @@
-import json, warnings
-
-from schematics.models import Model
-from schematics.types import StringType, BooleanType, IntType
-
 from .. import entities as en
 from ..enums import *
 
@@ -22,6 +17,7 @@ COLUMN_TYPE_MAPPINGS = {
     'numeric': ColumnType.numbers,
     'multiple-person': ColumnType.people,
     'phone': ColumnType.phone,
+    'pulse-updated': ColumnType.last_updated,
     'rating': ColumnType.rating,
     'color': ColumnType.status,
     'tag': ColumnType.tags,
@@ -32,14 +28,16 @@ COLUMN_TYPE_MAPPINGS = {
     'timezone': ColumnType.world_clock,
     'file': ColumnType.file,
     'board-relation': ColumnType.board_relation,
-    'subtasks': ColumnType.subitems
+    'subtasks': ColumnType.subitems,
+    'pulse-log': ColumnType.creation_log
 }
 
 
-class BaseColumn(Model):
-    id = StringType(required=True)
-    title = StringType()
-    settings_str = StringType()
+class BaseColumn(object):
+    def __init__(self, **kwargs):
+        self.id = kwargs.pop('id')
+        self.title = kwargs.pop('title', None)
+        self.settings_str = kwargs.pop('settings_str', None)
 
 
 class Column(BaseColumn):
@@ -51,12 +49,8 @@ class Column(BaseColumn):
             Is the column archived or not.
         id : `str`
             The column's unique identifier.
-        pos : `str`
-            The column's position in the board. 
         settings_str : `str`
             The column's settings in a string form.
-        settings : `moncli.entities.Settings`
-            The settings in entity form (status / dropdown)
         title : `str`
             The column's title.
         type : `str`
@@ -67,30 +61,28 @@ class Column(BaseColumn):
             The column's width.
     """
 
-    archived = BooleanType()
-    type = StringType()
-    width = IntType()
+    def __init__(self, **kwargs):
+        self.archived = kwargs.pop('archived', None)
+        self.type = kwargs.pop('type', None)
+        self.width = kwargs.pop('width', None)
+        super().__init__(**kwargs)
     
     def __repr__(self):
         return str(self.to_primitive())
-
-    @property
-    def settings(self):
-        warnings.warn('This functionality will be deprecated with the next minor release (v1.2)', DeprecationWarning)
-        if not self.settings_str:
-            return None
-        settings_obj = json.loads(self.settings_str)
-        if self.column_type is ColumnType.status:
-            return en.StatusSettings(settings_obj, strict=False)
-        elif self.column_type is ColumnType.dropdown:
-            return en.DropdownSettings(settings_obj, strict=False)
-        else:
-            return settings_obj
     
     @property
     def column_type(self):
         # TODO - Find something else other than auto-number to default to.
         return COLUMN_TYPE_MAPPINGS.get(self.type, ColumnType.auto_number)
+
+    def to_primitive(self):
+        return dict(
+            id=self.id,
+            title=self.title,
+            type=self.type,
+            archived=self.archived,
+            settings_str=self.settings_str,
+            width=self.width)
 
 
 class BaseColumnCollection(en.BaseCollection):

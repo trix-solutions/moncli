@@ -1,5 +1,5 @@
 import json
-from moncli.api_v2.handlers import get_boards
+from moncli.entities.item import ItemError
 
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
@@ -7,6 +7,8 @@ from nose.tools import ok_, eq_, raises
 from moncli import client, entities as en
 from moncli.entities import column_value as cv
 from moncli.enums import ColumnType
+from moncli.entities.item import ItemError
+
 
 @patch('moncli.api_v2.get_items')
 def test_item_should_get_board(get_items):
@@ -54,7 +56,7 @@ def test_item_should_get_column_values(get_columns, get_board, get_items):
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
     item = client.get_items()[0]
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
-    get_columns.return_value = [en.Column({'id': 'text_column_01', 'type': 'text'})]
+    get_columns.return_value = [en.Column(**{'id': 'text_column_01', 'type': 'text'})]
     get_items.return_value = [{'id': '1', 'column_values': [{'id': 'text_column_01', 'title': 'Text Column 01', 'value': json.dumps('Hello, Grandma')}]}]
 
     # Act
@@ -64,7 +66,7 @@ def test_item_should_get_column_values(get_columns, get_board, get_items):
     ok_(column_values != None)
     eq_(len(column_values), 1)
     eq_(column_values[0].title, 'Text Column 01')
-    eq_(column_values[0].text_value, 'Hello, Grandma')
+    eq_(column_values[0].value, 'Hello, Grandma')
 
 
 @patch('moncli.api_v2.get_items')
@@ -76,7 +78,7 @@ def test_item_should_get_column_values_for_default_status_column(get_columns, ge
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
     item = client.get_items()[0]
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
-    get_columns.return_value = [en.Column({'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})})]
+    get_columns.return_value = [en.Column(**{'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})})]
     get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'text': 'Test', 'additional_info': None, 'value': None}]}]
 
     # Act
@@ -86,8 +88,7 @@ def test_item_should_get_column_values_for_default_status_column(get_columns, ge
     ok_(column_values != None)
     eq_(len(column_values), 1)
     eq_(column_values[0].title, 'Status Column 01')
-    eq_(column_values[0].index, None)
-    eq_(column_values[0].label, 'Test')
+    eq_(column_values[0].value, None)
 
 
 @patch('moncli.api_v2.get_items')
@@ -99,7 +100,7 @@ def test_item_should_get_column_values_for_status_column(get_columns, get_board,
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
     item = client.get_items()[0]
     get_board.return_value = en.Board(**{'id': '1', 'name': 'Test Board 1'})
-    get_columns.return_value = [en.Column({'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})})]
+    get_columns.return_value = [en.Column(**{'id': 'status_column_01', 'type': 'color', 'settings_str': json.dumps({'labels': {'1': 'Test'}})})]
     get_items.return_value = [{'id': '1', 'column_values': [{'id': 'status_column_01', 'title': 'Status Column 01', 'text': 'Test', 'additional_info': json.dumps({'label': 'Test'}), 'value': json.dumps({'index': 1})}]}]
 
     # Act
@@ -109,8 +110,7 @@ def test_item_should_get_column_values_for_status_column(get_columns, get_board,
     ok_(column_values != None)
     eq_(len(column_values), 1)
     eq_(column_values[0].title, 'Status Column 01')
-    eq_(column_values[0].index, 1)
-    eq_(column_values[0].label, 'Test')
+    eq_(column_values[0].value, 'Test')
 
 
 @patch('moncli.api_v2.get_items')
@@ -137,7 +137,6 @@ def test_item_should_fail_to_retrieve_column_value_from_too_many_parameters(get_
     item.get_column_value(id='text_column_01', title='Text Column 01')
 
 
-
 @patch('moncli.api_v2.get_items')
 def test_item_should_get_column_value_by_id(get_items):
 
@@ -145,10 +144,9 @@ def test_item_should_get_column_value_by_id(get_items):
     column_id = 'text_column_01'
     column_title = 'Text Column 01'
     text_value = 'Hello, Grandma!'
-    column_value = cv.create_column_value(ColumnType.text, **{'id': column_id, 'title': column_title, 'text': text_value, 'value': json.dumps(text_value)})
-    column = en.Column({'id': column_id, 'title': column_title, 'type': 'text'})
+    column = en.Column(**{'id': column_id, 'title': column_title, 'type': 'text'})
     board = en.Board(id='1', name='Test Board 1', columns=[column.to_primitive()])
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': board.to_primitive(), 'column_values': [column_value.to_primitive()]}]
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': board.to_primitive(), 'column_values': [{'id': column_id, 'title': column_title, 'text': text_value, 'value': json.dumps(text_value)}]}]
     item = client.get_items()[0]
 
     # Act
@@ -168,10 +166,8 @@ def test_item_should_get_column_value_by_title(get_items):
     column_id = 'text_column_01'
     column_title = 'Text Column 01'
     text_value = 'Gello, Hrandma!'
-    column_value = cv.create_column_value(ColumnType.text, **{'id': column_id, 'title': column_title, 'text': text_value, 'value': json.dumps(text_value)})
-    column = en.Column({'id': column_id, 'title': column_title, 'type': 'text'})
-    board = en.Board(id='1', name='Test Board 1', columns=[column.to_primitive()])
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': board.to_primitive(), 'column_values': [column_value.to_primitive()]}]
+    board = en.Board(id='1', name='Test Board 1', columns=[{'id': column_id, 'title': column_title, 'type': 'text'}])
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': board.to_primitive(), 'column_values': [{'id': column_id, 'title': column_title, 'text': text_value, 'value': json.dumps(text_value)}]}]
     item = client.get_items()[0]
 
     # Act
@@ -204,13 +200,86 @@ def test_item_should_get_column_value_with_extra_id(get_column_values, get_items
     # Assert 
     ok_(column_value != None)
     eq_(column_value.title, 'Text Column 01')
-    eq_(column_value.long_text, 'Hello, Grandma')
+    eq_(column_value.value, 'Hello, Grandma')
     eq_(type(column_value), cv.LongTextValue)
-
 
 @patch('moncli.api_v2.get_items')
 @patch.object(en.Item, 'get_board')
-@raises(en.InvalidColumnValue)
+@raises(ItemError)
+def test_should_raise_error_when_id_and_title_and_column_value_are_none(get_board,get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    item = client.get_items()[0]
+
+    # Act
+    item.change_column_value(id=None,title=None,column_value = None)
+
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@raises(ItemError)
+def test_should_raise_error_when_id_and_title_are_not_none(get_board,get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    item = client.get_items()[0]
+    id = "item_id"
+    title = "item_title"
+    # Act
+    item.change_column_value(id=id,title=title)
+
+@patch('moncli.api_v2.get_items')
+@raises(ItemError)
+def test_should_raise_item_error_for_invalid_column_value(get_items):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    item = client.get_items()[0]
+    id = "item_id"
+    title = "item_title"
+    # Act
+    item.change_column_value(id=id,title=title,column_value=5)
+
+@patch('moncli.api_v2.change_column_value')
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+def test_should_return_item_for_valid_column_value(get_board,get_items,change_column_value):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1'}
+    item = client.get_items()[0]
+    id = "long text"
+    value=json.dumps({'text': 'Long text'})
+    new_value = en.cv.create_column_value(ColumnType.long_text,id=id, value=value).format()
+    # Act
+    new_item = item.change_column_value(id=id,column_value=new_value)
+    
+
+    # Assert
+    ok_(new_item != None)
+    eq_(new_item['id'], "1" )
+
+@patch('moncli.api_v2.change_column_value')
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+def test_should_return_item_when_id_and_title_not_provided(get_board,get_items,change_column_value):
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1'}]
+    get_board.return_value = en.Board(creds=None, id='1', name='Test Board 1')
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1'}
+    item = client.get_items()[0]
+    value=json.dumps({'text': 'Long text'})
+    new_value = en.cv.create_column_value(ColumnType.long_text,id='long_text', value=value)
+    # Act
+    new_item = item.change_column_value(column_value=new_value)
+
+    # Assert
+    ok_(new_item != None)
+    eq_(new_item['id'],"1" )
+
+@patch('moncli.api_v2.get_items')
+@patch.object(en.Item, 'get_board')
+@raises(ItemError)
 def test_item_should_fail_to_update_column_value_with_invalid_column_value(get_board, get_items):
 
     # Arrange
@@ -231,7 +300,7 @@ def test_should_fail_to_update_item_name_if_input_new_name_parameter_is_none(get
     item = client.get_items()[0]
 
     # Act
-    item.change_name(None)
+    item.change_item_name(None)
 
 @patch.object(en.Item,'get_board')
 @patch('moncli.api_v2.get_items')
@@ -247,7 +316,7 @@ def test_should_update_item_name_if_new_name_parameter_contains_a_valid_value(ch
 
 
     # Act
-    new_item = item.change_name(new_name)
+    new_item = item.change_item_name(new_name)
 
     # Assert
     ok_(item != None)
@@ -255,7 +324,7 @@ def test_should_update_item_name_if_new_name_parameter_contains_a_valid_value(ch
 
 
 @patch('moncli.api_v2.get_items')
-@raises(en.InvalidColumnValue)
+@raises(ItemError)
 def test_item_should_fail_to_update_column_value_with_invalid_column_value_with_id(get_items):
 
     # Arrange
@@ -308,7 +377,7 @@ def test_should_update_simple_column_value(change_simple_column_value, get_colum
         id= 'long_text', 
         title= 'Description', 
         text= "My previous keyword doesn't work", 
-        value= 'My previous keyword' )
+        value= json.dumps({'text': 'My previous keyword'}))
     get_column_values.return_value = en.BaseColumnCollection([column_value])
     item = client.get_items()[0]
     change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
@@ -338,7 +407,7 @@ def test_should_update_simple_column_value_for_status(change_simple_column_value
         title= 'Description', 
         text= "My previous keyword doesn't work", 
         value= json.dumps({"index":14,"post_id": None,"changed_at":"2020-05-30T19:51:09.981Z"}),
-        settings_str='{}' )
+        settings_str=json.dumps({'labels': {'14': 'new value'}}))
     get_column_values.return_value = en.BaseColumnCollection([column_value])
     change_simple_column_value.return_value = {'id': '1', 'name': 'Test Item 01'}
 
@@ -364,11 +433,10 @@ def test_item_should_change_multiple_column_values_with_dictionary(change_multip
 
     # Act
     item = item.change_multiple_column_values({'text_column_01': 'Hello, world!'})
-    
+
     # Assert 
     ok_(item != None)
     eq_(item.name, 'Test Item 01')
-
 
 
 @patch('moncli.api_v2.get_items')
@@ -572,6 +640,7 @@ def test_item_should_clear_item_updates(clear_item_updates, get_items):
     eq_(len(updated_item.updates), 0)
 
 
+
 @patch('moncli.api_v2.get_items')
 @patch('moncli.api_v2.add_file_to_column')
 def test_item_should_add_file(add_file_to_column, get_items):
@@ -613,26 +682,6 @@ def test_item_should_get_files(get_items):
     eq_(assets[0].url, 'https://test.monday.com/12345/33.jpg')
 
 
-@patch('moncli.api_v2.get_items')
-@patch('moncli.api_v2.change_column_value')
-def test_item_should_remove_files(change_column_value, get_items):
-    
-    # Arrange
-    get_items.return_value = [{'id': '1', 'name': 'Test Item 01', 'board': {'id': '1'}}]
-    change_column_value.return_value = get_items.return_value[0]
-    item = client.get_items()[0]
-    file_column = cv.create_column_value(ColumnType.file, id='files', title='Files')
-
-    # Act
-    item = item.remove_files(file_column)
-
-    # Assert 
-    ok_(item != None)
-    eq_(item.id, '1')
-    eq_(item.name, 'Test Item 01')
-    eq_(item.board.id, '1')
-
-
 @patch('moncli.api_v2.get_boards')
 @patch('moncli.api_v2.get_items')
 def test_should_get_activity_logs(get_items, get_boards):
@@ -651,3 +700,96 @@ def test_should_get_activity_logs(get_items, get_boards):
     ok_(activity_logs)
     eq_(activity_logs[0].id, id)
     eq_(activity_logs[0].account_id, account_id)
+
+
+@patch('moncli.api_v2.get_items')
+@raises(ItemError)
+def test_item_should_fail_to_remove_file(get_items):
+    
+    # Arrange
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1', 'board': {'id': '1'}}]
+    item = client.get_items()[0]
+
+    # Act
+    item.remove_files()
+
+@patch.object(en.Item,'get_column_values')
+@patch('moncli.api_v2.change_column_value')
+@patch('moncli.api_v2.get_items')
+def test_should_return_item_when_passing_file_value_only(get_items,change_column_value,get_column_values):
+
+    # Arrange
+    id= 'files_1',
+    title= 'Files 1'
+    value = {'files': [{'fileType': 'ASSET', 'assetId': 303639397, 'name': 'test.py'}]}
+
+    file_cv = en.cv.create_column_value(ColumnType.file,id=id,title=title,value=json.dumps(value))
+    board = {'id': '1','name': "new board"}
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
+    get_column_values.return_value = [file_cv]
+
+    item = client.get_items()[0]
+    column_value = item.get_column_values()[0]
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1','board': board}
+
+    # Act
+    file = item.remove_files(file_value=column_value)
+
+    # Assert
+    eq_(item.id, '1')
+
+@patch.object(en.Item,'get_column_values')
+@patch('moncli.api_v2.change_column_value')
+@patch('moncli.api_v2.get_items')
+def test_should_return_item_when_passing_id_or_title(get_items,change_column_value,get_column_values):
+
+    # Arrange
+    id= 'files_1',
+    title= 'Files 1'
+    value = {'files': [{'fileType': 'ASSET', 'assetId': 303639397, 'name': 'test.py'}]}
+
+    file_cv = en.cv.create_column_value(ColumnType.file,id=id,title=title,value=json.dumps(value))
+    board = {'id': '1','name': "new board"}
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
+    get_column_values.return_value = [file_cv]
+
+    item = client.get_items()[0]
+    column_value = item.get_column_values()[0]
+    change_column_value.return_value = {'id': '1', 'name': 'Test Item 1','board': board}
+
+    # Act
+    file = item.remove_files(id=id)
+
+    # Assert
+    eq_(item.id, '1')
+
+
+@patch('moncli.api_v2.get_items')
+def test_should_return_an_empty_list_when_parent_item_contains_no_subitems(get_items):
+
+    # Arrange
+    board = {'id': '1','name': "new board"}
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
+    item = client.get_items(ids=[1])[0]
+    get_items.return_value = [{'id': 12345, 'subitems': None}]
+
+    # Act
+    subitems = item.get_subitems()
+
+    # Assert
+    eq_(subitems,[])
+
+@patch('moncli.api_v2.get_items')
+def test_should_return_a_list_when_parent_item_passed_with_subitems_data(get_items):
+
+    # Arrange
+    board = {'id': '1','name': "new board"}
+    get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
+    item = client.get_items(ids=[1])[0]
+    get_items.return_value = [{'id': 12345, 'subitems': [{'id': 67890}]}]
+
+    # Act
+    subitems = item.get_subitems()[0]
+
+    # Assert
+    eq_(subitems['id'],'67890')
