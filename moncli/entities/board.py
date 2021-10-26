@@ -146,7 +146,7 @@ class Board(_Board):
         if columns and not self.__columns:
             self.__columns = en.BaseColumnCollection([en.Column(**column) for column in columns])
         if groups and not self.__groups:
-            self.__groups = [en.Group(creds=self.__creds, **group) for group in groups]
+            self.__groups = [en.Group(creds=self.__creds, __board=self, **group) for group in groups]
         if items and not self.__items:
             self.__items = [en.Item(creds=self.__creds, __board=self, **item) for item in items]
         if subscribers and not self.__subscribers:
@@ -1341,7 +1341,8 @@ class Board(_Board):
                 url : `str`
                     The webhook URL.
                 event : `moncli.enums.WebhookEventType`
-                    The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update).
+                    The event to listen to (incoming_notification / change_column_value / change_specific_column_value / create_item / create_update / change_name / when_date_arrived)
+                    The sub-item event to listen to (create_subitem / create_subitem_update / change_subitem_name / change_subitem_column_value)
                 args : `tuple`
                     The list of webhook return fields.
                 kwargs : `dict`

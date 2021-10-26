@@ -167,6 +167,7 @@ DEFAULT_ASSET_QUERY_FIELDS = [
     'id',
     'name',
     'url',
+    'public_url',
     'file_size',
     'file_extension'
 ]
