@@ -9,7 +9,7 @@ config = {
     'url': r'https://github.com/trix-solutions/moncli',
     'download_url': r'https://github.com/trix-solutions/moncli',
     'author_email': 'andrew.shatz@trix.solutions',
-    'version': '2.0.0',
+    'version': '2.0.1',
     'install_requires': [
         'nose>=1.3.7',
         'requests>=2.24.0',
@@ -25,7 +25,8 @@ config = {
         'moncli',
         'moncli.api_v1',
         'moncli.api_v2',
-        'moncli.entities'
+        'moncli.entities',
+        'moncli.entities.column_value'
     ],    
     'scripts': [],
     'name': 'moncli'
