@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
+from .. import DATE_FORMAT, TIME_FORMAT
 from .base import ColumnValue
-from ...config import DATE_FORMAT, TIME_FORMAT
 
 class ReadonlyValue(ColumnValue):
     """A readonly column value."""

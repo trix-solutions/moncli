@@ -1,7 +1,7 @@
 from schematics.models import Model
 from schematics.types import StringType, IntType
 
-from .. import api, entities as en, models as m
+from .. import api, entities as en
 from ..enums import *
 from ..error import BoardError
 from ..models import MondayModel
@@ -1097,7 +1097,7 @@ class Board(_Board):
  
 
 
-    def get_items_by_column_values(self, column_value: en.cv.ColumnValue, get_column_values: bool = False, as_model: type = None, *args, **kwargs):
+    def get_items_by_column_values(self, column_value: cv.ColumnValue, get_column_values: bool = False, as_model: type = None, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters

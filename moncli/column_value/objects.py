@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from ... import enums
+from .. import enums
 
 
 class Country(object):

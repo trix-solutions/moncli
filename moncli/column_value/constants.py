@@ -1,4 +1,4 @@
-from ...enums import *
+from .. import ColumnType
 
 
 SIMPLE_NULL_VALUE = ''
