@@ -1,7 +1,7 @@
 from schematics.models import Model
 from schematics.types import StringType, IntType
 
-from .. import api, entities as en
+from .. import api, entities as en, column_value as cv
 from ..enums import *
 from ..error import BoardError
 from ..models import MondayModel

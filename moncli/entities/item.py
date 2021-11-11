@@ -3,7 +3,7 @@ import json
 from schematics.models import Model
 from schematics.types import StringType
 
-from .. import api, entities as en, models as m, error as e
+from .. import api, entities as en, models as m, error as e, column_value as cv
 from ..error import ItemError
 from ..models import MondayModel
 
@@ -230,7 +230,7 @@ class Item(_Item):
         return self.__subitems
 
 
-    def add_file(self, file_column: en.cv.FileValue, file_path: str, *args):
+    def add_file(self, file_column: cv.FileValue, file_path: str, *args):
         """Add a file to a column value.
 
             Parameters

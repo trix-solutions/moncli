@@ -84,7 +84,7 @@ def create_board(board_name: str, board_kind: BoardKind, *args, **kwargs):
 
     kwargs['board_name'] = gql.StringValue(board_name)
     kwargs['board_kind'] = gql.EnumValue(board_kind)
-    return execute_query(kwargs.pop('api_key', None), query_name=CREATE_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
+    return execute_query(api_key=kwargs.pop('api_key', None), query_name=CREATE_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 
 def get_boards(*args, **kwargs) -> List[Dict[str, Any]]:
