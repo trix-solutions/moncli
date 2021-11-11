@@ -12,6 +12,7 @@ A Python Client and CLI tool for Monday.com
    * [Changing Column Values](#changing-column-values)
    * [Posting Updates](#posting-updates)
    * [Uploading Files](#uploading-files)  
+   * [Monday Models and Types](#monday-models-and-types)
   
 # Getting Started
 
@@ -44,8 +45,6 @@ Please note that standard requests have a default timeout of 10 seconds while fi
 The __MondayClient__ object is the entry point for all client activities and includes functionality for board, item, tag, and user management.
 
 The _api_key_v1_ and _api_key_v2_ parameters represent the user/account monday.com API access keys and can be found by navigating to __https://<your_instance_name>.monday.com/admin/integrations/api__ and copying both the API v1 (personal or company) and API v2 keys.
-
-Additional information regarding __MondayClient__ properties/methods can be found in the [MondayClient](#mondayclient) section below.
 
 # Using Moncli
 
@@ -141,8 +140,6 @@ Finally, boards are archived using the _archive_board_ method on the __MondayCli
 board_id = '12345'
 archived_board = client.archive_board(board_id)
 ```
-
-Additional information regarding the __Board__ object can be found in the [Board](#board) section below.  
 
 ## Working with Columns, Groups, and Items
 
@@ -274,8 +271,6 @@ item.delete_update(update.id)
 item.clear_all_updates()
 ```
 
-More information regarding Updates and Replies can be found in the [Update](#update) and [Reply](#other-entities) sections in the documentation below.
-
 ## Uploading Files ##
 
 Files, or assets, represent files uploaded to items via a file-type column or updates via the *add_file* method on both __Item__ and __Update__ objects. 
@@ -305,8 +300,41 @@ assets = item.remove_files(file_column)
 
 To remove files from an update, the only option currently available is to delete the update containing the file.  This is done using the *delete_update* method via an __Item__ instance or directly on an __Update__ instance with the *delete* method.
 
-More information regarding the __Asset__ object is found in the [File/Asset](#file) section of the documentation below.
+## Monday Models and Types
 
+The **MondayModel** a Python base class that enables developers to define their monday.com boards as a Python class. This powerful new addition allows developers to retrieve individual items from a board as the defined **MondayModel** subclass, make simple value edits to configured fields, and both export data for and save updated data to monday.com via the API. 
+
+Both models and types leverage the [Schematics](https://schematics.readthedocs.io/en/latest/) python package.
+
+A **MondayModel** can be simply created using various **MondayType** classes.  Simply declare a class and inherit the **MondayModel** class to create a new Monday model. Each model comes with the *id* and *name* fields corresponding to the ID and name of the linked monday.com item respectively.
+
+```python
+from moncli.models import MondayModel
+from moncli.types import *
+
+class WorkTask(MondayModel):
+    assignees = PeopleType(title='Assignees')
+    status = StatusType(title='Status')
+    due_date = DateType(title='Due Date')
+    total_hours = NumberType(title='Total Hours')
+```
+
+All Moncli entity methods that return an item or list of items can also return them **MondayModel** instances using the *as_model* parameter.
+
+```python
+task = client.get_items(ids=[12345678], as_model=WorkTask)[0]
+```
+
+Any **MondayModel** instance may be updated and saved to monday.com via the API.
+
+```python
+from moncli.column_value import Person
+
+task.assignees.append(Person(123456))
+task.status = 'Done'
+task.total_hours = 999
+task.save() # Saves only fields that have changed
+```
 
 ## Additional Questions/Feature Requests:
 
