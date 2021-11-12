@@ -23,7 +23,7 @@ class MondayType(BaseType):
 
     def __init__(self, id: str = None, title: str = None, *args, **kwargs):
         self.original_value = None
-        metadata = {}
+        metadata = kwargs.pop('metadata', {})
 
         if not id and not title:
             raise TypeError('"id" or "title" parameter is required.')
