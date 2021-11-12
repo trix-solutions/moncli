@@ -26,7 +26,7 @@ $ pip3 install moncli
 Getting started with the moncli Python package is simple.  To begin, import the default __MondayClient__ instance and set the API key using the following code below:
 ```python
 from moncli import client
-client.api_key_v2 = api_key_v2
+client.api_key = api_key_v2
 ```
 
 The API key can also be set globally using the following code.  Please note that this will be the preferred method for setting the API key moving forward. The former should only be used when needing access to multiple clients for different accounts.
