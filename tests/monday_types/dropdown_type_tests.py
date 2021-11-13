@@ -3,7 +3,7 @@ from nose.tools import eq_,raises
 from enum import Enum
 import json
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.models import MondayModel
 from moncli import types as t
@@ -44,7 +44,7 @@ class DropdownEnum(Enum):
 
 value = json.dumps(dropdown_value)
 settings_str = json.dumps(settings)
-column_value = en.cv.create_column_value(
+column_value = cv.create_column_value(
     column_type, id=id, title=title, value=value, settings_str=settings_str)
 
     

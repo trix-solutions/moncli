@@ -1,11 +1,10 @@
-from schematics.exceptions import ConversionError, DataError, ValidationError
+from schematics.exceptions import ConversionError, DataError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.models import MondayModel
 from moncli.types import TimelineType
-from moncli.entities.column_value import Timeline
 
 import json
 from datetime import datetime
@@ -20,7 +19,7 @@ def test_should_succeed_when_to_native_returns_a_timeline_when_passed_a_timeline
     from_date = '2021-09-01'
     to_date = '2021-10-01'
     value = json.dumps({'from': from_date, 'to': to_date})
-    timeline_value = en.cv.create_column_value(column_type, id=id, title=title, value=value, settings_str='{}')
+    timeline_value = cv.create_column_value(column_type, id=id, title=title, value=value, settings_str='{}')
 
     # Act
     timeline_type = TimelineType(title='Timeline Column 1')
@@ -85,7 +84,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_time
     timeline_type = TimelineType(title='Timeline Column 6')
 
     # Act
-    timeline = Timeline(datetime(2021, 9, 1), datetime(2021, 10, 1))
+    timeline = cv.Timeline(datetime(2021, 9, 1), datetime(2021, 10, 1))
     value = timeline_type.to_primitive(timeline)
 
     # Assert
@@ -100,7 +99,7 @@ def test_should_succeed_when_to_primitive_returns_an_empty_dict_when_passed_a_ti
     timeline_type = TimelineType(title='Timeline Column 7')
 
     # Act
-    timeline = Timeline(None, None)
+    timeline = cv.Timeline(None, None)
     value = timeline_type.to_primitive(timeline)
 
     # Assert
@@ -117,19 +116,5 @@ def test_should_succeed_when_validate_timeline_raises_a_validationerror_when_pas
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.timeline_type = Timeline(datetime(2021, 10, 13), datetime(2021, 10, 12))
+    test.timeline_type = cv.Timeline(datetime(2021, 10, 13), datetime(2021, 10, 12))
     test.validate()
-    
-    
-
-
-
-
-
-
-
-
-
-
-    
-

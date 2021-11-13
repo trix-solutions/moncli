@@ -1,7 +1,7 @@
 from schematics.exceptions import DataError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.models import MondayModel
 from moncli.types import TimeZoneType
@@ -13,7 +13,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passed_a_timezonevalue
     id = "timezone"
     title = 'Time Zone Column 1'
     column_type = ColumnType.world_clock
-    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value = cv.create_column_value(column_type,id=id,title=title)
     column_value.value = 'America/New_York'
 
     # Act
@@ -52,7 +52,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_s
     id = "timezone"
     title = 'Time Zone Column 1'
     column_type = ColumnType.world_clock
-    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value = cv.create_column_value(column_type,id=id,title=title)
     column_value.value = 'America/New_York'
 
     # Act

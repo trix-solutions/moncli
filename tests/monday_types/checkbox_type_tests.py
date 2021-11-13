@@ -3,7 +3,7 @@ import json
 from nose.tools import eq_
 
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.types import CheckboxType
 
@@ -15,7 +15,7 @@ def test_checkbox_type_should_succeed_when_to_native_returns_a_bool_when_passing
     column_type = ColumnType.checkbox
     title = 'Checkbox'
     value = json.dumps({'checked': 'true'})
-    checkbox_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    checkbox_value = cv.create_column_value(column_type, id=id, title=title, value=value)
 
     # Act
     checkbox_type = CheckboxType(id='check_1')

@@ -3,7 +3,7 @@ from schematics.exceptions import ConversionError
 from nose.tools import eq_,raises
 from enum import Enum
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.types import StatusType
 
@@ -13,14 +13,11 @@ class Status(Enum):
   in_progress = 'In Progress'
   done = 'Done'
 
-
-
-
 def test_should_succeed_when_to_native_returns_a_str_when_passing_in_a_statusvalue_value_with_api_data_to_status_type():
     
     # Arrange
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
 
 
     # Act
@@ -36,7 +33,7 @@ def test_should_succeed_when_to_native_returns_an_enum_class_when_passing_in_a_s
     # Arrange
 
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 2}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 2}),settings_str=settings_str)
 
 
     # Act
@@ -54,7 +51,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passing_in_a_int_value
     # Arrange
 
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
 
     # Act
 
@@ -70,7 +67,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passed_a_str_value_tha
 
    # Arrange
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
     
     # Act
     status_type = StatusType(title='Status')
@@ -84,7 +81,7 @@ def test_should_succeed_when_to_native_returns_a_str_when_passed_a_str_value_tha
 
    # Arrange
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
     
     # Act
     status_type = StatusType(title='Status')
@@ -99,7 +96,7 @@ def test_should_suceed_when_to_native_return_enum_value_when_pass_str_and_status
     # Arrange
 
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 2}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 2}),settings_str=settings_str)
 
 
     # Act
@@ -117,7 +114,7 @@ def test_should_suceed_when_to_native_return_enum_value_when_pass_enum_value_and
     # Arrange
 
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 2}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 2}),settings_str=settings_str)
 
 
     # Act
@@ -136,7 +133,7 @@ def test_should_succeed_when_to_native_raises_a_conversionerror_when_passed_eith
     # Arrange
 
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
     status_type = StatusType(title='Status')
     status_type.to_native(column_value)
 
@@ -149,7 +146,7 @@ def test_should_succeed_when_to_native_raises_a_conversionerror_when_passed_inva
     
     # Arrange
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
     status_type = StatusType(title='Status',as_enum=Status)
     status_type.to_native(column_value)
 
@@ -159,7 +156,7 @@ def test_should_succeed_when_to_native_raises_a_conversionerror_when_passed_inva
 
 def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_in_a_none_to_status_type():
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
 
 
     # Act
@@ -171,7 +168,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_in_a_no
 
 def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_str_value_to_status_type():
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
 
 
     # Act
@@ -183,7 +180,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_s
 
 def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_str_or_enum_class_value__to_status_type():
     settings_str = json.dumps({'labels': {'0': 'Ready','1':'In Progress','2': 'Done'}})
-    column_value = en.cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
+    column_value = cv.create_column_value(ColumnType.status, id='status', title='Status 1',value=json.dumps({'index': 1}),settings_str=settings_str)
 
 
     # Act

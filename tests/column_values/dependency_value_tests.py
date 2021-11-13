@@ -2,7 +2,7 @@ import json
 
 from nose.tools import eq_, raises
 
-from moncli import entities as en, error as e
+from moncli import column_value as cv, error as e
 from moncli.enums import *
 
 
@@ -13,7 +13,7 @@ def test_should_create_dependency_column_value_with_no_api_input_data():
     title="New dependency"
     column_type = ColumnType.dependency
 
-    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value = cv.create_column_value(column_type,id=id,title=title)
 
     # Act
     format = column_value.format()
@@ -30,7 +30,7 @@ def test_should_create_dependency_column_value_with_api_input_data():
     column_type = ColumnType.dependency
     value =  json.dumps({'linkedPulseIds' : [{'linkedPulseId': 123456789 }]})
 
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     format = column_value.format()
@@ -46,7 +46,7 @@ def test_should_create_dependency_column_value_with_api_with_no_value_data():
     column_type = ColumnType.dependency
     value =  json.dumps({'linkedPulseIds' : []})
 
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     value = column_value.value
@@ -62,7 +62,7 @@ def test_should_create_dependency_column_value_with_null_value():
     column_type = ColumnType.dependency
     value =  json.dumps({'linkedPulseIds' : [{'linkedPulseId': 123456789 }]})
 
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     column_value.value = None
@@ -79,7 +79,7 @@ def test_should_append_dependency_column_value_with_new_int_value():
     column_type = ColumnType.dependency
     value =  json.dumps({'linkedPulseIds' : [{'linkedPulseId': 123456789 }]})
 
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     column_value.value.append(123456790)
@@ -96,7 +96,7 @@ def test_should_append_dependency_column_value_with_new_str_value():
     column_type = ColumnType.dependency
     value =  json.dumps({'linkedPulseIds' : [{'linkedPulseId': 123456789 }]})
 
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     column_value.value.append('123456790')
@@ -114,7 +114,7 @@ def test_should_fail_to_add_invalid_value_to_dependency_column_value():
     title="New dependency"
     column_type = ColumnType.dependency
 
-    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value = cv.create_column_value(column_type,id=id,title=title)
 
     # Act
     column_value.value.append('not a value')

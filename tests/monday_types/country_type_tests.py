@@ -15,7 +15,7 @@ def test_should_succeed_when_to_native_returns_a_country_when_passing_in_a_count
     title = 'Country'
     column_type = ColumnType.country
     value = json.dumps({'countryName': 'India', 'countryCode': 'IN'})
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     country_type = t.CountryType(title='Country')
@@ -79,7 +79,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_coun
     country_type = t.CountryType(title='Country')
 
     # Act
-    format = country_type.to_primitive(en.cv.Country('India', 'IN'))
+    format = country_type.to_primitive(cv.Country('India', 'IN'))
 
     # Assert
     eq_(format['countryName'],'India')
@@ -92,7 +92,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_count
     country_type = t.CountryType(title='Country')
 
     # Act
-    format = country_type.to_primitive(en.cv.Country(name=None, code='IN'))
+    format = country_type.to_primitive(cv.Country(name=None, code='IN'))
 
     # Assert
     eq_(format,{})
@@ -102,7 +102,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_count
 def test_should_succeed_when_validate_country_raises_a_validationerror_when_passed_a_country_with_an_invalid_name_to_country_type():
     
     # Arrange
-    test.country_value= en.cv.Country('IINDA','IN')
+    test.country_value= cv.Country('IINDA','IN')
     test.country_value.name = ''
 
     # Act
@@ -113,7 +113,7 @@ def test_should_succeed_when_validate_country_raises_a_validationerror_when_pass
 def test_should_succeed_when_validate_country_raises_a_validationerror_when_passed_a_country_with_an_invalid_code_to_country_type():
 
     # Arrange
-    test.country_value= en.cv.Country('INDIA','INDYA')
+    test.country_value= cv.Country('INDIA','INDYA')
 
     # Act
     test.validate()

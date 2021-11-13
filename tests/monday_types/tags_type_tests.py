@@ -1,7 +1,7 @@
 from schematics.exceptions import ConversionError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli import types as t
 
@@ -10,7 +10,7 @@ def test_should_succeed_when_to_native_returns_a_list_when_passing_in_a_tagsvalu
     id = "tag_id"
     title = 'Tag IDs'
     column_type = ColumnType.tags
-    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value = cv.create_column_value(column_type,id=id,title=title)
     column_value.value = ['12345','12346']
 
     # Act

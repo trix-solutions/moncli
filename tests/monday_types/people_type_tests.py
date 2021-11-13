@@ -2,8 +2,7 @@ import json
 from schematics.exceptions import ConversionError, DataError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
-from moncli.entities.column_value.objects import PersonOrTeam
+from moncli import column_value as cv
 from moncli.enums import ColumnType, PeopleKind
 from moncli.models import MondayModel
 from moncli.types import PeopleType
@@ -19,7 +18,7 @@ def test_should_succeed_when_to_native_returns_a_list_when_passing_in_peoplevalu
         {'id': 13435, 'kind': 'person'}, {'id': 11234, 'kind': 'person'}]}
     value = json.dumps(value)
     settings_str = json.dumps({'max_people_allowed': 0})
-    people_value = en.cv.create_column_value(column_type,id=id,title=title,value=value,settings_str=settings_str)
+    people_value = cv.create_column_value(column_type,id=id,title=title,value=value,settings_str=settings_str)
 
     # Act
     people_type = PeopleType(title='Assignee')
@@ -35,7 +34,7 @@ def test_should_suceed_when_to_native_returns_a_personorteam_when_passing_in_a_p
     people_type = PeopleType(title='Assignee',max_allowed=1)
 
     # Act
-    value = people_type.to_native(en.cv.PersonOrTeam(id=12345,kind=PeopleKind.person))
+    value = people_type.to_native(cv.PersonOrTeam(id=12345,kind=PeopleKind.person))
 
     # Assert
     eq_(value.id, 12345)
@@ -147,7 +146,7 @@ def test_should_suceed_when_to_primitive_returns_export_dict_when_passed_a_perso
     people_type = PeopleType(title='Assignee',max_allowed=1)
 
     # Act
-    value = people_type.to_primitive(PersonOrTeam(12345,PeopleKind.person))
+    value = people_type.to_primitive(cv.PersonOrTeam(12345,PeopleKind.person))
     value1 = value['personsAndTeams'][0]
 
 
@@ -164,7 +163,7 @@ def test_should_suceed_when_validate_people_raises_validationerror_when_passed_a
         people_value = PeopleType(title='People',max_allowed=1)
     model =  TestModel(id='item_id', name='Item Name')
 
-    person_list = [PersonOrTeam(id=13435,kind=PeopleKind.person),PersonOrTeam(id=11234,kind=PeopleKind.person)]
+    person_list = [cv.PersonOrTeam(id=13435,kind=PeopleKind.person), cv.PersonOrTeam(id=11234,kind=PeopleKind.person)]
     model.people_value = person_list
 
     # Assert
@@ -181,7 +180,7 @@ def test_should_suceed_when_validate_people_raises_validateerror_when_passed_a_l
 
     id = [12235,12432,12342,12312,123122,321,2131]
 
-    person_list = [PersonOrTeam(id=value,kind=PeopleKind.person) for value in id]
+    person_list = [cv.PersonOrTeam(id=value,kind=PeopleKind.person) for value in id]
     model.people_value = person_list
 
     # Assert

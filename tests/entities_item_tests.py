@@ -4,8 +4,7 @@ from moncli.entities.item import ItemError
 from unittest.mock import patch
 from nose.tools import ok_, eq_, raises
 
-from moncli import client, entities as en
-from moncli.entities import column_value as cv
+from moncli import client, entities as en, column_value as cv
 from moncli.enums import ColumnType
 from moncli.entities.item import ItemError
 
@@ -250,7 +249,7 @@ def test_should_return_item_for_valid_column_value(get_board,get_items,change_co
     item = client.get_items()[0]
     id = "long text"
     value=json.dumps({'text': 'Long text'})
-    new_value = en.cv.create_column_value(ColumnType.long_text,id=id, value=value).format()
+    new_value = cv.create_column_value(ColumnType.long_text,id=id, value=value).format()
     # Act
     new_item = item.change_column_value(id=id,column_value=new_value)
     
@@ -269,7 +268,7 @@ def test_should_return_item_when_id_and_title_not_provided(get_board,get_items,c
     change_column_value.return_value = {'id': '1', 'name': 'Test Item 1'}
     item = client.get_items()[0]
     value=json.dumps({'text': 'Long text'})
-    new_value = en.cv.create_column_value(ColumnType.long_text,id='long_text', value=value)
+    new_value = cv.create_column_value(ColumnType.long_text,id='long_text', value=value)
     # Act
     new_item = item.change_column_value(column_value=new_value)
 
@@ -723,7 +722,7 @@ def test_should_return_item_when_passing_file_value_only(get_items,change_column
     title= 'Files 1'
     value = {'files': [{'fileType': 'ASSET', 'assetId': 303639397, 'name': 'test.py'}]}
 
-    file_cv = en.cv.create_column_value(ColumnType.file,id=id,title=title,value=json.dumps(value))
+    file_cv = cv.create_column_value(ColumnType.file,id=id,title=title,value=json.dumps(value))
     board = {'id': '1','name': "new board"}
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
     get_column_values.return_value = [file_cv]
@@ -748,7 +747,7 @@ def test_should_return_item_when_passing_id_or_title(get_items,change_column_val
     title= 'Files 1'
     value = {'files': [{'fileType': 'ASSET', 'assetId': 303639397, 'name': 'test.py'}]}
 
-    file_cv = en.cv.create_column_value(ColumnType.file,id=id,title=title,value=json.dumps(value))
+    file_cv = cv.create_column_value(ColumnType.file,id=id,title=title,value=json.dumps(value))
     board = {'id': '1','name': "new board"}
     get_items.return_value = [{'id': '1', 'name': 'Test Item 1','board': board}]
     get_column_values.return_value = [file_cv]

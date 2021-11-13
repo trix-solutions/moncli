@@ -3,7 +3,7 @@ from datetime import datetime
 from schematics.exceptions import ConversionError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.types import WeekType
 
@@ -20,7 +20,7 @@ def test_should_succeed_when_to_native_returns_a_week_when_passing_in_a_weekvalu
             'endDate': '2021-09-26'
         }
     })
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     week_type = WeekType(title=title)
@@ -83,7 +83,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_w
     
     # Arrange
     week_type = WeekType(title='week 1')
-    week = en.cv.Week(
+    week = cv.Week(
         start = datetime(2021, 9, 20, 0, 0),
         end = datetime(2021, 9, 26, 0, 0))
 
@@ -101,7 +101,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_week_
     week_type = WeekType(title='week 1')
 
    # Act
-    value = week_type.to_primitive(en.cv.Week(start = None,end = datetime(2021, 9, 26, 0, 0)))
+    value = week_type.to_primitive(cv.Week(start = None,end = datetime(2021, 9, 26, 0, 0)))
 
      # Assert
     eq_(value, {})

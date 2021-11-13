@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from nose.tools import eq_
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.types import CreationLogType
 
@@ -18,7 +18,7 @@ def test_should_suceed_when_to_native_returns_a_local_datetime_when_passed_a_cre
         'value': None
         }
     column_type = ColumnType.creation_log
-    column_value = en.cv.create_column_value(column_type, **column_value_data)
+    column_value = cv.create_column_value(column_type, **column_value_data)
 
     # Act
     creation_value_type = CreationLogType(title='Created')

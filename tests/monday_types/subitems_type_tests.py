@@ -1,9 +1,8 @@
 import json
-from nose.tools import eq_,raises
+from nose.tools import eq_
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
-from moncli.types import SubItemType
 
 def test_should_suceed_when_to_native_returns_list_when_passing_api_data_to_sub_item_value():
 
@@ -13,7 +12,7 @@ def test_should_suceed_when_to_native_returns_list_when_passing_api_data_to_sub_
     title = 'SubItem'
     column_type = ColumnType.subitems
     value =  json.dumps({'linkedPulseIds' : [{'linkedPulseId': 123456789 }]})
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act 
     
