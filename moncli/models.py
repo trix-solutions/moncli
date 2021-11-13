@@ -53,7 +53,8 @@ class MondayModel(Model):
                 for k, v in settings.items():
                     field_type.metadata[k] = v
                 self._original_values[field] = pickle.dumps(field_type.default)
-            super().__init__(raw_data=raw_data, **kwargs)  
+                
+        super().__init__(raw_data=raw_data, **kwargs)  
 
 
     @property
