@@ -2,7 +2,7 @@ import json
 
 from nose.tools import eq_
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.types import LongTextType
 
@@ -15,7 +15,7 @@ def test_longtext_type_should_succeed_when_to_native_returns_a_str_when_passing_
     title = 'Long Text'
     text = 'Some long text'
     value = json.dumps({'text': text})
-    longtext_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    longtext_value = cv.create_column_value(column_type, id=id, title=title, value=value)
 
     # Act
     longtext_type = LongTextType(id='longtext_column_1')

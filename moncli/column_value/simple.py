@@ -1,16 +1,10 @@
 import pytz
 from datetime import datetime, timedelta
 
-from moncli.error import ColumnValueError
-from moncli.entities.column_value.objects import PersonOrTeam, Phone
-from moncli import enums
-
-from ... import enums
-from ...config import DATE_FORMAT,TIME_FORMAT
-from ...error import ColumnValueError
+from .. import enums, DATE_FORMAT, TIME_FORMAT, ColumnValueError
 from .base import SimpleNullValue, ComplexNullValue
 from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
-from .objects import Email, Link, PersonOrTeam, Location
+from .objects import Email, Link, PersonOrTeam, Location, PersonOrTeam, Phone
 
 
 class DateValue(ComplexNullValue):

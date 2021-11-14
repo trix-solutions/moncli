@@ -1,10 +1,9 @@
 import json
-from schematics.exceptions import ConversionError, DataError
+from schematics.exceptions import ConversionError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
-from moncli.models import MondayModel
 from moncli.types import DependencyType
 
 
@@ -16,7 +15,7 @@ def test_should_succeed_when_to_native_returns_a_list_when_passing_in_a_dependen
     title = "Dependency 1"
     column_type = ColumnType.dependency
     value =  json.dumps({'linkedPulseIds' : [{'linkedPulseId': 123456789 }]})
-    column_value =  en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value =  cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     dependency_type = DependencyType(id='dependency')

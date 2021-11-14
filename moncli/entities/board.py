@@ -1,7 +1,7 @@
 from schematics.models import Model
 from schematics.types import StringType, IntType
 
-from .. import api, entities as en, models as m
+from .. import api, entities as en, column_value as cv
 from ..enums import *
 from ..error import BoardError
 from ..models import MondayModel
@@ -1097,7 +1097,7 @@ class Board(_Board):
  
 
 
-    def get_items_by_column_values(self, column_value: en.cv.ColumnValue, get_column_values: bool = False, as_model: type = None, *args, **kwargs):
+    def get_items_by_column_values(self, column_value: cv.ColumnValue, get_column_values: bool = False, as_model: type = None, *args, **kwargs):
         """Search items in this board by their column values.
     
             Parameters
@@ -1169,9 +1169,9 @@ class Board(_Board):
                     args.append(arg)
             args.extend(['id', 'name'])
 
-        if isinstance(column_value, en.cv.DateValue):
+        if isinstance(column_value, cv.DateValue):
             value = column_value.date
-        elif isinstance(column_value, en.cv.StatusValue):
+        elif isinstance(column_value, cv.StatusValue):
             value = column_value.label
         else:
             value = column_value.format()
@@ -1330,7 +1330,7 @@ class Board(_Board):
             column = [column for column in columns.values() if column.title == title][0]
 
         column_type = column.column_type      
-        return en.cv.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
+        return cv.create_column_value(column_type, id=column.id, title=column.title, settings_str=column.settings_str, **kwargs)
 
 
     def create_webhook(self, url: str, event: WebhookEventType, *args, **kwargs):

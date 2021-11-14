@@ -5,7 +5,7 @@ from schematics.models import Model
 
 class MondayModel(Model):
 
-    def __init__(self, item = None, raw_data: dict = None, id: str = None, name: str = None, board = None, *args, **kwargs):
+    def __init__(self, item = None, raw_data: dict = {}, id: str = None, name: str = None, board = None, **kwargs):
         
         self._item = item
         self._board = board
@@ -13,58 +13,48 @@ class MondayModel(Model):
         self._class = self.__class__.__name__
         self._original_values = {}
 
-        has_original = False
+        if not (item or board) and not (id and name):
+            raise TypeError('Input item, board, or id and name parameters are required.')
 
-        if item:
-            self.id = item.id
-            self.name = item.name
-            raw_data = {}
-            column_values = item.column_values
-            # When loading column values to the model fields,
-            for field, field_type in self._fields.items():
-                # First give title a try, as it is best known.
+        self.id = id
+        self.name = name
+
+        def get_key(field_type):
+            try:
+                return field_type.metadata['title']
+            except:
                 try:
-                    raw_data[field] = column_values[field_type.metadata['title']]
+                    return field_type.metadata['id']
                 except:
-                    # If that doesn't work, then see if there is an ID.
-                    try:
-                        raw_data[field] = column_values[field_type.metadata['id']]
-                    except:
-                        # Otherwise, it's not work the trouble...
-                        continue
-            has_original = True
-        elif raw_data:
-            self.id = raw_data.pop('id', None)
-            self.name = raw_data.pop('name', None)
-        elif (name and id):
-            self.id = id
-            self.name = name        
-        else:
-            raise TypeError('Input item, raw data, or id and name are required.')
-                
-        super(MondayModel, self).__init__(raw_data=raw_data)
-        
-        if board:
-            columns = board.columns
-            for field, field_type in self._fields.items():
-                try:
-                    column = columns[field_type.metadata['title']]
-                except:
-                    try:
-                        column = columns[field_type.metadata['id']]
-                    except:
-                        continue
+                    return None
+
+        for field, field_type in self._fields.items():
+            if not (item or board):
+                continue
+            key = get_key(field_type)
+            if not key:
+                print('Field {} contains no configured column ID or title.'.format(field))
+                continue
+            try:
+                column_values = item.column_values
+                if not id:
+                    self.id = item.id
+                if not name:
+                    self.name = item.name
+                value = column_values[key]
+                raw_data[field] = value
+                self._original_values[field] = pickle.dumps(value.value)
+            except:
+                columns = board.columns
+                column = columns[key]
                 field_type.metadata['id'] = column.id
                 field_type.metadata['title'] = column.title
                 settings = json.loads(column.settings_str)
                 for k, v in settings.items():
                     field_type.metadata[k] = v
-
-        for field, _type in self._fields.items():
-            if has_original:
-                self._original_values[field] = pickle.dumps(getattr(self, field))
-            else:
-                self._original_values[field] = pickle.dumps(_type.default)
+                self._original_values[field] = pickle.dumps(field_type.default)
+                
+        super().__init__(raw_data=raw_data, **kwargs)  
 
 
     @property
@@ -126,11 +116,15 @@ class MondayModel(Model):
                 self._item = self._item.change_multiple_column_values(column_values, get_column_values=True)
             if group:
                 self._item = self._item.move_to_group(group.id, get_column_values=True)
-        elif self._board and column_values:
+        elif self._board:
+            kwargs = {}
+            if column_values:
+                kwargs['column_values'] = column_values
             if group:
-                self._item = self._board.add_item(self.name, get_column_values=True, group_id=group.id, column_values=column_values)
+                self._item = self._board.add_item(self.name, get_column_values=True, group_id=group.id, **kwargs)
             else:
-                self._item = self._board.add_item(self.name, get_column_values=True, column_values=column_values)
+                self._item = self._board.add_item(self.name, get_column_values=True, **kwargs)
+            self.id = self._item.id
         if archive:
             self._item.archive()
-        return getattr(importlib.import_module(self._module), self._class)(self._item)
+        return self

@@ -1,11 +1,10 @@
 from schematics.exceptions import ConversionError, DataError, ValidationError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.models import MondayModel
 from moncli.types import EmailType
-from moncli.entities.column_value import Email
 
 
 def test_should_succeed_when_to_native_returns_a_email_when_passing_in_a_emailvalue_value_with_api_data_to_email_type():
@@ -13,7 +12,7 @@ def test_should_succeed_when_to_native_returns_a_email_when_passing_in_a_emailva
     id = "email"
     title = 'email 1'
     column_type = ColumnType.email
-    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value = cv.create_column_value(column_type,id=id,title=title)
     column_value.value = {'email': 'info@example.com', 'text': 'example email'}
 
     # Act
@@ -71,7 +70,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_emai
     email_type = EmailType(title='email 1')
 
     # Act
-    email = Email(email='someone@me.com', text='That is me!')
+    email = cv.Email(email='someone@me.com', text='That is me!')
     value = email_type.to_primitive(email)
 
     # Assert
@@ -88,5 +87,5 @@ def test_should_succeed_when_validate_email_raises_a_validation_error_when_passe
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.value = Email(email='this.isnot.an.email...',text='not a valid email')
+    test.value = cv.Email(email='this.isnot.an.email...',text='not a valid email')
     test.validate()

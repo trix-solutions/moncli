@@ -17,7 +17,7 @@ def test_should_succeed_when_to_native_returns_a_phone_when_passed_a_phonevalue_
     title = 'phone 1'
     column_type = ColumnType.phone
     value = json.dumps({'phone': '+15083658469', 'countryShortName': 'US'})
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     phone_type = t.PhoneType(title=title)
@@ -92,7 +92,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_phon
     phone_type = t.PhoneType(title='phone 1')
     
     # Act
-    value = phone_type.to_primitive(en.cv.Phone(phone = '+15083658469', code= 'US'))
+    value = phone_type.to_primitive(cv.Phone(phone = '+15083658469', code= 'US'))
 
     # Assert
     eq_(value['phone'],'+15083658469')
@@ -105,7 +105,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_phone
     phone_type = t.PhoneType(title='phone 1')
     
     # Act
-    value = phone_type.to_primitive(en.cv.Phone(phone = '+15083658469', code= None))
+    value = phone_type.to_primitive(cv.Phone(phone = '+15083658469', code= None))
 
     # Assert
     eq_(value,{})

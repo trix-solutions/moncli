@@ -3,8 +3,7 @@ import json, copy
 from schematics.transforms import blacklist
 from schematics.types import StringType
 
-from ... import entities as en
-from ...error import ColumnValueError
+from .. import entities as en, ColumnValueError
 from .constants import SIMPLE_NULL_VALUE, COMPLEX_NULL_VALUE
 
 

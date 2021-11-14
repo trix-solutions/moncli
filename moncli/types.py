@@ -9,7 +9,7 @@ from schematics.types import BaseType
 
 from . import enums
 
-from . import entities as en
+from . import column_value as cv
 from .config import *
 
 
@@ -23,7 +23,7 @@ class MondayType(BaseType):
 
     def __init__(self, id: str = None, title: str = None, *args, **kwargs):
         self.original_value = None
-        metadata = {}
+        metadata = kwargs.pop('metadata', {})
 
         if not id and not title:
             raise TypeError('"id" or "title" parameter is required.')
@@ -52,7 +52,7 @@ class MondayType(BaseType):
         if not value:
             return self.native_default
 
-        if not isinstance(value, en.cv.ColumnValue):
+        if not isinstance(value, cv.ColumnValue):
             if self.is_readonly:
                 return value
             if isinstance(value, self.native_type):
@@ -83,7 +83,7 @@ class MondayType(BaseType):
     def _cast(self, value):
         return self.native_type(value)
 
-    def _process_column_value(self, value: en.cv.ColumnValue):
+    def _process_column_value(self, value: cv.ColumnValue):
         return value.value
 
     def _export(self, value):
@@ -102,13 +102,13 @@ class CheckboxType(MondayType):
 
 class CountryType(MondayType):
 
-    native_type = en.cv.Country
+    native_type = cv.Country
     allow_casts = (dict,)
     null_value = {}
 
     def _cast(self, value):
         try:
-            return en.cv.Country(name = value['country'], code = value['code'])
+            return cv.Country(name = value['country'], code = value['code'])
         except KeyError:
             raise ConversionError('Unable to convert value "{}" to Country.'.format(value))
         
@@ -230,7 +230,7 @@ class DropdownType(MondayType):
         return return_list
 
     
-    def _process_column_value(self, value: en.cv.ColumnValue):
+    def _process_column_value(self, value: cv.ColumnValue):
         if isinstance(self.element_type,EnumMeta):
             return [self.element_type(data) for data in value.value]
         return super()._process_column_value(value)
@@ -251,13 +251,13 @@ class DropdownType(MondayType):
 
 
 class EmailType(MondayType):
-    native_type = en.cv.Email
+    native_type = cv.Email
     null_value = {}
     allow_casts = (dict, )
 
     def _cast(self, value):
         try:
-            return en.cv.Email(value['email'],value.get('text', value['email']))
+            return cv.Email(value['email'],value.get('text', value['email']))
         except KeyError:
             raise ConversionError('Cannot convert value "{}" to Email.'.format(value))
 
@@ -271,13 +271,13 @@ class EmailType(MondayType):
 
 
 class HourType(MondayType):
-    native_type = en.cv.Hour
+    native_type = cv.Hour
     null_value = {}
     allow_casts = (dict, )
 
     def _cast(self, value):
         try:
-            return en.cv.Hour(value['hour'],value.get('minute', 0))
+            return cv.Hour(value['hour'],value.get('minute', 0))
         except KeyError:
             raise ConversionError('Cannot convert value "{}" into Hour.'.format(value))
     def _export(self, value):
@@ -319,7 +319,7 @@ class ItemLinkType(MondayType):
                     raise ConversionError('Invalid item ID "{}".'.format(data))
             return return_list
             
-    def _process_column_value(self, value: en.cv.ItemLinkValue):
+    def _process_column_value(self, value: cv.ItemLinkValue):
         try:
             self.multiple_values = value.settings['allowMultipleItems']
         except KeyError:
@@ -348,13 +348,13 @@ class LastUpdatedType(MondayType):
 
 class LinkType(MondayType):
     
-    native_type = en.cv.Link
+    native_type = cv.Link
     null_value = {}
     allow_casts = (dict,)
 
     def _cast(self, value):
         try:
-            return en.cv.Link(value['url'],value['text'])
+            return cv.Link(value['url'],value['text'])
         except KeyError:
             raise ConversionError('Cannot convert value "{}" to Link.'.format(value))
     
@@ -372,13 +372,13 @@ class LinkType(MondayType):
 
 class LocationType(MondayType):
 
-    native_type = en.cv.Location
+    native_type = cv.Location
     allow_casts = (dict,)
     null_value = {}
 
     def _cast(self, value):
         try:
-            return en.cv.Location(lat=value['lat'],lng=value['lng'], address=value.get('address', None))
+            return cv.Location(lat=value['lat'],lng=value['lng'], address=value.get('address', None))
         except KeyError:
             raise ConversionError('Cannot convert "{}" to Location.'.format(value))
 
@@ -424,7 +424,7 @@ class PeopleType(MondayType):
     native_type = list
     native_default = []
     null_value = {}
-    element_type = en.cv.PersonOrTeam
+    element_type = cv.PersonOrTeam
     max_allowed = 0
 
     def __init__(self, id: str = None, title: str = None, max_allowed: int = 0, *args, **kwargs):
@@ -432,27 +432,27 @@ class PeopleType(MondayType):
         if max_allowed > 4 or max_allowed < 0:
             self.max_allowed = 0
         if max_allowed == 1:
-            self.native_type = en.cv.PersonOrTeam
+            self.native_type = cv.PersonOrTeam
             self.native_default = None
             self.allow_casts = (dict, int, str)
             self.element_type = None
         super().__init__(id, title, *args, **kwargs)
 
     def _process(self, value):
-        if isinstance(value,en.cv.PersonOrTeam):
+        if isinstance(value,cv.PersonOrTeam):
             return value
         return_list = []
         for data in value:
-            if isinstance(data,en.cv.PersonOrTeam):
+            if isinstance(data,cv.PersonOrTeam):
                 return_list.append(data)
                 continue
             try:
                 if isinstance(data, dict):
                     id = int(data['id'])
                     kind = enums.PeopleKind[data['kind']]
-                    return_list.append(en.cv.PersonOrTeam(id=id,kind=kind))               
+                    return_list.append(cv.PersonOrTeam(id=id,kind=kind))               
                 elif isinstance(data, (str,int)):
-                    return_list.append(en.cv.Person(int(data)))
+                    return_list.append(cv.Person(int(data)))
                 else:
                     raise ValueError('')
             except (ValueError, KeyError):
@@ -463,18 +463,18 @@ class PeopleType(MondayType):
     def _cast(self, value):
         try:
             if isinstance(value, dict):
-                return en.cv.PersonOrTeam(value['id'],enums.PeopleKind[value['kind']])
+                return cv.PersonOrTeam(value['id'],enums.PeopleKind[value['kind']])
             if isinstance(value, (int,str)):
-                return en.cv.Person(int(value))
+                return cv.Person(int(value))
         except (ValueError, KeyError):
             raise ConversionError('Cannot convert value "{}" to Person or Team.'.format(value))
 
 
-    def _process_column_value(self, value: en.cv.ColumnValue):
+    def _process_column_value(self, value: cv.ColumnValue):
         if 'max_people_allowed' in self.metadata:
             self.max_allowed = int(self.metadata['max_people_allowed'])
         if self.max_allowed == 1:
-            self.native_type = en.cv.PersonOrTeam
+            self.native_type = cv.PersonOrTeam
             self.native_default = None
             self.allow_casts = (dict, int, str)
             self.element_type = None
@@ -491,7 +491,7 @@ class PeopleType(MondayType):
         return {'personsAndTeams': personsAndTeams}
         
     def validate_people(self, value):
-        if self.max_allowed == 1 and not isinstance(value, en.cv.PersonOrTeam):
+        if self.max_allowed == 1 and not isinstance(value, cv.PersonOrTeam):
             raise ValidationError('Value contains too many Person or Team values: "{}".'.format(len(value)))
         if self.max_allowed in [2, 3] and len(value) > 4:
             raise ValidationError('Value contains too many Person or Team values: "{}".'.format(len(value)))
@@ -499,20 +499,20 @@ class PeopleType(MondayType):
 
 class PhoneType(MondayType):
 
-    native_type = en.cv.Phone
+    native_type = cv.Phone
     allow_casts = (dict,str)
     null_value = {}
 
     def _cast(self, value):
         if isinstance(value, dict):
             try:
-                return en.cv.Phone(phone=value['phone'],code=value['code'])
+                return cv.Phone(phone=value['phone'],code=value['code'])
             except KeyError:
                 raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
         elif isinstance(value, str):
             values = value.split(" ",1)
             try:
-                return en.cv.Phone(phone=values[0],code=values[1])
+                return cv.Phone(phone=values[0],code=values[1])
             except IndexError:
                 raise ConversionError('Unable to convert value "{}" to Phone.'.format(value))
 
@@ -590,7 +590,7 @@ class StatusType(MondayType):
             except ValueError:
                     raise ConversionError('Cannot find status label with index "{}".'.format(value))
     
-    def _process_column_value(self, value: en.cv.ColumnValue):
+    def _process_column_value(self, value: cv.ColumnValue):
         if self.native_type == str:
             self.choices = [value for value in self.metadata['labels'].values()]
         return super()._process_column_value(value)
@@ -639,7 +639,7 @@ class TagsType(MondayType):
         
 class TimelineType(MondayType):
 
-    native_type = en.cv.Timeline
+    native_type = cv.Timeline
     allow_casts = (dict,)
     null_value = {}
 
@@ -647,11 +647,11 @@ class TimelineType(MondayType):
         try:
             from_date = value['from']
             to_date = value['to']
-            return en.cv.Timeline(from_date=from_date, to_date=to_date)
+            return cv.Timeline(from_date=from_date, to_date=to_date)
         except KeyError:
             raise ConversionError('Could not convert value "{}" to Timeline.'.format(value))
 
-    def  _process_column_value(self, value: en.cv.ColumnValue):
+    def  _process_column_value(self, value: cv.ColumnValue):
         try:
             if value.settings['visualization_type']:
                 self.metadata['is_milestone'] = True
@@ -685,13 +685,13 @@ class TimeZoneType(MondayType):
 
 class WeekType(MondayType):
     
-    native_type = en.cv.Week
+    native_type = cv.Week
     null_value = {}
     allow_casts = (dict,)
 
     def _cast(self, value):
         try:
-            return en.cv.Week(value['start'],value['end'])
+            return cv.Week(value['start'],value['end'])
         except KeyError:
             raise ConversionError('Cannot convert value "{}" to Week.'.format(value))
     

@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from nose.tools import eq_, raises
 
-from moncli import entities as en, error as e
+from moncli import column_value as cv, error as e
 from moncli.enums import *
 
 
@@ -19,7 +19,7 @@ def test_should_create_last_updated_column_value_with_datetime_value_using_input
     column_type = ColumnType.last_updated
 
     # Act
-    column_value = en.cv.create_column_value(column_type, **column_value_data)
+    column_value = cv.create_column_value(column_type, **column_value_data)
 
     # Assert
     eq_(column_value.value, value.astimezone(datetime.now().tzinfo))
@@ -36,7 +36,7 @@ def test_should_raise_columnvalueerror_when_trying_to_set_a_valuet_to_create_las
         'value': None
     }
     column_type = ColumnType.last_updated
-    column_value = en.cv.create_column_value(column_type,**column_value_data)
+    column_value = cv.create_column_value(column_type,**column_value_data)
 
     # Act
     column_value.value = None
@@ -53,7 +53,7 @@ def test_shoucl_raise_columnvalueerror_when_calling_to_format_create_last_update
         'value': None
     }
     column_type = ColumnType.last_updated
-    column_value = en.cv.create_column_value(column_type,**column_value_data)
+    column_value = cv.create_column_value(column_type,**column_value_data)
 
 
     # Act 

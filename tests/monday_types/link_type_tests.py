@@ -2,7 +2,7 @@ import json
 from schematics.exceptions import DataError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.models import MondayModel
 from moncli.types import LinkType
@@ -15,7 +15,7 @@ def test_should_succeed_when_to_native_returns_a_link_when_passed_a_link_value_v
     title = 'link 1'
     column_type = ColumnType.link
     value = json.dumps({'url': 'https://www.google.com', 'text': 'Google'})
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     link_type = LinkType(title=title)
@@ -69,7 +69,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_l
     link_type = LinkType(title='link 1')
     
     # Act
-    value = link_type.to_primitive(en.cv.Link(url='https://www.google.com', text= 'Google'))
+    value = link_type.to_primitive(cv.Link(url='https://www.google.com', text= 'Google'))
 
     # Assert
     eq_(value['url'], 'https://www.google.com',)
@@ -82,7 +82,7 @@ def test_should_succeed_when_to_primitive_returns_an_empty_dict_when_passed_a_li
     link_type = LinkType(title='link 1')
     
     # Act
-    value = link_type.to_primitive(en.cv.Link(text= 'Google'))
+    value = link_type.to_primitive(cv.Link(text= 'Google'))
 
     # Assert
     eq_(value,{})
@@ -97,5 +97,5 @@ def test_should_succeed_when_validate_link_raises_a_validationerror_when_passed_
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.value = en.cv.Link(url='not a valid url')
+    test.value = cv.Link(url='not a valid url')
     test.validate()

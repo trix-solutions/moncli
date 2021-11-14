@@ -2,7 +2,7 @@ import json
 
 from nose.tools import eq_
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.types import NumberType
 
@@ -10,7 +10,7 @@ from moncli.types import NumberType
 def test_number_type_should_succeed_when_to_native_returns_an_int_or_float_when_passed_a_numbervalue_value_with_api_data():
     # Arrange
     number_type = NumberType(id='number_1')
-    column_value = en.cv.create_column_value(ColumnType.numbers, id='number_1', value=json.dumps(1))
+    column_value = cv.create_column_value(ColumnType.numbers, id='number_1', value=json.dumps(1))
 
     # Act
     int_value = number_type.to_native(column_value)

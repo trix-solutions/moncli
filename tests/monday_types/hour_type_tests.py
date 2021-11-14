@@ -1,11 +1,10 @@
 from schematics.exceptions import ConversionError, DataError, ValidationError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.models import MondayModel
 from moncli.types import HourType
-from moncli.entities.column_value import Hour
 
 
 def test_should_succeed_when_to_native_returns_an_hour_when_passed_a_hourvalue_value_with_api_data_to_hour_type():
@@ -13,7 +12,7 @@ def test_should_succeed_when_to_native_returns_an_hour_when_passed_a_hourvalue_v
     id = "hour"
     title = 'hour 1'
     column_type = ColumnType.hour
-    column_value = en.cv.create_column_value(column_type,id=id,title=title)
+    column_value = cv.create_column_value(column_type,id=id,title=title)
     column_value.value = {'hour': 12, 'minute': 0}
 
     # Act
@@ -89,7 +88,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_an_hou
 
     # Act
 
-    value = hour_type.to_primitive(Hour(12,0))
+    value = hour_type.to_primitive(cv.Hour(12,0))
     
     # Assert
 
@@ -104,7 +103,7 @@ def test_should_succeed_when_validate_hour_raises_a_validation_exception_when_pa
     model = TestModel(id='item_id', name='Item Name')
 
     # Act
-    model.value = Hour(12,0)
+    model.value = cv.Hour(12,0)
     model.value.hour = 99
 
     model.validate()
@@ -117,7 +116,7 @@ def test_should_succeed_when_validate_hour_raises_a_validation_exception_when_pa
     model = TestModel(id='item_id', name='Item Name')
 
     # Act
-    model.value = Hour(12,0)
+    model.value = cv.Hour(12,0)
     model.value.minute = 99
 
     model.validate()

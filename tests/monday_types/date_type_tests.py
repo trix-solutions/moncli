@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from nose.tools import eq_, raises
 from schematics.exceptions import ConversionError
 
-from moncli import entities as en, types as t
+from moncli import column_value as cv, types as t
 from moncli.config import DATE_FORMAT, TIME_FORMAT
 from moncli.enums import ColumnType
 
@@ -19,7 +19,7 @@ def test_date_type_should_succeed_when_to_native_returns_a_datetime_when_passing
     date = datetime(2021, 9, 29, 17, 48, 35)
     date = {'date': str(date.date()), 'time': str(date.time())}
     value = json.dumps(date)
-    date_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
+    date_value = cv.create_column_value(column_type, id=id, title=title,value=value)
 
     # Act
     date_type = t.DateType(id='date_column_1')

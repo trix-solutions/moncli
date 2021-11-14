@@ -1,7 +1,7 @@
 import json
 from nose.tools import eq_, raises
 
-from moncli import entities as en, error as e
+from moncli import column_value as cv, error as e
 from moncli.enums import *
 
 
@@ -14,7 +14,7 @@ def test_should_create_file_column_value_with_empty_list_value_using_no_input_ap
     value = []
 
     # Act
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
+    column_value = cv.create_column_value(column_type, id=id, title=title,value=value)
 
     # Assert
     eq_(column_value.value,[])
@@ -40,11 +40,11 @@ def test_should_create_file_column_value_with_an_item_id_list_value_using_input_
         }
 
     # Act
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=json.dumps(value))
-    cv = column_value.value
+    column_value = cv.create_column_value(column_type, id=id, title=title,value=json.dumps(value))
+    val = column_value.value
 
     # Assert
-    eq_(cv,value['files'])
+    eq_(val, value['files'])
 
 @raises(e.ColumnValueError)
 def test_should_raiseerror_when_trying_to_set_a_value_to_file_column_value():
@@ -65,7 +65,7 @@ def test_should_raiseerror_when_trying_to_set_a_value_to_file_column_value():
             }
         ]
         }
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=json.dumps(value))
+    column_value = cv.create_column_value(column_type, id=id, title=title,value=json.dumps(value))
 
     # Act
     column_value.value = {
@@ -88,7 +88,7 @@ def test_shoucl_raise_column_value_error_when_calling_format_for_a_file_column_v
     id = 'file1'
     title = "file"
     column_type = ColumnType.file
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.format()

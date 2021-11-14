@@ -2,8 +2,7 @@ import json
 from datetime import datetime
 
 from nose.tools import ok_, eq_, raises
-from moncli.entities.column_value.objects import Phone, Email
-from moncli import entities as en, error as e
+from moncli import column_value as cv, error as e
 from moncli.enums import *
 
 
@@ -13,7 +12,7 @@ def test_should_return_empty_text_column_value():
     id = 'text_1'
     column_type = ColumnType.text
     title = 'Text 1'
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     format = column_value.format()
@@ -31,7 +30,7 @@ def test_should_return_text_column_value_with_loaded_text():
     column_type = ColumnType.text
     title = 'Text 2'
     text = 'Hello, Grandma!'
-    column_value = en.cv.create_column_value(
+    column_value = cv.create_column_value(
         column_type, id=id, title=title, value=json.dumps(text))
 
     # Act
@@ -50,7 +49,7 @@ def test_should_return_empty_text_column_value_when_value_is_set_to_native_defau
     column_type = ColumnType.text
     title = 'Text 3'
     text = 'Hello, Grandma!'
-    column_value = en.cv.create_column_value(
+    column_value = cv.create_column_value(
         column_type, id=id, title=title, value=json.dumps(text))
 
     # Act
@@ -67,7 +66,7 @@ def test_should_return_text_column_with_value_when_setting_an_int_value():
     column_type = ColumnType.text
     title = 'Text 4'
     text = 12345
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = text
@@ -83,7 +82,7 @@ def test_should_return_text_column_with_value_when_setting_an_float_value():
     column_type = ColumnType.text
     title = 'Text 5'
     text = 123.45
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = text
@@ -99,7 +98,7 @@ def test_should_throw_exception_when_setting_an_invalid_value():
     column_type = ColumnType.text
     title = 'Text 5'
     text = {'value': 123.45}
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = text
@@ -117,7 +116,7 @@ def test_should_create_a_people_column_value_with_no_api_input_data():
     title = 'people 1'
     value = None
 
-    column_value = en.cv.create_column_value(
+    column_value = cv.create_column_value(
         column_type, id=id, title=title, value=value)
 
     # Act
@@ -138,7 +137,7 @@ def test_should_create_a_people_column_value_with_no_api_input_data():
     value_dict = {'personsAndTeams': [
         {'id': 134, 'kind': 'person'}, {'id': 11234, 'kind': 'person'}]}
     value = json.dumps(value_dict)
-    column_value = en.cv.create_column_value(
+    column_value = cv.create_column_value(
         column_type, id=id, title=title, value=value)
 
     # Act
@@ -157,7 +156,7 @@ def test_should_set_people_column_value_to_none():
     id = 'people_1'
     column_type = ColumnType.people
     title = 'people 1'
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
 
@@ -178,7 +177,7 @@ def test_should_throw_an_exception_when_setting_an_invalid_value_to_people_colum
     value_dict = {'personsAndTeams': [
         {'id': 123, 'kind': 'not person'}, {'id': 11234, 'kind': 'person'}]}
     value = json.dumps(value_dict)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -190,7 +189,7 @@ def test_should_create_a_number_column_value_with_no_api_input_data():
     id = 'value_1'
     title = "value"
     column_type = ColumnType.numbers
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     format = column_value.format()
@@ -205,7 +204,7 @@ def test_should_create_a_number_column_value_with_api_input_data():
     title = "value"
     column_type = ColumnType.numbers
     value = "123"
-    column_value = en.cv.create_column_value(
+    column_value = cv.create_column_value(
         column_type, id=id, title=title, value=value)
 
     # Act
@@ -222,7 +221,7 @@ def test_should_set_number_column_value_to_none_to_value():
     title = "value"
     column_type = ColumnType.numbers
     value = None
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -236,7 +235,7 @@ def test_should_set_number_column_value_to_int_or_float_to_value():
     title = "value"
     column_type = ColumnType.numbers
     value = 123.32
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -252,7 +251,7 @@ def test_should_set_number__an_improper_string_to_column_value_and_error():
     title = "value"
     column_type = ColumnType.numbers
     value = "just a number"
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -263,7 +262,7 @@ def test_should_set_number_column_value_to__a_valid_string_value():
     title = "value"
     column_type = ColumnType.numbers
     value = "123.32"
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -279,7 +278,7 @@ def test_should_create_date_column_value_with_no_input_data():
     title = 'date'
     column_type = ColumnType.date
     value=None
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
+    column_value = cv.create_column_value(column_type, id=id, title=title,value=value)
 
     # Act
     format = column_value.format()
@@ -301,7 +300,7 @@ def test_should_create_date_column_value_with_input_data():
         'time': str(date_value.time())
     }
     value = json.dumps(date_value)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
+    column_value = cv.create_column_value(column_type, id=id, title=title,value=value)
 
     # Act
     format = column_value.format()
@@ -315,7 +314,7 @@ def test_should_set_date_value_to_none_to_value():
     id = 'date_1'
     title = 'date'
     column_type = ColumnType.date
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value=None
@@ -328,7 +327,7 @@ def test_should_set_datetime_input_value_to_date_column_value():
     title = 'date'
     column_type = ColumnType.date
     value = datetime(2020, 12, 12, 12, 30, 12)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value=value
@@ -343,7 +342,7 @@ def test_should_set_invalid_unix_timestamp_to_date_column_value():
     title = 'date'
     column_type = ColumnType.date
     value = 999999999999
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value=value
@@ -356,7 +355,7 @@ def test_should_set_valid_unix_timestamp_to_date_column_value():
     value = 9999999999
     date_value=datetime(2286, 11, 20, 23, 16, 39)
     date = str(date_value.date())
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value=value
@@ -372,7 +371,7 @@ def test_should_set_invalid_monday_simple_string_to_date_column_value():
     title = 'date'
     column_type = ColumnType.date
     value = "202020-120-120 123:234:233"
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value=value
@@ -384,7 +383,7 @@ def test_should_set_monday_simple_string_to_date_column_value():
     column_type = ColumnType.date
     value = "2020-12-12 12:24:23"
     date_value = datetime(2020,12,12,12,24,23)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value=value
@@ -402,7 +401,7 @@ def test_should_set_none_to_dropdown_column_value():
     title = 'drop down 1'
     value = None
 
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -418,7 +417,7 @@ def test_should_create_a_dropdown_column_value_with_no_api_input_data():
     column_type = ColumnType.dropdown
     title = 'drop down 1'
     value = None
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value)
+    column_value = cv.create_column_value(column_type, id=id, title=title,value=value)
 
     # Act
     format = column_value.format()
@@ -452,7 +451,7 @@ def test_should_create_a_dropdown_column_value_with_api_input_data():
     }
     value = json.dumps(api_value)
     settings_str = json.dumps(settings)
-    column_value = en.cv.create_column_value(
+    column_value = cv.create_column_value(
         column_type, id=id, title=title, value=value, settings_str=settings_str)
 
     # Act 
@@ -483,7 +482,7 @@ def test_should_set_invalid_integer_to_dropdown_column_value():
         ]
     }
     settings_str = json.dumps(settings)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str =settings_str)
+    column_value = cv.create_column_value(column_type, id=id, title=title,settings_str =settings_str)
 
     # Act
     column_value.value.append(123)
@@ -511,7 +510,7 @@ def test_should_set_invalid_string_to_dropdown_index_column_value():
         ]
     }
     settings_str = json.dumps(settings)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str =settings_str)
+    column_value = cv.create_column_value(column_type, id=id, title=title,settings_str =settings_str)
 
     # Act
     column_value.value.append('42069')
@@ -539,7 +538,7 @@ def test_should_set_invalid_string_to_dropdown_label_column_value():
         ]
     }
     settings_str = json.dumps(settings)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str =settings_str)
+    column_value = cv.create_column_value(column_type, id=id, title=title,settings_str =settings_str)
 
     # Act
     column_value.value.append("dateTime")
@@ -552,7 +551,7 @@ def test_should_create_a_status_column_value_with_no_api_input_data():
     id = 'status_1'
     title = "status"
     column_type = ColumnType.status
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     format = column_value.format() 
@@ -573,7 +572,7 @@ def test_should_create_a_status_column_value_with_api_input_data():
     value = json.dumps(index_value)
     settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
     settings_str = json.dumps(settings)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,value=value,settings_str=settings_str)
+    column_value = cv.create_column_value(column_type, id=id, title=title,value=value,settings_str=settings_str)
 
     # Act
     format = column_value.format()
@@ -588,7 +587,7 @@ def test_should_set_none_to_status_value():
     id = 'status_1'
     title = "status"
     column_type = ColumnType.status
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act 
     column_value.value = None
@@ -605,7 +604,7 @@ def test_should_set_invalid_string_label_value_to_status_value():
     column_type = ColumnType.status
     settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
     settings_str = json.dumps(settings)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
+    column_value = cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
 
     # Act 
     column_value.value = "Not Done"
@@ -620,7 +619,7 @@ def test_should_set_a_status_column_value_with_string_label_value():
     settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
     settings_str = json.dumps(settings)
     value = 'Done'
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.settings_str=settings_str
@@ -639,7 +638,7 @@ def test_should_set_invalid_integer_to_status_index_value():
     settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
     settings_str = json.dumps(settings)
     value = 123
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
+    column_value = cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
 
     # Act 
 
@@ -654,7 +653,7 @@ def test_should_set_a_status_column_value_with_valid_integer_index_value():
     column_type = ColumnType.status
     settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
     settings_str = json.dumps(settings)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     value = 1
 
     # Act
@@ -674,7 +673,7 @@ def test_should_set_invalid_string_to_status_index_value():
     settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
     settings_str = json.dumps(settings)
     value = '123'
-    column_value = en.cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
+    column_value = cv.create_column_value(column_type, id=id, title=title,settings_str=settings_str)
 
     # Act 
     column_value.value = value
@@ -689,7 +688,7 @@ def test_should_set_a_status_column_value_with_valid_integer_index_value():
     value = "1"
     settings = {'labels': {'0': 'Working on it', '1': 'Done', '2': 'Stuck'}}
     settings_str = json.dumps(settings)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.settings_str=settings_str
@@ -705,7 +704,7 @@ def test_should_create_phone_column_value_with_no_api_input_data():
     id = 'phone_value_1'
     title = "Phone"
     column_type = ColumnType.phone
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     format = column_value.format()
@@ -720,7 +719,7 @@ def test_should_create_phone_column_value_with_api_input_data():
     title = "Phone"
     column_type = ColumnType.phone
     value = json.dumps({'phone': '+18637777777', 'countryShortName': 'US'})
-    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=value)
 
     # Act
     format = column_value.format()
@@ -736,7 +735,7 @@ def test_should_set_phone_column_value_to_none():
     title = "Phone"
     column_type = ColumnType.phone
     value = None
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -752,8 +751,8 @@ def test_should_set_phone_column_value_to_phone_value():
     column_type = ColumnType.phone
     phone = '+12397777777'
     code = 'US'
-    value = Phone(phone=phone, code=code)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = cv.Phone(phone=phone, code=code)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -771,7 +770,7 @@ def test_should_set_phone_column_value_to_string_value():
     phone = '+5087777777'
     code = 'US'
     value = '{} {}'.format(phone, code)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -789,7 +788,7 @@ def test_should_set_phone_column_value_to_valid_dict_value():
     phone = '+5087777777'
     code = 'US'
     value = {'phone': phone, 'code': code}
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -806,7 +805,7 @@ def test_should_set_phone_column_value_to_invalid_dict_value():
     title = "Phone"
     column_type = ColumnType.phone
     value = {'this': 'aint my phone number...'}
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -820,8 +819,8 @@ def test_should_create_phone_column_value_with_phone_set_to_none():
     column_type = ColumnType.phone
     phone = None
     code = 'US'
-    value = Phone(phone=phone, code=code)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = cv.Phone(phone=phone, code=code)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -838,8 +837,8 @@ def test_should_create_phone_column_value_with_code_set_to_none():
     column_type = ColumnType.phone
     phone = '+5087777777'
     code = None
-    value = Phone(phone=phone, code=code)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = cv.Phone(phone=phone, code=code)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -856,7 +855,7 @@ def test_should_email_column_value_with_no_api_input_data():
     title = "Email"
     column_type = ColumnType.email
 
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     format = column_value.format()
@@ -876,7 +875,7 @@ def test_should_email_column_value_with_api_input_data():
     value=json.dumps({'email': email, 'text': text})
 
     # Act
-    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=value)
     format = column_value.format()
 
     # Assert
@@ -890,7 +889,7 @@ def test_should_set_email_value_to_none():
     id = 'email_value_3'
     title = "Email"
     column_type = ColumnType.email
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = None
@@ -907,8 +906,8 @@ def test_should_set_email_value_to_email_column_value():
     column_type = ColumnType.email
     email = 'jdoe@somewhere.com'
     text = 'John Doe'
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
-    value = en.cv.Email(email=email, text=text)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
+    value = cv.Email(email=email, text=text)
 
     # Act
     column_value.value = value
@@ -925,10 +924,10 @@ def test_should_return_text_attribute_with_same_value_as_email_attribute_when_te
     column_type = ColumnType.email
     email = 'jdoe@somewhere.com'
     text = None
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value.value = en.cv.Email(email=email, text=text)
+    column_value.value = cv.Email(email=email, text=text)
     format = column_value.format()
 
     # Assert
@@ -942,7 +941,7 @@ def test_should_create_long_text_value_with_no_input_data():
     id = 'long_text_0'
     column_type = ColumnType.long_text
     title = 'Long Text'
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     format = column_value.format()
@@ -959,7 +958,7 @@ def test_should_create_long_text_value_with_api_input_data():
     title = 'Long Text'
     text = 'Some long text'
     value = json.dumps({'text': text})
-    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=value)
 
     # Act
     format = column_value.format()
@@ -975,7 +974,7 @@ def test_should_set_long_text_column_value_to_none():
     column_type = ColumnType.long_text
     title = 'Long Text'
     long_text = None
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = long_text
@@ -991,7 +990,7 @@ def test_should_set_string_value_to_long_text_value():
     column_type = ColumnType.long_text
     title = 'Long Text'
     long_text = 'Some long text'
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = long_text
@@ -1007,7 +1006,7 @@ def test_should_set_integer_value_to_long_text_value():
     column_type = ColumnType.long_text
     title = 'Long Text'
     long_text = 1234
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = long_text
@@ -1023,7 +1022,7 @@ def test_should_set_float_value_to_long_text_value():
     column_type = ColumnType.long_text
     title = 'Long Text'
     long_text = 1234.1234
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = long_text
@@ -1038,7 +1037,7 @@ def test_should_create_link_column_value_with_no_api_input_data():
     id = 'link_value_1'
     title = "Link"
     column_type = ColumnType.link
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     format = column_value.format()
@@ -1056,7 +1055,7 @@ def test_should_set_link_column_value_with_api_input_data():
     url = 'https://github.com'
     text = 'The Control of all Sources'
     value = json.dumps({'url': url, 'text': text})
-    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=value)
 
     # Act
     format = column_value.format()
@@ -1073,7 +1072,7 @@ def test_should_set_link_column_value_to_none():
     title = "Link"
     column_type = ColumnType.link
     value = None
-    column_value = en.cv.create_column_value(column_type, id=id, title=title, value=value)
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=value)
 
     # Act
     column_value.value = value
@@ -1090,8 +1089,8 @@ def test_should_set_link_column_value_to_link_value():
     column_type = ColumnType.link
     url = 'https://github.com'
     text = 'The Control of all Sources'
-    value = en.cv.Link(url=url, text=text)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = cv.Link(url=url, text=text)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -1109,7 +1108,7 @@ def test_should_set_link_column_value_to_string_value():
     url = 'https://github.com'
     text = 'The Control of all Sources'
     value = '{} {}'.format(url, text)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -1125,7 +1124,7 @@ def test_should_return_email_column_value_with_email_value_when_value_is_set_to_
     id = 'email_value_5'
     title = "Email"
     column_type = ColumnType.email
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     email = 'jdoe@somewhere.com'
     text = 'Back to the old Joe again...'
     value ='{} {}'.format(email,text)
@@ -1146,7 +1145,7 @@ def test_should_set_to_valid_dict_to_email_column_value():
     column_type = ColumnType.email
     email = 'jdoe@somewhere.com'
     text = 'John Doe'
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = {'email': email, 'text': text}
@@ -1163,7 +1162,7 @@ def test_should_raise_column_value_error_when_value_is_set_to_invalid_dict():
     id = 'email_value_7'
     title = "Email"
     column_type = ColumnType.email
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
     value = {'this': 'aint your average email'}
     
     # Act
@@ -1178,10 +1177,10 @@ def test_should_set_email_value_to_none_for_email_column_value():
     column_type = ColumnType.email
     email = None
     text = 'John Doe'
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
-    column_value.value = en.cv.Email(email=email, text=text)
+    column_value.value = cv.Email(email=email, text=text)
     format = column_value.format()
 
     # Assert
@@ -1197,7 +1196,7 @@ def test_should_set_link_column_value_to_valid_dict_value():
     url = 'https://github.com'
     text = 'The Control of all Sources'
     value = {'url': url, 'text': text}
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -1215,7 +1214,7 @@ def test_should_set_link_column_value_to_invalid_dict_value():
     title = "Link"
     column_type = ColumnType.link
     value = {'this': 'link is broken'}
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -1229,8 +1228,8 @@ def test_should_create_link_column_value_with_url_set_to_none():
     column_type = ColumnType.link
     url = None
     text = 'The Control of all Sources'
-    value = en.cv.Link(url=url, text=text)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = cv.Link(url=url, text=text)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value
@@ -1248,8 +1247,8 @@ def test_should_create_link_column_value_with_text_set_to_none():
     column_type = ColumnType.link
     url = 'https://github.com'
     text = None
-    value = en.cv.Link(url=url, text=text)
-    column_value = en.cv.create_column_value(column_type, id=id, title=title)
+    value = cv.Link(url=url, text=text)
+    column_value = cv.create_column_value(column_type, id=id, title=title)
 
     # Act
     column_value.value = value

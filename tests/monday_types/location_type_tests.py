@@ -17,7 +17,7 @@ def test_should_succeed_when_to_native_returns_a_location_when_passed_a_location
     title = 'Location'
     column_type = ColumnType.location
     value=json.dumps({'lat': 26.930101, 'lng': -80.790198, 'address': "Home address"})
-    column_value =  en.cv.create_column_value(column_type,id=id,title=title,value=value)
+    column_value =  cv.create_column_value(column_type,id=id,title=title,value=value)
 
     # Act
     location_type = t.LocationType(title='Location')
@@ -81,7 +81,7 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_a_loca
     location_type = t.LocationType(title='Location')
 
     # Act
-    value = location_type.to_primitive(en.cv.Location(lat = 26.930101, lng= -80.790198, address = "Home address"))
+    value = location_type.to_primitive(cv.Location(lat = 26.930101, lng= -80.790198, address = "Home address"))
 
     # Assert
     eq_(value['lat'],26.930101)
@@ -94,7 +94,7 @@ def test_should_succeed_when_to_primitive_returns_empty_dict_when_passed_a_locat
     location_type = t.LocationType(title='Location')
 
     # Act
-    value = location_type.to_primitive(en.cv.Location(lat = 26.930101))
+    value = location_type.to_primitive(cv.Location(lat = 26.930101))
 
     # Assert
     eq_(value,{})
@@ -108,7 +108,7 @@ def test_should_succeed_when_validate_location_raises_a_validation_error_when_pa
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.value = en.cv.Location(lat=-99,lng=123.234)
+    test.value = cv.Location(lat=-99,lng=123.234)
     test.validate()
 
 @raises(DataError)
@@ -120,5 +120,5 @@ def test_should_succeed_when_validate_location_raises_a_validationerror_when_pas
     test = TestModel(id='item_id', name='Item Name')
 
     # Act
-    test.value = en.cv.Location(lat=-23,lng=223.234)
+    test.value = cv.Location(lat=-23,lng=223.234)
     test.validate()

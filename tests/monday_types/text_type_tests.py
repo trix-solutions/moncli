@@ -2,7 +2,7 @@ import json
 
 from nose.tools import eq_
 
-from moncli import entities as en
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.types import TextType
 
@@ -10,7 +10,7 @@ from moncli.types import TextType
 def test_text_type_should_succeed_when_to_native_returns_a_str_when_passing_in_a_textvalue_value_with_api_get_itemdata():
 
     # Arrange
-    text_value = en.cv.create_column_value(ColumnType.text,id="text1",title="text", value=json.dumps('new text'))
+    text_value = cv.create_column_value(ColumnType.text,id="text1",title="text", value=json.dumps('new text'))
     text_type = TextType(id=1)
 
     # Act

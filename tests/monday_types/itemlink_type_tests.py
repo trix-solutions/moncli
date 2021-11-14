@@ -2,8 +2,7 @@ import json
 from schematics.exceptions import ConversionError, DataError
 from nose.tools import eq_,raises
 
-from moncli import entities as en
-from moncli.entities import column_value
+from moncli import column_value as cv
 from moncli.enums import ColumnType
 from moncli.types import ItemLinkType
 
@@ -16,7 +15,7 @@ def test_should_succeed_when_to_native_returns_a_list_when_passed_an_itemlink_va
     column_type = ColumnType.board_relation
     settings = json.dumps({'allowMultipleBoards': True, 'allowCreateReflectionColumn': False, 'boardIds': [1697598326]})
     value = json.dumps({'linkedPulseIds' : [{'linkedPulseId': 123456789 }]})
-    column_value = en.cv.create_column_value(column_type,id=id,title=title,value=value,settings_str=settings)
+    column_value = cv.create_column_value(column_type,id=id,title=title,value=value,settings_str=settings)
 
     # Act
     itemlink_type = ItemLinkType(title='Item Link Column 1')
