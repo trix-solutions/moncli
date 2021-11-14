@@ -201,7 +201,8 @@ def _process_repsonse(api_key: str, timeout: int, resp, data, **kwargs):
     """Process Rest graphql response/retry request."""
 
     text: dict = resp.json()
-
+    if resp.status_code == 401:
+        raise MondayApiError(json.dumps(data), resp.status_code, '', 'Request is not authorized.  Please verify that your API token is valid.')
     if resp.status_code == 403 or resp.status_code == 500:
         raise MondayApiError(json.dumps(data), resp.status_code, '', [text['error_message']])
     if resp.status_code == 429:
@@ -209,7 +210,7 @@ def _process_repsonse(api_key: str, timeout: int, resp, data, **kwargs):
         return execute_query(api_key, timeout, **kwargs)
     if text.__contains__('errors'):
         errors = text['errors']
-        if not 'Query has complexity of' in errors[0]['message']: # May my sins be forgiven someday...
+        if not 'Query has complexity of' in errors[0]['message']: 
             error_query = json.dumps(data)
             status_code = resp.status_code
             errors = text['errors']
