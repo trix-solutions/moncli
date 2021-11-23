@@ -262,7 +262,7 @@ class NumberValue(SimpleNullValue):
     
     def _convert(self, value):
         if self.__isint(value):
-           return int(value)
+           return int(float(value))
         elif self.__isfloat(value):
            return float(value)
         
