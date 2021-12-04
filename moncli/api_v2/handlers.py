@@ -408,10 +408,9 @@ def delete_subscribers_from_board(board_id: str, user_ids: list, *args, **kwargs
                 The monday.com v2 API user key.
     """
 
-    kwargs = {
-        'board_id': gql.IntValue(board_id),
-        'user_ids': gql.ListValue([int(id) for id in user_ids])
-    }
+    kwargs['board_id'] = gql.IntValue(board_id),
+    kwargs['user_ids'] = gql.ListValue([int(id) for id in user_ids])
+    
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=DELETE_SUBSCRIBERS_FROM_BOARD, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
     
@@ -1559,10 +1558,8 @@ def duplicate_item(board_id: str, item_id: str, *args, **kwargs):
                 Duplicate with the item's updates.
     """
     
-    kwargs = {
-        'board_id': gql.IntValue(board_id),
-        'item_id': gql.IntValue(item_id)
-    }
+    kwargs['board_id'] = gql.IntValue(board_id)
+    kwargs['item_id'] = gql.IntValue(item_id)
     return execute_query(api_key=kwargs.pop('api_key', None), query_name=DUPLICATE_ITEM, operation_type=gql.OperationType.MUTATION, fields=args, arguments=kwargs)
 
 

@@ -1408,7 +1408,7 @@ class Item(_Item):
             self.id,
             *args,
             api_key=self.__creds.api_key_v2,
-            *kwargs)
+            **kwargs)
         items = Item(creds=self.__creds, **item_data)
         if not as_model:
             return items

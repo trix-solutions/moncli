@@ -396,9 +396,7 @@ QUERY_MAP = {
     DUPLICATE_ITEM: (
         DEFAULT_ITEM_QUERY_FIELDS, 
         {
-            'board_id': ArgumentValueKind.Int,
-            'with_updates': ArgumentValueKind.Bool,
-            'item_id': ArgumentValueKind.Int
+            'with_updates': ArgumentValueKind.Bool
         }),
     UPDATES: (
         DEFAULT_UPDATE_QUERY_FIELDS, 
