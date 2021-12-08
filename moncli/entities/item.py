@@ -2,6 +2,8 @@ import json
 
 from schematics.models import Model
 from schematics.types import StringType
+from datetime import datetime
+from moncli.config import DATE_FORMAT, TIME_FORMAT
 
 from .. import api, entities as en, models as m, error as e, column_value as cv
 from ..error import ItemError
@@ -1065,6 +1067,12 @@ class Item(_Item):
             values = { value.id: value.format() for value in column_values }
         else:
             raise en.InvalidColumnValue(type(column_values).__name__)
+        for key,value in values.items():
+            if isinstance(value,datetime):
+                new_data = {}
+                new_data["date"]=value.date().strftime(DATE_FORMAT)
+                new_data["time"]=value.date().strftime(TIME_FORMAT)
+                values[key] = new_data
         item_data = api.change_multiple_column_value(
             self.id,
             self.board.id,
