@@ -919,17 +919,13 @@ class Board(_Board):
             return [group for group in self.get_groups(*args) if group.title == title][0]
 
 
-    def add_item(self, item_name: str,as_model: type = None, get_column_values = False, *args, **kwargs):
+    def add_item(self, item_name: str, *args, **kwargs):
         """Create a new item in the board.
 
             Parameters
 
                 item_name : `str`
                     The new item's name.
-                as_model: `type`
-                    The MondayModel subclass to be returned.
-                get_column_values: `bool`
-                    Returns column values with created item if set to `True`.
 
 
             Returns
@@ -972,7 +968,14 @@ class Board(_Board):
                     The group's unique identifier.
                 column_values : `json`
                     The column values of the new item.
+                as_model: `type`
+                    The MondayModel subclass to be returned.
+                get_column_values: `bool`
+                    Returns column values with created item if set to `True`.
         """
+
+        get_column_values = kwargs.pop('get_column_values', False)
+        as_model = kwargs.pop('as_model', None)
 
         if get_column_values:
             args = list(args)
@@ -997,15 +1000,15 @@ class Board(_Board):
             api_key=self.__creds.api_key_v2, 
             **kwargs)
 
-        items =  en.Item(creds=self.__creds, __board=self, **item_data)
+        item = en.Item(creds=self.__creds, __board=self, **item_data)
         if not as_model:
-            return items
-        if not issubclass(type(as_model), MondayModel):
+            return item
+        if not issubclass(as_model, MondayModel):
             raise BoardError(
                 'invalid_as_model_parameter',
                 self.id,
                 'as_model parameter must be of MondayModel Type')
-        return [as_model(item) for item in items]
+        return as_model(item)
 
 
     def get_items(self, get_column_values: bool = False, as_model: type = None, *args, **kwargs):

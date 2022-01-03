@@ -18,6 +18,9 @@ class MondayModel(Model):
 
         self.id = id
         self.name = name
+        if item:
+            self.id = item.id
+            self.name = item.name
 
         def get_key(field_type):
             try:
@@ -30,17 +33,13 @@ class MondayModel(Model):
 
         for field, field_type in self._fields.items():
             if not (item or board):
-                continue
+                continue                
             key = get_key(field_type)
             if not key:
                 print('Field {} contains no configured column ID or title.'.format(field))
                 continue
             try:
                 column_values = item.column_values
-                if not id:
-                    self.id = item.id
-                if not name:
-                    self.name = item.name
                 value = column_values[key]
                 raw_data[field] = value
                 self._original_values[field] = pickle.dumps(value.value)
