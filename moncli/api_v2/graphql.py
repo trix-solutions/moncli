@@ -64,7 +64,6 @@ class GraphQLNode():
         """
 
         formatted_args = ', '.join(['{}:{}'.format(key, value) for key, value in self.arguments.items()])
-        formatted_args = formatted_args.replace("'", '"')
         return '{} ({})'.format(body, formatted_args)
 
 
