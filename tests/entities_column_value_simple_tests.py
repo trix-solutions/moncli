@@ -310,6 +310,27 @@ def test_should_create_date_column_value_with_input_data():
     eq_(format['time'], '12:20:30')
 
 
+def test_should_create_empty_date_column_value_with_empty_date_input_data():
+
+    # Arrange
+
+    id = 'date_1'
+    title = 'date'
+    column_type = ColumnType.date
+    date_value = datetime(2020,12,12,12,20,30)
+    date_value = {
+        'date': ''
+    }
+    value = json.dumps(date_value)
+    column_value = cv.create_column_value(column_type, id=id, title=title,value=value)
+
+    # Act
+    format = column_value.format()
+
+    # Assert
+    eq_(format, {})
+
+
 def test_should_set_date_value_to_none_to_value():
     id = 'date_1'
     title = 'date'

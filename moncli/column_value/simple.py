@@ -15,16 +15,17 @@ class DateValue(ComplexNullValue):
 
     def _convert(self,value):
         try:
-            new_time = datetime.strptime(value['time'], TIME_FORMAT)
             new_date = datetime.strptime(value['date'], DATE_FORMAT)
+        except (KeyError, ValueError):
+            return None
+        try:
+            new_time = datetime.strptime(value['time'], TIME_FORMAT)
             self.has_time = True
             new_date = pytz.timezone('UTC').localize(new_date)
             new_date = new_date + timedelta(hours=new_time.hour, minutes=new_time.minute, seconds=new_time.second)
             date_value = new_date.astimezone(datetime.now().astimezone().tzinfo) 
             return date_value
-
-        except (KeyError, TypeError):
-            new_date = datetime.strptime(value['date'], DATE_FORMAT)
+        except (KeyError, TypeError): 
             return new_date
         
     def _cast(self,value):
