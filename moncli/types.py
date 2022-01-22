@@ -546,22 +546,31 @@ class StatusType(MondayType):
     native_type = str
     allow_casts = (int,)
     null_value = {}
+    
+    default_labels = {}
 
-    def __init__(self, id: str = None, title: str = None, as_enum: type = None ,  *args, **kwargs):
+    def __init__(self, id: str = None, title: str = None, as_enum: type = None, default_labels: list = None, *args, **kwargs):
         if as_enum:
             if not isinstance(as_enum, EnumMeta):
                 raise TypeError('Invalid type "{}" for status Enum.'.format(as_enum.__name__))
             self.choices = list(as_enum)
+            self.default_labels = {e.name: e.value for e in self.choices}
             for value in self.choices:
                 if not isinstance(value.value, str):
                     raise TypeError('Invalid value "{}" for status Enum "{}".'.format(value.value, value.__class__.__name__))
             self.native_type =  as_enum
             self.allow_casts = (str,)
+
+        if default_labels:
+            self.default_labels = {str(i): default_labels[i] for i in range(len(default_labels))}
             
         super().__init__(id=id, title=title, *args, **kwargs)
     
     def _process(self, value):
-        labels = self.metadata['labels']
+        try:
+            labels = self.metadata['labels']
+        except:
+            labels = self.default_labels
         if self.native_type != str:
             return value
         try:
@@ -576,8 +585,11 @@ class StatusType(MondayType):
             raise ConversionError('Cannot find status label "{}".'.format(value))
                 
     def _cast(self, value):
-        labels = self.metadata['labels']
         label = str(value)
+        try:
+            labels = self.metadata['labels']
+        except:
+            labels = self.default_labels
         if self.native_type == str and isinstance(value,int):
             try:    
                 return labels[label]

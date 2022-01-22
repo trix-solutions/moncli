@@ -189,3 +189,26 @@ def test_should_succeed_when_to_primitive_returns_export_dict_when_passed_in_a_s
     format = status_type.to_primitive(Status.done)
     # Assert
     eq_(format,{'index': 2})
+
+def test_should_succeed_when_using_default_labels_as_an_enum():
+    
+    # Arrange
+    status_type = StatusType(title='Status', as_enum=Status)
+
+    # Act
+    value = status_type.to_native('Done')
+
+    # Assert
+    eq_(value, Status.done)
+
+
+def test_should_succeed_when_using_default_labels_as_a_list_of_values():
+    
+    # Arrange
+    status_type = StatusType(title='Status', default_labels=[e.value for e in list(Status)])
+
+    # Act
+    value = status_type.to_native("2")
+
+    # Assert
+    eq_(value, Status.done.value)
