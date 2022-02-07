@@ -245,7 +245,7 @@ def test_should_create_timeline_column_value_with_api_data():
     dict_value = {
         'from': from_date,
         'to': to_date,
-        'visualization_type': type
+        'visualization_type': 'milestone'
     }
     value = json.dumps(dict_value)
 
@@ -257,6 +257,30 @@ def test_should_create_timeline_column_value_with_api_data():
     eq_(format['from'], from_date)
     eq_(format['to'], to_date)
 
+
+def test_should_create_timeline_column_value_with_api_data_and_null_visualization_type():
+
+    # Arrange
+    id = 'timeline'
+    title = 'timeline 2'
+    column_type = ColumnType.timeline
+    from_date=  '2021-01-01'
+    to_date = '2021-12-31'
+    type= 'milestone'
+    dict_value = {
+        'from': from_date,
+        'to': to_date,
+        'visualization_type': None
+    }
+    value = json.dumps(dict_value)
+
+    # Act
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=value)
+    format = column_value.format()
+
+    # Assert
+    eq_(format['from'], from_date)
+    eq_(format['to'], to_date)
 
 def test_should_set_timeline_column_value_to_None():
     
@@ -284,7 +308,7 @@ def test_should_set_timeline_column_value_with_valid_dict():
     value = {
               'from': '2021-12-31',
                'to': '2021-12-31',
-               'visualization_type': 'milestone'
+               'visualization_type': None
             }
     from_date = datetime.strptime(value['from'],DATE_FORMAT)
     to_date = datetime.strptime(value['to'],DATE_FORMAT)
