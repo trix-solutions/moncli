@@ -12,6 +12,9 @@ class MondayModel(Model):
         self._module = self.__module__
         self._class = self.__class__.__name__
         self._original_values = {}
+        base_raw_data = raw_data or {}
+        
+        raw_data = {}
 
         if not (item or board) and not (id and name):
             raise TypeError('Input item, board, or id and name parameters are required.')
@@ -41,7 +44,7 @@ class MondayModel(Model):
             try:
                 column_values = item.column_values
                 value = column_values[key]
-                raw_data[field] = value
+                base_raw_data[field] = value
                 self._original_values[field] = pickle.dumps(value.value)
             except:
                 columns = board.columns
@@ -53,7 +56,7 @@ class MondayModel(Model):
                     field_type.metadata[k] = v
                 self._original_values[field] = pickle.dumps(field_type.default)
                 
-        super().__init__(raw_data=raw_data, **kwargs)  
+        super().__init__(raw_data=base_raw_data, **kwargs)  
 
 
     @property
