@@ -9,7 +9,7 @@ config = {
     'url': r'https://github.com/trix-solutions/moncli',
     'download_url': r'https://github.com/trix-solutions/moncli',
     'author_email': 'andrew.shatz@trix.solutions',
-    'version': '2.0.8',
+    'version': '2.0.9',
     'license': 'BSD 3',
     'install_requires': [
         'requests>=2.24.0',

@@ -284,6 +284,12 @@ class GraphQLOperation(GraphQLField):
             body = '{} {} {{ {} }}'.format(self.action_type, var_format, body)
         else:
             body = '{} {{ {} }}'.format(self.action_type, body)
+        
+        import re
+        single_quotes = re.findall("\\'" + '".+"' + "\\'", body)
+        for quote in single_quotes:
+            repl = quote.replace("\'", "")
+            body = re.sub(quote, repl, body)
 
         return body
 
