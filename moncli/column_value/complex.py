@@ -147,9 +147,11 @@ class TimelineValue(ComplexNullValue):
         from_date = datetime.strptime(value['from'], DATE_FORMAT)
         to_date = datetime.strptime(value['to'], DATE_FORMAT)
         try:
-            if value['visualization_type']:
+            if value['visualization_type'] == 'milestone':
                 is_milestone = True
                 return Timeline(from_date=from_date,to_date=to_date,is_milestone=is_milestone)
+            else:
+                return Timeline(from_date=from_date,to_date=to_date)
         except KeyError:
             return Timeline(from_date=from_date,to_date=to_date)
     
