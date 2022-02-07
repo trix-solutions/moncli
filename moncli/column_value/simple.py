@@ -16,7 +16,7 @@ class DateValue(ComplexNullValue):
     def _convert(self,value):
         try:
             new_date = datetime.strptime(value['date'], DATE_FORMAT)
-        except (KeyError, ValueError):
+        except (KeyError, ValueError, TypeError):
             return None
         try:
             new_time = datetime.strptime(value['time'], TIME_FORMAT)
