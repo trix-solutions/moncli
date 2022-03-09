@@ -228,7 +228,7 @@ class Item(_Item):
     def subitems(self):
         """The nested subitems."""
         if not self.__subitems:
-            self.__subitems = self.get_subitems()
+            self.__subitems = self.get_subitems(get_column_values=True)
         return self.__subitems
 
 
@@ -693,11 +693,13 @@ class Item(_Item):
         return self.column_values[id]
 
 
-    def get_subitems(self, *args):
+    def get_subitems(self, get_column_values = False, *args):
         """Get the subitems of an item.
 
             Parameters
 
+                get_column_values: `bool`:
+                    Retrieves item column values if set to `True`.
                 args: list
                     list of return field arguments
 
@@ -735,6 +737,13 @@ class Item(_Item):
                 updates : `moncli.entities.update.Update`
                     The item's updates.
         """
+        if get_column_values:
+            args = list(args)
+            for arg in ['column_values.{}'.format(arg) for arg in api.DEFAULT_COLUMN_VALUE_QUERY_FIELDS]:
+                if arg not in args:
+                    args.append(arg)
+            args.extend(['id', 'name'])
+
         subitems_data = api.get_items(
             *api.get_field_list(api.DEFAULT_ITEM_QUERY_FIELDS, 'subitems', *args),
             api_key=self.__creds.api_key_v2,
