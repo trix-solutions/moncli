@@ -25,7 +25,7 @@ class DateValue(ComplexNullValue):
             new_date = new_date + timedelta(hours=new_time.hour, minutes=new_time.minute, seconds=new_time.second)
             date_value = new_date.astimezone(datetime.now().astimezone().tzinfo) 
             return date_value
-        except (KeyError, TypeError): 
+        except (KeyError, TypeError, ValueError): 
             return new_date
         
     def _cast(self,value):

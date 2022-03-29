@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from re import L
 
 from nose.tools import ok_, eq_, raises
 from moncli import column_value as cv, error as e
@@ -313,7 +314,6 @@ def test_should_create_date_column_value_with_input_data():
 def test_should_create_empty_date_column_value_with_empty_date_input_data():
 
     # Arrange
-
     id = 'date_1'
     title = 'date'
     column_type = ColumnType.date
@@ -329,6 +329,25 @@ def test_should_create_empty_date_column_value_with_empty_date_input_data():
 
     # Assert
     eq_(format, {})
+
+
+def test_should_create_date_column_value_when_time_input_is_empty_string():
+    
+    # Arrange
+    id = 'date_1'
+    title = 'Date'
+    column_type = ColumnType.date
+    value = {
+        'date': '2022-3-29',
+        'time': ''
+    }
+    value = json.dumps(value)
+
+    # Act
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Assert
+    eq_(datetime(2022, 3, 29), column_value.value)
 
 
 def test_should_set_date_value_to_none_to_value():
