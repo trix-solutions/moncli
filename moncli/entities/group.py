@@ -261,6 +261,8 @@ class Group(_Group):
 
                 column_values : `json`
                     The column values of the new item.
+                change_multiple_column_values: `bool`
+                    Create Status/Dropdown labels if they're missing. (Requires permission to change board structure).
         """
 
         item_data = api.create_item(
