@@ -325,9 +325,21 @@ QUERY_MAP = {
             'defaults': ArgumentValueKind.Json
         }),
     CHANGE_COLUMN_TITLE: (DEFAULT_COLUMN_QUERY_FIELDS, {}),
-    CHANGE_COLUMN_VALUE: (DEFAULT_ITEM_QUERY_FIELDS, {}),
-    CHANGE_SIMPLE_COLUMN_VALUE: (DEFAULT_ITEM_QUERY_FIELDS, {}),
-    CHANGE_MULTIPLE_COLUMN_VALUES: (DEFAULT_ITEM_QUERY_FIELDS, {}),
+    CHANGE_COLUMN_VALUE: (
+        DEFAULT_ITEM_QUERY_FIELDS, 
+        {
+            'create_labels_if_missing': ArgumentValueKind.Bool
+        }),
+    CHANGE_SIMPLE_COLUMN_VALUE: (
+        DEFAULT_ITEM_QUERY_FIELDS, 
+        {
+            'create_labels_if_missing': ArgumentValueKind.Bool
+        }),
+    CHANGE_MULTIPLE_COLUMN_VALUES: (
+        DEFAULT_ITEM_QUERY_FIELDS, 
+        {
+            'create_labels_if_missing': ArgumentValueKind.Bool
+        }),
     DUPLICATE_GROUP: (
         DEFAULT_GROUP_QUERY_FIELDS, 
         {
@@ -382,12 +394,14 @@ QUERY_MAP = {
         DEFAULT_ITEM_QUERY_FIELDS, 
         {
             'group_id': ArgumentValueKind.String,
-            'column_values': ArgumentValueKind.Json
+            'column_values': ArgumentValueKind.Json,
+            'create_labels_if_missing': ArgumentValueKind.Bool
         }),
     CREATE_SUBITEM: (
         DEFAULT_ITEM_QUERY_FIELDS,
         {
-            'column_values': ArgumentValueKind.Json
+            'column_values': ArgumentValueKind.Json,
+            'create_labels_if_missing': ArgumentValueKind.Bool
         }),
     CLEAR_ITEM_UPDATES: (DEFAULT_ITEM_QUERY_FIELDS, {}),
     MOVE_ITEM_TO_GROUP: (DEFAULT_ITEM_QUERY_FIELDS, {}),
