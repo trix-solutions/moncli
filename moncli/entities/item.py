@@ -818,7 +818,7 @@ class Item(_Item):
                 'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
-    def change_column_value(self,id = None, title = None, column_value = None, get_column_values: bool = None, as_model: type = None, *args):
+    def change_column_value(self,id = None, title = None, column_value = None, get_column_values: bool = None, as_model: type = None, *args, **kwargs):
         """Get an item's column value by ID or title.
 
             Parameters
@@ -836,6 +836,8 @@ class Item(_Item):
                     The MondayModel subclass to be returned.
                 args : `tuple`
                     Optional item return fields.
+                kwargs : `dict`
+                    Optional arguments for creating subitems.
 
             Returns
 
@@ -870,6 +872,11 @@ class Item(_Item):
                     The item's last update date.
                 updates : `moncli.entities.update.Update`
                     The item's updates.
+            
+            Optional Arguments
+            
+                create_labels_if_missing: `bool`
+                    Create Status/Dropdown labels if they're missing. (Requires permission to change board structure).
         """
         if id and title : 
             raise e.ItemError(
@@ -923,7 +930,8 @@ class Item(_Item):
             self.board.id,
             value,
             *args,
-            api_key=self.__creds.api_key_v2)
+            api_key=self.__creds.api_key_v2,
+            **kwargs)
         items = Item(creds=self.__creds, **item_data)
         if not as_model:
             return items
@@ -1151,6 +1159,8 @@ class Item(_Item):
             
                 column_values : `json`
                     The column values of the new item.
+                create_labels_if_missing: `bool`
+                    Create Status/Dropdown labels if they're missing. (Requires permission to change board structure).
         """
         
         subitem_data = api.create_subitem(
