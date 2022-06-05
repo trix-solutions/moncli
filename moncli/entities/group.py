@@ -261,7 +261,7 @@ class Group(_Group):
 
                 column_values : `json`
                     The column values of the new item.
-                change_multiple_column_values: `bool`
+                create_labels_if_missing: `bool`
                     Create Status/Dropdown labels if they're missing. (Requires permission to change board structure).
         """
 
