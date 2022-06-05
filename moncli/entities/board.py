@@ -869,7 +869,7 @@ class Board(_Board):
         return [en.Group(creds=self.__creds, __board=self, **data) for data in groups_data]
   
 
-    def get_group(self, id: str = None, title: str = None, *args):
+    def get_group(self, id: str = None, title: str = None, *args) -> en.Group:
         """Get a group belonging to the board by ID or title.
 
             Parameters
@@ -968,6 +968,8 @@ class Board(_Board):
                     The group's unique identifier.
                 column_values : `json`
                     The column values of the new item.
+                create_labels_if_missing: `bool`
+                    Create Status/Dropdown labels if they're missing. (Requires permission to change board structure).
                 as_model: `type`
                     The MondayModel subclass to be returned.
                 get_column_values: `bool`

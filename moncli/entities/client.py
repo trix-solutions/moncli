@@ -271,7 +271,7 @@ class MondayClient():
         return [en.Board(creds=self.__creds, **data) for data in boards_data]
 
 
-    def get_board(self, id: str = None, name: str = None, *args):
+    def get_board(self, id: str = None, name: str = None, *args) -> en.Board:
         """Get a board by unique identifier or name.
 
             Parameters
