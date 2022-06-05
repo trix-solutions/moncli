@@ -968,7 +968,7 @@ class Board(_Board):
                     The group's unique identifier.
                 column_values : `json`
                     The column values of the new item.
-                change_multiple_column_values: `bool`
+                create_labels_if_missing: `bool`
                     Create Status/Dropdown labels if they're missing. (Requires permission to change board structure).
                 as_model: `type`
                     The MondayModel subclass to be returned.
