@@ -942,7 +942,7 @@ class Item(_Item):
                 'as_model parameter must be of MondayModel Type')
         return [as_model(item) for item in items]
 
-    def change_simple_column_value(self, id = None, title = None, value = None,as_model: type = None, *args):
+    def change_simple_column_value(self, id = None, title = None, value = None, as_model: type = None, *args, **kwargs):
         """Change the item's column values using simple values.
 
             Parameters
@@ -957,6 +957,8 @@ class Item(_Item):
                     The value to be changed
                 args : `tuple`
                     Optional item return fields.
+                kwargs : `dict`
+                    Optional arguments for creating subitems.
 
             Returns
 
@@ -991,6 +993,11 @@ class Item(_Item):
                     The item's last update date.
                 updates : `moncli.entities.update.Update`
                     The item's updates.
+            
+            Optional Arguments
+            
+                create_labels_if_missing: `bool`
+                    Create Status/Dropdown labels if they're missing. (Requires permission to change board structure).
         """
         
         if not id and not title :
@@ -1009,7 +1016,8 @@ class Item(_Item):
             column_value.id,
             value,
             *args,
-            api_key=self.__creds.api_key_v2)        
+            api_key=self.__creds.api_key_v2,
+            **kwargs)        
 
         items = Item(creds=self.__creds, **item_data)
         if not as_model:
