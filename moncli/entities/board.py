@@ -869,7 +869,7 @@ class Board(_Board):
         return [en.Group(creds=self.__creds, __board=self, **data) for data in groups_data]
   
 
-    def get_group(self, id: str = None, title: str = None, *args):
+    def get_group(self, id: str = None, title: str = None, *args) -> en.Group:
         """Get a group belonging to the board by ID or title.
 
             Parameters
