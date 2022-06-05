@@ -63,7 +63,21 @@ class GraphQLNode():
                     GraphQL-formatted query string.
         """
 
-        formatted_args = ', '.join(['{}:{}'.format(key, value) for key, value in self.arguments.items()])
+        # 2765128211 - Temporary fix for formatting list-based arguments
+        args_list = []
+        for key, value in self.arguments.items():
+            if isinstance(value, list):
+                arg_format = '{}:['.format(key)
+                for item in value: 
+                    if isinstance(item, str):
+                        arg_format += '"{}", '.format(item)
+                    else:
+                        arg_format += '{}, '.format(item)
+                arg_format = '{}]'.format(arg_format[:-2])
+                args_list.append(arg_format)
+            else:
+                args_list.append('{}:{}'.format(key, value))
+        formatted_args = ', '.join(args_list)
         return '{} ({})'.format(body, formatted_args)
 
 
