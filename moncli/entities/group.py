@@ -199,7 +199,7 @@ class Group(_Group):
         """
 
         group_data = api.delete_group(
-            self.__board,
+            self.__board.id,
             self.id, 
             *args,
             api_key=self.__creds.api_key_v2)
