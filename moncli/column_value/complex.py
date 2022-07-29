@@ -144,8 +144,11 @@ class TimelineValue(ComplexNullValue):
     allow_casts = (dict)
 
     def _convert(self,value):
-        from_date = datetime.strptime(value['from'], DATE_FORMAT)
-        to_date = datetime.strptime(value['to'], DATE_FORMAT)
+        try:
+            from_date = datetime.strptime(value['from'], DATE_FORMAT)
+            to_date = datetime.strptime(value['to'], DATE_FORMAT)
+        except KeyError:
+            return None
         try:
             if value['visualization_type'] == 'milestone':
                 is_milestone = True
