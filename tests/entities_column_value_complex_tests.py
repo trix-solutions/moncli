@@ -371,6 +371,21 @@ def test_should_set_from_date_greater_than_to_date_timeline_column_value():
     # Act
     column_value.value = value
 
+def test_should_return_empty_complex_value_when_no_value_is_provided():
+    id = 'timeline1'
+    title = 'timeline 5'
+    column_type = ColumnType.timeline
+    dict_value = {'created_at': 'some_date'}
+    value = json.dumps(dict_value)
+    column_value = cv.create_column_value(column_type, id=id, title=title, value=value)
+
+    # Act 
+    format = column_value.format()
+
+    # Assert
+    eq_(column_value.value, None)
+    eq_(format, cv.COMPLEX_NULL_VALUE)
+
 
 def test_should_week_column_with_no_api_data():
 
