@@ -62,7 +62,10 @@ class HourValue(ComplexNullValue):
     allow_casts = (dict)
 
     def _convert(self, value):
-        return Hour(hour=value['hour'],minute=value['minute'])
+        try:
+            return Hour(hour=value['hour'],minute=value['minute'])
+        except KeyError:
+            return None
 
     def _cast(self, value):
         try:
