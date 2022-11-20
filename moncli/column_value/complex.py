@@ -249,7 +249,7 @@ class DependencyValue(ComplexNullValue):
         try:
             list_ids = value['linkedPulseIds']
             return [int(value['linkedPulseId']) for value in list_ids ]
-        except IndexError:
+        except (IndexError,KeyError):
             return []
     
     def _format(self):
