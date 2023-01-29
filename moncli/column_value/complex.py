@@ -147,7 +147,7 @@ class TimelineValue(ComplexNullValue):
         try:
             from_date = datetime.strptime(value['from'], DATE_FORMAT)
             to_date = datetime.strptime(value['to'], DATE_FORMAT)
-        except KeyError:
+        except (KeyError,ValueError):
             return None
         try:
             if value['visualization_type'] == 'milestone':
