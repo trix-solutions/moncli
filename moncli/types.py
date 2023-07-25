@@ -329,7 +329,10 @@ class ItemLinkType(MondayType):
             self.native_default = None
             self.element_type = None
             self.allow_casts = (str,)
-            return value.value[0]
+            try:
+                return value.value[0]
+            except IndexError:
+                return []
         return super()._process_column_value(value)
 
     def _export(self, value):
